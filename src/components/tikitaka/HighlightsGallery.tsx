@@ -17,8 +17,8 @@ export function HighlightsGallery() {
     <GoogleAuthGate
       title={lang === 'ar' ? 'سجل دخولك لمشاهدة ملخصات المباريات' : 'Sign in to watch match highlights'}
       description={lang === 'ar'
-        ? 'الدخول مجاني بحساب Google. كل نتيجة مباراة تظهر كخبر مثبت، والضغط عليها يفتح نتائج beIN SPORTS الرسمية.'
-        : 'Google sign-in is free. Every final score appears as a pinned story and opens official beIN SPORTS results.'}
+        ? 'الدخول مجاني بحساب Google. كل نتيجة نهائية تظهر هنا ككارت ثابت، والضغط عليها يفتح بحث beIN SPORTS الرسمي للملخص.'
+        : 'Google sign-in is free. Every final score appears here as a pinned card and opens official beIN SPORTS highlights.'}
     >
       <MatchHighlightsContent />
     </GoogleAuthGate>
@@ -34,12 +34,10 @@ function MatchHighlightsContent() {
   useTrackVisit({ eventType: 'highlights_view', page: '/highlights' });
 
   useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel();
-    };
+    return () => window.speechSynthesis.cancel();
   }, []);
 
-  const cards = useMemo(() => finishedMatches.map(toHighlightCard), [finishedMatches]);
+  const cards = useMemo(() => finishedMatches.map((match) => toHighlightCard(match, lang)), [finishedMatches, lang]);
 
   const openBeinSportsSearch = async (match: Match) => {
     const title = `${match.home.name} ${match.homeScore}-${match.awayScore} ${match.away.name} highlights`;
@@ -100,8 +98,8 @@ function MatchHighlightsContent() {
         </h3>
         <p className={cn('text-sm text-muted-foreground', lang === 'ar' && 'font-arabic')}>
           {lang === 'ar'
-            ? 'بعد نهاية كل مباراة، سنثبت النتيجة كخبر ملخص ونربطها ببحث beIN SPORTS الرسمي.'
-            : 'After each match ends, its final score will be pinned here and linked to official beIN SPORTS results.'}
+            ? 'بعد نهاية كل مباراة، سنثبت النتيجة هنا ونضيف عليها رابط مشاهدة الملخص من beIN SPORTS.'
+            : 'After each match ends, its final score will be pinned here with a beIN SPORTS highlights link.'}
         </p>
       </Card>
     );
@@ -119,17 +117,15 @@ function MatchHighlightsContent() {
             <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_49%,rgba(255,255,255,.25)_50%,transparent_51%)]" />
             <div className="absolute inset-x-6 top-6 flex items-center justify-between">
               <TeamBadge name={card.match.home.shortName} flag={card.match.home.flag} />
-              <Badge className="bg-background/90 text-foreground border border-border font-bold">
-                FT
-              </Badge>
+              <Badge className="bg-background/90 text-foreground border border-border font-bold">FT</Badge>
               <TeamBadge name={card.match.away.shortName} flag={card.match.away.flag} />
             </div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
               <div className="font-display text-5xl font-extrabold text-white drop-shadow-lg">
                 {card.match.homeScore} - {card.match.awayScore}
               </div>
               <div className="mt-3 rounded-full bg-primary/90 px-4 py-2 text-xs font-bold text-primary-foreground shadow-neon">
-                {lang === 'ar' ? 'ملخص المباراة' : 'Match Highlights'}
+                {lang === 'ar' ? 'لو عايز تشوف ملخص المباراة' : 'Watch match highlights'}
               </div>
             </div>
             <div className="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-primary/90 flex items-center justify-center shadow-neon group-hover:scale-110 transition-transform">
@@ -182,14 +178,16 @@ type HighlightCard = {
   badge: string;
 };
 
-function toHighlightCard(match: Match): HighlightCard {
+function toHighlightCard(match: Match, lang: 'en' | 'ar'): HighlightCard {
   const score = `${match.homeScore}-${match.awayScore}`;
 
   return {
     id: match.id,
     match,
     title: `${match.home.name} ${score} ${match.away.name}`,
-    description: `${match.competition} - ${match.stage}. Final score from ${match.venue || 'the match venue'}.`,
+    description: lang === 'ar'
+      ? `${match.competition} - ${match.stage}. النتيجة النهائية من ${match.venue || 'ملعب المباراة'}.`
+      : `${match.competition} - ${match.stage}. Final score from ${match.venue || 'the match venue'}.`,
     badge: match.stage,
   };
 }

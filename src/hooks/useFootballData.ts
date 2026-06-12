@@ -39,9 +39,9 @@ export function useUpcomingFixtures() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
-        if (data?.matches?.length) return data.matches as Match[];
-        if (!data?.response?.length) return getUpcomingMatches();
-        return data.response.slice(0, 6).map(mapFixture);
+        if (data?.matches?.length) return getUpcomingOnly(data.matches as Match[]);
+        if (!data?.response?.length) return getUpcomingOnly(getUpcomingMatches());
+        return getUpcomingOnly(data.response.map(mapFixture)).slice(0, 8);
       } catch {
         return getUpcomingMatches();
       }
@@ -57,9 +57,9 @@ export function useResults() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'results', league: WC_LEAGUE, season: WC_SEASON });
-        if (data?.matches?.length) return data.matches as Match[];
+        if (data?.matches?.length) return getFinishedOnly(data.matches as Match[]);
         if (!data?.response?.length) return getFinishedMatches();
-        return data.response.slice(0, 6).map(mapFixture);
+        return getFinishedOnly(data.response.map(mapFixture)).slice(0, 8);
       } catch {
         return getFinishedMatches();
       }
@@ -152,6 +152,20 @@ function mapFixture(f: ApiFixture) {
     awayScore: f.goals.away ?? 0,
     venue: f.fixture.venue?.name ?? '',
   };
+}
+
+function getUpcomingOnly(matches: Match[]) {
+  const now = Date.now();
+
+  return matches
+    .filter((match) => match.status === 'upcoming' && new Date(match.date).getTime() > now)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+}
+
+function getFinishedOnly(matches: Match[]) {
+  return matches
+    .filter((match) => match.status === 'finished')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 type ApiScorer = { player: { name: string }; statistics: [{ team: { name: string; logo: string }; goals: { total: number; assists: number | null }; games: { appearences: number } }] };

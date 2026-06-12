@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MatchCard } from './MatchCard';
 import { TournamentCountdown } from './TournamentCountdown';
-import { Radio, Calendar, CheckCircle2, Loader2 } from 'lucide-react';
+import { Radio, Calendar, CheckCircle2, Loader2, Play } from 'lucide-react';
 import { useLiveFixtures, useUpcomingFixtures, useResults } from '@/hooks/useFootballData';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
@@ -60,8 +60,30 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
       <TabsContent value="results" className="mt-6">
         {finishedLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!finishedLoading && finished.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {finished.map((m) => <MatchCard key={m.id} match={m} />)}
+          <div className="rounded-lg border border-primary/30 bg-gradient-card p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className={lang === 'ar' ? 'font-arabic' : ''}>
+                <h3 className="font-display text-xl font-extrabold">
+                  {lang === 'ar' ? 'النتائج النهائية نزلت في الملخصات' : 'Final scores moved to highlights'}
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {lang === 'ar'
+                    ? 'عشان الصفحة تفضل خفيفة، الماتش اللي يخلص بيتشال من المواعيد وبيظهر تحت كنتيجة ثابتة مع زر مشاهدة الملخص.'
+                    : 'To keep this area clean, finished matches leave the schedule and appear below as pinned highlight cards.'}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {finished.slice(0, 3).map((match) => (
+                  <div key={match.id} className="rounded-md border border-border bg-background px-3 py-2 text-xs font-bold">
+                    {match.home.shortName} {match.homeScore}-{match.awayScore} {match.away.shortName}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-2 text-sm font-bold text-primary">
+              <Play className="h-4 w-4" />
+              {lang === 'ar' ? 'لو عايز تشوف ملخص المباراة انزل لقسم الملخصات' : 'Scroll to Highlights to watch the match summary'}
+            </div>
           </div>
         )}
         {!finishedLoading && finished.length === 0 && <TournamentCountdown match={nextMatch} />}
