@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useLanguage } from '@/context/LanguageContext';
+import { hasSupabaseConfig } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
 interface GoogleAuthGateProps {
@@ -14,6 +15,24 @@ interface GoogleAuthGateProps {
 export function GoogleAuthGate({ children, title, description }: GoogleAuthGateProps) {
   const { lang } = useLanguage();
   const { loading, user, signInWithGoogle } = useAuth();
+
+  if (!hasSupabaseConfig) {
+    return (
+      <Card className="mx-auto max-w-xl p-8 border-destructive/40 bg-gradient-card text-center">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-destructive/15 text-destructive">
+          <Lock className="h-7 w-7" />
+        </div>
+        <h2 className={cn('font-display text-2xl font-extrabold mb-2', lang === 'ar' && 'font-arabic')}>
+          {lang === 'ar' ? 'إعدادات Supabase ناقصة' : 'Supabase configuration is missing'}
+        </h2>
+        <p className={cn('text-sm text-muted-foreground leading-relaxed', lang === 'ar' && 'font-arabic')}>
+          {lang === 'ar'
+            ? 'أضف VITE_SUPABASE_URL و VITE_SUPABASE_ANON_KEY في إعدادات Cloudflare Pages ثم أعد النشر.'
+            : 'Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Cloudflare Pages, then redeploy.'}
+        </p>
+      </Card>
+    );
+  }
 
   if (loading) {
     return (

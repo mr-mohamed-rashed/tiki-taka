@@ -10,9 +10,9 @@
   "theme_color": "#00ff66",
   "icons": [
     {
-      "src": "/icons/tiki-taka-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/icons/tiki-taka-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
@@ -22,14 +22,14 @@
       "short_name": "Results",
       "description": "Open the match results screen.",
       "url": "/results",
-      "icons": [{ "src": "/icons/tiki-taka-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icons/tiki-taka-icon.png", "sizes": "512x512", "type": "image/png" }]
     },
     {
       "name": "Live Matches",
       "short_name": "Live",
       "description": "Open live World Cup matches.",
       "url": "/live",
-      "icons": [{ "src": "/icons/tiki-taka-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "/icons/tiki-taka-icon.png", "sizes": "512x512", "type": "image/png" }]
     }
   ]
 }

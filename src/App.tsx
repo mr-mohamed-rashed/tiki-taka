@@ -7,6 +7,7 @@ import { routers } from "./router";
 import { LanguageProvider } from "./context/LanguageContext";
 import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 import { AuthProvider } from "./context/AuthContext";
+import { AppErrorBoundary } from "./components/tikitaka/AppErrorBoundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,19 +21,21 @@ const queryClient = new QueryClient({
 const App = () => {
   const router = createBrowserRouter(routers);
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LanguageProvider>
-          <SiteSettingsProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <RouterProvider router={router} />
-            </TooltipProvider>
-          </SiteSettingsProvider>
-        </LanguageProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <AppErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <LanguageProvider>
+            <SiteSettingsProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <RouterProvider router={router} />
+              </TooltipProvider>
+            </SiteSettingsProvider>
+          </LanguageProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </AppErrorBoundary>
   );
 };
 

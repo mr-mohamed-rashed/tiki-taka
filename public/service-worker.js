@@ -1,9 +1,7 @@
-const CACHE_NAME = 'tiki-taka-shell-v1';
+const CACHE_NAME = 'tiki-taka-assets-v2';
 const APP_SHELL = [
-  '/',
-  '/results',
   '/manifest.webmanifest',
-  '/icons/tiki-taka-icon.svg',
+  '/icons/tiki-taka-icon.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -29,7 +27,7 @@ self.addEventListener('fetch', (event) => {
   if (requestUrl.origin !== self.location.origin) return;
 
   if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request).catch(() => caches.match('/')));
+    event.respondWith(fetch(event.request));
     return;
   }
 
