@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Tiki-Taka Football Data Layer
  * -------------------------------------------------------
  * All data below is based on VERIFIED facts from FIFA.com and official sources
- * as of May 29, 2026. The FIFA World Cup 2026™ begins June 11, 2026.
+ * as of May 29, 2026. The FIFA World Cup 2026â„¢ begins June 11, 2026.
  *
  * Sources:
  *  - https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026
@@ -104,7 +104,7 @@ const teams: Record<string, Team> = {
   AUS: { id: 'AUS', name: 'Australia',     shortName: 'AUS', code: 'AU', flag: flag('au'), color: '#00008B' },
   // Group E
   GER: { id: 'GER', name: 'Germany',       shortName: 'GER', code: 'DE', flag: flag('de'), color: '#000000' },
-  CIV: { id: 'CIV', name: 'Côte d\'Ivoire', shortName: 'CIV', code: 'CI', flag: flag('ci'), color: '#F77F00' },
+  CIV: { id: 'CIV', name: 'Cأ´te d\'Ivoire', shortName: 'CIV', code: 'CI', flag: flag('ci'), color: '#F77F00' },
   ECU: { id: 'ECU', name: 'Ecuador',       shortName: 'ECU', code: 'EC', flag: flag('ec'), color: '#FFD100' },
   // Group F
   NED: { id: 'NED', name: 'Netherlands',   shortName: 'NED', code: 'NL', flag: flag('nl'), color: '#FF6B00' },
@@ -146,16 +146,16 @@ export const getTeams = () => teams;
  * Ticker items - verified news as of late May 2026
  */
 export const getTicker = (): TickerItem[] => [
-  { id: 't1', tag: 'KICK-OFF', text: 'FIFA World Cup 2026 officially begins June 11 — Opening match: Mexico vs South Africa at Estadio Azteca, Mexico City.' },
+  { id: 't1', tag: 'KICK-OFF', text: 'FIFA World Cup 2026 officially begins June 11 â€” Opening match: Mexico vs South Africa at Estadio Azteca, Mexico City.' },
   { id: 't2', tag: 'SQUADS',   text: 'Neymar named in Brazil squad by coach Carlo Ancelotti (May 18) - comeback after 3-year absence from national team.' },
-  { id: 't3', tag: 'SQUADS',   text: 'Manuel Neuer reverses international retirement — Germany goalkeeper set for his 5th World Cup under Nagelsmann.' },
+  { id: 't3', tag: 'SQUADS',   text: 'Manuel Neuer reverses international retirement â€” Germany goalkeeper set for his 5th World Cup under Nagelsmann.' },
   { id: 't4', tag: 'SQUADS',   text: 'Mohamed Salah & Omar Marmoush headline Egypt\'s 27-man squad announced by coach Hossam Hassan.' },
-  { id: 't5', tag: 'GROUPS',   text: 'Group C: Brazil, Morocco, Haiti & Scotland — one of the most competitive groups at the 2026 World Cup.' },
+  { id: 't5', tag: 'GROUPS',   text: 'Group C: Brazil, Morocco, Haiti & Scotland â€” one of the most competitive groups at the 2026 World Cup.' },
   { id: 't6', tag: 'SQUADS',   text: 'France squad named: Mbappe, Dembele, Olise & PSG prodigy Desire Doue headline Deschamps\' selection.' },
   { id: 't7', tag: 'SQUADS',   text: 'England squad confirmed - Thomas Tuchel keeps faith with qualifying heroes; Harry Kane leads the attack.' },
-  { id: 't8', tag: 'MATCH BALL', text: 'Official match ball unveiled: Adidas TRIONDA — inspired by the colors and heritage of the three host nations.' },
+  { id: 't8', tag: 'MATCH BALL', text: 'Official match ball unveiled: Adidas TRIONDA â€” inspired by the colors and heritage of the three host nations.' },
   { id: 't9', tag: 'SQUADS',   text: 'Argentina squad announcement expected before June 2 FIFA deadline - Messi set to lead La Albiceleste.' },
-  { id: 't10', tag: 'FINAL',   text: 'The Final will be held at MetLife Stadium, New Jersey on July 19, 2026 — the biggest World Cup final in history.' },
+  { id: 't10', tag: 'FINAL',   text: 'The Final will be held at MetLife Stadium, New Jersey on July 19, 2026 â€” the biggest World Cup final in history.' },
 ];
 
 /**
@@ -219,7 +219,7 @@ export const getUpcomingMatches = (): Match[] => [
 ];
 
 /**
- * "Results" tab — empty until the tournament starts (June 11, 2026)
+ * "Results" tab â€” empty until the tournament starts (June 11, 2026)
  */
 export const getFinishedMatches = (): Match[] => [];
 
@@ -250,79 +250,96 @@ export const getPlayerRankings = (): PlayerRanking[] => [
 ];
 
 export const getCommentary = (): CommentaryEvent[] => [
-  { id: 12, minute: "23'", type: 'info',   text: 'Tournament kicks off June 11, 2026 — Opening match: Mexico vs South Africa at Estadio Azteca.' },
-  { id: 11, minute: "20'", type: 'info',   text: 'Neymar returns to the Brazil squad after a 3-year absence — Coach Carlo Ancelotti includes him.' },
+  { id: 12, minute: "23'", type: 'info',   text: 'Tournament kicks off June 11, 2026 â€” Opening match: Mexico vs South Africa at Estadio Azteca.' },
+  { id: 11, minute: "20'", type: 'info',   text: 'Neymar returns to the Brazil squad after a 3-year absence â€” Coach Carlo Ancelotti includes him.' },
   { id: 10, minute: "18'", type: 'info',   text: 'Manuel Neuer reverses his international retirement and will represent Germany in his 5th World Cup.' },
   { id: 9,  minute: "15'", type: 'info',   text: 'Mohamed Salah and Omar Marmoush headline Egypt\'s squad under coach Hossam Hassan.' },
-  { id: 8,  minute: "12'", type: 'info',   text: 'Group C: Brazil, Morocco, Haiti & Scotland — one of the toughest groups at the 2026 World Cup.' },
-  { id: 7,  minute: "10'", type: 'info',   text: 'Germany drawn in Group E alongside Côte d\'Ivoire, Ecuador and Curaçao.' },
-  { id: 6,  minute: "8'",  type: 'info',   text: 'Argentina in Group J with Algeria, Austria and Jordan — notable debut for Jordan at a World Cup.' },
+  { id: 8,  minute: "12'", type: 'info',   text: 'Group C: Brazil, Morocco, Haiti & Scotland â€” one of the toughest groups at the 2026 World Cup.' },
+  { id: 7,  minute: "10'", type: 'info',   text: 'Germany drawn in Group E alongside Cأ´te d\'Ivoire, Ecuador and Curaأ§ao.' },
+  { id: 6,  minute: "8'",  type: 'info',   text: 'Argentina in Group J with Algeria, Austria and Jordan â€” notable debut for Jordan at a World Cup.' },
   { id: 5,  minute: "6'",  type: 'info',   text: 'Spain will face Saudi Arabia, Uruguay and Cabo Verde in Group H.' },
   { id: 4,  minute: "4'",  type: 'info',   text: 'England drawn with Croatia, Ghana and Panama in Group L under Thomas Tuchel.' },
-  { id: 3,  minute: "3'",  type: 'info',   text: 'France face Senegal and Norway in Group I — an intriguing European vs African clash.' },
-  { id: 2,  minute: "2'",  type: 'info',   text: '48 teams, 12 groups, 104 matches, 3 host nations — a new era for the FIFA World Cup.' },
-  { id: 1,  minute: "1'",  type: 'info',   text: 'Welcome to Tiki-Taka — your live hub for the FIFA World Cup 2026 in Canada, Mexico & USA.' },
+  { id: 3,  minute: "3'",  type: 'info',   text: 'France face Senegal and Norway in Group I â€” an intriguing European vs African clash.' },
+  { id: 2,  minute: "2'",  type: 'info',   text: '48 teams, 12 groups, 104 matches, 3 host nations â€” a new era for the FIFA World Cup.' },
+  { id: 1,  minute: "1'",  type: 'info',   text: 'Welcome to Tiki-Taka â€” your live hub for the FIFA World Cup 2026 in Canada, Mexico & USA.' },
 ];
 
 export const getHighlights = (): Highlight[] => [
   {
     id: 'h1',
     title: 'Lionel Messi - All Goals at FIFA World Cup 2022',
-    titleAr: 'ليونيل ميسي - جميع أهدافه في كأس العالم 2022',
+    titleAr: 'ظ„ظٹظˆظ†ظٹظ„ ظ…ظٹط³ظٹ - ط¬ظ…ظٹط¹ ط£ظ‡ط¯ط§ظپظ‡ ظپظٹ ظƒط£ط³ ط§ظ„ط¹ط§ظ„ظ… 2022',
     description: 'Relive every single goal scored by Lionel Messi during his magical and historic run to lift the FIFA World Cup trophy in Qatar 2022.',
-    descriptionAr: 'استرجع كل هدف سجله الأسطورة ليونيل ميسي خلال مسيرته السحرية والتاريخية لرفع كأس العالم في قطر 2022.',
+    descriptionAr: 'ط§ط³طھط±ط¬ط¹ ظƒظ„ ظ‡ط¯ظپ ط³ط¬ظ„ظ‡ ط§ظ„ط£ط³ط·ظˆط±ط© ظ„ظٹظˆظ†ظٹظ„ ظ…ظٹط³ظٹ ط®ظ„ط§ظ„ ظ…ط³ظٹط±طھظ‡ ط§ظ„ط³ط­ط±ظٹط© ظˆط§ظ„طھط§ط±ظٹط®ظٹط© ظ„ط±ظپط¹ ظƒط£ط³ ط§ظ„ط¹ط§ظ„ظ… ظپظٹ ظ‚ط·ط± 2022.',
     youtubeId: 'WzK-y9nL0bE', duration: '8:12', views: '12M',
   },
   {
     id: 'h2',
-    title: 'Kylian Mbappé vs Argentina (World Cup Final)',
-    titleAr: 'كيليان مبابي ضد الأرجنتين (نهائي كأس العالم)',
-    description: 'Watch Kylian Mbappé\'s incredible hat-trick performance against Argentina in one of the greatest World Cup finals of all time.',
-    descriptionAr: 'شاهد أداء كيليان مبابي المذهل وتسجيله لهاتريك ضد الأرجنتين في واحد من أعظم نهائيات كأس العالم على الإطلاق.',
+    title: 'Kylian Mbappأ© vs Argentina (World Cup Final)',
+    titleAr: 'ظƒظٹظ„ظٹط§ظ† ظ…ط¨ط§ط¨ظٹ ط¶ط¯ ط§ظ„ط£ط±ط¬ظ†طھظٹظ† (ظ†ظ‡ط§ط¦ظٹ ظƒط£ط³ ط§ظ„ط¹ط§ظ„ظ…)',
+    description: 'Watch Kylian Mbappأ©\'s incredible hat-trick performance against Argentina in one of the greatest World Cup finals of all time.',
+    descriptionAr: 'ط´ط§ظ‡ط¯ ط£ط¯ط§ط، ظƒظٹظ„ظٹط§ظ† ظ…ط¨ط§ط¨ظٹ ط§ظ„ظ…ط°ظ‡ظ„ ظˆطھط³ط¬ظٹظ„ظ‡ ظ„ظ‡ط§طھط±ظٹظƒ ط¶ط¯ ط§ظ„ط£ط±ط¬ظ†طھظٹظ† ظپظٹ ظˆط§ط­ط¯ ظ…ظ† ط£ط¹ط¸ظ… ظ†ظ‡ط§ط¦ظٹط§طھ ظƒط£ط³ ط§ظ„ط¹ط§ظ„ظ… ط¹ظ„ظ‰ ط§ظ„ط¥ط·ظ„ط§ظ‚.',
     youtubeId: '3mO2t2I5kE', duration: '5:45', views: '28M',
   },
   {
     id: 'h3',
     title: "Cristiano Ronaldo - Best Legendary Goals",
-    titleAr: 'كريستيانو رونالدو - أفضل الأهداف الأسطورية',
+    titleAr: 'ظƒط±ظٹط³طھظٹط§ظ†ظˆ ط±ظˆظ†ط§ظ„ط¯ظˆ - ط£ظپط¶ظ„ ط§ظ„ط£ظ‡ط¯ط§ظپ ط§ظ„ط£ط³ط·ظˆط±ظٹط©',
     description: 'A compilation of the most spectacular, high-flying, and powerful goals scored by Cristiano Ronaldo across his entire career.',
-    descriptionAr: 'تجميع لأكثر الأهداف المذهلة والقوية التي سجلها كريستيانو رونالدو طوال مسيرته الكروية الأسطورية.',
+    descriptionAr: 'طھط¬ظ…ظٹط¹ ظ„ط£ظƒط«ط± ط§ظ„ط£ظ‡ط¯ط§ظپ ط§ظ„ظ…ط°ظ‡ظ„ط© ظˆط§ظ„ظ‚ظˆظٹط© ط§ظ„طھظٹ ط³ط¬ظ„ظ‡ط§ ظƒط±ظٹط³طھظٹط§ظ†ظˆ ط±ظˆظ†ط§ظ„ط¯ظˆ ط·ظˆط§ظ„ ظ…ط³ظٹط±طھظ‡ ط§ظ„ظƒط±ظˆظٹط© ط§ظ„ط£ط³ط·ظˆط±ظٹط©.',
     youtubeId: 'a_J12TqC_Kk', duration: '10:05', views: '45M',
   },
   {
     id: 'h4',
     title: 'UEFA Champions League 2023/24 - Best Goals of the Season',
-    titleAr: 'أفضل أهداف دوري أبطال أوروبا لموسم 2023/24',
+    titleAr: 'ط£ظپط¶ظ„ ط£ظ‡ط¯ط§ظپ ط¯ظˆط±ظٹ ط£ط¨ط·ط§ظ„ ط£ظˆط±ظˆط¨ط§ ظ„ظ…ظˆط³ظ… 2023/24',
     description: 'Enjoy the most beautiful and decisive goals from the UEFA Champions League, featuring stunning volleys and last-minute drama.',
-    descriptionAr: 'استمتع بأجمل الأهداف الحاسمة من دوري أبطال أوروبا، والتي تتميز بتسديدات مذهلة ودراما اللحظات الأخيرة.',
+    descriptionAr: 'ط§ط³طھظ…طھط¹ ط¨ط£ط¬ظ…ظ„ ط§ظ„ط£ظ‡ط¯ط§ظپ ط§ظ„ط­ط§ط³ظ…ط© ظ…ظ† ط¯ظˆط±ظٹ ط£ط¨ط·ط§ظ„ ط£ظˆط±ظˆط¨ط§طŒ ظˆط§ظ„طھظٹ طھطھظ…ظٹط² ط¨طھط³ط¯ظٹط¯ط§طھ ظ…ط°ظ‡ظ„ط© ظˆط¯ط±ط§ظ…ط§ ط§ظ„ظ„ط­ط¸ط§طھ ط§ظ„ط£ط®ظٹط±ط©.',
     youtubeId: 'dM2q_4vYv_A', duration: '12:30', views: '14M',
   },
   {
     id: 'h5',
     title: "Neymar Jr - Ultimate Skills and Tricks",
-    titleAr: 'نيمار جونيور - المهارات والحيل الخارقة',
+    titleAr: 'ظ†ظٹظ…ط§ط± ط¬ظˆظ†ظٹظˆط± - ط§ظ„ظ…ظ‡ط§ط±ط§طھ ظˆط§ظ„ط­ظٹظ„ ط§ظ„ط®ط§ط±ظ‚ط©',
     description: 'Experience the Brazilian flair of Neymar Jr. This video showcases his impossible dribbles, rainbow flicks, and pure football magic.',
-    descriptionAr: 'استمتع بالسحر البرازيلي لنيمار جونيور. يعرض هذا الفيديو مراوغاته المستحيلة ومهاراته الخالصة في عالم كرة القدم.',
+    descriptionAr: 'ط§ط³طھظ…طھط¹ ط¨ط§ظ„ط³ط­ط± ط§ظ„ط¨ط±ط§ط²ظٹظ„ظٹ ظ„ظ†ظٹظ…ط§ط± ط¬ظˆظ†ظٹظˆط±. ظٹط¹ط±ط¶ ظ‡ط°ط§ ط§ظ„ظپظٹط¯ظٹظˆ ظ…ط±ط§ظˆط؛ط§طھظ‡ ط§ظ„ظ…ط³طھط­ظٹظ„ط© ظˆظ…ظ‡ط§ط±ط§طھظ‡ ط§ظ„ط®ط§ظ„طµط© ظپظٹ ط¹ط§ظ„ظ… ظƒط±ط© ط§ظ„ظ‚ط¯ظ….',
     youtubeId: 'm28K_r2r44c', duration: '6:20', views: '32M',
   },
   {
     id: 'h6',
     title: 'Premier League: Top 10 Assists of the Decade',
-    titleAr: 'الدوري الإنجليزي: أفضل 10 تمريرات حاسمة في العقد',
-    description: 'A look back at the most visionary and jaw-dropping assists in Premier League history, featuring Kevin De Bruyne, Mesut Özil, and more.',
-    descriptionAr: 'نظرة على أفضل التمريرات الحاسمة المذهلة في تاريخ الدوري الإنجليزي الممتاز، بمشاركة كيفين دي بروين، مسعود أوزيل، وغيرهم.',
+    titleAr: 'ط§ظ„ط¯ظˆط±ظٹ ط§ظ„ط¥ظ†ط¬ظ„ظٹط²ظٹ: ط£ظپط¶ظ„ 10 طھظ…ط±ظٹط±ط§طھ ط­ط§ط³ظ…ط© ظپظٹ ط§ظ„ط¹ظ‚ط¯',
+    description: 'A look back at the most visionary and jaw-dropping assists in Premier League history, featuring Kevin De Bruyne, Mesut أ–zil, and more.',
+    descriptionAr: 'ظ†ط¸ط±ط© ط¹ظ„ظ‰ ط£ظپط¶ظ„ ط§ظ„طھظ…ط±ظٹط±ط§طھ ط§ظ„ط­ط§ط³ظ…ط© ط§ظ„ظ…ط°ظ‡ظ„ط© ظپظٹ طھط§ط±ظٹط® ط§ظ„ط¯ظˆط±ظٹ ط§ظ„ط¥ظ†ط¬ظ„ظٹط²ظٹ ط§ظ„ظ…ظ…طھط§ط²طŒ ط¨ظ…ط´ط§ط±ظƒط© ظƒظٹظپظٹظ† ط¯ظٹ ط¨ط±ظˆظٹظ†طŒ ظ…ط³ط¹ظˆط¯ ط£ظˆط²ظٹظ„طŒ ظˆط؛ظٹط±ظ‡ظ….',
     youtubeId: 'yL1M1b_X-x0', duration: '8:44', views: '11M',
   },
 ];
 
+export const getNextMatchPreview = (lang: 'en' | 'ar' = 'ar') => {
+  const now = new Date();
+  const matches = getUpcomingMatches()
+    .filter((match) => new Date(match.date).getTime() >= now.getTime())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const nextMatch = matches[0] ?? getUpcomingMatches()[0];
+  const matchDate = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(nextMatch.date));
+
+  if (lang === 'ar') {
+    return `الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في ${nextMatch.venue} - ${matchDate}.`;
+  }
+
+  return `Up next: ${nextMatch.home.name} vs ${nextMatch.away.name} at ${nextMatch.venue} - ${matchDate}.`;
+};
+
 export const getFeaturedNews = (lang: 'en' | 'ar' = 'ar') => ({
-  title: lang === 'ar'
-    ? 'كأس العالم 2026 يُطرق أبوابنا - 13 يوماً على الانطلاق'
-    : '2026 World Cup is Here — 13 Days to Kick-Off',
-  excerpt: lang === 'ar'
-    ? 'المباراة الافتتاحية بين المكسيك وجنوب أفريقيا في استاد أزتيكا الأسطوري يوم 11 يونيو 2026. 48 منتخباً، 3 دول مضيفة، 104 مباراة. التاريخ يُصنع.'
-    : 'Mexico vs South Africa opens the tournament at the iconic Estadio Azteca on June 11, 2026. 48 teams, 3 host nations, 104 matches. History is being made.',
+  title: lang === 'ar' ? 'المباراة القادمة في كأس العالم 2026' : 'Next FIFA World Cup 2026 Match',
+  excerpt: getNextMatchPreview(lang),
   category: 'World Cup 2026',
   image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80',
-  timestamp: lang === 'ar' ? '29 مايو 2026' : 'May 29, 2026',
+  timestamp: lang === 'ar' ? 'تحديث مباشر' : 'Live update',
 });

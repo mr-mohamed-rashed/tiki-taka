@@ -15,6 +15,9 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
   const { data: live = [], isLoading: liveLoading } = useLiveFixtures();
   const { data: upcoming = [], isLoading: upcomingLoading } = useUpcomingFixtures();
   const { data: finished = [], isLoading: finishedLoading } = useResults();
+  const nextMatch = upcoming
+    .filter((match) => new Date(match.date).getTime() >= Date.now())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcoming[0];
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
@@ -41,7 +44,7 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
             {live.map((m) => <MatchCard key={m.id} match={m} />)}
           </div>
         )}
-        {!liveLoading && live.length === 0 && <TournamentCountdown />}
+        {!liveLoading && live.length === 0 && <TournamentCountdown match={nextMatch} />}
       </TabsContent>
 
       <TabsContent value="fixtures" className="mt-6">
@@ -51,7 +54,7 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
             {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
           </div>
         )}
-        {!upcomingLoading && upcoming.length === 0 && <TournamentCountdown />}
+        {!upcomingLoading && upcoming.length === 0 && <TournamentCountdown match={nextMatch} />}
       </TabsContent>
 
       <TabsContent value="results" className="mt-6">
@@ -61,7 +64,7 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
             {finished.map((m) => <MatchCard key={m.id} match={m} />)}
           </div>
         )}
-        {!finishedLoading && finished.length === 0 && <TournamentCountdown />}
+        {!finishedLoading && finished.length === 0 && <TournamentCountdown match={nextMatch} />}
       </TabsContent>
     </Tabs>
   );

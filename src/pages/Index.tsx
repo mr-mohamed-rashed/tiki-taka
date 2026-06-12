@@ -52,8 +52,8 @@ const Index = () => {
                 {featured.category}
               </Badge>
               <h1 className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl leading-[1.05] mb-5">
-                <EditableSiteText settingKey="hero_theBeautifulGame" fallbackEn={T.theBeautifulGame.en} fallbackAr={T.theBeautifulGame.ar} className={cn('text-foreground', lang === 'ar' && 'font-arabic')} />{' '}
-                <EditableSiteText settingKey="hero_live" fallbackEn={T.live.en} fallbackAr={T.live.ar} className="text-primary [text-shadow:0_0_30px_hsl(var(--primary)/0.5)]" />
+                <EditableSiteText settingKey="hero_footballTitle" fallbackEn="Football." fallbackAr="كرة القدم." className={cn('text-foreground', lang === 'ar' && 'font-arabic')} />{' '}
+                <EditableSiteText settingKey="hero_livePulse" fallbackEn="Live." fallbackAr="مباشر." className="text-primary [text-shadow:0_0_30px_hsl(var(--primary)/0.5)]" />
               </h1>
               <p className={cn('text-lg text-foreground/80 mb-8 max-w-2xl leading-relaxed', lang === 'ar' && 'font-arabic')}>
                 {featured.excerpt}
