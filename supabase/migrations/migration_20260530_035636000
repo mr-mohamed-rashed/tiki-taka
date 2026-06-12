@@ -1,0 +1,28 @@
+
+-- Re-apply explicit RLS policies for all CMS tables
+-- site_settings
+drop policy if exists "Service write site_settings" on site_settings;
+create policy "Allow insert site_settings"  on site_settings for insert  with check (true);
+create policy "Allow update site_settings"  on site_settings for update  using (true) with check (true);
+create policy "Allow delete site_settings"  on site_settings for delete  using (true);
+
+-- ad_banners
+drop policy if exists "Service write ad_banners" on ad_banners;
+create policy "Allow insert ad_banners"  on ad_banners for insert  with check (true);
+create policy "Allow update ad_banners"  on ad_banners for update  using (true) with check (true);
+create policy "Allow delete ad_banners"  on ad_banners for delete  using (true);
+
+-- manual_news
+drop policy if exists "Service write manual_news" on manual_news;
+create policy "Allow insert manual_news"  on manual_news for insert  with check (true);
+create policy "Allow update manual_news"  on manual_news for update  using (true) with check (true);
+create policy "Allow delete manual_news"  on manual_news for delete  using (true);
+-- fix select policy to show all (admin needs to see unpublished too)
+drop policy if exists "Public read manual_news" on manual_news;
+create policy "Allow select manual_news"  on manual_news for select  using (true);
+
+-- page_sections
+drop policy if exists "Service write page_sections" on page_sections;
+create policy "Allow insert page_sections"  on page_sections for insert  with check (true);
+create policy "Allow update page_sections"  on page_sections for update  using (true) with check (true);
+create policy "Allow delete page_sections"  on page_sections for delete  using (true);

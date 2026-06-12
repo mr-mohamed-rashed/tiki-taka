@@ -1,0 +1,56 @@
+
+-- Widget/section label overrides
+create table if not exists site_settings (
+  key        text primary key,
+  value_en   text not null default '',
+  value_ar   text not null default '',
+  updated_at timestamp with time zone default now()
+);
+alter table site_settings enable row level security;
+create policy "Public read site_settings" on site_settings for select using (true);
+create policy "Service write site_settings" on site_settings for all using (true) with check (true);
+
+-- Ad banners per position
+create table if not exists ad_banners (
+  id         uuid primary key default gen_random_uuid(),
+  position   text not null default 'hero',
+  title      text not null default '',
+  image_url  text not null default '',
+  link_url   text not null default '',
+  is_active  boolean not null default true,
+  sort_order integer not null default 0,
+  created_at timestamp with time zone default now()
+);
+alter table ad_banners enable row level security;
+create policy "Public read ad_banners" on ad_banners for select using (true);
+create policy "Service write ad_banners" on ad_banners for all using (true) with check (true);
+
+-- Manual news articles
+create table if not exists manual_news (
+  id           uuid primary key default gen_random_uuid(),
+  title_en     text not null default '',
+  title_ar     text not null default '',
+  excerpt_en   text not null default '',
+  excerpt_ar   text not null default '',
+  category     text not null default 'World Cup 2026',
+  image_url    text not null default '',
+  published_at date not null default current_date,
+  is_published boolean not null default true,
+  created_at   timestamp with time zone default now()
+);
+alter table manual_news enable row level security;
+create policy "Public read manual_news" on manual_news for select using (is_published = true);
+create policy "Service write manual_news" on manual_news for all using (true) with check (true);
+
+-- Seed default site settings
+insert into site_settings (key, value_en, value_ar) values
+  ('matchCenter',    'Match Center',         'مركز المباريات'),
+  ('matchCenterSub', 'Live scores, fixtures & results', 'نتائج مباشرة، مواعيد ومباريات'),
+  ('apiWidget',      'World Cup League – Live Widget', 'دوري كأس العالم – ويدجت مباشر'),
+  ('apiWidgetSub',   'Embedded directly from API-Football', 'مُدمج مباشرةً من API-Football'),
+  ('goldenBoot',     'Golden Boot Race',     'سباق الحذاء الذهبي'),
+  ('goldenBootSub',  'Tournament''s leading scorers', 'الهدافون في البطولة'),
+  ('worldCupPulse',  'World Cup Pulse',      'نبض كأس العالم'),
+  ('highlights',     'Highlights',           'ملخصات المباريات'),
+  ('highlightsSub',  'Match summaries powered by beIN Sports', 'ملخصات المباريات عبر beIN Sports')
+on conflict (key) do nothing;

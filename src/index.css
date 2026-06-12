@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Tiki-Taka Design System - Dark Pitch / Neon Green */
+    --background: 220 18% 6%;
+    --foreground: 150 15% 96%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 150 15% 96%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 150 15% 96%;
+
+    /* Neon green brand */
+    --primary: 140 100% 50%;
+    --primary-foreground: 220 18% 6%;
+    --primary-glow: 140 100% 65%;
+    --primary-deep: 145 70% 32%;
+
+    --secondary: 220 16% 14%;
+    --secondary-foreground: 150 15% 96%;
+
+    --muted: 220 16% 14%;
+    --muted-foreground: 150 8% 65%;
+
+    --accent: 140 80% 35%;
+    --accent-foreground: 150 15% 98%;
+
+    --destructive: 0 90% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --live: 0 95% 58%;
+    --live-foreground: 0 0% 100%;
+
+    --gold: 45 100% 55%;
+    --gold-foreground: 220 18% 6%;
+
+    --border: 220 16% 18%;
+    --input: 220 16% 18%;
+    --ring: 140 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Pitch gradients & glows */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-pitch: linear-gradient(180deg, hsl(140 60% 22%), hsl(140 70% 14%));
+    --gradient-pitch-stripes: repeating-linear-gradient(
+      90deg,
+      hsl(140 60% 22%) 0,
+      hsl(140 60% 22%) 40px,
+      hsl(140 65% 19%) 40px,
+      hsl(140 65% 19%) 80px
+    );
+    --gradient-card: linear-gradient(160deg, hsl(220 18% 12%), hsl(220 18% 8%));
+    --gradient-hero: linear-gradient(135deg, hsl(220 18% 6%) 0%, hsl(145 70% 12%) 60%, hsl(140 100% 25%) 100%);
+    --gradient-ticker: linear-gradient(90deg, hsl(var(--primary) / 0.15), transparent 30%, transparent 70%, hsl(var(--primary) / 0.15));
+
+    --shadow-neon: 0 0 25px hsl(var(--primary) / 0.45), 0 0 50px hsl(var(--primary) / 0.2);
+    --shadow-card: 0 10px 30px -10px hsl(220 50% 2% / 0.6);
+    --shadow-elevated: 0 25px 60px -20px hsl(220 50% 2% / 0.7);
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 150 15% 96%;
+    --sidebar-primary: 140 100% 50%;
+    --sidebar-primary-foreground: 220 18% 6%;
+    --sidebar-accent: 220 16% 14%;
+    --sidebar-accent-foreground: 150 15% 96%;
+    --sidebar-border: 220 16% 18%;
+    --sidebar-ring: 140 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 15% 0%, hsl(140 100% 50% / 0.06), transparent 40%),
+      radial-gradient(circle at 85% 100%, hsl(140 100% 50% / 0.05), transparent 45%);
+    background-attachment: fixed;
+  }
+
+  .font-display {
+    font-family: 'Rajdhani', 'Inter', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .font-arabic {
+    font-family: 'Cairo', system-ui, sans-serif;
+  }
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* ── Global football background watermark ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent 49.6%, hsl(var(--primary) / 0.14) 49.8%, hsl(var(--primary) / 0.14) 50.2%, transparent 50.4%),
+    radial-gradient(circle at center, transparent 0 16%, hsl(var(--primary) / 0.12) 16.2% 16.8%, transparent 17%),
+    repeating-linear-gradient(90deg, hsl(140 55% 18% / 0.35) 0 72px, hsl(140 55% 14% / 0.35) 72px 144px);
+  opacity: 0.07;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: luminosity;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Animations ===== */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.15); }
+}
+.animate-pulse-live {
+  animation: pulse-live 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.6); }
+  50% { box-shadow: 0 0 0 14px hsl(var(--primary) / 0); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker-scroll 45s linear infinite;
+}
+
+@keyframes ball-move {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(140px, -40px); }
+  40%  { transform: translate(60px, 60px); }
+  60%  { transform: translate(-90px, 30px); }
+  80%  { transform: translate(-160px, -50px); }
+  100% { transform: translate(0, 0); }
+}
+.animate-ball {
+  animation: ball-move 14s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out;
+}
+
+@keyframes commentary-slide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-commentary {
+  animation: commentary-slide 0.45s ease-out;
+}
+
+/* Custom scroll-bar in the commentary panel */
+.commentary-scroll::-webkit-scrollbar { width: 6px; }
+.commentary-scroll::-webkit-scrollbar-track { background: hsl(var(--muted)); border-radius: 3px; }
+.commentary-scroll::-webkit-scrollbar-thumb { background: hsl(var(--primary) / 0.4); border-radius: 3px; }
+.commentary-scroll::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.7); }

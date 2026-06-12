@@ -1,0 +1,35 @@
+{
+  "name": "Tiki-Taka World Cup 2026 Results",
+  "short_name": "Tiki-Taka",
+  "description": "Live World Cup 2026 scores, fixtures, results, standings and Arabic commentary.",
+  "start_url": "/results",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#07100c",
+  "theme_color": "#00ff66",
+  "icons": [
+    {
+      "src": "/icons/tiki-taka-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Match Results",
+      "short_name": "Results",
+      "description": "Open the match results screen.",
+      "url": "/results",
+      "icons": [{ "src": "/icons/tiki-taka-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Live Matches",
+      "short_name": "Live",
+      "description": "Open live World Cup matches.",
+      "url": "/live",
+      "icons": [{ "src": "/icons/tiki-taka-icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

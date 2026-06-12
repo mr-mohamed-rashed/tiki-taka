@@ -1,0 +1,44 @@
+/* eslint-disable react-refresh/only-export-components */
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import WorldCupNews from "./pages/WorldCupNews";
+import Standings from "./pages/Standings";
+import LiveMatches from "./pages/LiveMatches";
+import Results from "./pages/Results";
+import Groups from "./pages/Groups";
+import Admin from "./pages/Admin";
+
+import { Outlet } from 'react-router-dom';
+import { GlobalFloatingAd } from './components/tikitaka/GlobalFloatingAd';
+
+const Layout = () => (
+  <>
+    <Outlet />
+    <GlobalFloatingAd />
+  </>
+);
+
+export const routers = [
+    {
+      element: <Layout />,
+      children: [
+        { path: "/",          name: 'home',       element: <Index /> },
+        { path: "/news",      name: 'news',       element: <WorldCupNews /> },
+        { path: "/groups",    name: 'groups',     element: <Groups /> },
+        { path: "/standings", name: 'standings',  element: <Standings /> },
+        { path: "/live",      name: 'live',       element: <LiveMatches /> },
+        { path: "/results",   name: 'results',    element: <Results /> },
+        { path: "/admin",     name: 'admin',      element: <Admin /> },
+        /* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */
+        { path: "*",          name: '404',        element: <NotFound /> },
+      ]
+    }
+];
+
+declare global {
+  interface Window {
+    __routers__: typeof routers;
+  }
+}
+
+window.__routers__ = routers;

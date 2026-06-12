@@ -1,0 +1,4 @@
+-- Add slot_id field to ad_banners for dynamic ad slots
+alter table ad_banners add column if not exists slot_id text;
+-- Create index on slot_id for faster queries
+create index if not exists idx_ad_banners_slot_id on ad_banners(slot_id);

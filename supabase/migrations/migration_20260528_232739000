@@ -1,0 +1,54 @@
+
+-- Live chat messages
+create table if not exists public.chat_messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null,
+  username text not null,
+  message text not null check (char_length(message) <= 300),
+  is_deleted boolean default false,
+  match_id text not null default 'general',
+  created_at timestamptz default now()
+);
+
+alter table public.chat_messages enable row level security;
+
+create policy "Anyone can read non-deleted messages"
+  on public.chat_messages for select
+  using (is_deleted = false);
+
+create policy "Anyone can insert message"
+  on public.chat_messages for insert
+  with check (true);
+
+create policy "Moderators can soft-delete"
+  on public.chat_messages for update
+  using (true)
+  with check (true);
+
+-- Chat user profiles (username + moderator + ban status)
+create table if not exists public.chat_users (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null unique,
+  username text not null,
+  is_moderator boolean default false,
+  is_banned boolean default false,
+  created_at timestamptz default now()
+);
+
+alter table public.chat_users enable row level security;
+
+create policy "Anyone can read chat users"
+  on public.chat_users for select
+  using (true);
+
+create policy "Anyone can insert chat user"
+  on public.chat_users for insert
+  with check (true);
+
+create policy "Allow update for own user or moderators"
+  on public.chat_users for update
+  using (true)
+  with check (true);
+
+-- Enable realtime
+alter publication supabase_realtime add table public.chat_messages;
