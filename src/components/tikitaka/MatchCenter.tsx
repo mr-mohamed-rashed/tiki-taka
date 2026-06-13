@@ -1,23 +1,33 @@
+import { useMemo, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MatchCard } from './MatchCard';
 import { TournamentCountdown } from './TournamentCountdown';
-import { Radio, Calendar, CheckCircle2, Loader2, Trophy } from 'lucide-react';
+import { Radio, Calendar, CheckCircle2, ChevronLeft, ChevronRight, Loader2, Trophy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useLiveFixtures, useUpcomingFixtures, useResults } from '@/hooks/useFootballData';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
+import type { Match } from '@/lib/footballData';
 
 interface MatchCenterProps {
   defaultTab?: 'live' | 'fixtures' | 'results';
 }
+
+const PAGE_SIZE = 8;
 
 export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
   const { lang } = useLanguage();
   const { data: live = [], isLoading: liveLoading } = useLiveFixtures();
   const { data: upcoming = [], isLoading: upcomingLoading } = useUpcomingFixtures();
   const { data: finished = [], isLoading: finishedLoading } = useResults();
+  const [pages, setPages] = useState({ live: 1, fixtures: 1, results: 1 });
   const nextMatch = upcoming
     .filter((match) => new Date(match.date).getTime() >= Date.now())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcoming[0];
+
+  const setTabPage = (tab: keyof typeof pages, page: number) => {
+    setPages((current) => ({ ...current, [tab]: page }));
+  };
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
@@ -40,29 +50,25 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
       <TabsContent value="live" className="mt-6">
         {liveLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!liveLoading && live.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {live.map((m) => <MatchCard key={m.id} match={m} />)}
-          </div>
+          <PaginatedMatchGrid matches={live} page={pages.live} onPageChange={(page) => setTabPage('live', page)} lang={lang} />
         )}
-        {!liveLoading && live.length === 0 && <TournamentCountdown match={nextMatch} />}
+        {!liveLoading && live.length === 0 && (
+          nextMatch ? <TournamentCountdown match={nextMatch} /> : <EmptyMatchesMessage type="live" lang={lang} />
+        )}
       </TabsContent>
 
       <TabsContent value="fixtures" className="mt-6">
         {upcomingLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!upcomingLoading && upcoming.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {upcoming.map((m) => <MatchCard key={m.id} match={m} />)}
-          </div>
+          <PaginatedMatchGrid matches={upcoming} page={pages.fixtures} onPageChange={(page) => setTabPage('fixtures', page)} lang={lang} />
         )}
-        {!upcomingLoading && upcoming.length === 0 && <TournamentCountdown match={nextMatch} />}
+        {!upcomingLoading && upcoming.length === 0 && <EmptyMatchesMessage type="fixtures" lang={lang} />}
       </TabsContent>
 
       <TabsContent value="results" className="mt-6">
         {finishedLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!finishedLoading && finished.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {finished.map((m) => <MatchCard key={m.id} match={m} />)}
-          </div>
+          <PaginatedMatchGrid matches={finished} page={pages.results} onPageChange={(page) => setTabPage('results', page)} lang={lang} />
         )}
         {!finishedLoading && finished.length === 0 && (
           <div className="rounded-lg border border-border border-dashed bg-gradient-card p-8 text-center">
@@ -82,6 +88,24 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
   );
 }
 
+function EmptyMatchesMessage({ type, lang }: { type: 'live' | 'fixtures'; lang: string }) {
+  return (
+    <div className="rounded-lg border border-border border-dashed bg-gradient-card p-8 text-center">
+      <Trophy className="mx-auto mb-4 h-10 w-10 text-primary" />
+      <h3 className={lang === 'ar' ? 'font-arabic font-bold text-xl' : 'font-bold text-xl'}>
+        {type === 'live'
+          ? (lang === 'ar' ? 'لا توجد مباريات مباشرة الآن' : 'No live matches right now')
+          : (lang === 'ar' ? 'لا توجد مواعيد قادمة الآن' : 'No upcoming fixtures right now')}
+      </h3>
+      <p className={lang === 'ar' ? 'font-arabic mt-2 text-sm text-muted-foreground' : 'mt-2 text-sm text-muted-foreground'}>
+        {lang === 'ar'
+          ? 'سيتم تحديث هذا القسم تلقائياً عند وصول بيانات جديدة.'
+          : 'This section will update automatically when new data arrives.'}
+      </p>
+    </div>
+  );
+}
+
 function SkeletonCards() {
   return (
     <>
@@ -89,5 +113,85 @@ function SkeletonCards() {
         <div key={i} className="h-32 rounded-lg bg-muted animate-pulse" />
       ))}
     </>
+  );
+}
+
+function PaginatedMatchGrid({
+  matches,
+  page,
+  onPageChange,
+  lang,
+}: {
+  matches: Match[];
+  page: number;
+  onPageChange: (page: number) => void;
+  lang: string;
+}) {
+  const totalPages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const visibleMatches = useMemo(
+    () => matches.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [matches, safePage],
+  );
+
+  const goToPage = (nextPage: number) => {
+    onPageChange(Math.min(Math.max(nextPage, 1), totalPages));
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {visibleMatches.map((match) => <MatchCard key={match.id} match={match} />)}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-lg border border-border bg-card/60 p-3">
+          <div className={lang === 'ar' ? 'font-arabic text-sm text-muted-foreground' : 'text-sm text-muted-foreground'}>
+            {lang === 'ar'
+              ? `صفحة ${safePage} من ${totalPages} - كل صفحة ${PAGE_SIZE} مباريات`
+              : `Page ${safePage} of ${totalPages} - ${PAGE_SIZE} matches per page`}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => goToPage(safePage - 1)}
+              disabled={safePage === 1}
+              className="gap-1"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              {lang === 'ar' ? 'السابق' : 'Prev'}
+            </Button>
+
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <Button
+                key={pageNumber}
+                type="button"
+                variant={pageNumber === safePage ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => goToPage(pageNumber)}
+                className="h-9 w-9 p-0"
+              >
+                {pageNumber}
+              </Button>
+            ))}
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => goToPage(safePage + 1)}
+              disabled={safePage === totalPages}
+              className="gap-1"
+            >
+              {lang === 'ar' ? 'التالي' : 'Next'}
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

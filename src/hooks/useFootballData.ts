@@ -41,9 +41,9 @@ export function useUpcomingFixtures() {
         const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.matches?.length) return getUpcomingOnly(data.matches as Match[]);
         if (!data?.response?.length) return getUpcomingOnly(getUpcomingMatches());
-        return getUpcomingOnly(data.response.map(mapFixture)).slice(0, 8);
+        return getUpcomingOnly(data.response.map(mapFixture));
       } catch {
-        return getUpcomingMatches();
+        return getUpcomingOnly(getUpcomingMatches());
       }
     },
     refetchInterval: 120_000,
@@ -59,7 +59,7 @@ export function useResults() {
         const data = await callProxy({ endpoint: 'results', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.matches?.length) return getFinishedOnly(data.matches as Match[]);
         if (!data?.response?.length) return getFinishedMatches();
-        return getFinishedOnly(data.response.map(mapFixture)).slice(0, 8);
+        return getFinishedOnly(data.response.map(mapFixture));
       } catch {
         return getFinishedMatches();
       }
