@@ -8,7 +8,7 @@ export type Lang = 'en' | 'ar';
 const T = {
   home: { en: 'Home', ar: 'الرئيسية' },
   worldCupNews: { en: 'World Cup News', ar: 'أخبار كأس العالم' },
-  standings: { en: 'Standings', ar: 'الترتيب' },
+  standings: { en: 'Golden Boot', ar: 'الحذاء الذهبي' },
   liveMatches: { en: 'Live Matches', ar: 'المباريات المباشرة' },
   groups: { en: 'Groups', ar: 'المجموعات' },
   roadmap: { en: 'Road to the Cup', ar: 'طريق الكأس' },

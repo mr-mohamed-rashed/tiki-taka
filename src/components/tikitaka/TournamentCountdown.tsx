@@ -65,51 +65,66 @@ export function TournamentCountdown({ match }: TournamentCountdownProps) {
       {match && <FlagFaceOff match={match} />}
 
       <div className="relative z-10 flex min-h-[360px] flex-col items-center justify-center p-6 sm:p-10">
-      <div className="p-3 rounded-full bg-background/70 border border-primary/35 mb-5 shadow-neon backdrop-blur">
-          <Clock className="h-7 w-7 text-primary animate-pulse-glow rounded-full" />
+        <div className="relative group mb-6">
+          <div className="absolute inset-0 rounded-full bg-primary/40 blur-xl group-hover:bg-primary/60 transition-colors duration-500" />
+          <div className="relative p-4 rounded-full bg-background/80 border border-primary/50 shadow-[0_0_30px_hsl(var(--primary)/0.4)] backdrop-blur-xl">
+            <Clock className="h-8 w-8 text-primary animate-pulse-glow" />
+          </div>
         </div>
 
-        <h3 className={cn('font-display font-extrabold text-2xl sm:text-3xl mb-3 text-foreground drop-shadow-lg', lang === 'ar' && 'font-arabic')}>
+        <h3 className={cn('font-display font-black text-3xl sm:text-5xl mb-6 text-transparent bg-clip-text bg-gradient-to-r from-foreground via-primary to-foreground drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]', lang === 'ar' && 'font-arabic')}>
           {title}
         </h3>
 
         {match ? (
-          <div className="mb-8 space-y-3">
-            <div className="flex flex-wrap items-center justify-center gap-3 text-xl sm:text-2xl font-extrabold">
-              <TeamName name={match.home.name} flag={match.home.flag} />
-              <span className="rounded-full bg-primary px-3 py-1 text-sm font-black text-primary-foreground shadow-neon">VS</span>
-              <TeamName name={match.away.name} flag={match.away.flag} />
+          <div className="mb-12 space-y-6 w-full max-w-2xl mx-auto">
+            <div className="relative flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-4 p-6 sm:p-8 rounded-3xl bg-black/40 border border-white/10 shadow-2xl backdrop-blur-md">
+              <div className="w-full sm:w-2/5 flex justify-center sm:justify-end z-10">
+                <TeamName name={match.home.name} flag={match.home.flag} reverse={lang === 'ar'} />
+              </div>
+              
+              <div className="relative z-20 flex-shrink-0 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/60 text-primary-foreground shadow-[0_0_40px_hsl(var(--primary)/0.8)] border-2 border-background/50 ring-4 ring-primary/20 transform hover:scale-110 transition-transform duration-300">
+                <span className="text-lg sm:text-xl font-black italic">VS</span>
+              </div>
+              
+              <div className="w-full sm:w-2/5 flex justify-center sm:justify-start z-10">
+                <TeamName name={match.away.name} flag={match.away.flag} reverse={lang !== 'ar'} />
+              </div>
             </div>
-            <p className={cn('text-foreground/80', lang === 'ar' && 'font-arabic')}>
-              {match.stage} - {matchDate}
-            </p>
-            <p className="inline-flex items-center justify-center gap-2 text-sm text-foreground/75">
-              <MapPin className="h-4 w-4 text-primary" />
-              <span>{match.venue}</span>
-            </p>
+
+            <div className="flex flex-col items-center gap-2">
+              <p className={cn('inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold text-sm sm:text-base backdrop-blur-sm', lang === 'ar' && 'font-arabic')}>
+                {match.stage} <span className="mx-3 opacity-50">•</span> {matchDate}
+              </p>
+              <p className="inline-flex items-center justify-center gap-2 text-sm text-foreground/70 font-medium">
+                <MapPin className="h-4 w-4 text-primary/80" />
+                <span>{match.venue}</span>
+              </p>
+            </div>
           </div>
         ) : (
-          <p className={cn('text-muted-foreground mb-8 max-w-md', lang === 'ar' && 'font-arabic')}>
+          <p className={cn('text-muted-foreground mb-12 max-w-md', lang === 'ar' && 'font-arabic')}>
             {lang === 'ar'
               ? 'ستظهر بيانات المباريات الحية هنا فور انطلاق البطولة.'
               : 'Live match data will appear here once the tournament kicks off.'}
           </p>
         )}
 
-        <div className="grid grid-cols-4 gap-3 sm:gap-6" dir="ltr">
+        <div className="grid grid-cols-4 gap-3 sm:gap-8 w-full max-w-3xl" dir="ltr">
           {[
             { value: timeLeft.days, label: labels.days },
             { value: timeLeft.hours, label: labels.hours },
             { value: timeLeft.minutes, label: labels.minutes },
             { value: timeLeft.seconds, label: labels.seconds },
           ].map((item) => (
-            <div key={item.label} className="flex flex-col items-center min-w-0">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-background/90 border border-primary/40 rounded-xl shadow-neon mb-2 backdrop-blur">
-                <span className="font-display font-extrabold text-2xl sm:text-3xl text-primary tabular-nums">
+            <div key={item.label} className="group flex flex-col items-center min-w-0">
+              <div className="relative w-full aspect-square max-w-[100px] flex items-center justify-center bg-black/60 border border-white/10 rounded-2xl sm:rounded-3xl shadow-[inset_0_0_20px_rgba(255,255,255,0.05),0_10px_30px_rgba(0,0,0,0.5)] mb-4 backdrop-blur-xl transition-all duration-500 overflow-hidden group-hover:border-primary/50 group-hover:shadow-[inset_0_0_30px_hsl(var(--primary)/0.2),0_0_40px_hsl(var(--primary)/0.4)]">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-50" />
+                <span className="relative font-display font-black text-4xl sm:text-6xl text-white tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.5)] group-hover:text-primary group-hover:drop-shadow-[0_0_20px_hsl(var(--primary)/0.8)] transition-colors duration-300">
                   {item.value.toString().padStart(2, '0')}
                 </span>
               </div>
-              <span className={cn('text-xs font-bold text-foreground/75 uppercase tracking-wider', lang === 'ar' && 'font-arabic')}>
+              <span className={cn('text-xs sm:text-sm font-black text-foreground/60 uppercase tracking-[0.2em] group-hover:text-primary transition-colors duration-300', lang === 'ar' && 'font-arabic tracking-normal')}>
                 {item.label}
               </span>
             </div>
@@ -122,40 +137,63 @@ export function TournamentCountdown({ match }: TournamentCountdownProps) {
 
 function FlagFaceOff({ match }: { match: Match }) {
   return (
-    <div className="absolute inset-0">
-      <div className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
+    <div className="absolute inset-0 bg-background overflow-hidden">
+      {/* 
+        ONE PIECE MOBILE BLEND: 
+        On mobile, we use mask-image to smoothly fade the home flag from top-to-bottom
+        and away flag from bottom-to-top, creating a single unified cinematic background.
+        On desktop, we still use the sharp aggressive diagonal.
+      */}
+      
+      {/* Home Flag */}
+      <div 
+        className="absolute inset-x-0 top-0 h-[70%] sm:h-full sm:w-[60%] sm:bottom-0 sm:left-0 
+                   [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)] 
+                   sm:[mask-image:none] 
+                   sm:[clip-path:polygon(0_0,100%_0,80%_100%,0_100%)] overflow-hidden"
+      >
         <img
           src={match.home.flag}
           alt=""
-          className="h-full w-full scale-110 object-cover opacity-48 blur-[0.5px] saturate-110"
+          className="h-full w-full object-cover opacity-30 saturate-[2] mix-blend-plus-lighter"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/10 via-background/35 to-background/78" />
+        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-background/40 via-background/60 to-background" />
       </div>
 
-      <div className="absolute inset-y-0 right-0 w-1/2 overflow-hidden">
+      {/* Away Flag */}
+      <div 
+        className="absolute inset-x-0 bottom-0 h-[70%] sm:h-full sm:w-[60%] sm:top-0 sm:right-0 
+                   [mask-image:linear-gradient(to_top,black_40%,transparent_100%)] 
+                   sm:[mask-image:none] 
+                   sm:[clip-path:polygon(20%_0,100%_0,100%_100%,0_100%)] overflow-hidden"
+      >
         <img
           src={match.away.flag}
           alt=""
-          className="h-full w-full scale-110 object-cover opacity-48 blur-[0.5px] saturate-110"
+          className="h-full w-full object-cover opacity-30 saturate-[2] mix-blend-plus-lighter"
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-background/10 via-background/35 to-background/78" />
+        <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-l from-background/40 via-background/60 to-background" />
       </div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.04)_43%,hsl(var(--primary)/0.12)_50%,hsl(var(--primary)/0.04)_57%,transparent_100%)]" />
-      <div className="absolute left-1/2 bottom-4 h-32 w-32 -translate-x-1/2 rounded-full bg-primary/18 blur-3xl sm:bottom-6 sm:h-36 sm:w-36" />
-      <div className="absolute left-1/2 bottom-6 -translate-x-1/2 text-primary opacity-55 drop-shadow-[0_0_32px_hsl(var(--primary)/0.85)] sm:bottom-8">
-        <Zap className="h-24 w-24 fill-primary/20" />
+      {/* Cinematic Center Glow */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute h-full w-full bg-[radial-gradient(ellipse_at_center,transparent_0%,black_100%)] opacity-80" />
+        <div className="absolute h-[150%] w-[150%] sm:h-[120%] sm:w-[120%] bg-primary/10 blur-[100px] animate-pulse" />
       </div>
-      <div className="absolute inset-0 bg-background/42" />
     </div>
   );
 }
 
-function TeamName({ name, flag }: { name: string; flag: string }) {
+function TeamName({ name, flag, reverse }: { name: string; flag: string; reverse?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full bg-background/65 px-3 py-1.5 ring-1 ring-border backdrop-blur">
-      <img src={flag} alt="" className="h-6 w-6 rounded-full object-cover ring-1 ring-primary/50" />
-      <span>{name}</span>
-    </span>
+    <div className={cn("flex items-center gap-3 sm:gap-5", reverse && "flex-row-reverse")}>
+      <div className="relative">
+        <div className="absolute inset-0 rounded-full bg-primary/40 blur-md" />
+        <img src={flag} alt="" className="relative h-12 w-12 sm:h-16 sm:w-16 rounded-full object-cover ring-2 ring-white/20 shadow-2xl z-10" />
+      </div>
+      <span className="font-display font-black text-xl sm:text-3xl text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate max-w-[120px] sm:max-w-[200px]">
+        {name}
+      </span>
+    </div>
   );
 }
