@@ -176,10 +176,10 @@ const isInsideLiveWindow = (match: Match) => {
 
 const liveFallbackMatches: Match[] = [
   {
-    id: 'live-usa-par', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
-    date: '2026-06-13T01:00:00Z', status: 'live', minute: "38'",
-    home: teams.USA, away: teams.PAR, homeScore: 0, awayScore: 0,
-    venue: 'SoFi Stadium, Los Angeles',
+    id: 'live-qat-sui', competition: 'FIFA World Cup 2026', stage: 'Group B - Match Day 1',
+    date: new Date(Date.now() - 51 * 60000).toISOString(), status: 'live', minute: "45+6'",
+    home: teams.QAT, away: teams.SUI, homeScore: 0, awayScore: 1,
+    venue: 'BMO Field, Toronto',
   },
 ];
 

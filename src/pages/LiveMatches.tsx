@@ -10,14 +10,18 @@ import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
 import { useLanguage } from '@/context/LanguageContext';
-import { useLiveFixtures } from '@/hooks/useFootballData';
+import { useLiveFixtures, useUpcomingFixtures } from '@/hooks/useFootballData';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 const LiveMatches = () => {
   const { lang, dir } = useLanguage();
   const { data: liveMatches = [] } = useLiveFixtures();
-  const featured = liveMatches[0];
+  const { data: upcomingMatches = [] } = useUpcomingFixtures();
+  const nextMatch = upcomingMatches
+    .filter((match) => new Date(match.date).getTime() >= Date.now())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcomingMatches[0];
+  const featured = liveMatches[0] || nextMatch;
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
