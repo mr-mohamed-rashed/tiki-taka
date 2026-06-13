@@ -28,7 +28,7 @@ const SOCIAL_KEYS = [
 ];
 
 const CONTROL_KEYS = [
-  { key: 'ticker_speed_seconds', label: 'News ticker speed', placeholder: '32', help: 'Lower number means faster. Recommended: 24-32 seconds.' },
+  { key: 'ticker_speed_seconds', label: 'News ticker speed', placeholder: '70', help: 'Lower number means faster. Recommended: 65-90 seconds.' },
 ];
 
 export function WidgetLabelsTab() {
@@ -90,8 +90,8 @@ export function WidgetLabelsTab() {
               <Label className="text-xs text-muted-foreground">Seconds</Label>
               <Input
                 type="number"
-                min="12"
-                max="90"
+                min="50"
+                max="140"
                 value={getVal(key, 'en') || ''}
                 onChange={e => setVal(key, 'en', e.target.value)}
                 placeholder={placeholder}

@@ -15,6 +15,7 @@ interface GoogleAuthGateProps {
 export function GoogleAuthGate({ children, title, description }: GoogleAuthGateProps) {
   const { lang } = useLanguage();
   const { loading, user, signInWithGoogle } = useAuth();
+  const isArabic = lang === 'ar';
 
   if (!hasSupabaseConfig) {
     return (
@@ -22,11 +23,11 @@ export function GoogleAuthGate({ children, title, description }: GoogleAuthGateP
         <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-destructive/15 text-destructive">
           <Lock className="h-7 w-7" />
         </div>
-        <h2 className={cn('font-display text-2xl font-extrabold mb-2', lang === 'ar' && 'font-arabic')}>
-          {lang === 'ar' ? 'إعدادات Supabase ناقصة' : 'Supabase configuration is missing'}
+        <h2 className={cn('font-display text-2xl font-extrabold mb-2', isArabic && 'font-arabic')}>
+          {isArabic ? 'إعدادات Supabase ناقصة' : 'Supabase configuration is missing'}
         </h2>
-        <p className={cn('text-sm text-muted-foreground leading-relaxed', lang === 'ar' && 'font-arabic')}>
-          {lang === 'ar'
+        <p className={cn('text-sm text-muted-foreground leading-relaxed', isArabic && 'font-arabic')}>
+          {isArabic
             ? 'أضف VITE_SUPABASE_URL و VITE_SUPABASE_ANON_KEY في إعدادات Cloudflare Pages ثم أعد النشر.'
             : 'Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Cloudflare Pages, then redeploy.'}
         </p>
@@ -49,19 +50,19 @@ export function GoogleAuthGate({ children, title, description }: GoogleAuthGateP
       <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/15 text-primary">
         <Lock className="h-7 w-7" />
       </div>
-      <h2 className={cn('font-display text-2xl font-extrabold mb-2', lang === 'ar' && 'font-arabic')}>
-        {title ?? (lang === 'ar' ? 'سجل دخولك لمتابعة المحتوى' : 'Sign in to continue')}
+      <h2 className={cn('font-display text-2xl font-extrabold mb-2', isArabic && 'font-arabic')}>
+        {title ?? (isArabic ? 'سجل دخولك لمتابعة المحتوى' : 'Sign in to continue')}
       </h2>
-      <p className={cn('text-sm text-muted-foreground mb-6 leading-relaxed', lang === 'ar' && 'font-arabic')}>
+      <p className={cn('text-sm text-muted-foreground mb-6 leading-relaxed', isArabic && 'font-arabic')}>
         {description ?? (
-          lang === 'ar'
+          isArabic
             ? 'الدخول مجاني بحساب Google. نستخدمه فقط لتسجيل الزيارة وتحسين تجربة الأخبار والملخصات.'
             : 'Google sign-in is free. We use it to record visits and improve the news and highlights experience.'
         )}
       </p>
       <Button onClick={signInWithGoogle} className="font-bold shadow-neon">
         <LogIn className="h-4 w-4 me-2" />
-        {lang === 'ar' ? 'الدخول بحساب Google' : 'Continue with Google'}
+        {isArabic ? 'الدخول بحساب Google' : 'Continue with Google'}
       </Button>
     </Card>
   );

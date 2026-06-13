@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
+import { isAdminUser } from '@/lib/admin';
 
 export function AdminGate() {
   const { loading, user, signInWithGoogle, signInWithPassword, signOut } = useAuth();
@@ -12,7 +13,7 @@ export function AdminGate() {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const isDenied = Boolean(user && user.app_metadata?.role !== 'admin');
+  const isDenied = Boolean(user && !isAdminUser(user));
 
   const handleEmailLogin = async (event: FormEvent) => {
     event.preventDefault();
@@ -38,7 +39,7 @@ export function AdminGate() {
         </div>
         <h1 className="text-2xl font-display font-extrabold mb-1">Tiki-Taka Admin</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Sign in with an admin email or Google account marked as admin in Supabase.
+          Sign in with the admin email or the Google account marked as admin.
         </p>
 
         {loading ? (

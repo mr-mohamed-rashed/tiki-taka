@@ -168,6 +168,9 @@ body::before {
 }
 .animate-ticker {
   animation: ticker-scroll 45s linear infinite;
+  width: max-content;
+  min-width: max-content;
+  will-change: transform;
 }
 
 @keyframes ball-move {
