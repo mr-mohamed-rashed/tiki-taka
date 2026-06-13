@@ -109,7 +109,7 @@ const Index = () => {
           <MatchCenter defaultTab="live" />
         </section>
 
-        <section>
+        {false && <section>
           <SectionHeader
             icon={<LayoutGrid className="h-5 w-5" />}
             title={<EditableSiteText settingKey="section_apiWidget" fallbackEn="World Cup League – Live Widget" fallbackAr="دوري كأس العالم – ويدجت مباشر" />}
@@ -117,7 +117,7 @@ const Index = () => {
             lang={lang}
           />
           <ApiSportsWidget />
-        </section>
+        </section>}
 
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2">

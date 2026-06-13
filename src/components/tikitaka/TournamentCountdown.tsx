@@ -65,8 +65,8 @@ export function TournamentCountdown({ match }: TournamentCountdownProps) {
       {match && <FlagFaceOff match={match} />}
 
       <div className="relative z-10 flex min-h-[360px] flex-col items-center justify-center p-6 sm:p-10">
-        <div className="p-4 rounded-full bg-primary/15 mb-5 shadow-[0_0_40px_hsl(var(--primary)/0.35)]">
-          <Clock className="h-8 w-8 text-primary animate-pulse-glow rounded-full" />
+      <div className="p-3 rounded-full bg-background/70 border border-primary/35 mb-5 shadow-neon backdrop-blur">
+          <Clock className="h-7 w-7 text-primary animate-pulse-glow rounded-full" />
         </div>
 
         <h3 className={cn('font-display font-extrabold text-2xl sm:text-3xl mb-3 text-foreground drop-shadow-lg', lang === 'ar' && 'font-arabic')}>
@@ -123,30 +123,30 @@ export function TournamentCountdown({ match }: TournamentCountdownProps) {
 function FlagFaceOff({ match }: { match: Match }) {
   return (
     <div className="absolute inset-0">
-      <div className="absolute inset-y-0 left-0 w-[58%] overflow-hidden">
+      <div className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
         <img
           src={match.home.flag}
           alt=""
-          className="h-full w-full scale-125 object-cover opacity-45 blur-[1px] saturate-125"
+          className="h-full w-full scale-110 object-cover opacity-50 blur-[0.5px] saturate-125"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/15 via-background/35 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/10 via-background/35 to-background/78" />
       </div>
 
-      <div className="absolute inset-y-0 right-0 w-[58%] overflow-hidden">
+      <div className="absolute inset-y-0 right-0 w-1/2 overflow-hidden">
         <img
           src={match.away.flag}
           alt=""
-          className="h-full w-full scale-125 object-cover opacity-45 blur-[1px] saturate-125"
+          className="h-full w-full scale-110 object-cover opacity-50 blur-[0.5px] saturate-125"
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-background/15 via-background/35 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-l from-background/10 via-background/35 to-background/78" />
       </div>
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.18),transparent_32%),linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.08)_45%,hsl(var(--primary)/0.22)_50%,hsl(var(--primary)/0.08)_55%,transparent_100%)]" />
-      <div className="absolute left-1/2 top-0 h-full w-24 -translate-x-1/2 rotate-12 bg-gradient-to-b from-transparent via-primary/20 to-transparent blur-xl" />
-      <div className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-primary/40 bg-background/70 text-primary shadow-neon backdrop-blur">
-        <Zap className="h-7 w-7 fill-primary/25" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.04)_43%,hsl(var(--primary)/0.12)_50%,hsl(var(--primary)/0.04)_57%,transparent_100%)]" />
+      <div className="absolute left-1/2 bottom-6 h-36 w-36 -translate-x-1/2 rounded-full bg-primary/18 blur-3xl" />
+      <div className="absolute left-1/2 bottom-8 -translate-x-1/2 text-primary opacity-55 drop-shadow-[0_0_32px_hsl(var(--primary)/0.85)]">
+        <Zap className="h-24 w-24 fill-primary/20" />
       </div>
-      <div className="absolute inset-0 bg-background/35" />
+      <div className="absolute inset-0 bg-background/42" />
     </div>
   );
 }
