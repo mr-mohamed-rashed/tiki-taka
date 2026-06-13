@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { getLiveMatches, getUpcomingMatches, getFinishedMatches, getTopScorers, getPlayerRankings } from '@/lib/footballData';
-import type { Match } from '@/lib/footballData';
+import type { Match, Scorer } from '@/lib/footballData';
 
 // World Cup 2026 league ID on API-Football is 1
 const WC_LEAGUE = '1';
 const WC_SEASON = '2026';
+const WORLD_CUP_API = 'https://worldcup26.ir';
 
 async function callProxy(body: object) {
   const { data, error } = await supabase.functions.invoke('football-proxy', { body });
@@ -92,10 +93,10 @@ export function useTopScorers() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'topscorers', league: WC_LEAGUE, season: WC_SEASON });
-        if (!data?.response?.length) return getTopScorers();
+        if (!data?.response?.length) return await getWorldCupTopScorers();
         return data.response.slice(0, 10).map(mapScorer);
       } catch {
-        return getTopScorers();
+        return await getWorldCupTopScorers();
       }
     },
     refetchInterval: 180_000,
@@ -188,6 +189,104 @@ function mapScorer(s: ApiScorer, i: number) {
     matches: stat.games.appearences ?? 0,
     isLeader: i === 0,
   };
+}
+
+type WorldCupGame = {
+  finished?: string;
+  home_team_name_en?: string;
+  away_team_name_en?: string;
+  home_scorers?: string | null;
+  away_scorers?: string | null;
+};
+
+async function getWorldCupTopScorers(): Promise<Scorer[]> {
+  try {
+    const response = await fetch(`${WORLD_CUP_API}/get/games`);
+    if (!response.ok) throw new Error('WorldCup26 scorers unavailable');
+    const data = await response.json();
+    const games: WorldCupGame[] = Array.isArray(data) ? data : data?.games;
+    if (!Array.isArray(games)) return getTopScorers();
+
+    const scorerMap = new Map<string, Scorer>();
+
+    for (const game of games) {
+      if (String(game.finished).toLowerCase() !== 'true') continue;
+      addScorersFromString(scorerMap, game.home_scorers, game.home_team_name_en || 'Team');
+      addScorersFromString(scorerMap, game.away_scorers, game.away_team_name_en || 'Team');
+    }
+
+    const scorers = Array.from(scorerMap.values())
+      .sort((a, b) => b.goals - a.goals || a.name.localeCompare(b.name))
+      .map((scorer, index) => ({
+        ...scorer,
+        rank: index + 1,
+        isLeader: index === 0,
+      }));
+
+    return scorers.length ? scorers.slice(0, 20) : getTopScorers();
+  } catch {
+    return getTopScorers();
+  }
+}
+
+function addScorersFromString(scorerMap: Map<string, Scorer>, raw: string | null | undefined, teamName: string) {
+  if (!raw || raw === 'null') return;
+
+  for (const scorerName of parseWorldCupScorers(raw)) {
+    const key = `${scorerName}|${teamName}`;
+    const existing = scorerMap.get(key);
+
+    if (existing) {
+      existing.goals += 1;
+      continue;
+    }
+
+    scorerMap.set(key, {
+      rank: 0,
+      name: scorerName,
+      club: teamName,
+      country: {
+        id: teamName,
+        name: teamName,
+        shortName: teamName.slice(0, 3).toUpperCase(),
+        flag: teamFlag(teamName),
+        code: teamName.slice(0, 2).toUpperCase(),
+        color: '#888888',
+      },
+      goals: 1,
+      assists: 0,
+      matches: 1,
+    });
+  }
+}
+
+function parseWorldCupScorers(raw: string) {
+  return raw
+    .replace(/[{}]/g, '')
+    .split(',')
+    .map((part) => part
+      .replace(/[“”"]/g, '')
+      .replace(/\([^)]*\)/g, '')
+      .replace(/\s+\d{1,3}'(?:\+\d+')?/g, '')
+      .replace(/\s+\d{1,3}'/g, '')
+      .trim())
+    .filter(Boolean);
+}
+
+function teamFlag(teamName: string) {
+  const flags: Record<string, string> = {
+    Mexico: 'mx',
+    'South Africa': 'za',
+    'South Korea': 'kr',
+    'Czech Republic': 'cz',
+    Canada: 'ca',
+    'Bosnia and Herzegovina': 'ba',
+    'United States': 'us',
+    Paraguay: 'py',
+  };
+
+  const code = flags[teamName];
+  return code ? `https://flagcdn.com/w160/${code}.png` : '';
 }
 
 export type { ApiStandingGroup };

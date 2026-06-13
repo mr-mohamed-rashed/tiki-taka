@@ -43,6 +43,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       if (error) throw error;
     },
+    signInWithPassword: async (email: string, password: string) => {
+      if (!hasSupabaseConfig) {
+        throw new Error('Supabase is not configured');
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    },
     signOut: async () => {
       await supabase.auth.signOut();
     },

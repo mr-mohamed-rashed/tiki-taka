@@ -27,6 +27,10 @@ const SOCIAL_KEYS = [
   { key: 'social_website_url',  label: 'Website URL',  placeholder: 'https://...' },
 ];
 
+const CONTROL_KEYS = [
+  { key: 'ticker_speed_seconds', label: 'News ticker speed', placeholder: '32', help: 'Lower number means faster. Recommended: 24-32 seconds.' },
+];
+
 export function WidgetLabelsTab() {
   const { settings, loading, save } = useSiteSettings();
   const [saving, setSaving] = useState<string | null>(null);
@@ -63,6 +67,41 @@ export function WidgetLabelsTab() {
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">Edit section labels and the social links shown under the 2D match screen.</p>
       <div className="grid gap-4 md:grid-cols-2">
+        {CONTROL_KEYS.map(({ key, label, placeholder, help }) => (
+          <Card key={key} className="p-5 border-border bg-gradient-card">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="min-w-0">
+                <Badge variant="outline" className="mb-2 text-primary border-primary/40 font-mono text-xs">{key}</Badge>
+                <div className="text-sm font-semibold">{label}</div>
+                <p className="mt-1 text-xs text-muted-foreground">{help}</p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => saveKey(key, 'url')}
+                disabled={saving === key}
+                className={`gap-1.5 shrink-0 ${saved === key ? 'bg-green-600 hover:bg-green-700' : ''}`}
+              >
+                {saving === key ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> :
+                  saved === key ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
+                {saved === key ? 'Saved!' : 'Save'}
+              </Button>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Seconds</Label>
+              <Input
+                type="number"
+                min="12"
+                max="90"
+                value={getVal(key, 'en') || ''}
+                onChange={e => setVal(key, 'en', e.target.value)}
+                placeholder={placeholder}
+                className="h-9"
+                dir="ltr"
+              />
+            </div>
+          </Card>
+        ))}
+
         {SOCIAL_KEYS.map(({ key, label, placeholder }) => (
           <Card key={key} className="p-5 border-border bg-gradient-card">
             <div className="flex items-center justify-between gap-3 mb-4">
