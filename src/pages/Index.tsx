@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { ArrowRight, Trophy, Radio, Play, Newspaper, LayoutGrid } from 'lucide-react';
+import { ArrowRight, Trophy, Radio, Play, Newspaper, LayoutGrid, MapPin } from 'lucide-react';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
 import { MatchCenter } from '@/components/tikitaka/MatchCenter';
@@ -16,7 +16,7 @@ import { EditableImage } from '@/components/tikitaka/EditableImage';
 import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getFeaturedNews } from '@/lib/footballData';
+import { getFeaturedNews, getNextMatch } from '@/lib/footballData';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useManualNews } from '@/hooks/useManualNews';
@@ -29,6 +29,7 @@ const Index = () => {
   const { get } = useSiteSettingsContext();
   const { news: manualNews } = useManualNews(true);
   const featured = getFeaturedNews(lang);
+  const nextMatch = getNextMatch();
   const isEditMode = useEditMode();
 
   const label = (key: string, fallback: string) => get(key, lang) ?? fallback;
@@ -55,9 +56,23 @@ const Index = () => {
                 <EditableSiteText settingKey="hero_footballTitle" fallbackEn="Football." fallbackAr="كرة القدم." className={cn('text-foreground', lang === 'ar' && 'font-arabic')} />{' '}
                 <EditableSiteText settingKey="hero_livePulse" fallbackEn="Live." fallbackAr="مباشر." className="text-primary [text-shadow:0_0_30px_hsl(var(--primary)/0.5)]" />
               </h1>
-              <p className={cn('text-lg text-foreground/80 mb-8 max-w-2xl leading-relaxed', lang === 'ar' && 'font-arabic')}>
-                {featured.excerpt}
-              </p>
+              <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
+                <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
+                  {lang === 'ar' ? 'الماتش اللي عليه الدور' : 'Up Next'}
+                </p>
+                <div className="flex flex-wrap items-center gap-3 text-2xl sm:text-3xl font-extrabold text-foreground">
+                  <TeamHeroName name={nextMatch.home.name} flag={nextMatch.home.flag} />
+                  <span className="text-primary">vs</span>
+                  <TeamHeroName name={nextMatch.away.name} flag={nextMatch.away.flag} />
+                </div>
+                <p className="mt-3 text-sm sm:text-base text-foreground/75 leading-relaxed">
+                  {featured.excerpt.replace(`${nextMatch.home.name} vs ${nextMatch.away.name} at `, '').replace(`الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في `, '')}
+                </p>
+                <p className="mt-2 inline-flex items-center gap-2 text-sm text-foreground/70">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span>{nextMatch.venue}</span>
+                </p>
+              </div>
               <div className="flex flex-wrap gap-3">
                 <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
                   <NavLink to="/live">
@@ -190,6 +205,15 @@ function SectionHeader({ icon, title, subtitle, linkTo, linkLabel, lang }: {
         </NavLink>
       )}
     </div>
+  );
+}
+
+function TeamHeroName({ name, flag }: { name: string; flag: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 min-w-0">
+      <img src={flag} alt="" className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover ring-2 ring-primary/40 shadow-neon" />
+      <span className="truncate">{name}</span>
+    </span>
   );
 }
 

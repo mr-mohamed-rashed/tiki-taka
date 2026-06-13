@@ -315,12 +315,17 @@ export const getHighlights = (): Highlight[] => [
   },
 ];
 
-export const getNextMatchPreview = (lang: 'en' | 'ar' = 'ar') => {
+export const getNextMatch = () => {
   const now = new Date();
   const matches = getUpcomingMatches()
     .filter((match) => new Date(match.date).getTime() >= now.getTime())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  const nextMatch = matches[0] ?? getUpcomingMatches()[0];
+
+  return matches[0] ?? getUpcomingMatches()[0];
+};
+
+export const getNextMatchPreview = (lang: 'en' | 'ar' = 'ar') => {
+  const nextMatch = getNextMatch();
   const matchDate = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', {
     weekday: 'long',
     day: 'numeric',

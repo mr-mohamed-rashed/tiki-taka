@@ -6,28 +6,17 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useResults } from '@/hooks/useFootballData';
 import { useAuth } from '@/hooks/useAuth';
 import { trackVisitEvent, useTrackVisit } from '@/hooks/useVisitTracking';
+import { hasSupabaseConfig } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
-import { GoogleAuthGate } from './GoogleAuthGate';
 import type { Match } from '@/lib/footballData';
 
 export function HighlightsGallery() {
-  const { lang } = useLanguage();
-
-  return (
-    <GoogleAuthGate
-      title={lang === 'ar' ? 'سجل دخولك لمشاهدة ملخصات المباريات' : 'Sign in to watch match highlights'}
-      description={lang === 'ar'
-        ? 'الدخول مجاني بحساب Google. كل نتيجة نهائية تظهر هنا ككارت ثابت، والضغط عليها يفتح بحث beIN SPORTS الرسمي للملخص.'
-        : 'Google sign-in is free. Every final score appears here as a pinned card and opens official beIN SPORTS highlights.'}
-    >
-      <MatchHighlightsContent />
-    </GoogleAuthGate>
-  );
+  return <MatchHighlightsContent />;
 }
 
 function MatchHighlightsContent() {
   const { lang } = useLanguage();
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const { data: finishedMatches = [], isLoading } = useResults();
   const [speakingId, setSpeakingId] = useState<string | null>(null);
 
@@ -41,9 +30,15 @@ function MatchHighlightsContent() {
 
   const openBeinSportsSearch = async (match: Match) => {
     const title = `${match.home.name} ${match.homeScore}-${match.awayScore} ${match.away.name} highlights`;
+    const url = `https://www.youtube.com/@beINSPORTS/search?query=${encodeURIComponent(title)}`;
 
     window.speechSynthesis.cancel();
     setSpeakingId(null);
+
+    if (hasSupabaseConfig && !user) {
+      await signInWithGoogle();
+      return;
+    }
 
     await trackVisitEvent({
       userId: user?.id,
@@ -58,7 +53,7 @@ function MatchHighlightsContent() {
       },
     });
 
-    window.open(`https://www.youtube.com/@beINSPORTS/search?query=${encodeURIComponent(title)}`, '_blank', 'noopener,noreferrer');
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const speakText = (event: React.MouseEvent, card: HighlightCard) => {
@@ -98,7 +93,7 @@ function MatchHighlightsContent() {
         </h3>
         <p className={cn('text-sm text-muted-foreground', lang === 'ar' && 'font-arabic')}>
           {lang === 'ar'
-            ? 'بعد نهاية كل مباراة، سنثبت النتيجة هنا ونضيف عليها رابط مشاهدة الملخص من beIN SPORTS.'
+            ? 'بعد نهاية كل مباراة، ستنزل النتيجة هنا ككارت ثابت ومعها لينك مشاهدة الملخص.'
             : 'After each match ends, its final score will be pinned here with a beIN SPORTS highlights link.'}
         </p>
       </Card>
