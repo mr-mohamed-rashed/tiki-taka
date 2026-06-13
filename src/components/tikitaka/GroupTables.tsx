@@ -47,7 +47,7 @@ const GROUPS: GroupDefinition[] = [
     { name: 'USA', nameAr: 'الولايات المتحدة', flag: flag('us'), confirmed: true },
     { name: 'Paraguay', nameAr: 'باراجواي', flag: flag('py'), confirmed: true },
     { name: 'Australia', nameAr: 'أستراليا', flag: flag('au'), confirmed: true },
-    { name: 'UEFA Playoff', nameAr: 'ملحق أوروبا', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/320px-Flag_of_Europe.svg.png', confirmed: false },
+    { name: 'Turkiye', nameAr: 'تركيا', flag: flag('tr'), confirmed: true },
   ] },
   { name: 'Group E', nameAr: 'المجموعة E', teams: [
     { name: 'Germany', nameAr: 'ألمانيا', flag: flag('de'), confirmed: true },
@@ -58,7 +58,7 @@ const GROUPS: GroupDefinition[] = [
   { name: 'Group F', nameAr: 'المجموعة F', teams: [
     { name: 'Netherlands', nameAr: 'هولندا', flag: flag('nl'), confirmed: true },
     { name: 'Japan', nameAr: 'اليابان', flag: flag('jp'), confirmed: true },
-    { name: 'UEFA Playoff', nameAr: 'ملحق أوروبا', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/320px-Flag_of_Europe.svg.png', confirmed: false },
+    { name: 'Sweden', nameAr: 'السويد', flag: flag('se'), confirmed: true },
     { name: 'Tunisia', nameAr: 'تونس', flag: flag('tn'), confirmed: true },
   ] },
   { name: 'Group G', nameAr: 'المجموعة G', teams: [
@@ -76,7 +76,7 @@ const GROUPS: GroupDefinition[] = [
   { name: 'Group I', nameAr: 'المجموعة I', teams: [
     { name: 'France', nameAr: 'فرنسا', flag: flag('fr'), confirmed: true },
     { name: 'Senegal', nameAr: 'السنغال', flag: flag('sn'), confirmed: true },
-    { name: 'Inter-Conf. Playoff', nameAr: 'ملحق قاري', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/FIFA_Logo.svg/320px-FIFA_Logo.svg.png', confirmed: false },
+    { name: 'Iraq', nameAr: 'العراق', flag: flag('iq'), confirmed: true },
     { name: 'Norway', nameAr: 'النرويج', flag: flag('no'), confirmed: true },
   ] },
   { name: 'Group J', nameAr: 'المجموعة J', teams: [
@@ -87,7 +87,7 @@ const GROUPS: GroupDefinition[] = [
   ] },
   { name: 'Group K', nameAr: 'المجموعة K', teams: [
     { name: 'Portugal', nameAr: 'البرتغال', flag: flag('pt'), confirmed: true },
-    { name: 'Inter-Conf. Playoff', nameAr: 'ملحق قاري', flag: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/FIFA_Logo.svg/320px-FIFA_Logo.svg.png', confirmed: false },
+    { name: 'DR Congo', nameAr: 'الكونغو الديمقراطية', flag: flag('cd'), confirmed: true },
     { name: 'Uzbekistan', nameAr: 'أوزبكستان', flag: flag('uz'), confirmed: true },
     { name: 'Colombia', nameAr: 'كولومبيا', flag: flag('co'), confirmed: true },
   ] },

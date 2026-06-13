@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import type { Match } from '@/lib/footballData';
 
 interface Live2DTrackerProps {
@@ -13,6 +14,13 @@ interface Live2DTrackerProps {
 export function Live2DTracker({ match }: Live2DTrackerProps) {
   const home = match.home;
   const away = match.away;
+  const { get } = useSiteSettingsContext();
+  const socialLinks = [
+    { key: 'social_facebook_url', label: 'Facebook', href: get('social_facebook_url', 'en') || 'https://facebook.com', icon: <FacebookIcon /> },
+    { key: 'social_tiktok_url', label: 'TikTok', href: get('social_tiktok_url', 'en') || 'https://tiktok.com', icon: <TikTokIcon /> },
+    { key: 'social_youtube_url', label: 'YouTube', href: get('social_youtube_url', 'en') || 'https://youtube.com', icon: <YouTubeIcon /> },
+    { key: 'social_website_url', label: 'Website', href: get('social_website_url', 'en') || '/', icon: <WebIcon /> },
+  ];
 
   // Player positions (4-3-3) on a 600x380 viewBox pitch
   const homePlayers = [
@@ -29,7 +37,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
   ];
 
   return (
-    <Card className="overflow-hidden bg-gradient-card border-border">
+    <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-border">
       {/* Scoreboard */}
       <div className="px-4 sm:px-5 py-3 border-b border-border bg-card/60 flex items-center justify-between">
         <div className="flex items-center gap-2 sm:gap-3">
@@ -60,7 +68,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
       {/* Pitch */}
       <div className="p-3 sm:p-4 bg-background/40">
         <div className="relative w-full rounded-lg overflow-hidden ring-1 ring-primary/20 shadow-neon">
-          <svg viewBox="0 0 600 380" className="block w-full h-auto bg-gradient-pitch">
+          <svg viewBox="0 0 600 380" className="block w-full max-h-[300px] bg-gradient-pitch">
             {/* pitch stripes */}
             <defs>
               <pattern id="stripes" x="0" y="0" width="80" height="380" patternUnits="userSpaceOnUse">
@@ -134,7 +142,55 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
             <span className="font-semibold">{away.name}</span>
           </div>
         </div>
+
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 border-t border-border/60 pt-4">
+          {socialLinks.map((link) => (
+            <a
+              key={link.key}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex h-10 w-10 items-center justify-center rounded-full border border-primary/25 bg-background/75 text-foreground shadow-card transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-neon"
+              title={link.label}
+            >
+              {link.icon}
+            </a>
+          ))}
+        </div>
       </div>
     </Card>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.84c0-2.52 1.49-3.91 3.77-3.91 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
+    </svg>
+  );
+}
+
+function TikTokIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M16.6 5.82a5.55 5.55 0 0 0 3.24 1.04V10a8.77 8.77 0 0 1-3.22-.63v5.88A5.75 5.75 0 1 1 10.87 9.5c.32 0 .63.03.93.08v3.23a2.56 2.56 0 1 0 1.8 2.44V2h3a5.55 5.55 0 0 0 .01.63v3.19Z" />
+    </svg>
+  );
+}
+
+function YouTubeIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.8 12l-6.2 3.6Z" />
+    </svg>
+  );
+}
+
+function WebIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20M12 2a15.3 15.3 0 0 0 0 20" />
+    </svg>
   );
 }

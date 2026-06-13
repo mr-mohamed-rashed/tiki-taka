@@ -15,9 +15,27 @@ const LanguageContext = createContext<LanguageContextType>({
   isAr: false,
 });
 
+const ARABIC_REGIONS = new Set([
+  'AE', 'BH', 'DZ', 'EG', 'IQ', 'JO', 'KW', 'LB', 'LY', 'MA',
+  'OM', 'PS', 'QA', 'SA', 'SD', 'SY', 'TN', 'YE',
+]);
+
+function detectInitialLanguage(): Lang {
+  const saved = localStorage.getItem('tiki-lang') as Lang | null;
+  if (saved === 'ar' || saved === 'en') return saved;
+
+  const browserLanguages = navigator.languages?.length ? navigator.languages : [navigator.language];
+  const shouldUseArabic = browserLanguages.some((locale) => {
+    const [language, region] = locale.split(/[-_]/);
+    return language?.toLowerCase() === 'ar' || ARABIC_REGIONS.has(region?.toUpperCase() ?? '');
+  });
+
+  return shouldUseArabic ? 'ar' : 'en';
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => {
-    return (localStorage.getItem('tiki-lang') as Lang) ?? 'en';
+    return detectInitialLanguage();
   });
 
   const dir = lang === 'ar' ? 'rtl' : 'ltr';

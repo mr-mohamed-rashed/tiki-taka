@@ -20,6 +20,13 @@ const WIDGET_KEYS = [
   { key: 'highlightsSub',  label: 'Highlights Subtitle' },
 ];
 
+const SOCIAL_KEYS = [
+  { key: 'social_facebook_url', label: 'Facebook URL', placeholder: 'https://facebook.com/...' },
+  { key: 'social_tiktok_url',   label: 'TikTok URL',   placeholder: 'https://tiktok.com/@...' },
+  { key: 'social_youtube_url',  label: 'YouTube URL',  placeholder: 'https://youtube.com/@...' },
+  { key: 'social_website_url',  label: 'Website URL',  placeholder: 'https://...' },
+];
+
 export function WidgetLabelsTab() {
   const { settings, loading, save } = useSiteSettings();
   const [saving, setSaving] = useState<string | null>(null);
@@ -36,12 +43,13 @@ export function WidgetLabelsTab() {
     setEdits(prev => ({ ...prev, [key]: { en: getVal(key, 'en'), ar: getVal(key, 'ar'), [lang]: val } }));
   };
 
-  const saveKey = async (key: string) => {
+  const saveKey = async (key: string, mode: 'label' | 'url' = 'label') => {
     setSaving(key);
-    await save(key, getVal(key, 'en'), getVal(key, 'ar'));
+    const enValue = getVal(key, 'en');
+    await save(key, enValue, mode === 'url' ? enValue : getVal(key, 'ar'));
     setSaving(null);
     setSaved(key);
-    toast({ title: 'Saved!', description: `"${key}" label updated.` });
+    toast({ title: 'Saved!', description: `"${key}" ${mode === 'url' ? 'link' : 'label'} updated.` });
     setTimeout(() => setSaved(null), 2000);
   };
 
@@ -53,7 +61,39 @@ export function WidgetLabelsTab() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Edit the English and Arabic names for every section on the site.</p>
+      <p className="text-sm text-muted-foreground">Edit section labels and the social links shown under the 2D match screen.</p>
+      <div className="grid gap-4 md:grid-cols-2">
+        {SOCIAL_KEYS.map(({ key, label, placeholder }) => (
+          <Card key={key} className="p-5 border-border bg-gradient-card">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="min-w-0">
+                <Badge variant="outline" className="mb-2 text-primary border-primary/40 font-mono text-xs">{key}</Badge>
+                <div className="text-sm font-semibold">{label}</div>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => saveKey(key, 'url')}
+                disabled={saving === key}
+                className={`gap-1.5 shrink-0 ${saved === key ? 'bg-green-600 hover:bg-green-700' : ''}`}
+              >
+                {saving === key ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> :
+                  saved === key ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
+                {saved === key ? 'Saved!' : 'Save'}
+              </Button>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">Link</Label>
+              <Input
+                value={getVal(key, 'en')}
+                onChange={e => setVal(key, 'en', e.target.value)}
+                placeholder={placeholder}
+                className="h-9"
+                dir="ltr"
+              />
+            </div>
+          </Card>
+        ))}
+      </div>
       <div className="grid gap-4">
         {WIDGET_KEYS.map(({ key, label }) => (
           <Card key={key} className="p-5 border-border bg-gradient-card">
