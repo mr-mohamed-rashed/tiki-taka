@@ -75,14 +75,6 @@ export function BestPlayersTable() {
         {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary ms-auto" />}
       </div>
 
-      <div className="flex items-center gap-2 mx-4 mt-3 mb-1 text-xs bg-primary/10 border border-primary/20 rounded-lg px-3 py-2">
-        <Info className="h-3 w-3 text-primary shrink-0" />
-        <span className={cn(lang === 'ar' && 'font-arabic')}>
-          {lang === 'ar'
-            ? 'API-Football لا يوفر تقييم أفضل لاعب بشكل مباشر، لذلك نحسب مؤشر تأثير من الإحصائيات المتاحة.'
-            : 'API-Football does not expose a direct best-player rating, so this uses an impact score from available stats.'}
-        </span>
-      </div>
 
       <div className="overflow-x-auto">
         <Table>
