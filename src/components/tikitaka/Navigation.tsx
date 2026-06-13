@@ -15,6 +15,7 @@ export function Navigation() {
     { nameKey: 'home' as const,         to: '/' },
     { nameKey: 'worldCupNews' as const,  to: '/news' },
     { nameKey: 'groups' as const,        to: '/groups' },
+    { nameKey: 'roadmap' as const,       to: '/roadmap' },
     { nameKey: 'standings' as const,     to: '/standings' },
     { nameKey: 'liveMatches' as const,   to: '/live' },
   ];

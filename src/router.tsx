@@ -7,6 +7,7 @@ import LiveMatches from "./pages/LiveMatches";
 import Results from "./pages/Results";
 import Groups from "./pages/Groups";
 import Admin from "./pages/Admin";
+import Roadmap from "./pages/Roadmap";
 
 import { Outlet } from 'react-router-dom';
 import { GlobalFloatingAd } from './components/tikitaka/GlobalFloatingAd';
@@ -25,6 +26,7 @@ export const routers = [
         { path: "/",          name: 'home',       element: <Index /> },
         { path: "/news",      name: 'news',       element: <WorldCupNews /> },
         { path: "/groups",    name: 'groups',     element: <Groups /> },
+        { path: "/roadmap",   name: 'roadmap',    element: <Roadmap /> },
         { path: "/standings", name: 'standings',  element: <Standings /> },
         { path: "/live",      name: 'live',       element: <LiveMatches /> },
         { path: "/results",   name: 'results',    element: <Results /> },

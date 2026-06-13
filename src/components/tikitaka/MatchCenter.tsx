@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MatchCard } from './MatchCard';
 import { TournamentCountdown } from './TournamentCountdown';
 import { Live2DTracker } from './Live2DTracker';
-import { WorldCupRoadmap } from './WorldCupRoadmap';
 import { Radio, Calendar, CheckCircle2, ChevronLeft, ChevronRight, Loader2, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLiveFixtures, useUpcomingFixtures, useResults } from '@/hooks/useFootballData';
@@ -13,7 +12,7 @@ import { t } from '@/lib/i18n';
 import type { Match } from '@/lib/footballData';
 
 interface MatchCenterProps {
-  defaultTab?: 'live' | 'roadmap' | 'fixtures' | 'results';
+  defaultTab?: 'live' | 'fixtures' | 'results';
   liveTabRedirectTo?: string;
 }
 
@@ -37,7 +36,7 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full" ref={topRef}>
-      <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-2 sm:grid-cols-4 w-full max-w-2xl">
+      <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-3 w-full max-w-md">
         <TabsTrigger
           value="live"
           onClick={(event) => {
@@ -51,10 +50,10 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
           <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('tabLive', lang)}</span>
           {liveLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <span className="text-xs opacity-70">({live.length})</span>}
         </TabsTrigger>
-        <TabsTrigger value="roadmap" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
+        {false && <TabsTrigger value="roadmap" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
           <Trophy className="h-4 w-4" />
           <span className={lang === 'ar' ? 'font-arabic' : ''}>{lang === 'ar' ? 'طريق الكأس' : 'Cup Road'}</span>
-        </TabsTrigger>
+        </TabsTrigger>}
         <TabsTrigger value="fixtures" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
           <Calendar className="h-4 w-4" />
           <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('tabFixtures', lang)}</span>
@@ -76,10 +75,6 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
         {!liveLoading && live.length === 0 && (
           nextMatch ? <TournamentCountdown match={nextMatch} /> : <EmptyMatchesMessage type="live" lang={lang} />
         )}
-      </TabsContent>
-
-      <TabsContent value="roadmap" className="mt-6">
-        <WorldCupRoadmap />
       </TabsContent>
 
       <TabsContent value="fixtures" className="mt-6">

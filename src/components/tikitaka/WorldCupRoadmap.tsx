@@ -14,12 +14,8 @@ export function WorldCupRoadmap() {
 
   return (
     <div className="space-y-3">
-      <div className={cn('rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-center text-xs font-semibold text-primary sm:hidden', isAr && 'font-arabic')}>
-        {isAr ? 'أفضل عرض للخريطة على الموبايل: لف الشاشة بالعرض أو اسحب يمين وشمال.' : 'Best on mobile: rotate to landscape or swipe sideways.'}
-      </div>
-
       <div className="overflow-x-auto pb-2">
-        <Card className="relative min-w-[980px] overflow-hidden border-border bg-gradient-card p-6 lg:min-w-0">
+        <Card className="relative min-w-[980px] overflow-hidden border-border bg-gradient-card p-6 sm:min-w-0">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.18),transparent_34%)]" />
           <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-5">
             <RoadSide slots={slots.slice(0, 16)} side="left" isAr={isAr} />
