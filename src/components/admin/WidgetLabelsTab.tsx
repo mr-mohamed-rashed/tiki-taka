@@ -66,6 +66,28 @@ export function WidgetLabelsTab() {
 
       <Card className="border-border bg-gradient-card p-4">
         <div className="mb-4">
+          <h3 className="text-sm font-bold">Live Stream Settings</h3>
+          <p className="text-xs text-muted-foreground">URL to embed in place of the 2D match tracker (e.g., YouTube embed URL).</p>
+        </div>
+        <div className="space-y-2">
+          <div className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[200px_1fr_auto] xl:items-end">
+            <KeyLabel itemKey="live_stream_url" label="Live Stream Embed URL" />
+            <Field label="Link">
+              <Input
+                value={getVal('live_stream_url', 'en')}
+                onChange={(event) => setVal('live_stream_url', 'en', event.target.value)}
+                placeholder="https://youtube.com/embed/..."
+                className="h-8"
+                dir="ltr"
+              />
+            </Field>
+            <SaveButton itemKey="live_stream_url" saving={saving} saved={saved} onClick={() => saveLabelKey('live_stream_url')} />
+          </div>
+        </div>
+      </Card>
+
+      <Card className="border-border bg-gradient-card p-4">
+        <div className="mb-4">
           <h3 className="text-sm font-bold">Social links</h3>
           <p className="text-xs text-muted-foreground">The title appears next to the icon under the 2D match screen.</p>
         </div>

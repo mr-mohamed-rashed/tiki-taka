@@ -68,63 +68,72 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
       {/* Pitch */}
       <div className="p-3 sm:p-4 bg-background/40">
         <div className="relative w-full rounded-lg overflow-hidden ring-1 ring-primary/20 shadow-neon">
-          <svg viewBox="0 0 600 380" className="block w-full max-h-[300px] bg-gradient-pitch">
-            {/* pitch stripes */}
-            <defs>
-              <pattern id="stripes" x="0" y="0" width="80" height="380" patternUnits="userSpaceOnUse">
-                <rect width="40" height="380" fill="hsl(140 60% 22%)" />
-                <rect x="40" width="40" height="380" fill="hsl(140 65% 19%)" />
-              </pattern>
-              <radialGradient id="ballGrad" cx="35%" cy="35%" r="65%">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="100%" stopColor="#cccccc" />
-              </radialGradient>
-            </defs>
-            <rect width="600" height="380" fill="url(#stripes)" />
+          {get('live_stream_url', 'en') ? (
+            <iframe
+              src={get('live_stream_url', 'en')}
+              className="w-full aspect-video bg-black"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <svg viewBox="0 0 600 380" className="block w-full max-h-[300px] bg-gradient-pitch">
+              {/* pitch stripes */}
+              <defs>
+                <pattern id="stripes" x="0" y="0" width="80" height="380" patternUnits="userSpaceOnUse">
+                  <rect width="40" height="380" fill="hsl(140 60% 22%)" />
+                  <rect x="40" width="40" height="380" fill="hsl(140 65% 19%)" />
+                </pattern>
+                <radialGradient id="ballGrad" cx="35%" cy="35%" r="65%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#cccccc" />
+                </radialGradient>
+              </defs>
+              <rect width="600" height="380" fill="url(#stripes)" />
 
-            {/* outer lines */}
-            <g stroke="hsl(140 30% 85% / 0.7)" strokeWidth="2" fill="none">
-              <rect x="10" y="10" width="580" height="360" rx="2" />
-              <line x1="300" y1="10" x2="300" y2="370" />
-              <circle cx="300" cy="190" r="55" />
-              <circle cx="300" cy="190" r="3" fill="hsl(140 30% 85% / 0.7)" />
-              {/* penalty boxes */}
-              <rect x="10" y="95" width="80" height="190" />
-              <rect x="510" y="95" width="80" height="190" />
-              {/* 6-yard */}
-              <rect x="10" y="140" width="30" height="100" />
-              <rect x="560" y="140" width="30" height="100" />
-              {/* penalty spots */}
-              <circle cx="70" cy="190" r="2" fill="hsl(140 30% 85% / 0.7)" />
-              <circle cx="530" cy="190" r="2" fill="hsl(140 30% 85% / 0.7)" />
-            </g>
-
-            {/* Goals */}
-            <rect x="2" y="170" width="10" height="40" fill="hsl(140 30% 85% / 0.4)" />
-            <rect x="588" y="170" width="10" height="40" fill="hsl(140 30% 85% / 0.4)" />
-
-            {/* Home players */}
-            {homePlayers.map((p, i) => (
-              <g key={`h-${i}`}>
-                <circle cx={p.x} cy={p.y} r="9" fill={home.color} stroke="#fff" strokeWidth="1.5" />
-                <circle cx={p.x} cy={p.y} r="13" fill={home.color} opacity="0.2" />
+              {/* outer lines */}
+              <g stroke="hsl(140 30% 85% / 0.7)" strokeWidth="2" fill="none">
+                <rect x="10" y="10" width="580" height="360" rx="2" />
+                <line x1="300" y1="10" x2="300" y2="370" />
+                <circle cx="300" cy="190" r="55" />
+                <circle cx="300" cy="190" r="3" fill="hsl(140 30% 85% / 0.7)" />
+                {/* penalty boxes */}
+                <rect x="10" y="95" width="80" height="190" />
+                <rect x="510" y="95" width="80" height="190" />
+                {/* 6-yard */}
+                <rect x="10" y="140" width="30" height="100" />
+                <rect x="560" y="140" width="30" height="100" />
+                {/* penalty spots */}
+                <circle cx="70" cy="190" r="2" fill="hsl(140 30% 85% / 0.7)" />
+                <circle cx="530" cy="190" r="2" fill="hsl(140 30% 85% / 0.7)" />
               </g>
-            ))}
 
-            {/* Away players */}
-            {awayPlayers.map((p, i) => (
-              <g key={`a-${i}`}>
-                <circle cx={p.x} cy={p.y} r="9" fill={away.color} stroke="#fff" strokeWidth="1.5" />
-                <circle cx={p.x} cy={p.y} r="13" fill={away.color} opacity="0.2" />
+              {/* Goals */}
+              <rect x="2" y="170" width="10" height="40" fill="hsl(140 30% 85% / 0.4)" />
+              <rect x="588" y="170" width="10" height="40" fill="hsl(140 30% 85% / 0.4)" />
+
+              {/* Home players */}
+              {homePlayers.map((p, i) => (
+                <g key={`h-${i}`}>
+                  <circle cx={p.x} cy={p.y} r="9" fill={home.color} stroke="#fff" strokeWidth="1.5" />
+                  <circle cx={p.x} cy={p.y} r="13" fill={home.color} opacity="0.2" />
+                </g>
+              ))}
+
+              {/* Away players */}
+              {awayPlayers.map((p, i) => (
+                <g key={`a-${i}`}>
+                  <circle cx={p.x} cy={p.y} r="9" fill={away.color} stroke="#fff" strokeWidth="1.5" />
+                  <circle cx={p.x} cy={p.y} r="13" fill={away.color} opacity="0.2" />
+                </g>
+              ))}
+
+              {/* Ball (animated via group transform on inner element) */}
+              <g className="animate-ball">
+                <circle cx="300" cy="190" r="14" fill="hsl(var(--primary) / 0.25)" />
+                <circle cx="300" cy="190" r="7" fill="url(#ballGrad)" stroke="#222" strokeWidth="0.6" />
               </g>
-            ))}
-
-            {/* Ball (animated via group transform on inner element) */}
-            <g className="animate-ball">
-              <circle cx="300" cy="190" r="14" fill="hsl(var(--primary) / 0.25)" />
-              <circle cx="300" cy="190" r="7" fill="url(#ballGrad)" stroke="#222" strokeWidth="0.6" />
-            </g>
-          </svg>
+            </svg>
+          )}
         </div>
 
         {/* Legend */}
