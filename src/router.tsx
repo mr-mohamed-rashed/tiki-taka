@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, ScrollRestoration } from 'react-router-dom';
 import Index from './pages/Index';
 import NotFound from './pages/NotFound';
 import WorldCupNews from './pages/WorldCupNews';
@@ -21,6 +21,7 @@ const Layout = () => {
   if (isAdminRoute || isPublicHome) {
     return (
       <>
+        <ScrollRestoration />
         <Outlet />
         <GlobalFloatingAd />
       </>
@@ -33,6 +34,7 @@ const Layout = () => {
       title="سجل دخولك لمتابعة تيكي تاكا"
       description="أي تنقل داخل الموقع يحتاج تسجيل دخول مجاني بحساب Google لتسجيل الزيارة وحفظ تجربة كأس العالم."
     >
+      <ScrollRestoration />
       <Outlet />
       <GlobalFloatingAd />
     </GoogleAuthGate>
