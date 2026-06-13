@@ -84,13 +84,11 @@ const Index = () => {
                       <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
                     </NavLink>
                   </Button>
-                  {liveMatch && (
-                    <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur">
-                      <img src={liveMatch.home.flag} alt={liveMatch.home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
-                      <span className="text-xs font-extrabold text-primary">LIVE</span>
-                      <img src={liveMatch.away.flag} alt={liveMatch.away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur mt-2">
+                    <img src={(liveMatch || nextMatch).home.flag} alt={(liveMatch || nextMatch).home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
+                    <span className="text-xs font-extrabold text-primary">{liveMatch ? 'LIVE' : 'VS'}</span>
+                    <img src={(liveMatch || nextMatch).away.flag} alt={(liveMatch || nextMatch).away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
+                  </div>
                 </div>
                 <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 hover:text-primary font-bold">
                   <NavLink to="/standings">

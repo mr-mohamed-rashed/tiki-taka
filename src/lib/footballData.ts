@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Tiki-Taka Football Data Layer
  * -------------------------------------------------------
  * All data below is based on VERIFIED facts from FIFA.com and official sources
