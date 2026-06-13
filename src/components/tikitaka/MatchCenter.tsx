@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MatchCard } from './MatchCard';
 import { TournamentCountdown } from './TournamentCountdown';
 import { Live2DTracker } from './Live2DTracker';
+import { WorldCupRoadmap } from './WorldCupRoadmap';
 import { Radio, Calendar, CheckCircle2, ChevronLeft, ChevronRight, Loader2, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLiveFixtures, useUpcomingFixtures, useResults } from '@/hooks/useFootballData';
@@ -11,13 +13,16 @@ import { t } from '@/lib/i18n';
 import type { Match } from '@/lib/footballData';
 
 interface MatchCenterProps {
-  defaultTab?: 'live' | 'fixtures' | 'results';
+  defaultTab?: 'live' | 'roadmap' | 'fixtures' | 'results';
+  liveTabRedirectTo?: string;
 }
 
 const PAGE_SIZE = 8;
 
-export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
+export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCenterProps) {
   const { lang } = useLanguage();
+  const navigate = useNavigate();
+  const topRef = useRef<HTMLDivElement | null>(null);
   const { data: live = [], isLoading: liveLoading } = useLiveFixtures();
   const { data: upcoming = [], isLoading: upcomingLoading } = useUpcomingFixtures();
   const { data: finished = [], isLoading: finishedLoading } = useResults();
@@ -31,12 +36,24 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
   };
 
   return (
-    <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-3 w-full max-w-md">
-        <TabsTrigger value="live" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
+    <Tabs defaultValue={defaultTab} className="w-full" ref={topRef}>
+      <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-2 sm:grid-cols-4 w-full max-w-2xl">
+        <TabsTrigger
+          value="live"
+          onClick={(event) => {
+            if (!liveTabRedirectTo) return;
+            event.preventDefault();
+            navigate(liveTabRedirectTo);
+          }}
+          className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold"
+        >
           <Radio className="h-4 w-4" />
           <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('tabLive', lang)}</span>
           {liveLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <span className="text-xs opacity-70">({live.length})</span>}
+        </TabsTrigger>
+        <TabsTrigger value="roadmap" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
+          <Trophy className="h-4 w-4" />
+          <span className={lang === 'ar' ? 'font-arabic' : ''}>{lang === 'ar' ? 'طريق الكأس' : 'Cup Road'}</span>
         </TabsTrigger>
         <TabsTrigger value="fixtures" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
           <Calendar className="h-4 w-4" />
@@ -52,7 +69,7 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
         {liveLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!liveLoading && live.length > 0 && (
           <div className="space-y-5">
-            <PaginatedMatchGrid matches={live} page={pages.live} onPageChange={(page) => setTabPage('live', page)} lang={lang} />
+            <PaginatedMatchGrid matches={live} page={pages.live} onPageChange={(page) => setTabPage('live', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
             <Live2DTracker match={live[0]} />
           </div>
         )}
@@ -61,10 +78,14 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
         )}
       </TabsContent>
 
+      <TabsContent value="roadmap" className="mt-6">
+        <WorldCupRoadmap />
+      </TabsContent>
+
       <TabsContent value="fixtures" className="mt-6">
         {upcomingLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!upcomingLoading && upcoming.length > 0 && (
-          <PaginatedMatchGrid matches={upcoming} page={pages.fixtures} onPageChange={(page) => setTabPage('fixtures', page)} lang={lang} />
+          <PaginatedMatchGrid matches={upcoming} page={pages.fixtures} onPageChange={(page) => setTabPage('fixtures', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
         )}
         {!upcomingLoading && upcoming.length === 0 && <EmptyMatchesMessage type="fixtures" lang={lang} />}
       </TabsContent>
@@ -72,7 +93,7 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
       <TabsContent value="results" className="mt-6">
         {finishedLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!finishedLoading && finished.length > 0 && (
-          <PaginatedMatchGrid matches={finished} page={pages.results} onPageChange={(page) => setTabPage('results', page)} lang={lang} />
+          <PaginatedMatchGrid matches={finished} page={pages.results} onPageChange={(page) => setTabPage('results', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
         )}
         {!finishedLoading && finished.length === 0 && (
           <div className="rounded-lg border border-border border-dashed bg-gradient-card p-8 text-center">
@@ -124,11 +145,13 @@ function PaginatedMatchGrid({
   matches,
   page,
   onPageChange,
+  onJumpToTop,
   lang,
 }: {
   matches: Match[];
   page: number;
   onPageChange: (page: number) => void;
+  onJumpToTop: () => void;
   lang: string;
 }) {
   const totalPages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
@@ -139,7 +162,9 @@ function PaginatedMatchGrid({
   );
 
   const goToPage = (nextPage: number) => {
-    onPageChange(Math.min(Math.max(nextPage, 1), totalPages));
+    const targetPage = Math.min(Math.max(nextPage, 1), totalPages);
+    onPageChange(targetPage);
+    window.setTimeout(onJumpToTop, 0);
   };
 
   return (

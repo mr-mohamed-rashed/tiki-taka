@@ -166,7 +166,15 @@ export const getTicker = (): TickerItem[] => [
 /**
  * Live matches - No matches yet (tournament starts June 11, 2026)
  */
-export const getLiveMatches = (): Match[] => [
+const LIVE_MATCH_WINDOW_MS = 130 * 60 * 1000;
+
+const isInsideLiveWindow = (match: Match) => {
+  const kickoff = new Date(match.date).getTime();
+  const now = Date.now();
+  return now >= kickoff && now <= kickoff + LIVE_MATCH_WINDOW_MS;
+};
+
+const liveFallbackMatches: Match[] = [
   {
     id: 'live-usa-par', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
     date: '2026-06-13T01:00:00Z', status: 'live', minute: "38'",
@@ -175,11 +183,19 @@ export const getLiveMatches = (): Match[] => [
   },
 ];
 
+export const getLiveMatches = (): Match[] => liveFallbackMatches.filter(isInsideLiveWindow);
+
 /**
  * Upcoming matches - First round of confirmed Group Stage fixtures (June 11-20, 2026)
  * Source: FIFA official schedule released December 6, 2025
  */
 export const getUpcomingMatches = (): Match[] => [
+  {
+    id: 'u0', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
+    date: '2026-06-13T01:00:00Z', status: 'upcoming',
+    home: teams.USA, away: teams.PAR, homeScore: 0, awayScore: 0,
+    venue: 'SoFi Stadium, Los Angeles',
+  },
   {
     id: 'u1', competition: 'FIFA World Cup 2026', stage: 'Group B - Match Day 1',
     date: '2026-06-13T19:00:00Z', status: 'upcoming',
@@ -611,6 +627,12 @@ export const getFinishedMatches = (): Match[] => [
     date: '2026-06-12T23:00:00Z', status: 'finished',
     home: teams.CAN, away: teams.BIH, homeScore: 1, awayScore: 1,
     venue: 'BMO Field, Toronto',
+  },
+  {
+    id: 'r4', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
+    date: '2026-06-13T01:00:00Z', status: 'finished',
+    home: teams.USA, away: teams.PAR, homeScore: 4, awayScore: 1,
+    venue: 'SoFi Stadium, Los Angeles',
   },
 ];
 

@@ -16,7 +16,7 @@ import { EditableImage } from '@/components/tikitaka/EditableImage';
 import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getFeaturedNews, getNextMatch } from '@/lib/footballData';
+import { getFeaturedNews, getLiveMatches, getNextMatch } from '@/lib/footballData';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useManualNews } from '@/hooks/useManualNews';
@@ -30,6 +30,7 @@ const Index = () => {
   const { news: manualNews } = useManualNews(true);
   const featured = getFeaturedNews(lang);
   const nextMatch = getNextMatch();
+  const liveMatch = getLiveMatches()[0];
   const isEditMode = useEditMode();
 
   const label = (key: string, fallback: string) => get(key, lang) ?? fallback;
@@ -73,17 +74,26 @@ const Index = () => {
                   <span>{nextMatch.venue}</span>
                 </p>
               </div>
-              <div className="flex flex-wrap gap-3">
-                <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
-                  <NavLink to="/live">
-                    <Radio className="h-4 w-4 me-2" />
-                    <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
-                  </NavLink>
-                </Button>
+              <div className="flex flex-wrap items-start gap-3">
+                <div className="flex flex-col items-center gap-2">
+                  <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
+                    <NavLink to="/live">
+                      <Radio className="h-4 w-4 me-2" />
+                      <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
+                    </NavLink>
+                  </Button>
+                  {liveMatch && (
+                    <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur">
+                      <img src={liveMatch.home.flag} alt={liveMatch.home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
+                      <span className="text-xs font-extrabold text-primary">LIVE</span>
+                      <img src={liveMatch.away.flag} alt={liveMatch.away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
+                    </div>
+                  )}
+                </div>
                 <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 hover:text-primary font-bold">
                   <NavLink to="/standings">
                     <Trophy className="h-4 w-4 me-2" />
-                    <EditableSiteText settingKey="hero_viewStandings" fallbackEn={T.viewStandings.en} fallbackAr={T.viewStandings.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
+                    <EditableSiteText settingKey="hero_topScorersButton" fallbackEn="Top Scorers" fallbackAr="ترتيب الهدافين" className={lang === 'ar' ? 'font-arabic' : ''} />
                   </NavLink>
                 </Button>
               </div>
@@ -106,7 +116,7 @@ const Index = () => {
             linkLabel={<EditableSiteText settingKey="link_allMatches" fallbackEn={T.allMatches.en} fallbackAr={T.allMatches.ar} />}
             lang={lang}
           />
-          <MatchCenter defaultTab="live" />
+          <MatchCenter defaultTab="fixtures" liveTabRedirectTo="/live" />
         </section>
 
         {false && <section>
@@ -170,7 +180,7 @@ const Index = () => {
           </aside>
         </section>
 
-        <section>
+        <section className="hidden">
           <SectionHeader
             icon={<Trophy className="h-5 w-5" />}
             title={lang === 'ar' ? 'طريق كأس العالم' : 'Road to the World Cup'}
