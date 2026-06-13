@@ -164,7 +164,7 @@ const Index = () => {
                   </div>
                 ))}
                 {/* Fallback static headlines when no manual news yet */}
-                {pulseNews.length === 0 && [
+                {false && [
                   { tag: 'SQUADS',  text: lang === 'ar' ? 'نيمار يعود! البرازيل تضمه في قائمتها لكأس العالم 2026 - 18 مايو 2026' : 'Neymar returns! Brazil squad named by Ancelotti — May 18, 2026' },
                   { tag: 'SQUADS',  text: lang === 'ar' ? 'نوير يتراجع عن اعتزاله - ألمانيا تعلن قائمتها بقيادة ناغلسمان' : 'Neuer reverses retirement — Nagelsmann names Germany squad' },
                   { tag: 'SQUADS',  text: lang === 'ar' ? 'صلاح ومرموش يقودان مصر في المجموعة G' : 'Salah & Marmoush lead Egypt in Group G' },

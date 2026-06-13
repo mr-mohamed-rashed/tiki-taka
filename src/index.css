@@ -173,6 +173,17 @@ body::before {
   will-change: transform;
 }
 
+@keyframes ticker-scroll-ar {
+  0% { transform: translateX(50%); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker-ar {
+  animation: ticker-scroll-ar 70s linear infinite;
+  width: max-content;
+  min-width: max-content;
+  will-change: transform;
+}
+
 @keyframes ball-move {
   0%   { transform: translate(0, 0); }
   20%  { transform: translate(140px, -40px); }

@@ -1,34 +1,30 @@
 import { useState } from 'react';
-import { Save, Loader2, Check } from 'lucide-react';
+import { Check, Loader2, Save } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { toast } from '@/hooks/use-toast';
 
 const WIDGET_KEYS = [
-  { key: 'matchCenter',    label: 'Match Center Title' },
+  { key: 'matchCenter', label: 'Match Center Title' },
   { key: 'matchCenterSub', label: 'Match Center Subtitle' },
-  { key: 'apiWidget',      label: 'Live Widget Title' },
-  { key: 'apiWidgetSub',   label: 'Live Widget Subtitle' },
-  { key: 'goldenBoot',     label: 'Golden Boot Title' },
-  { key: 'goldenBootSub',  label: 'Golden Boot Subtitle' },
-  { key: 'worldCupPulse',  label: 'News Pulse Title' },
-  { key: 'highlights',     label: 'Highlights Title' },
-  { key: 'highlightsSub',  label: 'Highlights Subtitle' },
+  { key: 'apiWidget', label: 'Latest News Title' },
+  { key: 'apiWidgetSub', label: 'Daily News Subtitle', hint: 'آخر الأخبار اليومية في صفحة الأخبار.' },
+  { key: 'goldenBoot', label: 'Golden Boot Title' },
+  { key: 'goldenBootSub', label: 'Golden Boot Subtitle' },
+  { key: 'worldCupPulse', label: 'News Pulse Title' },
+  { key: 'highlights', label: 'Highlights Title' },
+  { key: 'highlightsSub', label: 'Highlights Subtitle' },
 ];
 
 const SOCIAL_KEYS = [
-  { key: 'social_facebook_url', label: 'Facebook URL', placeholder: 'https://facebook.com/...' },
-  { key: 'social_tiktok_url',   label: 'TikTok URL',   placeholder: 'https://tiktok.com/@...' },
-  { key: 'social_youtube_url',  label: 'YouTube URL',  placeholder: 'https://youtube.com/@...' },
-  { key: 'social_website_url',  label: 'Website URL',  placeholder: 'https://...' },
-];
-
-const CONTROL_KEYS = [
-  { key: 'ticker_speed_seconds', label: 'News ticker speed', placeholder: '70', help: 'Lower number means faster. Recommended: 65-90 seconds.' },
+  { key: 'social_facebook_url', label: 'Facebook', placeholder: 'https://facebook.com/...' },
+  { key: 'social_tiktok_url', label: 'TikTok', placeholder: 'https://tiktok.com/@...' },
+  { key: 'social_youtube_url', label: 'YouTube', placeholder: 'https://youtube.com/@...' },
+  { key: 'social_website_url', label: 'Website', placeholder: 'https://...' },
 ];
 
 export function WidgetLabelsTab() {
@@ -39,143 +35,143 @@ export function WidgetLabelsTab() {
 
   const getVal = (key: string, lang: 'en' | 'ar') => {
     if (edits[key]) return edits[key][lang];
-    const row = settings.find(s => s.key === key);
+    const row = settings.find((setting) => setting.key === key);
     return row ? (lang === 'en' ? row.value_en : row.value_ar) : '';
   };
 
   const setVal = (key: string, lang: 'en' | 'ar', val: string) => {
-    setEdits(prev => ({ ...prev, [key]: { en: getVal(key, 'en'), ar: getVal(key, 'ar'), [lang]: val } }));
+    setEdits((prev) => ({ ...prev, [key]: { en: getVal(key, 'en'), ar: getVal(key, 'ar'), [lang]: val } }));
   };
 
-  const saveKey = async (key: string, mode: 'label' | 'url' = 'label') => {
+  const saveLabelKey = async (key: string) => {
     setSaving(key);
-    const enValue = getVal(key, 'en');
-    await save(key, enValue, mode === 'url' ? enValue : getVal(key, 'ar'));
+    await save(key, getVal(key, 'en'), getVal(key, 'ar'));
     setSaving(null);
     setSaved(key);
-    toast({ title: 'Saved!', description: `"${key}" ${mode === 'url' ? 'link' : 'label'} updated.` });
+    toast({ title: 'Saved!', description: `"${key}" updated.` });
     setTimeout(() => setSaved(null), 2000);
   };
 
-  if (loading) return (
-    <div className="flex items-center justify-center py-20">
-      <Loader2 className="h-6 w-6 animate-spin text-primary" />
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Edit section labels and the social links shown under the 2D match screen.</p>
-      <div className="grid gap-4 md:grid-cols-2">
-        {CONTROL_KEYS.map(({ key, label, placeholder, help }) => (
-          <Card key={key} className="p-5 border-border bg-gradient-card">
-            <div className="flex items-center justify-between gap-3 mb-4">
-              <div className="min-w-0">
-                <Badge variant="outline" className="mb-2 text-primary border-primary/40 font-mono text-xs">{key}</Badge>
-                <div className="text-sm font-semibold">{label}</div>
-                <p className="mt-1 text-xs text-muted-foreground">{help}</p>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => saveKey(key, 'url')}
-                disabled={saving === key}
-                className={`gap-1.5 shrink-0 ${saved === key ? 'bg-green-600 hover:bg-green-700' : ''}`}
-              >
-                {saving === key ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> :
-                  saved === key ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
-                {saved === key ? 'Saved!' : 'Save'}
-              </Button>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Seconds</Label>
-              <Input
-                type="number"
-                min="50"
-                max="140"
-                value={getVal(key, 'en') || ''}
-                onChange={e => setVal(key, 'en', e.target.value)}
-                placeholder={placeholder}
-                className="h-9"
-                dir="ltr"
-              />
-            </div>
-          </Card>
-        ))}
+      <p className="text-sm text-muted-foreground">Edit compact section labels and social links.</p>
 
-        {SOCIAL_KEYS.map(({ key, label, placeholder }) => (
-          <Card key={key} className="p-5 border-border bg-gradient-card">
-            <div className="flex items-center justify-between gap-3 mb-4">
-              <div className="min-w-0">
-                <Badge variant="outline" className="mb-2 text-primary border-primary/40 font-mono text-xs">{key}</Badge>
-                <div className="text-sm font-semibold">{label}</div>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => saveKey(key, 'url')}
-                disabled={saving === key}
-                className={`gap-1.5 shrink-0 ${saved === key ? 'bg-green-600 hover:bg-green-700' : ''}`}
-              >
-                {saving === key ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> :
-                  saved === key ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
-                {saved === key ? 'Saved!' : 'Save'}
-              </Button>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Link</Label>
-              <Input
-                value={getVal(key, 'en')}
-                onChange={e => setVal(key, 'en', e.target.value)}
-                placeholder={placeholder}
-                className="h-9"
-                dir="ltr"
-              />
-            </div>
-          </Card>
-        ))}
-      </div>
-      <div className="grid gap-4">
-        {WIDGET_KEYS.map(({ key, label }) => (
-          <Card key={key} className="p-5 border-border bg-gradient-card">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-primary border-primary/40 font-mono text-xs">{key}</Badge>
-                <span className="text-sm font-semibold">{label}</span>
-              </div>
-              <Button
-                size="sm"
-                onClick={() => saveKey(key)}
-                disabled={saving === key}
-                className={`gap-1.5 ${saved === key ? 'bg-green-600 hover:bg-green-700' : ''}`}
-              >
-                {saving === key ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> :
-                  saved === key ? <Check className="h-3.5 w-3.5" /> : <Save className="h-3.5 w-3.5" />}
-                {saved === key ? 'Saved!' : 'Save'}
-              </Button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">English</Label>
+      <Card className="border-border bg-gradient-card p-4">
+        <div className="mb-4">
+          <h3 className="text-sm font-bold">Social links</h3>
+          <p className="text-xs text-muted-foreground">The title appears next to the icon under the 2D match screen.</p>
+        </div>
+        <div className="space-y-2">
+          {SOCIAL_KEYS.map(({ key, label, placeholder }) => (
+            <div key={key} className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[150px_220px_1fr_auto] xl:items-end">
+              <KeyLabel itemKey={key} label={label} />
+              <Field label="Title">
+                <Input
+                  value={getVal(key, 'ar') || label}
+                  onChange={(event) => setVal(key, 'ar', event.target.value)}
+                  placeholder={label}
+                  className="h-8"
+                />
+              </Field>
+              <Field label="Link">
                 <Input
                   value={getVal(key, 'en')}
-                  onChange={e => setVal(key, 'en', e.target.value)}
-                  placeholder="English label..."
-                  className="h-9"
+                  onChange={(event) => setVal(key, 'en', event.target.value)}
+                  placeholder={placeholder}
+                  className="h-8"
+                  dir="ltr"
                 />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">العربية</Label>
+              </Field>
+              <SaveButton itemKey={key} saving={saving} saved={saved} onClick={() => saveLabelKey(key)} />
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="border-border bg-gradient-card p-4">
+        <div className="mb-4">
+          <h3 className="text-sm font-bold">Section labels</h3>
+          <p className="text-xs text-muted-foreground">Compact controls for homepage titles and subtitles.</p>
+        </div>
+        <div className="space-y-2">
+          {WIDGET_KEYS.map(({ key, label, hint }) => (
+            <div key={key} className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[170px_1fr_1fr_auto] xl:items-end">
+              <KeyLabel itemKey={key} label={label} hint={hint} />
+              <Field label="English">
+                <Input
+                  value={getVal(key, 'en')}
+                  onChange={(event) => setVal(key, 'en', event.target.value)}
+                  placeholder={key === 'apiWidgetSub' ? 'Daily latest news...' : 'English label...'}
+                  className="h-8"
+                />
+              </Field>
+              <Field label="العربية">
                 <Input
                   value={getVal(key, 'ar')}
-                  onChange={e => setVal(key, 'ar', e.target.value)}
-                  placeholder="التسمية بالعربية..."
-                  className="h-9 font-arabic text-right"
+                  onChange={(event) => setVal(key, 'ar', event.target.value)}
+                  placeholder={key === 'apiWidgetSub' ? 'آخر الأخبار اليومية...' : 'التسمية بالعربية...'}
+                  className="h-8 font-arabic text-right"
                   dir="rtl"
                 />
-              </div>
+              </Field>
+              <SaveButton itemKey={key} saving={saving} saved={saved} onClick={() => saveLabelKey(key)} />
             </div>
-          </Card>
-        ))}
-      </div>
+          ))}
+        </div>
+      </Card>
     </div>
+  );
+}
+
+function KeyLabel({ itemKey, label, hint }: { itemKey: string; label: string; hint?: string }) {
+  return (
+    <div className="min-w-0">
+      <Badge variant="outline" className="mb-1 text-primary border-primary/40 font-mono text-[10px]">{itemKey}</Badge>
+      <div className="text-xs font-semibold">{label}</div>
+      {hint && <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1">
+      <Label className="text-[11px] text-muted-foreground">{label}</Label>
+      {children}
+    </div>
+  );
+}
+
+function SaveButton({
+  itemKey,
+  saving,
+  saved,
+  onClick,
+}: {
+  itemKey: string;
+  saving: string | null;
+  saved: string | null;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      size="sm"
+      onClick={onClick}
+      disabled={saving === itemKey}
+      className={`h-8 gap-1.5 shrink-0 px-3 ${saved === itemKey ? 'bg-green-600 hover:bg-green-700' : ''}`}
+    >
+      {saving === itemKey ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        : saved === itemKey ? <Check className="h-3.5 w-3.5" />
+          : <Save className="h-3.5 w-3.5" />}
+      {saved === itemKey ? 'Saved!' : 'Save'}
+    </Button>
   );
 }

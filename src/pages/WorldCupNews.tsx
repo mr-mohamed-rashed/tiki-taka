@@ -9,7 +9,6 @@ import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
 import { ArticleCard } from '@/components/sports/ArticleCard';
 import { useLanguage } from '@/context/LanguageContext';
 import { useManualNews } from '@/hooks/useManualNews';
-import { useRealNews, formatForCards } from '@/hooks/useRealNews';
 import { useTrackVisit } from '@/hooks/useVisitTracking';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -26,13 +25,11 @@ const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
 function NewsContent() {
   const { lang } = useLanguage();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
-  const { data: realNews, isLoading } = useRealNews(lang);
   const manualArticles = manualNews.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
-  const externalArticles = formatForCards(realNews, lang);
 
   useTrackVisit({ eventType: 'news_view', page: '/news' });
 
-  if (manualLoading || (isLoading && manualArticles.length === 0)) {
+  if (manualLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
         <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
@@ -56,6 +53,7 @@ function NewsContent() {
             timestamp={article.published_at}
             author={lang === 'ar' ? 'تيكي تاكا' : 'Tiki-Taka'}
             sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
+            detailUrl={`/news/${article.id}`}
           />
         ))}
       </div>
@@ -63,18 +61,14 @@ function NewsContent() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {externalArticles?.map((article, index) => (
-        <ArticleCard
-          key={article.id || index}
-          title={article.title}
-          excerpt={article.summary}
-          category={article.category}
-          image={NEWS_IMAGES[index % NEWS_IMAGES.length]}
-          timestamp={article.date}
-          author={lang === 'ar' ? 'تيكي تاكا AI' : 'Tiki-Taka AI'}
-        />
-      ))}
+    <div className="rounded-xl border border-dashed border-border bg-card/60 p-10 text-center text-muted-foreground">
+      <Newspaper className="mx-auto mb-3 h-9 w-9 text-primary" />
+      <p className={cn('font-bold', lang === 'ar' && 'font-arabic')}>
+        {lang === 'ar' ? 'لا توجد أخبار منشورة حتى الآن' : 'No published news yet'}
+      </p>
+      <p className={cn('mt-1 text-sm', lang === 'ar' && 'font-arabic')}>
+        {lang === 'ar' ? 'أضف أول خبر من الداش بورد وسيظهر هنا.' : 'Add the first article from the dashboard and it will appear here.'}
+      </p>
     </div>
   );
 }

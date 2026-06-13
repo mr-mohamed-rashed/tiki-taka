@@ -1,18 +1,14 @@
 import { Loader2, Radio } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useManualNews } from '@/hooks/useManualNews';
 import { useRealNews, formatForTicker } from '@/hooks/useRealNews';
 import { t } from '@/lib/i18n';
 
 export function NewsTicker() {
   const { lang } = useLanguage();
-  const { get } = useSiteSettingsContext();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
   const { data: realNews, isLoading } = useRealNews(lang);
-
-  const speed = Number(get('ticker_speed_seconds', 'en') || 70);
-  const tickerSpeed = Number.isFinite(speed) ? Math.min(Math.max(speed, 50), 140) : 70;
+  const tickerSpeed = 70;
 
   const manualItems = manualNews
     .filter((item) => item.category === 'Ticker')
@@ -51,7 +47,7 @@ export function NewsTicker() {
         </div>
         <div className="flex-1 overflow-hidden relative bg-gradient-ticker" dir="ltr">
           <div
-            className="flex whitespace-nowrap animate-ticker py-2.5"
+            className={`flex whitespace-nowrap py-2.5 ${lang === 'ar' ? 'animate-ticker-ar' : 'animate-ticker'}`}
             style={{ animationDuration: `${tickerSpeed}s` }}
           >
             {loop.map((item, index) => (

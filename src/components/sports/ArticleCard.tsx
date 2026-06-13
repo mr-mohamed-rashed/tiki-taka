@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronRight, Clock, ExternalLink, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ interface ArticleCardProps {
   timestamp: string;
   author?: string;
   sourceUrl?: string;
+  detailUrl?: string;
 }
 
 const categoryColors: Record<string, string> = {
@@ -44,8 +46,9 @@ const categoryColors: Record<string, string> = {
   Stats: 'bg-muted text-foreground border border-border',
 };
 
-export function ArticleCard({ title, excerpt, category, image, timestamp, author, sourceUrl }: ArticleCardProps) {
+export function ArticleCard({ title, excerpt, category, image, timestamp, author, sourceUrl, detailUrl }: ArticleCardProps) {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const { lang } = useLanguage();
   const isArabic = lang === 'ar';
   const badgeClass = categoryColors[category] ?? 'bg-primary/20 text-primary border border-primary/40';
@@ -54,7 +57,7 @@ export function ArticleCard({ title, excerpt, category, image, timestamp, author
     <>
       <Card
         className="group cursor-pointer overflow-hidden border border-border bg-gradient-card hover:border-primary/50 hover:shadow-card transition-all duration-200 hover:-translate-y-0.5"
-        onClick={() => setOpen(true)}
+        onClick={() => detailUrl ? navigate(detailUrl) : setOpen(true)}
       >
         <div className="relative aspect-video overflow-hidden">
           <img

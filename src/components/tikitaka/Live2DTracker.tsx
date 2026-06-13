@@ -16,10 +16,10 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
   const away = match.away;
   const { get } = useSiteSettingsContext();
   const socialLinks = [
-    { key: 'social_facebook_url', label: 'Facebook', href: get('social_facebook_url', 'en') || 'https://facebook.com', icon: <FacebookIcon /> },
-    { key: 'social_tiktok_url', label: 'TikTok', href: get('social_tiktok_url', 'en') || 'https://tiktok.com', icon: <TikTokIcon /> },
-    { key: 'social_youtube_url', label: 'YouTube', href: get('social_youtube_url', 'en') || 'https://youtube.com', icon: <YouTubeIcon /> },
-    { key: 'social_website_url', label: 'Website', href: get('social_website_url', 'en') || '/', icon: <WebIcon /> },
+    { key: 'social_facebook_url', label: get('social_facebook_url', 'ar') || 'Facebook', href: get('social_facebook_url', 'en') || 'https://facebook.com', icon: <FacebookIcon /> },
+    { key: 'social_tiktok_url', label: get('social_tiktok_url', 'ar') || 'TikTok', href: get('social_tiktok_url', 'en') || 'https://tiktok.com', icon: <TikTokIcon /> },
+    { key: 'social_youtube_url', label: get('social_youtube_url', 'ar') || 'YouTube', href: get('social_youtube_url', 'en') || 'https://youtube.com', icon: <YouTubeIcon /> },
+    { key: 'social_website_url', label: get('social_website_url', 'ar') || 'Website', href: get('social_website_url', 'en') || '/', icon: <WebIcon /> },
   ];
 
   // Player positions (4-3-3) on a 600x380 viewBox pitch
@@ -150,10 +150,11 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex h-10 w-10 items-center justify-center rounded-full border border-primary/25 bg-background/75 text-foreground shadow-card transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-neon"
+              className="group flex h-10 items-center justify-center gap-2 rounded-full border border-primary/25 bg-background/75 px-3 text-xs font-bold text-foreground shadow-card transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-neon"
               title={link.label}
             >
               {link.icon}
+              <span>{link.label}</span>
             </a>
           ))}
         </div>

@@ -2,6 +2,7 @@
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import WorldCupNews from "./pages/WorldCupNews";
+import NewsArticle from "./pages/NewsArticle";
 import Standings from "./pages/Standings";
 import LiveMatches from "./pages/LiveMatches";
 import Results from "./pages/Results";
@@ -10,14 +11,33 @@ import Admin from "./pages/Admin";
 import Roadmap from "./pages/Roadmap";
 
 import { Outlet } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { GlobalFloatingAd } from './components/tikitaka/GlobalFloatingAd';
+import { GoogleAuthGate } from './components/tikitaka/GoogleAuthGate';
 
-const Layout = () => (
-  <>
-    <Outlet />
-    <GlobalFloatingAd />
-  </>
-);
+const Layout = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    return (
+      <>
+        <Outlet />
+        <GlobalFloatingAd />
+      </>
+    );
+  }
+
+  return (
+    <GoogleAuthGate
+      title="سجل دخولك لمتابعة تيكي تاكا"
+      description="أي تنقل داخل الموقع يحتاج تسجيل دخول مجاني بحساب Google لتسجيل الزيارة وحفظ تجربة كأس العالم."
+    >
+      <Outlet />
+      <GlobalFloatingAd />
+    </GoogleAuthGate>
+  );
+};
 
 export const routers = [
     {
@@ -25,6 +45,7 @@ export const routers = [
       children: [
         { path: "/",          name: 'home',       element: <Index /> },
         { path: "/news",      name: 'news',       element: <WorldCupNews /> },
+        { path: "/news/:id",   name: 'newsArticle', element: <NewsArticle /> },
         { path: "/groups",    name: 'groups',     element: <Groups /> },
         { path: "/roadmap",   name: 'roadmap',    element: <Roadmap /> },
         { path: "/standings", name: 'standings',  element: <Standings /> },
