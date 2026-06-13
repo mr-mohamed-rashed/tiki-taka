@@ -82,6 +82,16 @@ export const AD_SLOTS: AdSlot[] = [
     height: '250px',
     description: 'Secondary sidebar ad on live page'
   },
+
+  // Marquee Row
+  {
+    id: 'marquee-row',
+    name: 'Sponsor Marquee Row',
+    location: 'marquee',
+    width: 'auto',
+    height: '60px',
+    description: 'Continuous scrolling row of sponsor images'
+  },
 ];
 
 // Helper function to get slots by location

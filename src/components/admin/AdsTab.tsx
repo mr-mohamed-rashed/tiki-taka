@@ -7,10 +7,11 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAdBanners, type AdBannerRow } from '@/hooks/useAdBanners';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Switch } from '@/components/ui/switch';
 import { AD_SLOTS, getSlotsByLocation } from '@/lib/adSlots';
 
-const LOCATIONS = ['hero', 'sidebar', 'news-page', 'live-page'];
+const LOCATIONS = ['hero', 'sidebar', 'news-page', 'live-page', 'marquee'];
 
 const blank = (): Omit<AdBannerRow, 'id' | 'created_at'> => ({
   position: 'hero', slot_id: '', title: '', image_url: '', link_url: '', is_active: true, sort_order: 0, width: '280px', height: 'auto',
@@ -18,10 +19,25 @@ const blank = (): Omit<AdBannerRow, 'id' | 'created_at'> => ({
 
 export function AdsTab() {
   const { banners, loading, save, update, remove, toggle } = useAdBanners();
+  const { settings, save: saveSetting } = useSiteSettings();
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState(blank());
   const [saving, setSaving] = useState(false);
+  const [savingSpeed, setSavingSpeed] = useState(false);
+  const [marqueeSpeed, setMarqueeSpeed] = useState('50');
+
+  useEffect(() => {
+    setMarqueeSpeed(settings.find((setting) => setting.key === 'marquee_speed_seconds')?.value_en || '50');
+  }, [settings]);
+
+  const saveMarqueeSpeed = async () => {
+    const seconds = Math.max(10, Math.min(300, Number(marqueeSpeed) || 50)).toString();
+    setMarqueeSpeed(seconds);
+    setSavingSpeed(true);
+    await saveSetting('marquee_speed_seconds', seconds, seconds);
+    setSavingSpeed(false);
+  };
 
   const startEdit = (b: AdBannerRow) => {
     setEditing(b.id);
@@ -59,12 +75,40 @@ export function AdsTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">Manage ad banners displayed on different pages.</p>
-        <Button size="sm" onClick={() => { setAdding(true); setForm(blank()); }} className="gap-1.5">
+        <p className="text-sm text-muted-foreground">Manage ad banners and sponsor marquee (الرو).</p>
+        <Button size="sm" onClick={() => { setAdding(true); setForm({ ...blank(), position: 'marquee', slot_id: 'marquee-row' }); }} className="gap-1.5">
           <Plus className="h-3.5 w-3.5" />
-          Add Ad
+          Add Ad / Sponsor
         </Button>
       </div>
+
+      <Card className="p-4 border-primary/25 bg-gradient-card">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+          <div className="sm:w-48">
+            <Label className="mb-1.5 block text-xs text-muted-foreground">Marquee Speed (seconds)</Label>
+            <Input
+              type="number"
+              min={10}
+              max={300}
+              value={marqueeSpeed}
+              onChange={(event) => setMarqueeSpeed(event.target.value)}
+              className="h-10 text-center"
+              dir="ltr"
+            />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={saveMarqueeSpeed}
+            disabled={savingSpeed}
+            className="h-10 gap-2"
+          >
+            {savingSpeed ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+            Save Speed
+          </Button>
+          <p className="pb-2 text-xs text-muted-foreground ml-3 rtl:mr-3">Lower = faster. Recommended: 30 to 80.</p>
+        </div>
+      </Card>
 
       {/* Edit/Add Modal */}
       {(adding || editing) && (

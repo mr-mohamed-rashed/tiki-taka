@@ -14,6 +14,7 @@ import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
 import { EditableSiteText } from '@/components/tikitaka/EditableSiteText';
 import { EditableImage } from '@/components/tikitaka/EditableImage';
 import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
+import { SponsorMarquee } from '@/components/tikitaka/SponsorMarquee';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getFeaturedNews, getLiveMatches, getNextMatch } from '@/lib/footballData';
@@ -106,6 +107,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <SponsorMarquee />
 
       <main className="container mx-auto px-4 lg:px-8 py-12 space-y-16">
         <section>
