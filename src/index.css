@@ -174,8 +174,8 @@ body::before {
 }
 
 @keyframes ticker-scroll-ar {
-  0% { transform: translateX(50%); }
-  100% { transform: translateX(-50%); }
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(50%); }
 }
 .animate-ticker-ar {
   animation: ticker-scroll-ar 70s linear infinite;

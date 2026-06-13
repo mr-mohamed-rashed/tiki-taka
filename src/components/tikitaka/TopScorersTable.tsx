@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ArrowUpDown, Info, Loader2, Trophy } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { ArrowUpDown, Loader2, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTopScorers } from '@/hooks/useFootballData';
@@ -28,7 +28,6 @@ export function TopScorersTable() {
       setIsAscending((value) => !value);
       return;
     }
-
     setSortKey(key);
     setIsAscending(key === 'rank');
   };
@@ -56,21 +55,10 @@ export function TopScorersTable() {
             {lang === 'ar' ? 'ترتيب هدافي كأس العالم 2026' : 'World Cup 2026 Top Scorers'}
           </h3>
           <p className={cn('text-xs text-muted-foreground', lang === 'ar' && 'font-arabic')}>
-            {lang === 'ar'
-              ? 'يتحدث من API-Football عند توفر بيانات الهدافين'
-              : 'Updates from API-Football when scorer data is available'}
+            {lang === 'ar' ? 'آخر أرقام الهدافين في البطولة' : 'Latest tournament scorer numbers'}
           </p>
         </div>
         {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary ms-auto" />}
-      </div>
-
-      <div className="flex items-center gap-2 mx-4 mt-3 mb-1 text-xs bg-primary/10 border border-primary/20 rounded-lg px-3 py-2">
-        <Info className="h-3 w-3 text-primary shrink-0" />
-        <span className={cn(lang === 'ar' && 'font-arabic')}>
-          {lang === 'ar'
-            ? 'لو مفتاح API-Football مضاف في Supabase Function باسم API_FOOTBALL_KEY ستظهر الأرقام الحقيقية هنا عند رجوعها من المزود.'
-            : 'If API_FOOTBALL_KEY is configured in the Supabase Function, real scorer stats will appear here when returned by the provider.'}
-        </span>
       </div>
 
       <div className="overflow-x-auto">

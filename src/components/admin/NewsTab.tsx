@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useManualNews, type ManualNewsRow } from '@/hooks/useManualNews';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const ARTICLE_CATEGORIES = ['World Cup 2026', 'Groups', 'Squads', 'Preview', 'Results', 'Highlights', 'Stats'];
 const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
@@ -54,7 +55,10 @@ const blankArticle = (): NewsDraft => ({
 
 export function NewsTab() {
   const { news, loading, save, remove, togglePublish } = useManualNews();
+  const { settings, save: saveSetting } = useSiteSettings();
   const [saving, setSaving] = useState(false);
+  const [savingSpeed, setSavingSpeed] = useState(false);
+  const [tickerSpeed, setTickerSpeed] = useState('70');
   const [ticker, setTicker] = useState(blankTicker());
   const [pulse, setPulse] = useState(blankPulse());
   const [article, setArticle] = useState(blankArticle());
@@ -63,12 +67,24 @@ export function NewsTab() {
   const pulseItems = news.filter((item) => item.category === 'Pulse');
   const articleItems = news.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
 
+  useEffect(() => {
+    setTickerSpeed(settings.find((setting) => setting.key === 'ticker_speed_seconds')?.value_en || '70');
+  }, [settings]);
+
   const addItem = async (draft: NewsDraft, reset: () => void) => {
     if (!draft.title_ar.trim() && !draft.title_en.trim()) return;
     setSaving(true);
     await save(draft);
     reset();
     setSaving(false);
+  };
+
+  const saveTickerSpeed = async () => {
+    const seconds = Math.max(25, Math.min(180, Number(tickerSpeed) || 70)).toString();
+    setTickerSpeed(seconds);
+    setSavingSpeed(true);
+    await saveSetting('ticker_speed_seconds', seconds, seconds);
+    setSavingSpeed(false);
   };
 
   if (loading) {
@@ -129,6 +145,30 @@ export function NewsTab() {
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 حفظ السطر
               </Button>
+            </div>
+            <div className="mt-3 flex flex-col gap-2 rounded-lg border border-border bg-background/40 p-3 sm:flex-row sm:items-end">
+              <Field label="سرعة الشريط بالثواني" className="sm:w-48">
+                <Input
+                  type="number"
+                  min={25}
+                  max={180}
+                  value={tickerSpeed}
+                  onChange={(event) => setTickerSpeed(event.target.value)}
+                  className="h-10 text-center"
+                  dir="ltr"
+                />
+              </Field>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={saveTickerSpeed}
+                disabled={savingSpeed}
+                className="h-10 gap-2"
+              >
+                {savingSpeed ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                حفظ السرعة
+              </Button>
+              <p className="pb-2 text-xs text-muted-foreground">رقم أقل = حركة أسرع. الأفضل من 55 إلى 90.</p>
             </div>
           </Card>
           <NewsList items={tickerItems} empty="لا توجد سطور في الشريط حتى الآن." onRemove={remove} onToggle={togglePublish} />

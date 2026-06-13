@@ -130,6 +130,10 @@ const Index = () => {
           <ApiSportsWidget />
         </section>}
 
+        <section>
+          <TrendingSidebar />
+        </section>
+
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2">
             <SectionHeader
@@ -144,8 +148,6 @@ const Index = () => {
           </div>
 
           <aside className="space-y-6">
-            <TrendingSidebar />
-
             <div>
               <SectionHeader 
                 icon={<Newspaper className="h-5 w-5" />} 

@@ -1,14 +1,16 @@
 import { Loader2, Radio } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useManualNews } from '@/hooks/useManualNews';
 import { useRealNews, formatForTicker } from '@/hooks/useRealNews';
 import { t } from '@/lib/i18n';
 
 export function NewsTicker() {
   const { lang } = useLanguage();
+  const { get } = useSiteSettingsContext();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
   const { data: realNews, isLoading } = useRealNews(lang);
-  const tickerSpeed = 70;
+  const tickerSpeed = Math.max(25, Math.min(180, Number(get('ticker_speed_seconds') || 70)));
 
   const manualItems = manualNews
     .filter((item) => item.category === 'Ticker')

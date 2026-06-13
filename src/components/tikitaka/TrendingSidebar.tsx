@@ -1,63 +1,80 @@
-import { TrendingUp, Loader2, Users, User } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Newspaper, TrendingUp } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/context/LanguageContext';
+import { useManualNews } from '@/hooks/useManualNews';
 import { cn } from '@/lib/utils';
-import { useAIAgent } from '@/hooks/useAIAgent';
 
-interface TrendingItem {
-  name: string;
-  type: 'team' | 'player';
-  reason: string;
-}
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=800&q=80';
+const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
 
 export function TrendingSidebar() {
   const { lang } = useLanguage();
-  const { data, isLoading } = useAIAgent<TrendingItem[]>('trending', undefined, lang);
+  const { news, loading } = useManualNews(true);
+  const articles = news
+    .filter((item) => !SYSTEM_CATEGORIES.has(item.category))
+    .slice(0, 3);
 
   return (
-    <Card className="bg-gradient-card border-border overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-card/60">
-        <div className="p-2 rounded-lg bg-primary/15">
-          <TrendingUp className="h-5 w-5 text-primary" />
+    <Card className="overflow-hidden border-border bg-gradient-card">
+      <div className="flex items-center justify-between gap-4 border-b border-border bg-card/60 px-5 py-4">
+        <div className="flex items-center gap-3">
+          <div className="rounded-lg bg-primary/15 p-2 text-primary">
+            <TrendingUp className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className={cn('font-display text-xl font-extrabold', lang === 'ar' && 'font-arabic')}>
+              {lang === 'ar' ? 'الأكثر تداولًا' : 'Trending Now'}
+            </h3>
+            <p className={cn('text-xs text-muted-foreground', lang === 'ar' && 'font-arabic')}>
+              {lang === 'ar' ? 'آخر 3 أخبار من صفحة الأخبار' : 'Latest 3 stories from the news page'}
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className={cn("font-display font-extrabold text-lg", lang === 'ar' && 'font-arabic')}>
-            {lang === 'ar' ? 'الأكثر تداولاً' : 'Trending Now'}
-          </h3>
-          <p className={cn("text-xs text-muted-foreground", lang === 'ar' && 'font-arabic')}>
-            {lang === 'ar' ? 'تحليل الذكاء الاصطناعي' : 'AI Analysis'}
-          </p>
-        </div>
+        <NavLink to="/news" className="text-sm font-bold text-primary hover:text-primary-glow">
+          {lang === 'ar' ? 'كل الأخبار' : 'All news'}
+        </NavLink>
       </div>
 
-      <div className="p-4 space-y-4">
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
-            <span className={cn("text-sm", lang === 'ar' && 'font-arabic')}>
-              {lang === 'ar' ? 'جاري التحليل...' : 'Analyzing trends...'}
-            </span>
-          </div>
-        ) : (
-          data?.map((item, i) => (
-            <div key={i} className="flex items-start gap-3 group">
-              <div className="shrink-0 mt-1">
-                {item.type === 'team' ? (
-                  <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                ) : (
-                  <User className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                )}
-              </div>
-              <div>
-                <h4 className={cn("font-bold text-sm group-hover:text-primary transition-colors", lang === 'ar' && 'font-arabic')}>
-                  {item.name}
-                </h4>
-                <p className={cn("text-xs text-muted-foreground mt-0.5 leading-relaxed", lang === 'ar' && 'font-arabic')}>
-                  {item.reason}
-                </p>
-              </div>
-            </div>
+      <div className="grid gap-3 p-4 md:grid-cols-3">
+        {loading ? (
+          Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="h-32 animate-pulse rounded-lg bg-muted/30" />
           ))
+        ) : articles.length > 0 ? (
+          articles.map((item) => {
+            const title = lang === 'ar' ? item.title_ar || item.title_en : item.title_en || item.title_ar;
+            return (
+              <NavLink
+                key={item.id}
+                to={`/news/${item.id}`}
+                className="group overflow-hidden rounded-lg border border-border bg-background/55 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-card"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden">
+                  <img
+                    src={item.image_url || FALLBACK_IMAGE}
+                    alt={title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <Badge className="absolute right-2 top-2 bg-primary text-primary-foreground text-[10px]">
+                    {item.category}
+                  </Badge>
+                </div>
+                <div className="p-3">
+                  <h4 className={cn('line-clamp-2 text-sm font-bold leading-6 group-hover:text-primary', lang === 'ar' && 'font-arabic')}>
+                    {title}
+                  </h4>
+                  <p className="mt-2 text-[11px] text-muted-foreground" dir="ltr">{item.published_at}</p>
+                </div>
+              </NavLink>
+            );
+          })
+        ) : (
+          <div className="col-span-full flex items-center justify-center gap-2 rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">
+            <Newspaper className="h-4 w-4 text-primary" />
+            {lang === 'ar' ? 'أضف أخبار صفحة الأخبار من الداش بورد لتظهر هنا.' : 'Add news articles from the dashboard to show them here.'}
+          </div>
         )}
       </div>
     </Card>
