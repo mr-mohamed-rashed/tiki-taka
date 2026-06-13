@@ -123,27 +123,27 @@ export function TournamentCountdown({ match }: TournamentCountdownProps) {
 function FlagFaceOff({ match }: { match: Match }) {
   return (
     <div className="absolute inset-0">
-      <div className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
+      <div className="absolute left-0 top-0 h-1/2 w-full overflow-hidden sm:inset-y-0 sm:h-full sm:w-1/2">
         <img
           src={match.home.flag}
           alt=""
-          className="h-full w-full scale-110 object-cover opacity-50 blur-[0.5px] saturate-125"
+          className="h-full w-full scale-105 object-cover opacity-42 blur-[0.5px] saturate-110 sm:scale-110 sm:opacity-48"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/10 via-background/35 to-background/78" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/35 to-background/78 sm:bg-gradient-to-r" />
       </div>
 
-      <div className="absolute inset-y-0 right-0 w-1/2 overflow-hidden">
+      <div className="absolute bottom-0 right-0 h-1/2 w-full overflow-hidden sm:inset-y-0 sm:h-full sm:w-1/2">
         <img
           src={match.away.flag}
           alt=""
-          className="h-full w-full scale-110 object-cover opacity-50 blur-[0.5px] saturate-125"
+          className="h-full w-full scale-105 object-cover opacity-42 blur-[0.5px] saturate-110 sm:scale-110 sm:opacity-48"
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-background/10 via-background/35 to-background/78" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/10 via-background/35 to-background/78 sm:bg-gradient-to-l" />
       </div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.04)_43%,hsl(var(--primary)/0.12)_50%,hsl(var(--primary)/0.04)_57%,transparent_100%)]" />
-      <div className="absolute left-1/2 bottom-6 h-36 w-36 -translate-x-1/2 rounded-full bg-primary/18 blur-3xl" />
-      <div className="absolute left-1/2 bottom-8 -translate-x-1/2 text-primary opacity-55 drop-shadow-[0_0_32px_hsl(var(--primary)/0.85)]">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,hsl(var(--primary)/0.08)_48%,hsl(var(--primary)/0.13)_50%,hsl(var(--primary)/0.08)_52%,transparent_100%)] sm:bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.04)_43%,hsl(var(--primary)/0.12)_50%,hsl(var(--primary)/0.04)_57%,transparent_100%)]" />
+      <div className="absolute left-1/2 bottom-4 h-32 w-32 -translate-x-1/2 rounded-full bg-primary/18 blur-3xl sm:bottom-6 sm:h-36 sm:w-36" />
+      <div className="absolute left-1/2 bottom-6 -translate-x-1/2 text-primary opacity-55 drop-shadow-[0_0_32px_hsl(var(--primary)/0.85)] sm:bottom-8">
         <Zap className="h-24 w-24 fill-primary/20" />
       </div>
       <div className="absolute inset-0 bg-background/42" />

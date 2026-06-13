@@ -1,13 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { ArrowRight, Trophy, Radio, Play, Newspaper, LayoutGrid, MapPin } from 'lucide-react';
+import { ArrowRight, Trophy, Radio, Newspaper, LayoutGrid, MapPin } from 'lucide-react';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
 import { MatchCenter } from '@/components/tikitaka/MatchCenter';
 import { TopScorersTable } from '@/components/tikitaka/TopScorersTable';
-import { HighlightsGallery } from '@/components/tikitaka/HighlightsGallery';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
 import { ApiSportsWidget } from '@/components/tikitaka/ApiSportsWidget';
+import { WorldCupRoadmap } from '@/components/tikitaka/WorldCupRoadmap';
 import { TrendingSidebar } from '@/components/tikitaka/TrendingSidebar';
 import { AdBanner } from '@/components/tikitaka/AdBanner';
 import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
@@ -172,12 +172,12 @@ const Index = () => {
 
         <section>
           <SectionHeader
-            icon={<Play className="h-5 w-5" />}
-            title={<EditableSiteText settingKey="section_highlights" fallbackEn={T.highlights.en} fallbackAr={T.highlights.ar} />}
-            subtitle={<EditableSiteText settingKey="section_highlightsSub" fallbackEn={T.highlightsSub.en} fallbackAr={T.highlightsSub.ar} />}
+            icon={<Trophy className="h-5 w-5" />}
+            title={lang === 'ar' ? 'طريق كأس العالم' : 'Road to the World Cup'}
+            subtitle={lang === 'ar' ? 'خريطة تأهل 32 فريقاً نحو الكأس' : 'A 32-team qualification map leading to the trophy'}
             lang={lang}
           />
-          <HighlightsGallery />
+          <WorldCupRoadmap />
         </section>
       </main>
 
