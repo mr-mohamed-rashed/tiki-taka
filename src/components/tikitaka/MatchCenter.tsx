@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MatchCard } from './MatchCard';
 import { TournamentCountdown } from './TournamentCountdown';
+import { Live2DTracker } from './Live2DTracker';
 import { Radio, Calendar, CheckCircle2, ChevronLeft, ChevronRight, Loader2, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLiveFixtures, useUpcomingFixtures, useResults } from '@/hooks/useFootballData';
@@ -50,7 +51,10 @@ export function MatchCenter({ defaultTab = 'live' }: MatchCenterProps) {
       <TabsContent value="live" className="mt-6">
         {liveLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
         {!liveLoading && live.length > 0 && (
-          <PaginatedMatchGrid matches={live} page={pages.live} onPageChange={(page) => setTabPage('live', page)} lang={lang} />
+          <div className="space-y-5">
+            <PaginatedMatchGrid matches={live} page={pages.live} onPageChange={(page) => setTabPage('live', page)} lang={lang} />
+            <Live2DTracker match={live[0]} />
+          </div>
         )}
         {!liveLoading && live.length === 0 && (
           nextMatch ? <TournamentCountdown match={nextMatch} /> : <EmptyMatchesMessage type="live" lang={lang} />

@@ -161,7 +161,14 @@ export const getTicker = (): TickerItem[] => [
 /**
  * Live matches - No matches yet (tournament starts June 11, 2026)
  */
-export const getLiveMatches = (): Match[] => [];
+export const getLiveMatches = (): Match[] => [
+  {
+    id: 'live-usa-par', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
+    date: '2026-06-13T01:00:00Z', status: 'live', minute: "38'",
+    home: teams.USA, away: teams.PAR, homeScore: 0, awayScore: 0,
+    venue: 'SoFi Stadium, Los Angeles',
+  },
+];
 
 /**
  * Upcoming matches - First round of confirmed Group Stage fixtures (June 11-20, 2026)
@@ -169,52 +176,16 @@ export const getLiveMatches = (): Match[] => [];
  */
 export const getUpcomingMatches = (): Match[] => [
   {
-    id: 'u1', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
-    date: '2026-06-13T01:00:00Z', status: 'upcoming',
-    home: teams.USA, away: teams.PAR, homeScore: 0, awayScore: 0,
-    venue: 'SoFi Stadium, Los Angeles',
-  },
-  {
-    id: 'u2', competition: 'FIFA World Cup 2026', stage: 'Group B - Match Day 1',
+    id: 'u1', competition: 'FIFA World Cup 2026', stage: 'Group B - Match Day 1',
     date: '2026-06-13T19:00:00Z', status: 'upcoming',
     home: teams.QAT, away: teams.SUI, homeScore: 0, awayScore: 0,
     venue: 'BMO Field, Toronto',
   },
   {
-    id: 'u3', competition: 'FIFA World Cup 2026', stage: 'Group C - Match Day 1',
+    id: 'u2', competition: 'FIFA World Cup 2026', stage: 'Group C - Match Day 1',
     date: '2026-06-14T00:00:00Z', status: 'upcoming',
     home: teams.BRA, away: teams.MAR, homeScore: 0, awayScore: 0,
     venue: 'SoFi Stadium, Los Angeles',
-  },
-  {
-    id: 'u4', competition: 'FIFA World Cup 2026', stage: 'Group I - Match Day 1',
-    date: '2026-06-14T20:00:00Z', status: 'upcoming',
-    home: teams.FRA, away: teams.SEN, homeScore: 0, awayScore: 0,
-    venue: 'MetLife Stadium, New Jersey',
-  },
-  {
-    id: 'u5', competition: 'FIFA World Cup 2026', stage: 'Group J - Match Day 1',
-    date: '2026-06-15T17:00:00Z', status: 'upcoming',
-    home: teams.ARG, away: teams.ALG, homeScore: 0, awayScore: 0,
-    venue: 'Hard Rock Stadium, Miami',
-  },
-  {
-    id: 'u6', competition: 'FIFA World Cup 2026', stage: 'Group H - Match Day 1',
-    date: '2026-06-16T20:00:00Z', status: 'upcoming',
-    home: teams.ESP, away: teams.KSA, homeScore: 0, awayScore: 0,
-    venue: 'AT&T Stadium, Dallas',
-  },
-  {
-    id: 'u7', competition: 'FIFA World Cup 2026', stage: 'Group L - Match Day 1',
-    date: '2026-06-17T17:00:00Z', status: 'upcoming',
-    home: teams.ENG, away: teams.PAN, homeScore: 0, awayScore: 0,
-    venue: "Levi's Stadium, San Francisco",
-  },
-  {
-    id: 'u8', competition: 'FIFA World Cup 2026', stage: 'Group G - Match Day 1',
-    date: '2026-06-18T17:00:00Z', status: 'upcoming',
-    home: teams.BEL, away: teams.EGY, homeScore: 0, awayScore: 0,
-    venue: 'AT&T Stadium, Dallas',
   },
 ];
 
