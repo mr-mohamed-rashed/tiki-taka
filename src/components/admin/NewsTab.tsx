@@ -1,83 +1,74 @@
 import { useState } from 'react';
-import {
-  Check,
-  ChevronDown,
-  Eye,
-  EyeOff,
-  Loader2,
-  Newspaper,
-  Pencil,
-  Plus,
-  Save,
-  Trash2,
-  X,
-} from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useManualNews, type ManualNewsRow } from '@/hooks/useManualNews';
 
-const CATEGORIES = ['World Cup 2026', 'Groups', 'Squads', 'Preview', 'Results', 'Highlights', 'Stats'];
+const ARTICLE_CATEGORIES = ['World Cup 2026', 'Groups', 'Squads', 'Preview', 'Results', 'Highlights', 'Stats'];
+const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
 
-const blank = (): Omit<ManualNewsRow, 'id' | 'created_at'> => ({
-  title_en: '',
+type NewsDraft = Omit<ManualNewsRow, 'id' | 'created_at'>;
+
+const today = () => new Date().toISOString().slice(0, 10);
+
+const blankTicker = (): NewsDraft => ({
   title_ar: '',
-  excerpt_en: '',
+  title_en: '',
   excerpt_ar: '',
+  excerpt_en: '',
+  category: 'Ticker',
+  image_url: '',
+  published_at: today(),
+  is_published: true,
+});
+
+const blankPulse = (): NewsDraft => ({
+  title_ar: '',
+  title_en: '',
+  excerpt_ar: '',
+  excerpt_en: '',
+  category: 'Pulse',
+  image_url: '',
+  published_at: today(),
+  is_published: true,
+});
+
+const blankArticle = (): NewsDraft => ({
+  title_ar: '',
+  title_en: '',
+  excerpt_ar: '',
+  excerpt_en: '',
   category: 'World Cup 2026',
   image_url: '',
-  published_at: new Date().toISOString().slice(0, 10),
+  published_at: today(),
   is_published: true,
 });
 
 export function NewsTab() {
-  const { news, loading, save, update, remove, togglePublish } = useManualNews();
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState(blank());
-  const [editId, setEditId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<Partial<ManualNewsRow>>({});
+  const { news, loading, save, remove, togglePublish } = useManualNews();
   const [saving, setSaving] = useState(false);
+  const [ticker, setTicker] = useState(blankTicker());
+  const [pulse, setPulse] = useState(blankPulse());
+  const [article, setArticle] = useState(blankArticle());
 
-  const resetAddForm = () => {
-    setForm(blank());
-    setAdding(false);
-  };
+  const tickerItems = news.filter((item) => item.category === 'Ticker');
+  const pulseItems = news.filter((item) => item.category === 'Pulse');
+  const articleItems = news.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
 
-  const handleAdd = async () => {
-    if (!form.title_en.trim() && !form.title_ar.trim()) return;
+  const addItem = async (draft: NewsDraft, reset: () => void) => {
+    if (!draft.title_ar.trim() && !draft.title_en.trim()) return;
     setSaving(true);
-    await save(form);
-    setForm(blank());
-    setAdding(true);
+    await save(draft);
+    reset();
     setSaving(false);
-  };
-
-  const handleUpdate = async () => {
-    if (!editId) return;
-    setSaving(true);
-    await update(editId, editForm);
-    setEditId(null);
-    setSaving(false);
-  };
-
-  const startEdit = (item: ManualNewsRow) => {
-    setEditId(item.id);
-    setEditForm({
-      title_en: item.title_en,
-      title_ar: item.title_ar,
-      excerpt_en: item.excerpt_en,
-      excerpt_ar: item.excerpt_ar,
-      category: item.category,
-      image_url: item.image_url,
-      published_at: item.published_at,
-      is_published: item.is_published,
-    });
   };
 
   if (loading) {
@@ -90,257 +81,262 @@ export function NewsTab() {
 
   return (
     <div className="space-y-5" dir="rtl">
-      <Card className="overflow-hidden border-primary/25 bg-gradient-card">
-        <Collapsible open={adding} onOpenChange={setAdding}>
-          <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/35 bg-primary/10 text-primary shadow-neon">
-                <Newspaper className="h-6 w-6" />
-              </div>
-              <div>
-                <h2 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
-                  نبض كأس العالم
-                </h2>
-                <p className="text-sm text-muted-foreground">أضف الأخبار التي تظهر في الموقع وشريط الأخبار.</p>
-              </div>
-            </div>
-
-            <CollapsibleTrigger asChild>
-              <Button className="gap-2 font-semibold">
-                {adding ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                {adding ? 'إغلاق الإضافة' : 'إضافة خبر'}
-                <ChevronDown className={`h-4 w-4 transition-transform ${adding ? 'rotate-180' : ''}`} />
-              </Button>
-            </CollapsibleTrigger>
-          </div>
-
-          <CollapsibleContent>
-            <div className="border-t border-border/70 p-5">
-              <NewsForm
-                form={form}
-                setForm={setForm}
-                saving={saving}
-                submitLabel="حفظ الخبر"
-                onSubmit={handleAdd}
-                onCancel={resetAddForm}
-              />
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
-
-      {news.length === 0 && !adding && (
-        <Card className="p-8 text-center text-sm text-muted-foreground">
-          لا توجد أخبار مضافة حتى الآن. اضغط على إضافة خبر وابدأ أول خبر.
-        </Card>
-      )}
-
-      <div className="space-y-3">
-        {news.map((item) => (
-          <Card key={item.id} className={`border-border bg-card/70 p-4 ${!item.is_published ? 'opacity-65' : ''}`}>
-            {editId === item.id ? (
-              <div className="space-y-4">
-                <NewsForm
-                  form={{
-                    title_en: editForm.title_en ?? '',
-                    title_ar: editForm.title_ar ?? '',
-                    excerpt_en: editForm.excerpt_en ?? '',
-                    excerpt_ar: editForm.excerpt_ar ?? '',
-                    category: editForm.category ?? item.category,
-                    image_url: editForm.image_url ?? '',
-                    published_at: editForm.published_at ?? item.published_at,
-                    is_published: editForm.is_published ?? item.is_published,
-                  }}
-                  setForm={(next) => {
-                    setEditForm((current) => {
-                      const currentForm = {
-                        title_en: current.title_en ?? '',
-                        title_ar: current.title_ar ?? '',
-                        excerpt_en: current.excerpt_en ?? '',
-                        excerpt_ar: current.excerpt_ar ?? '',
-                        category: current.category ?? item.category,
-                        image_url: current.image_url ?? '',
-                        published_at: current.published_at ?? item.published_at,
-                        is_published: current.is_published ?? item.is_published,
-                      };
-                      return typeof next === 'function' ? next(currentForm) : next;
-                    });
-                  }}
-                  saving={saving}
-                  submitLabel="حفظ التعديل"
-                  onSubmit={handleUpdate}
-                  onCancel={() => setEditId(null)}
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                {item.image_url && (
-                  <img
-                    src={item.image_url}
-                    alt={item.title_ar || item.title_en}
-                    className="h-24 w-full rounded-lg border border-border object-cover sm:h-20 sm:w-32"
-                  />
-                )}
-
-                <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <Badge className="bg-primary/15 text-primary hover:bg-primary/20">{item.category}</Badge>
-                    <Badge variant={item.is_published ? 'default' : 'outline'} className="gap-1">
-                      {item.is_published ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
-                      {item.is_published ? 'ظاهر' : 'مسودة'}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground" dir="ltr">{item.published_at}</span>
-                  </div>
-
-                  <h3 className="font-arabic text-base font-bold leading-7 text-foreground">
-                    {item.title_ar || item.title_en}
-                  </h3>
-                  {item.excerpt_ar && (
-                    <p className="mt-1 line-clamp-2 text-sm leading-6 text-muted-foreground">{item.excerpt_ar}</p>
-                  )}
-                  {item.title_en && (
-                    <p className="mt-2 truncate text-xs text-muted-foreground" dir="ltr">{item.title_en}</p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2 sm:flex-col">
-                  <Switch checked={item.is_published} onCheckedChange={(value) => togglePublish(item.id, value)} />
-                  <Button size="icon" variant="outline" className="h-9 w-9" onClick={() => startEdit(item)}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-9 w-9 text-destructive hover:text-destructive"
-                    onClick={() => remove(item.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Card>
-        ))}
+      <div className="flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/35 bg-primary/10 text-primary shadow-neon">
+          <Newspaper className="h-6 w-6" />
+        </div>
+        <div>
+          <h2 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">إدارة الأخبار</h2>
+          <p className="text-sm text-muted-foreground">كل نوع خبر له طريقة إضافة ومكان ظهور مختلف في الموقع.</p>
+        </div>
       </div>
+
+      <Tabs defaultValue="ticker" className="space-y-5">
+        <TabsList className="grid h-auto grid-cols-1 gap-2 bg-card p-1 sm:grid-cols-3">
+          <TabsTrigger value="ticker" className="gap-2 py-3">
+            <Zap className="h-4 w-4" />
+            الشريط
+          </TabsTrigger>
+          <TabsTrigger value="articles" className="gap-2 py-3">
+            <FileText className="h-4 w-4" />
+            صفحة الأخبار
+          </TabsTrigger>
+          <TabsTrigger value="pulse" className="gap-2 py-3">
+            <Newspaper className="h-4 w-4" />
+            نبض كأس العالم
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ticker" className="space-y-4">
+          <Card className="border-primary/25 bg-gradient-card p-5">
+            <SectionTitle
+              title="شريط الأخبار"
+              description="سطر قصير يظهر في شريط الأخبار المتحرك. اكتب السطر واضغط حفظ."
+            />
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <Input
+                value={ticker.title_ar}
+                onChange={(event) => setTicker((current) => ({ ...current, title_ar: event.target.value }))}
+                className="h-11 flex-1 font-arabic text-right"
+                dir="rtl"
+                placeholder="مثال: قرعة نارية في دور المجموعات..."
+              />
+              <Button
+                onClick={() => addItem(ticker, () => setTicker(blankTicker()))}
+                disabled={saving || !ticker.title_ar.trim()}
+                className="h-11 gap-2 font-semibold"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                حفظ السطر
+              </Button>
+            </div>
+          </Card>
+          <NewsList items={tickerItems} empty="لا توجد سطور في الشريط حتى الآن." onRemove={remove} onToggle={togglePublish} />
+        </TabsContent>
+
+        <TabsContent value="articles" className="space-y-4">
+          <Card className="border-primary/25 bg-gradient-card p-5">
+            <SectionTitle
+              title="أخبار صفحة الأخبار"
+              description="خبر كامل له عنوان وتفاصيل وصورة. لو عندك مصدر خارجي أو صفحة تفاصيل طويلة حط الرابط في خانة اللينك."
+            />
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="عنوان الخبر">
+                <Input
+                  value={article.title_ar}
+                  onChange={(event) => setArticle((current) => ({ ...current, title_ar: event.target.value }))}
+                  className="h-10 font-arabic text-right"
+                  dir="rtl"
+                  placeholder="عنوان الخبر..."
+                />
+              </Field>
+              <Field label="التصنيف">
+                <Select value={article.category} onValueChange={(value) => setArticle((current) => ({ ...current, category: value }))}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ARTICLE_CATEGORIES.map((category) => (
+                      <SelectItem key={category} value={category}>{category}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="تفاصيل الخبر" className="sm:col-span-2">
+                <Textarea
+                  value={article.excerpt_ar}
+                  onChange={(event) => setArticle((current) => ({ ...current, excerpt_ar: event.target.value }))}
+                  rows={5}
+                  className="resize-none font-arabic text-right"
+                  dir="rtl"
+                  placeholder="اكتب تفاصيل الخبر هنا..."
+                />
+              </Field>
+              <Field label="رابط الصورة">
+                <Input
+                  value={article.image_url}
+                  onChange={(event) => setArticle((current) => ({ ...current, image_url: event.target.value }))}
+                  className="h-10"
+                  dir="ltr"
+                  placeholder="https://..."
+                />
+              </Field>
+              <Field label="لينك صفحة الخبر أو المصدر">
+                <Input
+                  value={article.excerpt_en}
+                  onChange={(event) => setArticle((current) => ({ ...current, excerpt_en: event.target.value }))}
+                  className="h-10"
+                  dir="ltr"
+                  placeholder="https://... اختياري"
+                />
+              </Field>
+              <Field label="English title اختياري">
+                <Input
+                  value={article.title_en}
+                  onChange={(event) => setArticle((current) => ({ ...current, title_en: event.target.value }))}
+                  className="h-10"
+                  dir="ltr"
+                  placeholder="Optional"
+                />
+              </Field>
+              <PublishSwitch value={article.is_published} onChange={(value) => setArticle((current) => ({ ...current, is_published: value }))} />
+            </div>
+            <Button
+              onClick={() => addItem(article, () => setArticle(blankArticle()))}
+              disabled={saving || !article.title_ar.trim()}
+              className="mt-4 gap-2 font-semibold"
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              حفظ الخبر
+            </Button>
+          </Card>
+          <NewsList items={articleItems} empty="لا توجد أخبار كاملة حتى الآن." onRemove={remove} onToggle={togglePublish} />
+        </TabsContent>
+
+        <TabsContent value="pulse" className="space-y-4">
+          <Card className="border-primary/25 bg-gradient-card p-5">
+            <SectionTitle
+              title="نبض كأس العالم"
+              description="كارت خفيف في الرئيسية: عنوان قصير وتايتل/تصنيف فقط."
+            />
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_220px_auto]">
+              <Input
+                value={pulse.title_ar}
+                onChange={(event) => setPulse((current) => ({ ...current, title_ar: event.target.value }))}
+                className="h-11 font-arabic text-right"
+                dir="rtl"
+                placeholder="مثال: صلاح ومرموش يقودان مصر..."
+              />
+              <Input
+                value={pulse.title_en}
+                onChange={(event) => setPulse((current) => ({ ...current, title_en: event.target.value }))}
+                className="h-11"
+                dir="ltr"
+                placeholder="Title / tag"
+              />
+              <Button
+                onClick={() => addItem(pulse, () => setPulse(blankPulse()))}
+                disabled={saving || !pulse.title_ar.trim()}
+                className="h-11 gap-2 font-semibold"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                حفظ
+              </Button>
+            </div>
+          </Card>
+          <NewsList items={pulseItems} empty="لا توجد عناصر في نبض كأس العالم حتى الآن." onRemove={remove} onToggle={togglePublish} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
 
-type NewsFormState = Omit<ManualNewsRow, 'id' | 'created_at'>;
+function SectionTitle({ title, description }: { title: string; description: string }) {
+  return (
+    <div>
+      <h3 className="font-display text-xl font-extrabold text-foreground">{title}</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+    </div>
+  );
+}
 
-function NewsForm({
-  form,
-  setForm,
-  saving,
-  submitLabel,
-  onSubmit,
-  onCancel,
+function Field({ label, className, children }: { label: string; className?: string; children: ReactNode }) {
+  return (
+    <div className={className}>
+      <Label className="mb-1.5 block text-xs text-muted-foreground">{label}</Label>
+      {children}
+    </div>
+  );
+}
+
+function PublishSwitch({ value, onChange }: { value: boolean; onChange: (value: boolean) => void }) {
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-border bg-background/50 px-3 py-2">
+      <div>
+        <p className="text-sm font-semibold">نشر الآن</p>
+        <p className="text-xs text-muted-foreground">اقفلها لو عايزه مسودة.</p>
+      </div>
+      <Switch checked={value} onCheckedChange={onChange} />
+    </div>
+  );
+}
+
+function NewsList({
+  items,
+  empty,
+  onRemove,
+  onToggle,
 }: {
-  form: NewsFormState;
-  setForm: React.Dispatch<React.SetStateAction<NewsFormState>>;
-  saving: boolean;
-  submitLabel: string;
-  onSubmit: () => void;
-  onCancel: () => void;
+  items: ManualNewsRow[];
+  empty: string;
+  onRemove: (id: string) => Promise<void>;
+  onToggle: (id: string, isPublished: boolean) => Promise<void>;
 }) {
-  const canSave = form.title_ar.trim() || form.title_en.trim();
+  if (items.length === 0) {
+    return <Card className="p-8 text-center text-sm text-muted-foreground">{empty}</Card>;
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="space-y-1 sm:col-span-2">
-          <Label className="text-xs text-muted-foreground">عنوان الخبر بالعربي</Label>
-          <Input
-            value={form.title_ar}
-            onChange={(event) => setForm((current) => ({ ...current, title_ar: event.target.value }))}
-            className="h-10 font-arabic text-right"
-            dir="rtl"
-            placeholder="مثال: نيمار يعود! البرازيل تضمه في قائمتها..."
-          />
-        </div>
-
-        <div className="space-y-1 sm:col-span-2">
-          <Label className="text-xs text-muted-foreground">ملخص قصير</Label>
-          <Textarea
-            value={form.excerpt_ar}
-            onChange={(event) => setForm((current) => ({ ...current, excerpt_ar: event.target.value }))}
-            rows={3}
-            className="resize-none font-arabic text-right"
-            dir="rtl"
-            placeholder="اكتب سطر أو سطرين يظهروا تحت الخبر..."
-          />
-        </div>
-
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">التصنيف</Label>
-          <Select value={form.category} onValueChange={(value) => setForm((current) => ({ ...current, category: value }))}>
-            <SelectTrigger className="h-10">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {CATEGORIES.map((category) => (
-                <SelectItem key={category} value={category}>{category}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">تاريخ النشر</Label>
-          <Input
-            type="date"
-            value={form.published_at}
-            onChange={(event) => setForm((current) => ({ ...current, published_at: event.target.value }))}
-            className="h-10"
-            dir="ltr"
-          />
-        </div>
-
-        <div className="space-y-1 sm:col-span-2">
-          <Label className="text-xs text-muted-foreground">رابط الصورة</Label>
-          <Input
-            value={form.image_url}
-            onChange={(event) => setForm((current) => ({ ...current, image_url: event.target.value }))}
-            className="h-10"
-            dir="ltr"
-            placeholder="https://..."
-          />
-        </div>
-
-        <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">English title اختياري</Label>
-          <Input
-            value={form.title_en}
-            onChange={(event) => setForm((current) => ({ ...current, title_en: event.target.value }))}
-            className="h-10"
-            dir="ltr"
-            placeholder="Optional English title"
-          />
-        </div>
-
-        <div className="flex items-center justify-between rounded-lg border border-border bg-background/50 px-3 py-2">
-          <div>
-            <p className="text-sm font-semibold">نشر الخبر الآن</p>
-            <p className="text-xs text-muted-foreground">اقفلها لو عايزه يبقى مسودة.</p>
+    <div className="space-y-3">
+      {items.map((item) => (
+        <Card key={item.id} className={`border-border bg-card/70 p-4 ${!item.is_published ? 'opacity-65' : ''}`}>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            {item.image_url && (
+              <img
+                src={item.image_url}
+                alt={item.title_ar || item.title_en}
+                className="h-20 w-full rounded-lg border border-border object-cover sm:w-28"
+              />
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <Badge className="bg-primary/15 text-primary hover:bg-primary/20">{item.category}</Badge>
+                <Badge variant={item.is_published ? 'default' : 'outline'} className="gap-1">
+                  {item.is_published ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                  {item.is_published ? 'ظاهر' : 'مسودة'}
+                </Badge>
+                <span className="text-xs text-muted-foreground" dir="ltr">{item.published_at}</span>
+              </div>
+              <h3 className="font-arabic text-base font-bold leading-7 text-foreground">{item.title_ar || item.title_en}</h3>
+              {item.excerpt_ar && <p className="mt-1 line-clamp-2 text-sm leading-6 text-muted-foreground">{item.excerpt_ar}</p>}
+              {item.excerpt_en?.startsWith('http') && (
+                <p className="mt-2 truncate text-xs text-primary" dir="ltr">{item.excerpt_en}</p>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={item.is_published} onCheckedChange={(value) => onToggle(item.id, value)} />
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-9 w-9 text-destructive hover:text-destructive"
+                onClick={() => onRemove(item.id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <Switch
-            checked={form.is_published}
-            onCheckedChange={(value) => setForm((current) => ({ ...current, is_published: value }))}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        <Button onClick={onSubmit} disabled={saving || !canSave} className="gap-2 font-semibold">
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {submitLabel}
-        </Button>
-        <Button variant="outline" onClick={onCancel} className="gap-2">
-          <X className="h-4 w-4" />
-          إلغاء
-        </Button>
-        {canSave && !saving && <span className="flex items-center gap-1 text-xs text-primary"><Check className="h-3 w-3" /> جاهز للحفظ</span>}
-      </div>
+        </Card>
+      ))}
     </div>
   );
 }

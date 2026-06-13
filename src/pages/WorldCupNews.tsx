@@ -8,6 +8,7 @@ import { NewsTicker } from '@/components/tikitaka/NewsTicker';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
 import { ArticleCard } from '@/components/sports/ArticleCard';
 import { useLanguage } from '@/context/LanguageContext';
+import { useManualNews } from '@/hooks/useManualNews';
 import { useRealNews, formatForCards } from '@/hooks/useRealNews';
 import { useTrackVisit } from '@/hooks/useVisitTracking';
 import { t } from '@/lib/i18n';
@@ -20,14 +21,18 @@ const NEWS_IMAGES = [
   'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80',
 ];
 
+const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
+
 function NewsContent() {
   const { lang } = useLanguage();
+  const { news: manualNews, loading: manualLoading } = useManualNews(true);
   const { data: realNews, isLoading } = useRealNews(lang);
-  const articles = formatForCards(realNews, lang);
+  const manualArticles = manualNews.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
+  const externalArticles = formatForCards(realNews, lang);
 
   useTrackVisit({ eventType: 'news_view', page: '/news' });
 
-  if (isLoading) {
+  if (manualLoading || (isLoading && manualArticles.length === 0)) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
         <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
@@ -38,9 +43,28 @@ function NewsContent() {
     );
   }
 
+  if (manualArticles.length > 0) {
+    return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {manualArticles.map((article, index) => (
+          <ArticleCard
+            key={article.id}
+            title={lang === 'ar' ? article.title_ar || article.title_en : article.title_en || article.title_ar}
+            excerpt={lang === 'ar' ? article.excerpt_ar || article.excerpt_en : article.excerpt_en || article.excerpt_ar}
+            category={article.category}
+            image={article.image_url || NEWS_IMAGES[index % NEWS_IMAGES.length]}
+            timestamp={article.published_at}
+            author={lang === 'ar' ? 'تيكي تاكا' : 'Tiki-Taka'}
+            sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {articles?.map((article, index) => (
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {externalArticles?.map((article, index) => (
         <ArticleCard
           key={article.id || index}
           title={article.title}
@@ -71,18 +95,20 @@ const WorldCupNews = () => {
               <Newspaper className="h-5 w-5" />
             </div>
             <div>
-              <h1 className={cn('font-display font-extrabold text-3xl sm:text-4xl', lang === 'ar' && 'font-arabic')}>{t('newsTitle', lang)}</h1>
+              <h1 className={cn('font-display font-extrabold text-3xl sm:text-4xl', lang === 'ar' && 'font-arabic')}>
+                {t('newsTitle', lang)}
+              </h1>
               <p className={cn('text-sm text-muted-foreground', lang === 'ar' && 'font-arabic')}>
                 {lang === 'ar'
-                  ? 'آخر أخبار كأس العالم 2026 من مصادر موثوقة.'
-                  : 'Verified World Cup 2026 news from trusted sources.'}
+                  ? 'آخر أخبار كأس العالم 2026 من لوحة التحكم والمصادر الموثوقة.'
+                  : 'World Cup 2026 news from the dashboard and trusted sources.'}
               </p>
             </div>
           </div>
           <div className="hidden sm:flex items-center gap-2 text-primary text-sm font-bold bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
             <Sparkles className="h-4 w-4" />
             <span className={cn(lang === 'ar' && 'font-arabic')}>
-              {lang === 'ar' ? 'تجميع ذكي' : 'Smart Aggregation'}
+              {lang === 'ar' ? 'تحديث ذكي' : 'Smart Updates'}
             </span>
           </div>
           <AdBanner slotId="news-sidebar-1" />
@@ -91,7 +117,7 @@ const WorldCupNews = () => {
         <GoogleAuthGate
           title={lang === 'ar' ? 'سجل دخولك لقراءة الأخبار' : 'Sign in to read news'}
           description={lang === 'ar'
-            ? 'الدخول مجاني بحساب Google. سنسجل زيارة الأخبار فقط لتحليل الجمهور وتحسين المحتوى.'
+            ? 'الدخول مجاني بحساب Google. نسجل زيارة الأخبار فقط لتحليل الجمهور وتحسين المحتوى.'
             : 'Google sign-in is free. We only record a news visit to understand audience interest.'}
         >
           <NewsContent />

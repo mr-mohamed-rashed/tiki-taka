@@ -15,9 +15,10 @@ export function NewsTicker() {
   const tickerSpeed = Number.isFinite(speed) ? Math.min(Math.max(speed, 50), 140) : 70;
 
   const manualItems = manualNews
+    .filter((item) => item.category === 'Ticker')
     .slice(0, 12)
     .map((item) => ({
-      tag: item.category || (lang === 'ar' ? 'خبر' : 'NEWS'),
+      tag: lang === 'ar' ? 'خبر عاجل' : 'NEWS',
       text: lang === 'ar' ? item.title_ar || item.title_en : item.title_en || item.title_ar,
     }))
     .filter((item) => item.text);

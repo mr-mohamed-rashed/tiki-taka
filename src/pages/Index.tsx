@@ -28,6 +28,7 @@ const Index = () => {
   const { lang, dir } = useLanguage();
   const { get } = useSiteSettingsContext();
   const { news: manualNews } = useManualNews(true);
+  const pulseNews = manualNews.filter((item) => item.category === 'Pulse');
   const featured = getFeaturedNews(lang);
   const nextMatch = getNextMatch();
   const liveMatch = getLiveMatches()[0];
@@ -154,16 +155,16 @@ const Index = () => {
               />
               <div className="space-y-3">
                 {/* Manual news from dashboard */}
-                {manualNews.slice(0, 5).map(n => (
+                {pulseNews.slice(0, 5).map(n => (
                   <div key={n.id} className="block p-4 rounded-lg border border-border bg-gradient-card hover:border-primary/50 hover:shadow-card transition-all group">
-                    <Badge variant="outline" className="border-primary/40 text-primary text-[10px] font-bold mb-2">{n.category}</Badge>
+                    <Badge variant="outline" className="border-primary/40 text-primary text-[10px] font-bold mb-2">{n.title_en || 'PULSE'}</Badge>
                     <p className={cn('text-sm font-semibold group-hover:text-primary transition-colors leading-snug', lang === 'ar' && 'font-arabic')}>
                       {lang === 'ar' ? n.title_ar || n.title_en : n.title_en || n.title_ar}
                     </p>
                   </div>
                 ))}
                 {/* Fallback static headlines when no manual news yet */}
-                {manualNews.length === 0 && [
+                {pulseNews.length === 0 && [
                   { tag: 'SQUADS',  text: lang === 'ar' ? 'نيمار يعود! البرازيل تضمه في قائمتها لكأس العالم 2026 - 18 مايو 2026' : 'Neymar returns! Brazil squad named by Ancelotti — May 18, 2026' },
                   { tag: 'SQUADS',  text: lang === 'ar' ? 'نوير يتراجع عن اعتزاله - ألمانيا تعلن قائمتها بقيادة ناغلسمان' : 'Neuer reverses retirement — Nagelsmann names Germany squad' },
                   { tag: 'SQUADS',  text: lang === 'ar' ? 'صلاح ومرموش يقودان مصر في المجموعة G' : 'Salah & Marmoush lead Egypt in Group G' },
