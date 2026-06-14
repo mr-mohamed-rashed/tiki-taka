@@ -37,13 +37,6 @@ const Index = () => {
   const { data: liveMatches = [] } = useLiveFixtures();
   const liveMatch = liveMatches[0] || getLiveMatches()[0];
   const isEditMode = useEditMode();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (liveMatch) {
-      navigate('/live', { replace: true });
-    }
-  }, [liveMatch, navigate]);
 
   const label = (key: string, fallback: string) => get(key, lang) ?? fallback;
 

@@ -166,7 +166,7 @@ export const getTicker = (): TickerItem[] => [
 /**
  * Live matches - No matches yet (tournament starts June 11, 2026)
  */
-const LIVE_MATCH_WINDOW_MS = 130 * 60 * 1000;
+const LIVE_MATCH_WINDOW_MS = 105 * 60 * 1000;
 
 const isInsideLiveWindow = (match: Match) => {
   const kickoff = new Date(match.date).getTime();
