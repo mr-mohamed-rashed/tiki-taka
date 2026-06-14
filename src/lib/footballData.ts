@@ -33,6 +33,7 @@ export interface Match {
   homeScore: number;
   awayScore: number;
   venue: string;
+  highlight_url?: string;
 }
 
 export interface Scorer {

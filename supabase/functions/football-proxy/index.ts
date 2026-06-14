@@ -103,23 +103,13 @@ Deno.serve(async (req: Request) => {
 });
 
 async function fetchWorldCupMatches(endpoint: ProxyEndpoint): Promise<NormalizedMatch[]> {
-  const [gamesData, stadiumsData] = await Promise.all([
-    fetchJson(`${WORLD_CUP_BASE}/get/games`),
-    fetchJson(`${WORLD_CUP_BASE}/get/stadiums`).catch(() => []),
-  ]);
+  // Use ESPN API
+  const url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard';
+  const data = await fetchJson(url).catch(() => ({ events: [] }));
+  const events = data.events || [];
 
-  const games = Array.isArray(gamesData) ? gamesData : gamesData?.games;
-  if (!Array.isArray(games)) {
-    throw new Error('WorldCup26 games response is invalid');
-  }
-
-  const stadiums = Array.isArray(stadiumsData) ? stadiumsData : stadiumsData?.stadiums;
-  const stadiumById = new Map<string, WorldCupStadium>(
-    Array.isArray(stadiums) ? stadiums.map((stadium: WorldCupStadium) => [String(stadium.id), stadium]) : [],
-  );
-
-  return games
-    .map((game: WorldCupGame) => normalizeWorldCupGame(game, stadiumById.get(String(game.stadium_id ?? ''))))
+  return events
+    .map(normalizeESPNMatch)
     .filter((match: NormalizedMatch) => {
       if (endpoint === 'live') return match.status === 'live';
       if (endpoint === 'results') return match.status === 'finished';
@@ -129,37 +119,44 @@ async function fetchWorldCupMatches(endpoint: ProxyEndpoint): Promise<Normalized
     .slice(0, endpoint === 'fixtures' ? 12 : 20);
 }
 
-function normalizeWorldCupGame(game: WorldCupGame, stadium?: WorldCupStadium): NormalizedMatch {
-  const homeName = game.home_team_name_en || game.home_team_label || 'TBD';
-  const awayName = game.away_team_name_en || game.away_team_label || 'TBD';
-  const timeElapsed = String(game.time_elapsed ?? '').toLowerCase();
-  const finished = String(game.finished ?? '').toLowerCase() === 'true';
-  const isLive = !finished && timeElapsed !== 'notstarted' && timeElapsed !== '' && timeElapsed !== 'null';
-  const stage = formatStage(game);
+function normalizeESPNMatch(event: any): NormalizedMatch {
+  const comp = event.competitions?.[0];
+  const home = comp?.competitors?.find((c: any) => c.homeAway === 'home');
+  const away = comp?.competitors?.find((c: any) => c.homeAway === 'away');
+  const statusType = event.status?.type || {};
+  
+  // ESPN states: 'pre', 'in', 'post'
+  const state = statusType.state;
+  let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
+  if (state === 'in') status = 'live';
+  if (state === 'post') status = 'finished';
+
+  const homeName = home?.team?.displayName || home?.team?.name || 'TBD';
+  const awayName = away?.team?.displayName || away?.team?.name || 'TBD';
 
   return {
-    id: String(game.id),
+    id: String(event.id),
     competition: 'FIFA World Cup 2026',
-    stage,
-    date: parseWorldCupDate(game.local_date),
-    status: isLive ? 'live' : finished ? 'finished' : 'upcoming',
-    minute: isLive ? `${timeElapsed}'` : undefined,
-    home: buildTeam(homeName),
-    away: buildTeam(awayName),
-    homeScore: toScore(game.home_score),
-    awayScore: toScore(game.away_score),
-    venue: formatVenue(stadium),
+    stage: event.season?.type === 2 ? 'Group Stage' : 'Knockout',
+    date: event.date,
+    status,
+    minute: status === 'live' ? event.status?.displayClock : undefined,
+    home: buildTeam(homeName, home?.team?.logo),
+    away: buildTeam(awayName, away?.team?.logo),
+    homeScore: parseInt(home?.score || '0') || 0,
+    awayScore: parseInt(away?.score || '0') || 0,
+    venue: comp?.venue?.fullName || '',
   };
 }
 
-function buildTeam(name: string) {
+function buildTeam(name: string, logo?: string) {
   const code = name === 'TBD' ? 'TBD' : name.slice(0, 3).toUpperCase();
 
   return {
     id: name,
     name,
     shortName: code,
-    flag: '',
+    flag: logo || '',
     code,
     color: '#888888',
   };
@@ -174,23 +171,12 @@ function parseWorldCupDate(value?: string): string {
   return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute))).toISOString();
 }
 
-function formatStage(game: WorldCupGame): string {
-  const type = game.type?.toUpperCase() || 'GROUP';
-  if (type === 'GROUP') return `Group ${game.group ?? ''} - Matchday ${game.matchday ?? ''}`.trim();
-  if (type === 'R32') return 'Round of 32';
-  if (type === 'R16') return 'Round of 16';
-  if (type === 'QF') return 'Quarterfinal';
-  if (type === 'SF') return 'Semifinal';
-  if (type === 'THIRD') return 'Third Place';
-  if (type === 'FINAL') return 'Final';
-  return type;
+function formatStage(game: any): string {
+  return 'World Cup 2026';
 }
 
-function formatVenue(stadium?: WorldCupStadium): string {
-  if (!stadium) return '';
-  const name = stadium.fifa_name || stadium.name_en || '';
-  const city = [stadium.city_en, stadium.country_en].filter(Boolean).join(', ');
-  return [name, city].filter(Boolean).join(' - ');
+function formatVenue(stadium?: any): string {
+  return '';
 }
 
 function toScore(value?: string): number {

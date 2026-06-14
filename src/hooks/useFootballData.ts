@@ -62,49 +62,12 @@ async function callProxy(body: object) {
   }
 }
 
-// ---------- Map manual_matches to Match ----------
-function mapManualMatch(row: any): Match {
-  return {
-    id: row.id,
-    competition: row.competition,
-    stage: row.stage,
-    date: row.date,
-    status: row.status as any,
-    minute: row.minute,
-    home: {
-      id: row.home_team_id,
-      name: row.home_team_name,
-      shortName: row.home_team_name.substring(0, 3).toUpperCase(),
-      flag: row.home_team_flag,
-      code: 'NA',
-      color: '#000000',
-    },
-    away: {
-      id: row.away_team_id,
-      name: row.away_team_name,
-      shortName: row.away_team_name.substring(0, 3).toUpperCase(),
-      flag: row.away_team_flag,
-      code: 'NA',
-      color: '#000000',
-    },
-    homeScore: row.home_score,
-    awayScore: row.away_score,
-    venue: row.venue,
-    highlight_url: row.highlight_url,
-  };
-}
-
 // ---------- Live fixtures ----------
 export function useLiveFixtures() {
   return useQuery({
     queryKey: ['live-fixtures'],
     queryFn: async () => {
       try {
-        const { data: manualData, error } = await supabase.from('manual_matches' as any).select('*').eq('status', 'live');
-        if (!error && manualData && manualData.length > 0) {
-          return manualData.map(mapManualMatch);
-        }
-        
         const data = await callProxy({ endpoint: 'live' });
         if (data?.matches?.length) return data.matches as Match[];
         if (!data?.response?.length) return getLiveMatches(); // fallback to mock
@@ -124,11 +87,6 @@ export function useUpcomingFixtures() {
     queryKey: ['upcoming-fixtures'],
     queryFn: async () => {
       try {
-        const { data: manualData, error } = await supabase.from('manual_matches' as any).select('*').eq('status', 'upcoming');
-        if (!error && manualData && manualData.length > 0) {
-          return manualData.map(mapManualMatch);
-        }
-
         const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.matches?.length) return getUpcomingOnly(data.matches as Match[]);
         if (!data?.response?.length) return getUpcomingOnly(getUpcomingMatches());
@@ -147,17 +105,12 @@ export function useResults() {
     queryKey: ['results'],
     queryFn: async () => {
       try {
-        const { data: manualData, error } = await supabase.from('manual_matches' as any).select('*').eq('status', 'finished');
-        if (!error && manualData && manualData.length > 0) {
-          return manualData.map(mapManualMatch);
-        }
-
         const data = await callProxy({ endpoint: 'results', league: WC_LEAGUE, season: WC_SEASON });
         let proxyResults: Match[] = [];
         if (data?.matches?.length) proxyResults = getFinishedOnly(data.matches as Match[]);
         else if (data?.response?.length) proxyResults = getFinishedOnly(data.response.map(mapFixture));
         
-        const mockResults = getMockResults();
+        const mockResults = getFinishedMatches();
         const teamsMap = Object.values(teams);
         
         proxyResults = proxyResults.map(m => {
@@ -181,9 +134,22 @@ export function useResults() {
           }
         }
         
-        return uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const sortedResults = uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        // Fetch highlights from Supabase
+        const { data: highlights, error } = await supabase.from('match_highlights' as any).select('*');
+        if (!error && highlights && highlights.length > 0) {
+          return sortedResults.map(match => {
+            const h = highlights.find((x: any) => x.match_id === match.id);
+            if (h) {
+              return { ...match, highlight_url: h.highlight_url };
+            }
+            return match;
+          });
+        }
+        return sortedResults;
       } catch {
-        return getMockResults();
+        return getFinishedMatches();
       }
     },
     refetchInterval: 120_000,
