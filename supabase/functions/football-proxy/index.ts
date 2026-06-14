@@ -3,7 +3,7 @@ const CORS = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const WORLD_CUP_BASE = 'https://worldcup26.ir';
+
 const API_FOOTBALL_BASE = 'https://v3.football.api-sports.io';
 
 type ProxyEndpoint = 'live' | 'fixtures' | 'results' | 'standings' | 'topscorers' | 'fixture_events' | 'groups';
@@ -15,30 +15,7 @@ type ProxyRequest = {
   fixtureId?: string;
 };
 
-type WorldCupGame = {
-  id: string;
-  home_score?: string;
-  away_score?: string;
-  group?: string;
-  matchday?: string;
-  local_date?: string;
-  stadium_id?: string;
-  finished?: string;
-  time_elapsed?: string;
-  type?: string;
-  home_team_name_en?: string;
-  away_team_name_en?: string;
-  home_team_label?: string;
-  away_team_label?: string;
-};
 
-type WorldCupStadium = {
-  id: string;
-  name_en?: string;
-  fifa_name?: string;
-  city_en?: string;
-  country_en?: string;
-};
 
 type NormalizedMatch = {
   id: string;
@@ -162,29 +139,9 @@ function buildTeam(name: string, logo?: string) {
   };
 }
 
-function parseWorldCupDate(value?: string): string {
-  if (!value) return new Date().toISOString();
-  const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/);
-  if (!match) return new Date(value).toISOString();
-
-  const [, month, day, year, hour, minute] = match;
-  return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute))).toISOString();
-}
-
-function formatStage(game: any): string {
-  return 'World Cup 2026';
-}
-
-function formatVenue(stadium?: any): string {
-  return '';
-}
-
-function toScore(value?: string): number {
-  const score = Number(value);
-  return Number.isFinite(score) ? score : 0;
-}
 
 async function fetchApiFootball({ endpoint, league, season, fixtureId }: Required<Pick<ProxyRequest, 'endpoint' | 'league' | 'season'>> & Pick<ProxyRequest, 'fixtureId'>) {
+  // @ts-ignore - Deno is available in Supabase edge functions
   const apiKey = Deno.env.get('API_FOOTBALL_KEY') ?? '';
   if (!apiKey) {
     return { response: [] };

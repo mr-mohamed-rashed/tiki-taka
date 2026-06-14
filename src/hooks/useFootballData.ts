@@ -25,10 +25,13 @@ async function callProxy(body: object) {
           // Normalize directly using our getUpcomingMatches as a base
           const baseMatches = [...getFinishedMatches(), ...getUpcomingMatches()];
           const mapped = baseMatches.map(m => {
-            const apiGame = games.find((g: any) => 
-              g.home_team_name_en?.toLowerCase() === m.home.name.toLowerCase() &&
-              g.away_team_name_en?.toLowerCase() === m.away.name.toLowerCase()
-            );
+            const apiGame = games.find((g: any) => {
+              const apiHome = (g.home_team_name_en || '').toLowerCase().replace('turkey', 'turkiye').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+              const apiAway = (g.away_team_name_en || '').toLowerCase().replace('turkey', 'turkiye').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+              const myHome = m.home.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+              const myAway = m.away.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+              return apiHome === myHome && apiAway === myAway;
+            });
             if (apiGame) {
               const finished = String(apiGame.finished ?? '').toLowerCase() === 'true';
               const timeElapsed = String(apiGame.time_elapsed ?? '').toLowerCase();
