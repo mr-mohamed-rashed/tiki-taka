@@ -6,10 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AD_SLOTS, getSlotsByLocation } from '@/lib/adSlots';
+import { AD_SLOTS, getSlotsByLocation, LOCATIONS } from '@/lib/adSlots';
 import { useEditMode } from '@/hooks/useEditMode';
-
-const LOCATIONS = ['hero', 'sidebar', 'news-page', 'live-page', 'global'];
 
 export function AdBanner({ slotId }: { slotId: string }) {
   const { banners, update } = useAdBanners();
@@ -24,7 +22,14 @@ export function AdBanner({ slotId }: { slotId: string }) {
   const slot = getSlotById(slotId);
   if (!slot) return null;
 
-  const activeBanner = banners.find(b => b.is_active && (b.slot_id === slotId || b.position === slotId));
+  const allLocationSlots = getSlotsByLocation(slot.location);
+  const isFirstSlotInLocation = allLocationSlots[0]?.id === slotId;
+
+  const activeBanner = banners.find(b => b.is_active && (
+    b.slot_id === slotId || 
+    b.position === slotId ||
+    (b.position === slot.location && !b.slot_id && isFirstSlotInLocation)
+  ));
   if (!activeBanner) return null;
 
   const startEdit = () => {

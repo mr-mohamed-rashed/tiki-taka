@@ -20,12 +20,7 @@ const WIDGET_KEYS = [
   { key: 'highlightsSub', label: 'Highlights Subtitle' },
 ];
 
-const SOCIAL_KEYS = [
-  { key: 'social_facebook_url', label: 'Facebook', placeholder: 'https://facebook.com/...' },
-  { key: 'social_tiktok_url', label: 'TikTok', placeholder: 'https://tiktok.com/@...' },
-  { key: 'social_youtube_url', label: 'YouTube', placeholder: 'https://youtube.com/@...' },
-  { key: 'social_website_url', label: 'Website', placeholder: 'https://...' },
-];
+
 
 export function WidgetLabelsTab() {
   const { settings, loading, save } = useSiteSettings();
@@ -62,108 +57,7 @@ export function WidgetLabelsTab() {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Edit compact section labels and social links.</p>
-
-      <Card className="border-border bg-gradient-card p-4">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold">Live Stream Settings</h3>
-            <p className="text-xs text-muted-foreground">Add multiple streaming servers for the live match player.</p>
-          </div>
-          <Button variant="outline" size="sm" onClick={() => {
-            const currentServersStr = getVal('live_stream_url', 'en');
-            let parsed = [];
-            try { parsed = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) parsed = [{name: 'Server 1', url: currentServersStr}] }
-            parsed.push({ name: `Server ${parsed.length + 1}`, url: '' });
-            setVal('live_stream_url', 'en', JSON.stringify(parsed));
-          }}>
-            Add Server
-          </Button>
-        </div>
-        <div className="space-y-3">
-          {(() => {
-            const currentServersStr = getVal('live_stream_url', 'en');
-            let servers = [];
-            try { servers = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) servers = [{name: 'Server 1', url: currentServersStr}] }
-            
-            if (servers.length === 0) {
-              return <div className="text-sm text-muted-foreground italic p-2 border border-dashed rounded-lg text-center">No servers added. The 2D Tracker will be shown.</div>;
-            }
-
-            return servers.map((server: any, idx: number) => (
-              <div key={idx} className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[100px_1fr_auto] xl:items-end relative group">
-                <Field label="Server Name">
-                  <Input
-                    value={server.name}
-                    onChange={(e) => {
-                      const newServers = [...servers];
-                      newServers[idx].name = e.target.value;
-                      setVal('live_stream_url', 'en', JSON.stringify(newServers));
-                    }}
-                    placeholder="e.g. Server 1"
-                    className="h-8"
-                  />
-                </Field>
-                <Field label="Embed URL">
-                  <Input
-                    value={server.url}
-                    onChange={(e) => {
-                      const newServers = [...servers];
-                      newServers[idx].url = e.target.value;
-                      setVal('live_stream_url', 'en', JSON.stringify(newServers));
-                    }}
-                    placeholder="https://youtube.com/embed/..."
-                    className="h-8"
-                    dir="ltr"
-                  />
-                </Field>
-                <Button variant="destructive" size="sm" className="h-8" onClick={() => {
-                  const newServers = servers.filter((_: any, i: number) => i !== idx);
-                  setVal('live_stream_url', 'en', JSON.stringify(newServers));
-                }}>
-                  Remove
-                </Button>
-              </div>
-            ));
-          })()}
-          
-          <div className="flex justify-end pt-2 border-t border-border">
-            <SaveButton itemKey="live_stream_url" saving={saving} saved={saved} onClick={() => saveLabelKey('live_stream_url')} />
-          </div>
-        </div>
-      </Card>
-
-      <Card className="border-border bg-gradient-card p-4">
-        <div className="mb-4">
-          <h3 className="text-sm font-bold">Social links</h3>
-          <p className="text-xs text-muted-foreground">The title appears next to the icon under the 2D match screen.</p>
-        </div>
-        <div className="space-y-2">
-          {SOCIAL_KEYS.map(({ key, label, placeholder }) => (
-            <div key={key} className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[150px_220px_1fr_auto] xl:items-end">
-              <KeyLabel itemKey={key} label={label} />
-              <Field label="Title">
-                <Input
-                  value={getVal(key, 'ar') || label}
-                  onChange={(event) => setVal(key, 'ar', event.target.value)}
-                  placeholder={label}
-                  className="h-8"
-                />
-              </Field>
-              <Field label="Link">
-                <Input
-                  value={getVal(key, 'en')}
-                  onChange={(event) => setVal(key, 'en', event.target.value)}
-                  placeholder={placeholder}
-                  className="h-8"
-                  dir="ltr"
-                />
-              </Field>
-              <SaveButton itemKey={key} saving={saving} saved={saved} onClick={() => saveLabelKey(key)} />
-            </div>
-          ))}
-        </div>
-      </Card>
+      <p className="text-sm text-muted-foreground">Edit compact section labels across the site.</p>
 
       <Card className="border-border bg-gradient-card p-4">
         <div className="mb-4">

@@ -9,6 +9,7 @@ import { MatchCenter } from '@/components/tikitaka/MatchCenter';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
+import { TournamentCountdown } from '@/components/tikitaka/TournamentCountdown';
 import { useLanguage } from '@/context/LanguageContext';
 import { useLiveFixtures, useUpcomingFixtures } from '@/hooks/useFootballData';
 import { t } from '@/lib/i18n';
@@ -21,7 +22,7 @@ const LiveMatches = () => {
   const nextMatch = upcomingMatches
     .filter((match) => new Date(match.date).getTime() >= Date.now())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcomingMatches[0];
-  const featured = liveMatches[0] || nextMatch;
+  const featured = liveMatches[0]; // ONLY use actual live matches for the tracker
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
@@ -45,10 +46,13 @@ const LiveMatches = () => {
               </p>
             </div>
           </div>
-          <AdBanner slotId="live-sidebar-1" />
+          <div className="flex flex-col gap-4">
+            <AdBanner slotId="live-sidebar-1" />
+            <AdBanner slotId="live-sidebar-2" />
+          </div>
         </header>
 
-        {featured && (
+        {featured ? (
           <section>
             <div className="flex items-center gap-2 mb-5">
               <Tv className="h-5 w-5 text-primary" />
@@ -77,6 +81,10 @@ const LiveMatches = () => {
             <div className="max-w-2xl">
               <LiveChat matchId={featured.id} />
             </div>
+          </section>
+        ) : (
+          <section className="max-w-2xl mx-auto mb-12">
+            {nextMatch ? <TournamentCountdown match={nextMatch} /> : null}
           </section>
         )}
 

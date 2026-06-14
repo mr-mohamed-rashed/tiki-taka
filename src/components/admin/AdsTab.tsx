@@ -9,9 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAdBanners, type AdBannerRow } from '@/hooks/useAdBanners';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Switch } from '@/components/ui/switch';
-import { AD_SLOTS, getSlotsByLocation } from '@/lib/adSlots';
-
-const LOCATIONS = ['hero', 'sidebar', 'news-page', 'live-page', 'marquee'];
+import { AD_SLOTS, getSlotsByLocation, LOCATIONS } from '@/lib/adSlots';
 
 const blank = (): Omit<AdBannerRow, 'id' | 'created_at'> => ({
   position: 'hero', slot_id: '', title: '', image_url: '', link_url: '', is_active: true, sort_order: 0, width: '280px', height: 'auto',
@@ -121,7 +119,10 @@ export function AdsTab() {
             </div>
             <div className="space-y-2">
               <Label>Location</Label>
-              <Select value={form.position} onValueChange={v => setForm(f => ({ ...f, position: v, slot_id: '' }))}>
+              <Select value={form.position} onValueChange={v => {
+                const firstSlot = getSlotsByLocation(v)[0];
+                setForm(f => ({ ...f, position: v, slot_id: firstSlot ? firstSlot.id : '' }))
+              }}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{LOCATIONS.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
               </Select>

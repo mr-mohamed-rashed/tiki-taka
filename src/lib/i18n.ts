@@ -106,7 +106,7 @@ const T = {
   adminLabels: { en: 'Labels', ar: 'التسميات' },
   adminAds: { en: 'Ads', ar: 'الإعلانات' },
   adminNews: { en: 'News', ar: 'الأخبار' },
-  adminTest: { en: 'Test', ar: 'اختبار' },
+  adminMediaPlayer: { en: 'Media Player', ar: 'مشغل الميديا' },
   adminAnalytics: { en: 'Analytics', ar: 'التحليلات' },
 } as const;
 

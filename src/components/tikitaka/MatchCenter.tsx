@@ -16,7 +16,7 @@ interface MatchCenterProps {
   liveTabRedirectTo?: string;
 }
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 4;
 
 export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCenterProps) {
   const { lang } = useLanguage();

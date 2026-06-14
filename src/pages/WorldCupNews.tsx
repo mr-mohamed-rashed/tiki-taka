@@ -105,7 +105,10 @@ const WorldCupNews = () => {
               {lang === 'ar' ? 'تحديث ذكي' : 'Smart Updates'}
             </span>
           </div>
-          <AdBanner slotId="news-sidebar-1" />
+          <div className="flex flex-col gap-4">
+            <AdBanner slotId="news-sidebar-1" />
+            <AdBanner slotId="news-sidebar-2" />
+          </div>
         </div>
 
         <GoogleAuthGate

@@ -1,4 +1,4 @@
-import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity } from 'lucide-react';
+import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity, PlayCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { WidgetLabelsTab } from '@/components/admin/WidgetLabelsTab';
 import { AdsTab } from '@/components/admin/AdsTab';
 import { NewsTab } from '@/components/admin/NewsTab';
 import { PageBuilder } from '@/components/admin/PageBuilder';
-import { TestPanel } from '@/components/admin/TestPanel';
+import { MediaPlayerTab } from '@/components/admin/MediaPlayerTab';
 import { AnalyticsTab } from '@/components/admin/AnalyticsTab';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
@@ -80,8 +80,8 @@ export default function Admin() {
             <TabsTrigger value="news" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <Newspaper className="h-4 w-4" /> {t('adminNews', lang)}
             </TabsTrigger>
-            <TabsTrigger value="test" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
-              <CheckCircle className="h-4 w-4" /> {t('adminTest', lang)}
+            <TabsTrigger value="mediaplayer" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
+              <PlayCircle className="h-4 w-4" /> {t('adminMediaPlayer', lang)}
             </TabsTrigger>
           </TabsList>
 
@@ -90,7 +90,7 @@ export default function Admin() {
           <TabsContent value="widgets"><WidgetLabelsTab /></TabsContent>
           <TabsContent value="ads"><AdsTab /></TabsContent>
           <TabsContent value="news"><NewsTab /></TabsContent>
-          <TabsContent value="test"><TestPanel /></TabsContent>
+          <TabsContent value="mediaplayer"><MediaPlayerTab /></TabsContent>
         </Tabs>
       </main>
     </div>

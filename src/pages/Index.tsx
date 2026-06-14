@@ -101,6 +101,7 @@ const Index = () => {
             <div className="flex-shrink-0 w-full lg:w-auto lg:max-w-sm xl:max-w-md flex flex-col gap-4">
               <AdSlotSelector location="hero" onAdd={() => {}} />
               <AdBanner slotId="hero-sidebar-1" />
+              <AdBanner slotId="hero-sidebar-2" />
             </div>
           </div>
         </div>

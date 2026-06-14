@@ -10,6 +10,8 @@ export interface AdSlot {
   description: string;
 }
 
+export const LOCATIONS = ['global', 'hero', 'news-page', 'live-page', 'marquee'];
+
 export const AD_SLOTS: AdSlot[] = [
   // Global Floating Ad
   {
