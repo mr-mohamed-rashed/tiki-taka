@@ -146,15 +146,7 @@ const Index = () => {
           <MatchCenter defaultTab="fixtures" />
         </section>
 
-        {false && <section>
-          <SectionHeader
-            icon={<LayoutGrid className="h-5 w-5" />}
-            title={<EditableSiteText settingKey="section_apiWidget" fallbackEn="World Cup League – Live Widget" fallbackAr="دوري كأس العالم – ويدجت مباشر" />}
-            subtitle={<EditableSiteText settingKey="section_apiWidgetSub" fallbackEn="Embedded directly from API-Football" fallbackAr="مُدمج مباشرةً من API-Football" />}
-            lang={lang}
-          />
-          <ApiSportsWidget />
-        </section>}
+        {/* ApiSportsWidget removed temporarily */}
 
         <section>
           <TrendingSidebar />
@@ -189,19 +181,6 @@ const Index = () => {
                     <p className={cn('text-sm font-semibold group-hover:text-primary transition-colors leading-snug', lang === 'ar' && 'font-arabic')}>
                       {lang === 'ar' ? n.title_ar || n.title_en : n.title_en || n.title_ar}
                     </p>
-                  </div>
-                ))}
-                {/* Fallback static headlines when no manual news yet */}
-                {false && [
-                  { tag: 'SQUADS', text: lang === 'ar' ? 'نيمار يعود! البرازيل تضمه في قائمتها لكأس العالم 2026 - 18 مايو 2026' : 'Neymar returns! Brazil squad named by Ancelotti — May 18, 2026' },
-                  { tag: 'SQUADS', text: lang === 'ar' ? 'نوير يتراجع عن اعتزاله - ألمانيا تعلن قائمتها بقيادة ناغلسمان' : 'Neuer reverses retirement — Nagelsmann names Germany squad' },
-                  { tag: 'SQUADS', text: lang === 'ar' ? 'صلاح ومرموش يقودان مصر في المجموعة G' : 'Salah & Marmoush lead Egypt in Group G' },
-                  { tag: 'GROUPS', text: lang === 'ar' ? 'الأرجنتين مع الجزائر والنمسا والأردن في المجموعة J' : 'Argentina face Algeria, Austria & Jordan in Group J' },
-                  { tag: 'PREVIEW', text: lang === 'ar' ? '13 يوماً على الانطلاق - المباراة الافتتاحية: المكسيك ضد جنوب أفريقيا' : '13 days to go — Opening match: Mexico vs South Africa at Azteca' },
-                ].map((n, i) => (
-                  <div key={i} className="block p-4 rounded-lg border border-border bg-gradient-card hover:border-primary/50 hover:shadow-card transition-all group">
-                    <Badge variant="outline" className="border-primary/40 text-primary text-[10px] font-bold mb-2">{n.tag}</Badge>
-                    <p className={cn('text-sm font-semibold group-hover:text-primary transition-colors leading-snug', lang === 'ar' && 'font-arabic')}>{n.text}</p>
                   </div>
                 ))}
               </div>

@@ -50,10 +50,6 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
           <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('tabLive', lang)}</span>
           {liveLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <span className="text-xs opacity-70">({live.length})</span>}
         </TabsTrigger>
-        {false && <TabsTrigger value="roadmap" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
-          <Trophy className="h-4 w-4" />
-          <span className={lang === 'ar' ? 'font-arabic' : ''}>{lang === 'ar' ? 'طريق الكأس' : 'Cup Road'}</span>
-        </TabsTrigger>}
         <TabsTrigger value="fixtures" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
           <Calendar className="h-4 w-4" />
           <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('tabFixtures', lang)}</span>

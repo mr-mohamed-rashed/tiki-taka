@@ -11,6 +11,34 @@ import type { Scorer } from '@/lib/footballData';
 
 type SortKey = 'rank' | 'goals' | 'assists' | 'matches';
 
+const BootIcon = ({ className, rank }: { className?: string, rank: number }) => {
+  const gradientId = `boot-grad-${rank}`;
+  const stop1 = rank === 1 ? '#FDE047' : rank === 2 ? '#E2E8F0' : '#FCA5A5'; // Light gold/silver/bronze
+  const stop2 = rank === 1 ? '#D97706' : rank === 2 ? '#64748B' : '#9A3412'; // Dark gold/silver/bronze
+  return (
+    <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={stop1} />
+          <stop offset="50%" stopColor={stop2} />
+          <stop offset="100%" stopColor={stop1} />
+        </linearGradient>
+      </defs>
+      <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1c0-1.5-1-3-2.5-3.5L14 12V7a2 2 0 0 0-4 0v2L7 11c-1.5 1-3 2.5-3 3z" fill={`url(#${gradientId})`} stroke={stop2} strokeWidth="0.5" strokeLinejoin="round"/>
+      <path d="M6 20v1.5 M10 20v1.5 M14 20v1.5 M18 20v1.5" stroke={stop2} strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M8 14l3-2" stroke="white" strokeOpacity="0.6" strokeWidth="1.5" strokeLinecap="round"/>
+      <circle cx="15" cy="15" r="1.5" fill="white" fillOpacity="0.4" />
+    </svg>
+  );
+};
+
+const getRankColors = (rank: number) => {
+  if (rank === 1) return { text: 'text-yellow-500', bg: 'bg-yellow-500', border: 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]', rowBg: 'bg-gradient-to-r from-yellow-500/10 via-transparent to-transparent hover:from-yellow-500/15' };
+  if (rank === 2) return { text: 'text-slate-300', bg: 'bg-slate-300', border: 'border-slate-400/50 shadow-[0_0_15px_rgba(148,163,184,0.2)]', rowBg: 'bg-gradient-to-r from-slate-400/10 via-transparent to-transparent hover:from-slate-400/15' };
+  if (rank === 3) return { text: 'text-amber-600', bg: 'bg-amber-600', border: 'border-amber-600/50 shadow-[0_0_15px_rgba(217,119,6,0.2)]', rowBg: 'bg-gradient-to-r from-amber-600/10 via-transparent to-transparent hover:from-amber-600/15' };
+  return { text: 'text-foreground', bg: 'bg-muted', border: 'border-border', rowBg: 'hover:bg-muted/50' };
+};
+
 export function TopScorersTable() {
   const { lang } = useLanguage();
   const { data: scorersData, isLoading } = useTopScorers();
@@ -100,20 +128,22 @@ export function TopScorersTable() {
                 </TableCell>
               </TableRow>
             ))}
-            {!isLoading && visibleScorers.map((scorer: Scorer) => (
+            {!isLoading && visibleScorers.map((scorer: Scorer) => {
+              const colors = getRankColors(scorer.rank);
+              const isTop3 = scorer.rank <= 3;
+              return (
               <TableRow
                 key={scorer.name}
                 className={cn(
-                  'border-border transition-colors',
-                  scorer.isLeader
-                    ? 'bg-gradient-to-r from-gold/10 via-transparent to-transparent hover:from-gold/15'
-                    : 'hover:bg-muted/50',
+                  'transition-colors border-y',
+                  colors.border,
+                  colors.rowBg
                 )}
               >
                 <TableCell>
                   <div className={cn(
                     'w-7 h-7 rounded-md flex items-center justify-center text-sm font-bold font-display',
-                    scorer.isLeader ? 'bg-gold text-gold-foreground shadow-card' : 'bg-muted text-foreground',
+                    isTop3 ? `${colors.bg} text-black shadow-card` : 'bg-muted text-foreground',
                   )}>
                     {scorer.rank}
                   </div>
@@ -122,7 +152,10 @@ export function TopScorersTable() {
                   <div className="flex items-center gap-3">
                     <img src={scorer.country.flag} alt={scorer.country.name} className="w-6 h-6 rounded object-cover ring-1 ring-border" />
                     <div>
-                      <div className={cn('font-bold text-sm', scorer.isLeader && 'text-gold')}>{scorer.name}</div>
+                      <div className={cn('font-bold text-sm flex items-center gap-2', isTop3 && colors.text)}>
+                        {scorer.name}
+                        {isTop3 && <BootIcon className="w-5 h-5 drop-shadow-md" rank={scorer.rank} />}
+                      </div>
                       <div className="text-xs text-muted-foreground md:hidden">{scorer.club}</div>
                     </div>
                   </div>
@@ -143,7 +176,8 @@ export function TopScorersTable() {
                   {scorer.matches}
                 </TableCell>
               </TableRow>
-            ))}
+              );
+            })}
           </TableBody>
         </Table>
       </div>
