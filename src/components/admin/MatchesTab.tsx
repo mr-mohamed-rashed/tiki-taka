@@ -19,10 +19,11 @@ export function MatchesTab() {
     if (url === undefined) return;
 
     setSavingId(matchId);
-    const { error } = await supabase.from('match_highlights' as any).upsert({ 
-      match_id: matchId, 
-      highlight_url: url 
-    });
+    const { error } = await supabase.from('site_settings').upsert({ 
+      key: `match_highlight_${matchId}`, 
+      value_en: url,
+      value_ar: url
+    }, { onConflict: 'key' });
     
     setSavingId(null);
     if (error) {

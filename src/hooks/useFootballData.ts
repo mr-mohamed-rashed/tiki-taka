@@ -137,12 +137,12 @@ export function useResults() {
         const sortedResults = uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         // Fetch highlights from Supabase
-        const { data: highlights, error } = await supabase.from('match_highlights' as any).select('*');
-        if (!error && highlights && highlights.length > 0) {
+        const { data: settings, error } = await supabase.from('site_settings').select('*').like('key', 'match_highlight_%');
+        if (!error && settings && settings.length > 0) {
           return sortedResults.map(match => {
-            const h = highlights.find((x: any) => x.match_id === match.id);
+            const h = settings.find((x: any) => x.key === `match_highlight_${match.id}`);
             if (h) {
-              return { ...match, highlight_url: h.highlight_url };
+              return { ...match, highlight_url: h.value_en };
             }
             return match;
           });
