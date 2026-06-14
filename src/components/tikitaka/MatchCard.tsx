@@ -144,12 +144,21 @@ export function MatchCard({ match }: MatchCardProps) {
 
       {isFinished && (
         <div className="px-4 pb-4">
-          <Button onClick={openHighlights} variant={match.highlight_url ? "default" : "outline"} className={cn("w-full font-bold", !match.highlight_url && "border-primary/40 text-primary hover:bg-primary/10")}>
-            <ExternalLink className="h-4 w-4 me-2" />
-            {match.highlight_url 
-              ? (lang === 'ar' ? 'مشاهدة فيديو الملخص' : 'Watch Highlight Video')
-              : (lang === 'ar' ? 'بحث عن الملخص في يوتيوب' : 'Search Highlights on YouTube')}
-          </Button>
+          {match.highlight_url ? (
+            <div className="aspect-video w-full overflow-hidden rounded-xl bg-black/50 ring-1 ring-border shadow-lg relative">
+               <iframe
+                  src={getYouTubeEmbedUrl(match.highlight_url)}
+                  className="w-full h-full border-0 absolute inset-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+            </div>
+          ) : (
+            <Button onClick={openHighlights} variant="outline" className="w-full font-bold border-primary/40 text-primary hover:bg-primary/10">
+              <ExternalLink className="h-4 w-4 me-2" />
+              {lang === 'ar' ? 'بحث عن الملخص في يوتيوب' : 'Search Highlights on YouTube'}
+            </Button>
+          )}
         </div>
       )}
 
@@ -164,4 +173,22 @@ export function MatchCard({ match }: MatchCardProps) {
       </div>
     </Card>
   );
+}
+
+function getYouTubeEmbedUrl(url: string) {
+  if (!url) return '';
+  try {
+    const urlObj = new URL(url);
+    if (urlObj.hostname.includes('youtube.com')) {
+      const videoId = urlObj.searchParams.get('v');
+      return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : url;
+    }
+    if (urlObj.hostname === 'youtu.be') {
+      const videoId = urlObj.pathname.slice(1);
+      return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : url;
+    }
+  } catch (e) {
+    return url;
+  }
+  return url;
 }

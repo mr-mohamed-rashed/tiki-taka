@@ -12,17 +12,28 @@ export function MatchesTab() {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [urls, setUrls] = useState<Record<string, string>>({});
 
+  const [savedId, setSavedId] = useState<string | null>(null);
+
   const handleSave = async (matchId: string) => {
     const url = urls[matchId];
-    if (url === undefined) return; // Not changed
+    if (url === undefined) return;
 
     setSavingId(matchId);
-    await supabase.from('match_highlights' as any).upsert({ 
+    const { error } = await supabase.from('match_highlights' as any).upsert({ 
       match_id: matchId, 
       highlight_url: url 
     });
+    
     setSavingId(null);
-    refetch(); // Refetch to get updated highlights
+    if (error) {
+      console.error(error);
+      alert('حدث خطأ أثناء الحفظ. تأكد من إعداد قاعدة البيانات.');
+      return;
+    }
+    
+    setSavedId(matchId);
+    setTimeout(() => setSavedId(null), 2000);
+    refetch();
   };
 
   const handleUrlChange = (matchId: string, val: string) => {
@@ -74,10 +85,10 @@ export function MatchesTab() {
                     size="sm" 
                     onClick={() => handleSave(match.id)}
                     disabled={savingId === match.id}
-                    className="shrink-0 gap-2"
+                    className={`shrink-0 gap-2 ${savedId === match.id ? 'bg-green-600 hover:bg-green-700' : ''}`}
                   >
-                    {savingId === match.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    حفظ
+                    {savingId === match.id ? <Loader2 className="h-4 w-4 animate-spin" /> : savedId === match.id ? <CheckCircle className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+                    {savedId === match.id ? 'تم الحفظ' : 'حفظ'}
                   </Button>
                 </div>
               </div>
