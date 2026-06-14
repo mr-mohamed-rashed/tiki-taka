@@ -22,7 +22,7 @@ const LiveMatches = () => {
   const nextMatch = upcomingMatches
     .filter((match) => new Date(match.date).getTime() >= Date.now())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcomingMatches[0];
-  const featured = liveMatches[0]; // ONLY use actual live matches for the tracker
+  const featured = liveMatches[0] || nextMatch;
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
