@@ -62,7 +62,6 @@ const Index = () => {
                 <EditableSiteText settingKey="hero_footballTitle" fallbackEn="Football." fallbackAr="كرة القدم." className={cn('text-foreground', lang === 'ar' && 'font-arabic')} />{' '}
                 <EditableSiteText settingKey="hero_livePulse" fallbackEn="Live." fallbackAr="مباشر." className="text-primary [text-shadow:0_0_30px_hsl(var(--primary)/0.5)]" />
               </h1>
-              {liveMatch ? (
                 <>
                   <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
                     <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
@@ -83,15 +82,22 @@ const Index = () => {
                   </div>
                   <div className="flex flex-wrap items-start gap-3">
                     <div className="flex flex-col items-center gap-2">
-                      <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
-                        <NavLink to="/live">
+                      {liveMatches.length > 0 ? (
+                        <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
+                          <NavLink to="/live">
+                            <Radio className="h-4 w-4 me-2" />
+                            <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
+                          </NavLink>
+                        </Button>
+                      ) : (
+                        <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon" onClick={() => document.getElementById('match-center')?.scrollIntoView({ behavior: 'smooth' })}>
                           <Radio className="h-4 w-4 me-2" />
                           <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
-                        </NavLink>
-                      </Button>
+                        </Button>
+                      )}
                       <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur mt-2">
                         <img src={(liveMatch || nextMatch).home.flag} alt={(liveMatch || nextMatch).home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
-                        <span className="text-xs font-extrabold text-primary">{liveMatch ? 'LIVE' : 'VS'}</span>
+                        <span className="text-xs font-extrabold text-primary">{liveMatches.length > 0 ? 'LIVE' : 'VS'}</span>
                         <img src={(liveMatch || nextMatch).away.flag} alt={(liveMatch || nextMatch).away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
                       </div>
                     </div>
@@ -103,11 +109,6 @@ const Index = () => {
                     </Button>
                   </div>
                 </>
-              ) : (
-                <div className="mb-8 w-full">
-                  <TournamentCountdown match={nextMatch} onTimerZero={() => window.location.reload()} />
-                </div>
-              )}
             </div>
             <div className="flex-shrink-0 w-full lg:w-auto lg:max-w-sm xl:max-w-md flex flex-col gap-4">
               <AdSlotSelector location="hero" onAdd={() => {}} />
@@ -121,7 +122,7 @@ const Index = () => {
       <SponsorMarquee />
 
       <main className="container mx-auto px-4 lg:px-8 py-12 space-y-16">
-        <section>
+        <section id="match-center">
           <SectionHeader
             icon={<Radio className="h-5 w-5" />}
             title={<EditableSiteText settingKey="section_matchCenter" fallbackEn={T.matchCenter.en} fallbackAr={T.matchCenter.ar} />}
