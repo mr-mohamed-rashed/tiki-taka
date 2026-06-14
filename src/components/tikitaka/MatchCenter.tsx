@@ -69,7 +69,6 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
         {!liveLoading && live.length > 0 && (
           <div className="space-y-5">
             <PaginatedMatchGrid matches={live} page={pages.live} onPageChange={(page) => setTabPage('live', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
-            <Live2DTracker match={live[0]} />
           </div>
         )}
         {!liveLoading && live.length === 0 && (

@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import type { Match } from '@/lib/footballData';
 
@@ -15,11 +17,26 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
   const home = match.home;
   const away = match.away;
   const { get } = useSiteSettingsContext();
+
+  const formatHref = (input: string) => {
+    if (!input) return '#';
+    // If the user pastes a full message "Hey watch this https://vt.tiktok.com/...", extract the link
+    const urlMatch = input.match(/(https?:\/\/[^\s]+)/);
+    let url = urlMatch ? urlMatch[0] : input.trim();
+    
+    // If there's still no http/https (e.g., they just pasted "tiktok.com/@user"), add it
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      // Basic cleanup in case it's just text with spaces
+      url = `https://${url.split(' ')[0]}`;
+    }
+    return url;
+  };
+
   const socialLinks = [
-    { key: 'social_facebook_url', label: get('social_facebook_url', 'ar') || 'Facebook', href: get('social_facebook_url', 'en') || 'https://facebook.com', icon: <FacebookIcon /> },
-    { key: 'social_tiktok_url', label: get('social_tiktok_url', 'ar') || 'TikTok', href: get('social_tiktok_url', 'en') || 'https://tiktok.com', icon: <TikTokIcon /> },
-    { key: 'social_youtube_url', label: get('social_youtube_url', 'ar') || 'YouTube', href: get('social_youtube_url', 'en') || 'https://youtube.com', icon: <YouTubeIcon /> },
-    { key: 'social_website_url', label: get('social_website_url', 'ar') || 'Website', href: get('social_website_url', 'en') || '/', icon: <WebIcon /> },
+    { key: 'social_facebook_url', label: get('social_facebook_url', 'ar') || 'Facebook', href: formatHref(get('social_facebook_url', 'en') || 'https://facebook.com'), icon: <FacebookIcon /> },
+    { key: 'social_tiktok_url', label: get('social_tiktok_url', 'ar') || 'TikTok', href: formatHref(get('social_tiktok_url', 'en') || 'https://tiktok.com'), icon: <TikTokIcon /> },
+    { key: 'social_youtube_url', label: get('social_youtube_url', 'ar') || 'YouTube', href: formatHref(get('social_youtube_url', 'en') || 'https://youtube.com'), icon: <YouTubeIcon /> },
+    { key: 'social_website_url', label: get('social_website_url', 'ar') || 'Website', href: formatHref(get('social_website_url', 'en') || '/'), icon: <WebIcon /> },
   ];
 
   // Player positions (4-3-3) on a 600x380 viewBox pitch
@@ -35,6 +52,38 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
     { x: 380, y: 130 }, { x: 380, y: 190 }, { x: 380, y: 250 },
     { x: 320, y: 90  }, { x: 320, y: 190 }, { x: 320, y: 290 },
   ];
+
+  const [activeServerIndex, setActiveServerIndex] = useState(0);
+
+  const servers = (() => {
+    const raw = get('live_stream_url', 'en');
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    } catch(e) {
+      return [{ name: 'Server 1', url: raw }];
+    }
+    return [];
+  })();
+
+  const activeServerUrl = servers[activeServerIndex]?.url || '';
+
+  const streamUrl = (() => {
+    if (!activeServerUrl) return '';
+    try {
+      const url = new URL(activeServerUrl);
+      if (url.hostname.includes('youtube.com') && url.searchParams.has('v')) {
+        return `https://www.youtube.com/embed/${url.searchParams.get('v')}`;
+      }
+      if (url.hostname.includes('youtu.be')) {
+        return `https://www.youtube.com/embed${url.pathname}`;
+      }
+    } catch (e) {
+      // Ignore invalid URLs
+    }
+    return activeServerUrl;
+  })();
 
   return (
     <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-border">
@@ -67,10 +116,25 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
 
       {/* Pitch */}
       <div className="p-3 sm:p-4 bg-background/40">
+        {servers.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-3">
+            {servers.map((server, idx) => (
+              <Button
+                key={idx}
+                variant={idx === activeServerIndex ? "default" : "secondary"}
+                size="sm"
+                onClick={() => setActiveServerIndex(idx)}
+                className="font-bold text-xs shadow-sm"
+              >
+                {server.name || `Server ${idx + 1}`}
+              </Button>
+            ))}
+          </div>
+        )}
         <div className="relative w-full rounded-lg overflow-hidden ring-1 ring-primary/20 shadow-neon">
-          {get('live_stream_url', 'en') ? (
+          {streamUrl ? (
             <iframe
-              src={get('live_stream_url', 'en')}
+              src={streamUrl}
               className="w-full aspect-video bg-black"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

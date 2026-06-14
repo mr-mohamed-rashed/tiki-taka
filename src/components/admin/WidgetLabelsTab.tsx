@@ -65,22 +65,69 @@ export function WidgetLabelsTab() {
       <p className="text-sm text-muted-foreground">Edit compact section labels and social links.</p>
 
       <Card className="border-border bg-gradient-card p-4">
-        <div className="mb-4">
-          <h3 className="text-sm font-bold">Live Stream Settings</h3>
-          <p className="text-xs text-muted-foreground">URL to embed in place of the 2D match tracker (e.g., YouTube embed URL).</p>
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-bold">Live Stream Settings</h3>
+            <p className="text-xs text-muted-foreground">Add multiple streaming servers for the live match player.</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => {
+            const currentServersStr = getVal('live_stream_url', 'en');
+            let parsed = [];
+            try { parsed = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) parsed = [{name: 'Server 1', url: currentServersStr}] }
+            parsed.push({ name: `Server ${parsed.length + 1}`, url: '' });
+            setVal('live_stream_url', 'en', JSON.stringify(parsed));
+          }}>
+            Add Server
+          </Button>
         </div>
-        <div className="space-y-2">
-          <div className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[200px_1fr_auto] xl:items-end">
-            <KeyLabel itemKey="live_stream_url" label="Live Stream Embed URL" />
-            <Field label="Link">
-              <Input
-                value={getVal('live_stream_url', 'en')}
-                onChange={(event) => setVal('live_stream_url', 'en', event.target.value)}
-                placeholder="https://youtube.com/embed/..."
-                className="h-8"
-                dir="ltr"
-              />
-            </Field>
+        <div className="space-y-3">
+          {(() => {
+            const currentServersStr = getVal('live_stream_url', 'en');
+            let servers = [];
+            try { servers = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) servers = [{name: 'Server 1', url: currentServersStr}] }
+            
+            if (servers.length === 0) {
+              return <div className="text-sm text-muted-foreground italic p-2 border border-dashed rounded-lg text-center">No servers added. The 2D Tracker will be shown.</div>;
+            }
+
+            return servers.map((server: any, idx: number) => (
+              <div key={idx} className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[100px_1fr_auto] xl:items-end relative group">
+                <Field label="Server Name">
+                  <Input
+                    value={server.name}
+                    onChange={(e) => {
+                      const newServers = [...servers];
+                      newServers[idx].name = e.target.value;
+                      setVal('live_stream_url', 'en', JSON.stringify(newServers));
+                    }}
+                    placeholder="e.g. Server 1"
+                    className="h-8"
+                  />
+                </Field>
+                <Field label="Embed URL">
+                  <Input
+                    value={server.url}
+                    onChange={(e) => {
+                      const newServers = [...servers];
+                      newServers[idx].url = e.target.value;
+                      setVal('live_stream_url', 'en', JSON.stringify(newServers));
+                    }}
+                    placeholder="https://youtube.com/embed/..."
+                    className="h-8"
+                    dir="ltr"
+                  />
+                </Field>
+                <Button variant="destructive" size="sm" className="h-8" onClick={() => {
+                  const newServers = servers.filter((_: any, i: number) => i !== idx);
+                  setVal('live_stream_url', 'en', JSON.stringify(newServers));
+                }}>
+                  Remove
+                </Button>
+              </div>
+            ));
+          })()}
+          
+          <div className="flex justify-end pt-2 border-t border-border">
             <SaveButton itemKey="live_stream_url" saving={saving} saved={saved} onClick={() => saveLabelKey('live_stream_url')} />
           </div>
         </div>
