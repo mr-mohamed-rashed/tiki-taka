@@ -9,9 +9,57 @@ const WC_SEASON = '2026';
 const WORLD_CUP_API = 'https://worldcup26.ir';
 
 async function callProxy(body: object) {
-  const { data, error } = await supabase.functions.invoke('football-proxy', { body });
-  if (error) throw error;
-  return data;
+  try {
+    const { data, error } = await supabase.functions.invoke('football-proxy', { body });
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    return data;
+  } catch (err) {
+    console.error('Proxy failed, attempting direct fetch...', err);
+    if (['live', 'fixtures', 'results'].includes((body as any).endpoint)) {
+      try {
+        const res = await fetch(`${WORLD_CUP_API}/get/games`);
+        const json = await res.json();
+        const games = Array.isArray(json) ? json : json?.games;
+        if (Array.isArray(games)) {
+          // Normalize directly using our getUpcomingMatches as a base
+          const baseMatches = getUpcomingMatches();
+          const mapped = baseMatches.map(m => {
+            const apiGame = games.find((g: any) => 
+              g.home_team_name_en?.toLowerCase() === m.home.name.toLowerCase() &&
+              g.away_team_name_en?.toLowerCase() === m.away.name.toLowerCase()
+            );
+            if (apiGame) {
+              const finished = String(apiGame.finished ?? '').toLowerCase() === 'true';
+              const timeElapsed = String(apiGame.time_elapsed ?? '').toLowerCase();
+              const isLive = !finished && timeElapsed !== 'notstarted' && timeElapsed !== '' && timeElapsed !== 'null';
+              
+              return {
+                ...m,
+                homeScore: Number(apiGame.home_score) || 0,
+                awayScore: Number(apiGame.away_score) || 0,
+                status: isLive ? 'live' : finished ? 'finished' : 'upcoming',
+                minute: isLive ? `${timeElapsed}'` : undefined,
+              };
+            }
+            return m;
+          });
+          
+          return {
+            provider: 'worldcup26-direct',
+            matches: mapped.filter((m) => {
+              if ((body as any).endpoint === 'live') return m.status === 'live';
+              if ((body as any).endpoint === 'results') return m.status === 'finished';
+              return m.status === 'upcoming';
+            })
+          };
+        }
+      } catch (directErr) {
+        console.error('Direct fetch also failed', directErr);
+      }
+    }
+    throw err;
+  }
 }
 
 // ---------- Live fixtures ----------
