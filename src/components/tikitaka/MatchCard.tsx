@@ -74,7 +74,7 @@ export function MatchCard({ match }: MatchCardProps) {
       },
     });
 
-    const targetUrl = match.highlight_url || `https://www.youtube.com/@beINSPORTS/search?query=${encodeURIComponent(matchTitle)}`;
+    const targetUrl = match.highlight_url || `https://www.youtube.com/results?search_query=${encodeURIComponent(matchTitle + ' highlights')}`;
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
@@ -144,9 +144,11 @@ export function MatchCard({ match }: MatchCardProps) {
 
       {isFinished && (
         <div className="px-4 pb-4">
-          <Button onClick={openHighlights} variant="outline" className="w-full border-primary/40 text-primary hover:bg-primary/10 font-bold">
+          <Button onClick={openHighlights} variant={match.highlight_url ? "default" : "outline"} className={cn("w-full font-bold", !match.highlight_url && "border-primary/40 text-primary hover:bg-primary/10")}>
             <ExternalLink className="h-4 w-4 me-2" />
-            {lang === 'ar' ? 'مشاهدة الملخص عبر beIN SPORTS' : 'Watch highlights on beIN SPORTS'}
+            {match.highlight_url 
+              ? (lang === 'ar' ? 'مشاهدة فيديو الملخص' : 'Watch Highlight Video')
+              : (lang === 'ar' ? 'بحث عن الملخص في يوتيوب' : 'Search Highlights on YouTube')}
           </Button>
         </div>
       )}
