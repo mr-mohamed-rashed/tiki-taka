@@ -191,15 +191,15 @@ export const getLiveMatches = (): Match[] => {
 export const getUpcomingMatches = (): Match[] => [
   {
     id: 'u0', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
-    date: '2026-06-13T01:00:00Z', status: 'upcoming',
-    home: teams.USA, away: teams.PAR, homeScore: 0, awayScore: 0,
-    venue: 'SoFi Stadium, Los Angeles',
+    date: '2026-06-13T16:00:00Z', status: 'finished',
+    home: teams.USA, away: teams.PAR, homeScore: 4, awayScore: 1,
+    venue: 'MetLife Stadium, New York/New Jersey',
   },
   {
     id: 'u1', competition: 'FIFA World Cup 2026', stage: 'Group B - Match Day 1',
-    date: '2026-06-13T19:00:00Z', status: 'upcoming',
-    home: teams.QAT, away: teams.SUI, homeScore: 0, awayScore: 0,
-    venue: 'BMO Field, Toronto',
+    date: '2026-06-13T19:00:00Z', status: 'finished',
+    home: teams.QAT, away: teams.SUI, homeScore: 1, awayScore: 1,
+    venue: 'Gillette Stadium, Boston',
   },
   {
     id: 'u2', competition: 'FIFA World Cup 2026', stage: 'Group C - Match Day 1',

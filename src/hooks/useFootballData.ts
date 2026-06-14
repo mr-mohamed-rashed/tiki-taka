@@ -23,7 +23,7 @@ async function callProxy(body: object) {
         const games = Array.isArray(json) ? json : json?.games;
         if (Array.isArray(games)) {
           // Normalize directly using our getUpcomingMatches as a base
-          const baseMatches = getUpcomingMatches();
+          const baseMatches = [...getFinishedMatches(), ...getUpcomingMatches()];
           const mapped = baseMatches.map(m => {
             const apiGame = games.find((g: any) => 
               g.home_team_name_en?.toLowerCase() === m.home.name.toLowerCase() &&
