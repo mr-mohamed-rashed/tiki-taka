@@ -20,7 +20,7 @@ export function Navigation() {
     { nameKey: 'groups' as const,        to: '/groups' },
     { nameKey: 'roadmap' as const,       to: '/roadmap' },
     { nameKey: 'standings' as const,     to: '/standings' },
-    { nameKey: 'liveMatches' as const,   to: liveMatches.length > 0 ? '/live' : '/' },
+    { nameKey: 'liveMatches' as const,   to: '/live' },
   ];
 
   return (
