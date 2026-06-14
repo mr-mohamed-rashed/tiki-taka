@@ -81,16 +81,11 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
       </TabsContent>
 
       <TabsContent value="results" className="mt-6">
-        <div className="bg-card border border-border rounded-lg overflow-hidden shadow-neon">
-          <iframe 
-            src="https://livescore.in" 
-            width="100%" 
-            height="500" 
-            frameBorder="0"
-            className="w-full min-h-[500px]"
-            title="Live Results"
-          />
-        </div>
+        {finishedLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
+        {!finishedLoading && finished.length > 0 && (
+          <PaginatedMatchGrid matches={finished} page={pages.results} onPageChange={(page) => setTabPage('results', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
+        )}
+        {!finishedLoading && finished.length === 0 && <EmptyMatchesMessage type="fixtures" lang={lang} />}
       </TabsContent>
     </Tabs>
   );
