@@ -130,7 +130,7 @@ const Index = () => {
             linkLabel={<EditableSiteText settingKey="link_allMatches" fallbackEn={T.allMatches.en} fallbackAr={T.allMatches.ar} />}
             lang={lang}
           />
-          <MatchCenter defaultTab="fixtures" liveTabRedirectTo="/live" />
+          <MatchCenter defaultTab="fixtures" />
         </section>
 
         {false && <section>

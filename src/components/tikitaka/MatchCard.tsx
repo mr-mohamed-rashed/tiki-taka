@@ -29,17 +29,17 @@ function TeamRow({
   align: 'left' | 'right';
 }) {
   return (
-    <div className={cn('flex items-center gap-3 flex-1', align === 'right' && 'flex-row-reverse text-right')}>
+    <div className={cn('flex items-center gap-2 sm:gap-3 flex-1', align === 'right' && 'flex-row-reverse text-right')}>
       <img
         src={team.flag}
         alt={team.name}
-        className="w-9 h-9 sm:w-11 sm:h-11 rounded-md object-cover shadow-card ring-1 ring-border"
+        className="w-7 h-7 sm:w-11 sm:h-11 rounded-md object-cover shadow-card ring-1 ring-border shrink-0"
       />
       <div className="min-w-0">
-        <div className={cn('font-bold text-sm sm:text-base truncate', isWinner ? 'text-foreground' : 'text-foreground/70')}>
+        <div className={cn('font-bold text-xs sm:text-base truncate', isWinner ? 'text-foreground' : 'text-foreground/70')}>
           {team.name}
         </div>
-        <div className="text-xs text-muted-foreground uppercase tracking-wider">{team.shortName}</div>
+        <div className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider hidden sm:block">{team.shortName}</div>
       </div>
     </div>
   );
@@ -109,26 +109,26 @@ export function MatchCard({ match }: MatchCardProps) {
         )}
       </div>
 
-      <div className="px-4 py-4 flex items-center gap-3 sm:gap-4">
+      <div className="px-2 py-3 sm:px-4 sm:py-4 flex items-center gap-1 sm:gap-4">
         <TeamRow team={match.home} isWinner={homeWin} align="left" />
 
-        <div className="shrink-0 px-2 sm:px-4 text-center">
+        <div className="shrink-0 px-1 sm:px-4 text-center">
           {isUpcoming ? (
-            <div className="font-display font-bold text-lg sm:text-2xl text-primary tabular-nums">
+            <div className="font-display font-bold text-base sm:text-2xl text-primary tabular-nums">
               {formatTime(match.date)}
             </div>
           ) : (
-            <div className="flex items-center gap-2 font-display font-extrabold text-2xl sm:text-3xl tabular-nums">
+            <div className="flex items-center gap-1.5 sm:gap-2 font-display font-extrabold text-xl sm:text-3xl tabular-nums">
               <span className={cn(homeWin ? 'text-primary' : 'text-foreground')}>{match.homeScore}</span>
               <span className="text-border">-</span>
               <span className={cn(awayWin ? 'text-primary' : 'text-foreground')}>{match.awayScore}</span>
             </div>
           )}
           {isLive && match.minute && (
-            <div className="text-[10px] font-bold text-live mt-0.5 uppercase tracking-wider">{match.minute}</div>
+            <div className="text-[9px] sm:text-[10px] font-bold text-live mt-0.5 uppercase tracking-wider">{match.minute}</div>
           )}
           {isUpcoming && (
-            <div className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider">Kick-off</div>
+            <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider">Kick-off</div>
           )}
         </div>
 

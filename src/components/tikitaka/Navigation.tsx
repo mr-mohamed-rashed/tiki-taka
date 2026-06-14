@@ -41,29 +41,36 @@ export function Navigation() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-0.5">
-            {links.map((link) => (
-              <NavLink
-                key={link.nameKey}
-                to={link.to}
-                end={link.to === '/'}
-                className={({ isActive }) =>
-                  cn(
-                    'relative px-3 py-2 font-semibold text-sm transition-colors rounded-md whitespace-nowrap',
-                    'hover:text-primary',
-                    isActive ? 'text-primary' : 'text-foreground/80'
-                  )
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <EditableSiteText settingKey={`nav_${link.nameKey}`} fallbackEn={T[link.nameKey].en} fallbackAr={T[link.nameKey].ar} />
-                    {isActive && (
-                      <span className="absolute left-3 right-3 -bottom-[1px] h-0.5 bg-primary shadow-neon rounded-full" />
-                    )}
-                  </>
-                )}
-              </NavLink>
-            ))}
+            {links.map((link) => {
+              const isHomeLink = link.nameKey === 'home';
+              return (
+                <NavLink
+                  key={link.nameKey}
+                  to={link.to}
+                  end={isHomeLink || link.to === '/'}
+                  className={({ isActive }) => {
+                    const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
+                    return cn(
+                      'relative px-3 py-2 font-semibold text-sm transition-colors rounded-md whitespace-nowrap',
+                      'hover:text-primary',
+                      effectivelyActive ? 'text-primary' : 'text-foreground/80'
+                    );
+                  }}
+                >
+                  {({ isActive }) => {
+                    const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
+                    return (
+                      <>
+                        <EditableSiteText settingKey={`nav_${link.nameKey}`} fallbackEn={T[link.nameKey].en} fallbackAr={T[link.nameKey].ar} />
+                        {effectivelyActive && (
+                          <span className="absolute left-3 right-3 -bottom-[1px] h-0.5 bg-primary shadow-neon rounded-full" />
+                        )}
+                      </>
+                    );
+                  }}
+                </NavLink>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -98,24 +105,28 @@ export function Navigation() {
         {/* Mobile menu */}
         {open && (
           <div className="md:hidden border-t border-border py-3 space-y-1 animate-fade-in-up">
-            {links.map((link) => (
-              <NavLink
-                key={link.nameKey}
-                to={link.to}
-                end={link.to === '/'}
-                onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  cn(
-                    'block px-4 py-3 rounded-lg font-semibold text-sm transition-colors',
-                    isActive
-                      ? 'bg-primary/15 text-primary'
-                      : 'text-foreground/80 hover:bg-muted hover:text-primary'
-                  )
-                }
-              >
-                <EditableSiteText settingKey={`nav_${link.nameKey}`} fallbackEn={T[link.nameKey].en} fallbackAr={T[link.nameKey].ar} />
-              </NavLink>
-            ))}
+            {links.map((link) => {
+              const isHomeLink = link.nameKey === 'home';
+              return (
+                <NavLink
+                  key={link.nameKey}
+                  to={link.to}
+                  end={isHomeLink || link.to === '/'}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => {
+                    const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
+                    return cn(
+                      'block px-4 py-3 rounded-lg font-semibold text-sm transition-colors',
+                      effectivelyActive
+                        ? 'bg-primary/15 text-primary'
+                        : 'text-foreground/80 hover:bg-muted hover:text-primary'
+                    );
+                  }}
+                >
+                  <EditableSiteText settingKey={`nav_${link.nameKey}`} fallbackEn={T[link.nameKey].en} fallbackAr={T[link.nameKey].ar} />
+                </NavLink>
+              );
+            })}
           </div>
         )}
       </div>
