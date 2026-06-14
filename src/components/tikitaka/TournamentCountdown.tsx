@@ -9,12 +9,14 @@ const DEFAULT_START = new Date('2026-06-11T21:00:00Z').getTime();
 
 interface TournamentCountdownProps {
   match?: Match;
+  onTimerZero?: () => void;
 }
 
 const getTimeLeft = (targetTime: number) => {
   const distance = Math.max(targetTime - Date.now(), 0);
 
   return {
+    distance,
     days: Math.floor(distance / (1000 * 60 * 60 * 24)),
     hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
     minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
@@ -22,20 +24,24 @@ const getTimeLeft = (targetTime: number) => {
   };
 };
 
-export function TournamentCountdown({ match }: TournamentCountdownProps) {
+export function TournamentCountdown({ match, onTimerZero }: TournamentCountdownProps) {
   const { lang } = useLanguage();
   const targetTime = useMemo(() => (match ? new Date(match.date).getTime() : DEFAULT_START), [match]);
   const [timeLeft, setTimeLeft] = useState(() => getTimeLeft(targetTime));
 
   useEffect(() => {
-    setTimeLeft(getTimeLeft(targetTime));
-
     const timer = window.setInterval(() => {
-      setTimeLeft(getTimeLeft(targetTime));
+      const newTime = getTimeLeft(targetTime);
+      setTimeLeft(newTime);
+      
+      if (newTime.distance <= 0) {
+        window.clearInterval(timer);
+        onTimerZero?.();
+      }
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [targetTime]);
+  }, [targetTime, onTimerZero]);
 
   const labels = {
     days: lang === 'ar' ? 'يوم' : 'Days',

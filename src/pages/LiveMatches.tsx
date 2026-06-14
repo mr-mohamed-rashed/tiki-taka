@@ -84,7 +84,7 @@ const LiveMatches = () => {
           </section>
         ) : (
           <section className="max-w-2xl mx-auto mb-12">
-            {nextMatch ? <TournamentCountdown match={nextMatch} /> : null}
+            {nextMatch ? <TournamentCountdown match={nextMatch} onTimerZero={() => window.location.reload()} /> : null}
           </section>
         )}
 

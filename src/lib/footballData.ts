@@ -82,7 +82,7 @@ export interface Highlight {
 const flag = (code: string) => `https://flagcdn.com/w160/${code.toLowerCase()}.png`;
 
 // Verified qualified teams for World Cup 2026 (based on official FIFA draw - Dec 5, 2025)
-const teams: Record<string, Team> = {
+export const teams: Record<string, Team> = {
   // Group A
   MEX: { id: 'MEX', name: 'Mexico',        shortName: 'MEX', code: 'MX', flag: flag('mx'), color: '#006847' },
   RSA: { id: 'RSA', name: 'South Africa',  shortName: 'RSA', code: 'ZA', flag: flag('za'), color: '#007749' },
@@ -174,14 +174,7 @@ const isInsideLiveWindow = (match: Match) => {
   return now >= kickoff && now <= kickoff + LIVE_MATCH_WINDOW_MS;
 };
 
-const liveFallbackMatches: Match[] = [
-  {
-    id: 'live-qat-sui', competition: 'FIFA World Cup 2026', stage: 'Group B - Match Day 1',
-    date: new Date(Date.now() - 51 * 60000).toISOString(), status: 'live', minute: "45+6'",
-    home: teams.QAT, away: teams.SUI, homeScore: 0, awayScore: 1,
-    venue: 'BMO Field, Toronto',
-  },
-];
+const liveFallbackMatches: Match[] = [];
 
 export const getLiveMatches = (): Match[] => liveFallbackMatches.filter(isInsideLiveWindow);
 
@@ -633,6 +626,18 @@ export const getFinishedMatches = (): Match[] => [
     date: '2026-06-13T01:00:00Z', status: 'finished',
     home: teams.USA, away: teams.PAR, homeScore: 4, awayScore: 1,
     venue: 'SoFi Stadium, Los Angeles',
+  },
+  {
+    id: 'r5', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
+    date: '2026-06-13T04:00:00Z', status: 'finished',
+    home: teams.AUS, away: teams.TUR, homeScore: 0, awayScore: 2,
+    venue: 'Arrowhead Stadium, Kansas City',
+  },
+  {
+    id: 'r6', competition: 'FIFA World Cup 2026', stage: 'Group E - Match Day 1',
+    date: '2026-06-13T17:00:00Z', status: 'finished',
+    home: teams.GER, away: teams.CUR, homeScore: 3, awayScore: 0,
+    venue: 'Lincoln Financial Field, Philadelphia',
   },
 ];
 

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { getLiveMatches, getUpcomingMatches, getFinishedMatches, getTopScorers, getPlayerRankings } from '@/lib/footballData';
+import { getLiveMatches, getUpcomingMatches, getFinishedMatches, getTopScorers, getPlayerRankings, teams } from '@/lib/footballData';
 import type { Match, Scorer } from '@/lib/footballData';
 
 // World Cup 2026 league ID on API-Football is 1
@@ -274,6 +274,9 @@ function parseWorldCupScorers(raw: string) {
 }
 
 function teamFlag(teamName: string) {
+  const team = Object.values(teams).find(t => t.name.toLowerCase() === teamName.toLowerCase() || t.id.toLowerCase() === teamName.toLowerCase());
+  if (team) return team.flag;
+
   const flags: Record<string, string> = {
     Mexico: 'mx',
     'South Africa': 'za',
