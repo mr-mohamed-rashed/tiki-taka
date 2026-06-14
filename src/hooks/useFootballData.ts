@@ -365,12 +365,7 @@ function teamFlag(teamName: string) {
 }
 
 function getMockResults() {
-  const now = Date.now();
-  const pastUpcoming = getUpcomingMatches()
-    .filter(m => new Date(m.date).getTime() <= now - 105 * 60000)
-    .map(m => ({ ...m, status: 'finished' as const }));
-
-  return getFinishedOnly([...getFinishedMatches(), ...pastUpcoming]);
+  return getFinishedOnly([...getFinishedMatches()]);
 }
 
 export type { ApiStandingGroup };
