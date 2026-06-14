@@ -26,8 +26,6 @@ import { useEditMode } from '@/hooks/useEditMode';
 import { useLiveFixtures } from '@/hooks/useFootballData';
 import { t, T } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-import { SectionHeader } from '@/components/tikitaka/SectionHeader';
-import { TeamHeroName } from '@/components/tikitaka/TeamHeroName';
 
 const Index = () => {
   const { lang, dir } = useLanguage();

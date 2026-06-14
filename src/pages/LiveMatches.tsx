@@ -22,7 +22,7 @@ const LiveMatches = () => {
   const nextMatch = upcomingMatches
     .filter((match) => new Date(match.date).getTime() >= Date.now())
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcomingMatches[0];
-  const featured = liveMatches[0] || nextMatch;
+  const featured = liveMatches[0]; // ONLY use actual live matches for the tracker
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
@@ -84,16 +84,9 @@ const LiveMatches = () => {
           </section>
         ) : (
           <section className="max-w-2xl mx-auto mb-12">
-            {nextMatch ? <TournamentCountdown match={nextMatch} onTimerZero={() => window.location.reload()} /> : null}
+            {nextMatch ? <TournamentCountdown match={nextMatch} /> : null}
           </section>
         )}
-
-        <section>
-          <h2 className={cn('font-display font-extrabold text-2xl mb-5', lang === 'ar' && 'font-arabic')}>
-            {lang === 'ar' ? 'جميع المباريات' : 'All Matches'}
-          </h2>
-          <MatchCenter defaultTab="live" />
-        </section>
       </main>
 
       <TikiTakaFooter />

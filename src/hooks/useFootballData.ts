@@ -106,9 +106,35 @@ export function useResults() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'results', league: WC_LEAGUE, season: WC_SEASON });
-        if (data?.matches?.length) return getFinishedOnly(data.matches as Match[]);
-        if (!data?.response?.length) return getMockResults();
-        return getFinishedOnly(data.response.map(mapFixture));
+        let proxyResults: Match[] = [];
+        if (data?.matches?.length) proxyResults = getFinishedOnly(data.matches as Match[]);
+        else if (data?.response?.length) proxyResults = getFinishedOnly(data.response.map(mapFixture));
+        
+        const mockResults = getMockResults();
+        const teamsMap = Object.values(teams);
+        
+        proxyResults = proxyResults.map(m => {
+          const homeTeam = teamsMap.find(t => t.name.toLowerCase() === m.home.name.toLowerCase() || t.id === m.home.id);
+          const awayTeam = teamsMap.find(t => t.name.toLowerCase() === m.away.name.toLowerCase() || t.id === m.away.id);
+          return {
+            ...m,
+            home: { ...m.home, flag: homeTeam?.flag || m.home.flag },
+            away: { ...m.away, flag: awayTeam?.flag || m.away.flag }
+          };
+        });
+
+        const allResults = [...proxyResults, ...mockResults];
+        const uniqueResults: Match[] = [];
+        const seen = new Set();
+        for (const m of allResults) {
+          const key = `${m.home.name}-${m.away.name}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            uniqueResults.push(m);
+          }
+        }
+        
+        return uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       } catch {
         return getMockResults();
       }
@@ -204,10 +230,8 @@ function mapFixture(f: ApiFixture) {
 }
 
 function getUpcomingOnly(matches: Match[]) {
-  const now = Date.now();
-
   return matches
-    .filter((match) => match.status === 'upcoming' && new Date(match.date).getTime() > now)
+    .filter((match) => match.status === 'upcoming')
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
