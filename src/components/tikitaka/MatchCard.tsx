@@ -70,11 +70,12 @@ export function MatchCard({ match }: MatchCardProps) {
         matchId: match.id,
         home: match.home.name,
         away: match.away.name,
-        provider: 'beIN SPORTS',
+        provider: match.highlight_url ? 'custom' : 'beIN SPORTS',
       },
     });
 
-    window.open(`https://www.youtube.com/@beINSPORTS/search?query=${encodeURIComponent(matchTitle)}`, '_blank', 'noopener,noreferrer');
+    const targetUrl = match.highlight_url || `https://www.youtube.com/@beINSPORTS/search?query=${encodeURIComponent(matchTitle)}`;
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (

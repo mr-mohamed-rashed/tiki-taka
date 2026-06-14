@@ -81,23 +81,16 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
       </TabsContent>
 
       <TabsContent value="results" className="mt-6">
-        {finishedLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
-        {!finishedLoading && finished.length > 0 && (
-          <PaginatedMatchGrid matches={finished} page={pages.results} onPageChange={(page) => setTabPage('results', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
-        )}
-        {!finishedLoading && finished.length === 0 && (
-          <div className="rounded-lg border border-border border-dashed bg-gradient-card p-8 text-center">
-            <Trophy className="mx-auto mb-4 h-10 w-10 text-primary" />
-            <h3 className={lang === 'ar' ? 'font-arabic font-bold text-xl' : 'font-bold text-xl'}>
-              {lang === 'ar' ? 'لا توجد نتائج سابقة حتى الآن' : 'No previous results yet'}
-            </h3>
-            <p className={lang === 'ar' ? 'font-arabic mt-2 text-sm text-muted-foreground' : 'mt-2 text-sm text-muted-foreground'}>
-              {lang === 'ar'
-                ? 'هذا التبويب يعرض الماتشات التي انتهت فقط. المباريات المباشرة ستظهر في تبويب مباشر.'
-                : 'This tab only shows finished matches. Live matches appear in the Live tab.'}
-            </p>
-          </div>
-        )}
+        <div className="bg-card border border-border rounded-lg overflow-hidden shadow-neon">
+          <iframe 
+            src="https://livescore.in" 
+            width="100%" 
+            height="500" 
+            frameBorder="0"
+            className="w-full min-h-[500px]"
+            title="Live Results"
+          />
+        </div>
       </TabsContent>
     </Tabs>
   );
