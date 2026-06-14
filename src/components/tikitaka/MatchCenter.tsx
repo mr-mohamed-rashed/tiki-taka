@@ -61,7 +61,7 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
       </TabsList>
 
       <TabsContent value="live" className="mt-6">
-        {liveLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
+        {liveLoading && <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"><SkeletonCards /></div>}
         {!liveLoading && live.length > 0 && (
           <div className="space-y-5">
             <PaginatedMatchGrid matches={live} page={pages.live} onPageChange={(page) => setTabPage('live', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
@@ -73,7 +73,7 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
       </TabsContent>
 
       <TabsContent value="fixtures" className="mt-6">
-        {upcomingLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
+        {upcomingLoading && <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"><SkeletonCards /></div>}
         {!upcomingLoading && upcoming.length > 0 && (
           <PaginatedMatchGrid matches={upcoming} page={pages.fixtures} onPageChange={(page) => setTabPage('fixtures', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
         )}
@@ -81,7 +81,7 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
       </TabsContent>
 
       <TabsContent value="results" className="mt-6">
-        {finishedLoading && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><SkeletonCards /></div>}
+        {finishedLoading && <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"><SkeletonCards /></div>}
         {!finishedLoading && finished.length > 0 && (
           <PaginatedMatchGrid matches={finished} page={pages.results} onPageChange={(page) => setTabPage('results', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
         )}
@@ -147,7 +147,7 @@ function PaginatedMatchGrid({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {visibleMatches.map((match) => <MatchCard key={match.id} match={match} />)}
       </div>
 
