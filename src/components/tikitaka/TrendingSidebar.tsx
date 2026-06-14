@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/context/LanguageContext';
 import { useManualNews } from '@/hooks/useManualNews';
+import { useRealNews, formatForCards } from '@/hooks/useRealNews';
 import { cn } from '@/lib/utils';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=800&q=80';
@@ -11,10 +12,26 @@ const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
 
 export function TrendingSidebar() {
   const { lang } = useLanguage();
-  const { news, loading } = useManualNews(true);
-  const articles = news
+  const { news, loading: manualLoading } = useManualNews(true);
+  const { data: realNews, isLoading: realLoading } = useRealNews(lang);
+  
+  const manualArticles = news
     .filter((item) => !SYSTEM_CATEGORIES.has(item.category))
     .slice(0, 3);
+    
+  const loading = manualLoading || realLoading;
+  
+  // Use manual articles if available, otherwise fallback to real news
+  const articles = manualArticles.length > 0 
+    ? manualArticles 
+    : (realNews ? formatForCards(realNews, lang).slice(0, 3).map(n => ({
+        id: n.id,
+        title_en: n.title,
+        title_ar: n.title,
+        category: n.category,
+        image_url: FALLBACK_IMAGE,
+        published_at: n.date
+      })) : []);
 
   return (
     <Card className="overflow-hidden border-border bg-gradient-card">

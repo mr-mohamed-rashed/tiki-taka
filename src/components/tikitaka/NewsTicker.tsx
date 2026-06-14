@@ -21,7 +21,7 @@ export function NewsTicker() {
     }))
     .filter((item) => item.text);
 
-  const tickerItems = manualItems.length > 0 ? manualItems : formatForTicker(realNews, lang);
+  const tickerItems = [...manualItems, ...formatForTicker(realNews, lang)];
   const fallbackItems = [
     {
       tag: 'WORLD CUP',
