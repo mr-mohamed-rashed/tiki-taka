@@ -59,10 +59,10 @@ export function useResults() {
       try {
         const data = await callProxy({ endpoint: 'results', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.matches?.length) return getFinishedOnly(data.matches as Match[]);
-        if (!data?.response?.length) return getFinishedMatches();
+        if (!data?.response?.length) return getMockResults();
         return getFinishedOnly(data.response.map(mapFixture));
       } catch {
-        return getFinishedMatches();
+        return getMockResults();
       }
     },
     refetchInterval: 120_000,
@@ -290,6 +290,15 @@ function teamFlag(teamName: string) {
 
   const code = flags[teamName];
   return code ? `https://flagcdn.com/w160/${code}.png` : '';
+}
+
+function getMockResults() {
+  const now = Date.now();
+  const pastUpcoming = getUpcomingMatches()
+    .filter(m => new Date(m.date).getTime() <= now - 130 * 60000)
+    .map(m => ({ ...m, status: 'finished' as const }));
+
+  return getFinishedOnly([...getFinishedMatches(), ...pastUpcoming]);
 }
 
 export type { ApiStandingGroup };

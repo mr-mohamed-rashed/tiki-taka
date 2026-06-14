@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { ArrowRight, Trophy, Radio, Newspaper, LayoutGrid, MapPin } from 'lucide-react';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
@@ -14,6 +14,7 @@ import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
 import { EditableSiteText } from '@/components/tikitaka/EditableSiteText';
 import { EditableImage } from '@/components/tikitaka/EditableImage';
 import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
+import { TournamentCountdown } from '@/components/tikitaka/TournamentCountdown';
 import { SponsorMarquee } from '@/components/tikitaka/SponsorMarquee';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useManualNews } from '@/hooks/useManualNews';
 import { useEditMode } from '@/hooks/useEditMode';
+import { useLiveFixtures } from '@/hooks/useFootballData';
 import { t, T } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
@@ -32,8 +34,16 @@ const Index = () => {
   const pulseNews = manualNews.filter((item) => item.category === 'Pulse');
   const featured = getFeaturedNews(lang);
   const nextMatch = getNextMatch();
-  const liveMatch = getLiveMatches()[0];
+  const { data: liveMatches = [] } = useLiveFixtures();
+  const liveMatch = liveMatches[0] || getLiveMatches()[0];
   const isEditMode = useEditMode();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (liveMatch) {
+      navigate('/live', { replace: true });
+    }
+  }, [liveMatch, navigate]);
 
   const label = (key: string, fallback: string) => get(key, lang) ?? fallback;
 
@@ -59,44 +69,52 @@ const Index = () => {
                 <EditableSiteText settingKey="hero_footballTitle" fallbackEn="Football." fallbackAr="كرة القدم." className={cn('text-foreground', lang === 'ar' && 'font-arabic')} />{' '}
                 <EditableSiteText settingKey="hero_livePulse" fallbackEn="Live." fallbackAr="مباشر." className="text-primary [text-shadow:0_0_30px_hsl(var(--primary)/0.5)]" />
               </h1>
-              <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
-                <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
-                  {lang === 'ar' ? 'الماتش اللي عليه الدور' : 'Up Next'}
-                </p>
-                <div className="flex flex-wrap items-center gap-3 text-2xl sm:text-3xl font-extrabold text-foreground">
-                  <TeamHeroName name={nextMatch.home.name} flag={nextMatch.home.flag} />
-                  <span className="text-primary">vs</span>
-                  <TeamHeroName name={nextMatch.away.name} flag={nextMatch.away.flag} />
-                </div>
-                <p className="mt-3 text-sm sm:text-base text-foreground/75 leading-relaxed">
-                  {featured.excerpt.replace(`${nextMatch.home.name} vs ${nextMatch.away.name} at `, '').replace(`الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في `, '')}
-                </p>
-                <p className="mt-2 inline-flex items-center gap-2 text-sm text-foreground/70">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span>{nextMatch.venue}</span>
-                </p>
-              </div>
-              <div className="flex flex-wrap items-start gap-3">
-                <div className="flex flex-col items-center gap-2">
-                  <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
-                    <NavLink to="/live">
-                      <Radio className="h-4 w-4 me-2" />
-                      <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
-                    </NavLink>
-                  </Button>
-                  <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur mt-2">
-                    <img src={(liveMatch || nextMatch).home.flag} alt={(liveMatch || nextMatch).home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
-                    <span className="text-xs font-extrabold text-primary">{liveMatch ? 'LIVE' : 'VS'}</span>
-                    <img src={(liveMatch || nextMatch).away.flag} alt={(liveMatch || nextMatch).away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
+              {liveMatch ? (
+                <>
+                  <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
+                    <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
+                      {lang === 'ar' ? 'الماتش اللي عليه الدور' : 'Up Next'}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-3 text-2xl sm:text-3xl font-extrabold text-foreground">
+                      <TeamHeroName name={nextMatch.home.name} flag={nextMatch.home.flag} />
+                      <span className="text-primary">vs</span>
+                      <TeamHeroName name={nextMatch.away.name} flag={nextMatch.away.flag} />
+                    </div>
+                    <p className="mt-3 text-sm sm:text-base text-foreground/75 leading-relaxed">
+                      {featured.excerpt.replace(`${nextMatch.home.name} vs ${nextMatch.away.name} at `, '').replace(`الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في `, '')}
+                    </p>
+                    <p className="mt-2 inline-flex items-center gap-2 text-sm text-foreground/70">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span>{nextMatch.venue}</span>
+                    </p>
                   </div>
+                  <div className="flex flex-wrap items-start gap-3">
+                    <div className="flex flex-col items-center gap-2">
+                      <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
+                        <NavLink to="/live">
+                          <Radio className="h-4 w-4 me-2" />
+                          <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
+                        </NavLink>
+                      </Button>
+                      <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur mt-2">
+                        <img src={(liveMatch || nextMatch).home.flag} alt={(liveMatch || nextMatch).home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
+                        <span className="text-xs font-extrabold text-primary">{liveMatch ? 'LIVE' : 'VS'}</span>
+                        <img src={(liveMatch || nextMatch).away.flag} alt={(liveMatch || nextMatch).away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
+                      </div>
+                    </div>
+                    <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 hover:text-primary font-bold">
+                      <NavLink to="/standings">
+                        <Trophy className="h-4 w-4 me-2" />
+                        <EditableSiteText settingKey="hero_topScorersButton" fallbackEn="Top Scorers" fallbackAr="ترتيب الهدافين" className={lang === 'ar' ? 'font-arabic' : ''} />
+                      </NavLink>
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="mb-8 w-full">
+                  <TournamentCountdown match={nextMatch} onTimerZero={() => window.location.reload()} />
                 </div>
-                <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 hover:text-primary font-bold">
-                  <NavLink to="/standings">
-                    <Trophy className="h-4 w-4 me-2" />
-                    <EditableSiteText settingKey="hero_topScorersButton" fallbackEn="Top Scorers" fallbackAr="ترتيب الهدافين" className={lang === 'ar' ? 'font-arabic' : ''} />
-                  </NavLink>
-                </Button>
-              </div>
+              )}
             </div>
             <div className="flex-shrink-0 w-full lg:w-auto lg:max-w-sm xl:max-w-md flex flex-col gap-4">
               <AdSlotSelector location="hero" onAdd={() => {}} />

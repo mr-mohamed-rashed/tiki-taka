@@ -176,7 +176,13 @@ const isInsideLiveWindow = (match: Match) => {
 
 const liveFallbackMatches: Match[] = [];
 
-export const getLiveMatches = (): Match[] => liveFallbackMatches.filter(isInsideLiveWindow);
+export const getLiveMatches = (): Match[] => {
+  const liveFromUpcoming = getUpcomingMatches()
+    .filter(isInsideLiveWindow)
+    .map(m => ({ ...m, status: 'live' as MatchStatus, minute: "45'" }));
+  
+  return [...liveFallbackMatches.filter(isInsideLiveWindow), ...liveFromUpcoming];
+};
 
 /**
  * Upcoming matches - First round of confirmed Group Stage fixtures (June 11-20, 2026)
@@ -620,24 +626,6 @@ export const getFinishedMatches = (): Match[] => [
     date: '2026-06-12T23:00:00Z', status: 'finished',
     home: teams.CAN, away: teams.BIH, homeScore: 1, awayScore: 1,
     venue: 'BMO Field, Toronto',
-  },
-  {
-    id: 'r4', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
-    date: '2026-06-13T01:00:00Z', status: 'finished',
-    home: teams.USA, away: teams.PAR, homeScore: 4, awayScore: 1,
-    venue: 'SoFi Stadium, Los Angeles',
-  },
-  {
-    id: 'r5', competition: 'FIFA World Cup 2026', stage: 'Group D - Match Day 1',
-    date: '2026-06-13T04:00:00Z', status: 'finished',
-    home: teams.AUS, away: teams.TUR, homeScore: 0, awayScore: 2,
-    venue: 'Arrowhead Stadium, Kansas City',
-  },
-  {
-    id: 'r6', competition: 'FIFA World Cup 2026', stage: 'Group E - Match Day 1',
-    date: '2026-06-13T17:00:00Z', status: 'finished',
-    home: teams.GER, away: teams.CUR, homeScore: 3, awayScore: 0,
-    venue: 'Lincoln Financial Field, Philadelphia',
   },
 ];
 

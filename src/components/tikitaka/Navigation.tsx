@@ -6,10 +6,13 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/LanguageContext';
 import { t, T } from '@/lib/i18n';
 import { EditableSiteText } from '@/components/tikitaka/EditableSiteText';
+import { useLiveFixtures } from '@/hooks/useFootballData';
 
 export function Navigation() {
   const [open, setOpen] = useState(false);
   const { lang, setLang, dir } = useLanguage();
+
+  const { data: liveMatches = [] } = useLiveFixtures();
 
   const links = [
     { nameKey: 'home' as const,         to: '/' },
@@ -17,7 +20,7 @@ export function Navigation() {
     { nameKey: 'groups' as const,        to: '/groups' },
     { nameKey: 'roadmap' as const,       to: '/roadmap' },
     { nameKey: 'standings' as const,     to: '/standings' },
-    { nameKey: 'liveMatches' as const,   to: '/live' },
+    { nameKey: 'liveMatches' as const,   to: liveMatches.length > 0 ? '/live' : '/' },
   ];
 
   return (
