@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap } from 'lucide-react';
+import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap, ArrowUp, ArrowDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -54,7 +54,7 @@ const blankArticle = (): NewsDraft => ({
 });
 
 export function NewsTab() {
-  const { news, loading, save, remove, togglePublish } = useManualNews();
+  const { news, loading, save, remove, togglePublish, reorder } = useManualNews();
   const { settings, save: saveSetting } = useSiteSettings();
   const [saving, setSaving] = useState(false);
   const [savingSpeed, setSavingSpeed] = useState(false);
@@ -171,7 +171,7 @@ export function NewsTab() {
               <p className="pb-2 text-xs text-muted-foreground">رقم أقل = حركة أسرع. الأفضل من 55 إلى 90.</p>
             </div>
           </Card>
-          <NewsList items={tickerItems} empty="لا توجد سطور في الشريط حتى الآن." onRemove={remove} onToggle={togglePublish} />
+          <NewsList items={tickerItems} empty="لا توجد سطور في الشريط حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} />
         </TabsContent>
 
         <TabsContent value="articles" className="space-y-4">
@@ -250,7 +250,7 @@ export function NewsTab() {
               حفظ الخبر
             </Button>
           </Card>
-          <NewsList items={articleItems} empty="لا توجد أخبار كاملة حتى الآن." onRemove={remove} onToggle={togglePublish} />
+          <NewsList items={articleItems} empty="لا توجد أخبار كاملة حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} />
         </TabsContent>
 
         <TabsContent value="pulse" className="space-y-4">
@@ -284,7 +284,7 @@ export function NewsTab() {
               </Button>
             </div>
           </Card>
-          <NewsList items={pulseItems} empty="لا توجد عناصر في نبض كأس العالم حتى الآن." onRemove={remove} onToggle={togglePublish} />
+          <NewsList items={pulseItems} empty="لا توجد عناصر في نبض كأس العالم حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} />
         </TabsContent>
       </Tabs>
     </div>
@@ -326,11 +326,13 @@ function NewsList({
   empty,
   onRemove,
   onToggle,
+  onReorder,
 }: {
   items: ManualNewsRow[];
   empty: string;
   onRemove: (id: string) => Promise<void>;
   onToggle: (id: string, isPublished: boolean) => Promise<void>;
+  onReorder: (id1: string, id2: string, createdAt1: string, createdAt2: string) => Promise<void>;
 }) {
   if (items.length === 0) {
     return <Card className="p-8 text-center text-sm text-muted-foreground">{empty}</Card>;
@@ -338,9 +340,29 @@ function NewsList({
 
   return (
     <div className="space-y-3">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <Card key={item.id} className={`border-border bg-card/70 p-4 ${!item.is_published ? 'opacity-65' : ''}`}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+            <div className="flex flex-row sm:flex-col gap-1 items-center justify-center">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8"
+                disabled={index === 0}
+                onClick={() => onReorder(item.id, items[index - 1].id, item.created_at, items[index - 1].created_at)}
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8"
+                disabled={index === items.length - 1}
+                onClick={() => onReorder(item.id, items[index + 1].id, item.created_at, items[index + 1].created_at)}
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
+            </div>
             {item.image_url && (
               <img
                 src={item.image_url}

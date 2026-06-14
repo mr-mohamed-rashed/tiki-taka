@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ArrowRight, Trophy, Radio, Newspaper, LayoutGrid, MapPin } from 'lucide-react';
+import { ArrowRight, Trophy, Radio, Newspaper, LayoutGrid, MapPin, Calendar } from 'lucide-react';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
 import { MatchCenter } from '@/components/tikitaka/MatchCenter';
@@ -26,12 +26,24 @@ import { useEditMode } from '@/hooks/useEditMode';
 import { useLiveFixtures } from '@/hooks/useFootballData';
 import { t, T } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { SectionHeader } from '@/components/tikitaka/SectionHeader';
+import { TeamHeroName } from '@/components/tikitaka/TeamHeroName';
 
 const Index = () => {
   const { lang, dir } = useLanguage();
   const { get } = useSiteSettingsContext();
   const { news: manualNews } = useManualNews(true);
   const pulseNews = manualNews.filter((item) => item.category === 'Pulse');
+  const [pulsePage, setPulsePage] = useState(1);
+  const PULSE_PAGE_SIZE = 5;
+  const pulseTotalPages = Math.max(1, Math.ceil(pulseNews.length / PULSE_PAGE_SIZE));
+  const safePulsePage = Math.min(pulsePage, pulseTotalPages);
+  const visiblePulseNews = pulseNews.slice((safePulsePage - 1) * PULSE_PAGE_SIZE, safePulsePage * PULSE_PAGE_SIZE);
+
+  const goToPulsePage = (nextPage: number) => {
+    setPulsePage(Math.min(Math.max(nextPage, 1), pulseTotalPages));
+  };
+
   const featured = getFeaturedNews(lang);
   const nextMatch = getNextMatch();
   const { data: liveMatches = [] } = useLiveFixtures();
@@ -62,56 +74,56 @@ const Index = () => {
                 <EditableSiteText settingKey="hero_footballTitle" fallbackEn="Football." fallbackAr="كرة القدم." className={cn('text-foreground', lang === 'ar' && 'font-arabic')} />{' '}
                 <EditableSiteText settingKey="hero_livePulse" fallbackEn="Live." fallbackAr="مباشر." className="text-primary [text-shadow:0_0_30px_hsl(var(--primary)/0.5)]" />
               </h1>
-                <>
-                  <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
-                    <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
-                      {lang === 'ar' ? 'الماتش اللي عليه الدور' : 'Up Next'}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-3 text-2xl sm:text-3xl font-extrabold text-foreground">
-                      <TeamHeroName name={nextMatch.home.name} flag={nextMatch.home.flag} />
-                      <span className="text-primary">vs</span>
-                      <TeamHeroName name={nextMatch.away.name} flag={nextMatch.away.flag} />
-                    </div>
-                    <p className="mt-3 text-sm sm:text-base text-foreground/75 leading-relaxed">
-                      {featured.excerpt.replace(`${nextMatch.home.name} vs ${nextMatch.away.name} at `, '').replace(`الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في `, '')}
-                    </p>
-                    <p className="mt-2 inline-flex items-center gap-2 text-sm text-foreground/70">
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <span>{nextMatch.venue}</span>
-                    </p>
+              <>
+                <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
+                  <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
+                    {lang === 'ar' ? 'الماتش اللي عليه الدور' : 'Up Next'}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 text-2xl sm:text-3xl font-extrabold text-foreground">
+                    <TeamHeroName name={nextMatch.home.name} flag={nextMatch.home.flag} />
+                    <span className="text-primary">vs</span>
+                    <TeamHeroName name={nextMatch.away.name} flag={nextMatch.away.flag} />
                   </div>
-                  <div className="flex flex-wrap items-start gap-3">
-                    <div className="flex flex-col items-center gap-2">
-                      {liveMatches.length > 0 ? (
-                        <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
-                          <NavLink to="/live">
-                            <Radio className="h-4 w-4 me-2" />
-                            <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
-                          </NavLink>
-                        </Button>
-                      ) : (
-                        <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon" onClick={() => document.getElementById('match-center')?.scrollIntoView({ behavior: 'smooth' })}>
+                  <p className="mt-3 text-sm sm:text-base text-foreground/75 leading-relaxed">
+                    {featured.excerpt.replace(`${nextMatch.home.name} vs ${nextMatch.away.name} at `, '').replace(`الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في `, '')}
+                  </p>
+                  <p className="mt-2 inline-flex items-center gap-2 text-sm text-foreground/70">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span>{nextMatch.venue}</span>
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-start gap-3">
+                  <div className="flex flex-col items-center gap-2">
+                    {liveMatches.length > 0 ? (
+                      <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
+                        <NavLink to="/live">
                           <Radio className="h-4 w-4 me-2" />
                           <EditableSiteText settingKey="hero_watchLiveNow" fallbackEn={T.watchLiveNow.en} fallbackAr={T.watchLiveNow.ar} className={lang === 'ar' ? 'font-arabic' : ''} />
-                        </Button>
-                      )}
-                      <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur mt-2">
-                        <img src={(liveMatch || nextMatch).home.flag} alt={(liveMatch || nextMatch).home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
-                        <span className="text-xs font-extrabold text-primary">{liveMatches.length > 0 ? 'LIVE' : 'VS'}</span>
-                        <img src={(liveMatch || nextMatch).away.flag} alt={(liveMatch || nextMatch).away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
-                      </div>
+                        </NavLink>
+                      </Button>
+                    ) : (
+                      <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon" onClick={() => document.getElementById('match-center')?.scrollIntoView({ behavior: 'smooth' })}>
+                        <Calendar className="h-4 w-4 me-2" />
+                        <EditableSiteText settingKey="hero_exploreMatches" fallbackEn="Match Center" fallbackAr="مركز المباريات" className={lang === 'ar' ? 'font-arabic' : ''} />
+                      </Button>
+                    )}
+                    <div className="flex items-center gap-2 rounded-full border border-primary/20 bg-background/45 px-3 py-1.5 shadow-card backdrop-blur mt-2">
+                      <img src={(liveMatch || nextMatch).home.flag} alt={(liveMatch || nextMatch).home.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe" />
+                      <span className="text-xs font-extrabold text-primary">{liveMatches.length > 0 ? 'LIVE' : 'VS'}</span>
+                      <img src={(liveMatch || nextMatch).away.flag} alt={(liveMatch || nextMatch).away.name} className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/40 animate-flag-breathe [animation-delay:0.45s]" />
                     </div>
-                    <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 hover:text-primary font-bold">
-                      <NavLink to="/standings">
-                        <Trophy className="h-4 w-4 me-2" />
-                        <EditableSiteText settingKey="hero_topScorersButton" fallbackEn="Top Scorers" fallbackAr="ترتيب الهدافين" className={lang === 'ar' ? 'font-arabic' : ''} />
-                      </NavLink>
-                    </Button>
                   </div>
-                </>
+                  <Button asChild size="lg" variant="outline" className="border-primary/40 text-foreground hover:bg-primary/10 hover:text-primary font-bold">
+                    <NavLink to="/standings">
+                      <Trophy className="h-4 w-4 me-2" />
+                      <EditableSiteText settingKey="hero_topScorersButton" fallbackEn="Top Scorers" fallbackAr="ترتيب الهدافين" className={lang === 'ar' ? 'font-arabic' : ''} />
+                    </NavLink>
+                  </Button>
+                </div>
+              </>
             </div>
             <div className="flex-shrink-0 w-full lg:w-auto lg:max-w-sm xl:max-w-md flex flex-col gap-4">
-              <AdSlotSelector location="hero" onAdd={() => {}} />
+              <AdSlotSelector location="hero" onAdd={() => { }} />
               <AdBanner slotId="hero-sidebar-1" />
               <AdBanner slotId="hero-sidebar-2" />
             </div>
@@ -163,15 +175,15 @@ const Index = () => {
 
           <aside className="space-y-6">
             <div>
-              <SectionHeader 
-                icon={<Newspaper className="h-5 w-5" />} 
-                title={<EditableSiteText settingKey="section_worldCupPulse" fallbackEn={T.worldCupPulse.en} fallbackAr={T.worldCupPulse.ar} />} 
-                subtitle={<EditableSiteText settingKey="section_latestHeadlines" fallbackEn={T.latestHeadlines.en} fallbackAr={T.latestHeadlines.ar} />} 
-                lang={lang} 
+              <SectionHeader
+                icon={<Newspaper className="h-5 w-5" />}
+                title={<EditableSiteText settingKey="section_worldCupPulse" fallbackEn={T.worldCupPulse.en} fallbackAr={T.worldCupPulse.ar} />}
+                subtitle={<EditableSiteText settingKey="section_latestHeadlines" fallbackEn={T.latestHeadlines.en} fallbackAr={T.latestHeadlines.ar} />}
+                lang={lang}
               />
               <div className="space-y-3">
                 {/* Manual news from dashboard */}
-                {pulseNews.slice(0, 5).map(n => (
+                {visiblePulseNews.map(n => (
                   <div key={n.id} className="block p-4 rounded-lg border border-border bg-gradient-card hover:border-primary/50 hover:shadow-card transition-all group">
                     <Badge variant="outline" className="border-primary/40 text-primary text-[10px] font-bold mb-2">{n.title_en || 'PULSE'}</Badge>
                     <p className={cn('text-sm font-semibold group-hover:text-primary transition-colors leading-snug', lang === 'ar' && 'font-arabic')}>
@@ -181,10 +193,10 @@ const Index = () => {
                 ))}
                 {/* Fallback static headlines when no manual news yet */}
                 {false && [
-                  { tag: 'SQUADS',  text: lang === 'ar' ? 'نيمار يعود! البرازيل تضمه في قائمتها لكأس العالم 2026 - 18 مايو 2026' : 'Neymar returns! Brazil squad named by Ancelotti — May 18, 2026' },
-                  { tag: 'SQUADS',  text: lang === 'ar' ? 'نوير يتراجع عن اعتزاله - ألمانيا تعلن قائمتها بقيادة ناغلسمان' : 'Neuer reverses retirement — Nagelsmann names Germany squad' },
-                  { tag: 'SQUADS',  text: lang === 'ar' ? 'صلاح ومرموش يقودان مصر في المجموعة G' : 'Salah & Marmoush lead Egypt in Group G' },
-                  { tag: 'GROUPS',  text: lang === 'ar' ? 'الأرجنتين مع الجزائر والنمسا والأردن في المجموعة J' : 'Argentina face Algeria, Austria & Jordan in Group J' },
+                  { tag: 'SQUADS', text: lang === 'ar' ? 'نيمار يعود! البرازيل تضمه في قائمتها لكأس العالم 2026 - 18 مايو 2026' : 'Neymar returns! Brazil squad named by Ancelotti — May 18, 2026' },
+                  { tag: 'SQUADS', text: lang === 'ar' ? 'نوير يتراجع عن اعتزاله - ألمانيا تعلن قائمتها بقيادة ناغلسمان' : 'Neuer reverses retirement — Nagelsmann names Germany squad' },
+                  { tag: 'SQUADS', text: lang === 'ar' ? 'صلاح ومرموش يقودان مصر في المجموعة G' : 'Salah & Marmoush lead Egypt in Group G' },
+                  { tag: 'GROUPS', text: lang === 'ar' ? 'الأرجنتين مع الجزائر والنمسا والأردن في المجموعة J' : 'Argentina face Algeria, Austria & Jordan in Group J' },
                   { tag: 'PREVIEW', text: lang === 'ar' ? '13 يوماً على الانطلاق - المباراة الافتتاحية: المكسيك ضد جنوب أفريقيا' : '13 days to go — Opening match: Mexico vs South Africa at Azteca' },
                 ].map((n, i) => (
                   <div key={i} className="block p-4 rounded-lg border border-border bg-gradient-card hover:border-primary/50 hover:shadow-card transition-all group">
@@ -193,6 +205,40 @@ const Index = () => {
                   </div>
                 ))}
               </div>
+
+              {pulseTotalPages > 1 && (
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-border bg-card/40 p-4 mt-2 rounded-lg">
+                  <div className={lang === 'ar' ? 'font-arabic text-sm text-muted-foreground' : 'text-sm text-muted-foreground'}>
+                    {lang === 'ar'
+                      ? `صفحة ${safePulsePage} من ${pulseTotalPages}`
+                      : `Page ${safePulsePage} of ${pulseTotalPages}`}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2" dir="ltr">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => goToPulsePage(safePulsePage - 1)}
+                      disabled={safePulsePage === 1}
+                      className="h-8 px-2"
+                    >
+                      {lang === 'ar' ? 'السابق' : 'Prev'}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => goToPulsePage(safePulsePage + 1)}
+                      disabled={safePulsePage === pulseTotalPages}
+                      className="h-8 px-2"
+                    >
+                      {lang === 'ar' ? 'التالي' : 'Next'}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </aside>
         </section>

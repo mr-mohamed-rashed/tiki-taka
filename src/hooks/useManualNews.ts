@@ -145,5 +145,23 @@ export function useManualNews(publishedOnly = false) {
     await fetch();
   };
 
-  return { news, loading, save, update, remove, togglePublish, refresh: fetch, usingLocalFallback };
+  const reorder = async (id1: string, id2: string, createdAt1: string, createdAt2: string) => {
+    if (usingLocalFallback) {
+      writeLocalNews(
+        readLocalNews().map((row) => {
+          if (row.id === id1) return { ...row, created_at: createdAt2 };
+          if (row.id === id2) return { ...row, created_at: createdAt1 };
+          return row;
+        })
+      );
+      applyLocal();
+      return;
+    }
+    
+    await supabase.from('manual_news').update({ created_at: createdAt2 }).eq('id', id1);
+    await supabase.from('manual_news').update({ created_at: createdAt1 }).eq('id', id2);
+    await fetch();
+  };
+
+  return { news, loading, save, update, remove, togglePublish, reorder, refresh: fetch, usingLocalFallback };
 }

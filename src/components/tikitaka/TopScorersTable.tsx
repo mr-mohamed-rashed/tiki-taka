@@ -44,8 +44,19 @@ export function TopScorersTable() {
     </Button>
   );
 
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
+
+  const totalPages = Math.max(1, Math.ceil(scorers.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const visibleScorers = scorers.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const goToPage = (nextPage: number) => {
+    setPage(Math.min(Math.max(nextPage, 1), totalPages));
+  };
+
   return (
-    <Card className="overflow-hidden bg-gradient-card border-border">
+    <Card className="overflow-hidden bg-gradient-card border-border flex flex-col">
       <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-card/50">
         <div className="p-2 rounded-lg bg-gold/15">
           <Trophy className="h-5 w-5 text-gold" />
@@ -61,7 +72,7 @@ export function TopScorersTable() {
         {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary ms-auto" />}
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto flex-1">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
@@ -82,14 +93,14 @@ export function TopScorersTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && Array.from({ length: 5 }).map((_, index) => (
+            {isLoading && Array.from({ length: PAGE_SIZE }).map((_, index) => (
               <TableRow key={index} className="border-border">
                 <TableCell colSpan={6}>
                   <div className="h-8 bg-muted rounded animate-pulse" />
                 </TableCell>
               </TableRow>
             ))}
-            {!isLoading && scorers.map((scorer: Scorer) => (
+            {!isLoading && visibleScorers.map((scorer: Scorer) => (
               <TableRow
                 key={scorer.name}
                 className={cn(
@@ -136,6 +147,53 @@ export function TopScorersTable() {
           </TableBody>
         </Table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-border bg-card/40 p-4">
+          <div className={lang === 'ar' ? 'font-arabic text-sm text-muted-foreground' : 'text-sm text-muted-foreground'}>
+            {lang === 'ar'
+              ? `صفحة ${safePage} من ${totalPages}`
+              : `Page ${safePage} of ${totalPages}`}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2" dir="ltr">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => goToPage(safePage - 1)}
+              disabled={safePage === 1}
+              className="h-8 px-2"
+            >
+              {lang === 'ar' ? 'السابق' : 'Prev'}
+            </Button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+              <Button
+                key={pageNumber}
+                type="button"
+                variant={pageNumber === safePage ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => goToPage(pageNumber)}
+                className="h-8 w-8 p-0"
+              >
+                {pageNumber}
+              </Button>
+            ))}
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => goToPage(safePage + 1)}
+              disabled={safePage === totalPages}
+              className="h-8 px-2"
+            >
+              {lang === 'ar' ? 'التالي' : 'Next'}
+            </Button>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }
