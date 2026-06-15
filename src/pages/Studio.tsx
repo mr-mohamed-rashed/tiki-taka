@@ -3,6 +3,7 @@ import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose
 import { Card } from '@/components/ui/card';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
+import { Slider } from '@/components/ui/slider';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ export default function Studio() {
   const [showChat, setShowChat] = useState(true);
   const [isTheater, setIsTheater] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [volume, setVolume] = useState(0.8);
   const [state, setState] = useState<LiveStudioState>(defaultState);
   const [viewers, setViewers] = useState(0);
 
@@ -152,16 +154,31 @@ export default function Studio() {
             <Card className={cn("bg-black overflow-hidden flex flex-col items-center justify-center border-border relative group", isTheater ? "h-full w-full rounded-none" : "aspect-video rounded-xl")}>
               
               {/* Controls Overlay */}
-              <div className="absolute top-4 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  onClick={() => setIsMuted(!isMuted)} 
-                  className={cn("border-none text-white", "bg-black/50 hover:bg-black/80")}
-                  title={lang === 'ar' ? "كتم / تشغيل الصوت" : "Toggle Mute"}
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4 text-red-500" /> : <Volume2 className="h-4 w-4" />}
-                </Button>
+              <div className="absolute top-4 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
+                <div className="flex items-center gap-2 bg-black/50 p-1.5 rounded-md hover:bg-black/80 transition-colors">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={() => setIsMuted(!isMuted)} 
+                    className="border-none text-white hover:bg-white/20 h-8 w-8"
+                    title={lang === 'ar' ? "كتم / تشغيل الصوت" : "Toggle Mute"}
+                  >
+                    {isMuted || volume === 0 ? <VolumeX className="h-4 w-4 text-red-500" /> : <Volume2 className="h-4 w-4" />}
+                  </Button>
+                  <div className="w-20 px-2 hidden sm:block">
+                    <Slider
+                      value={[isMuted ? 0 : volume * 100]}
+                      max={100}
+                      step={1}
+                      onValueChange={(vals) => {
+                        setVolume(vals[0] / 100);
+                        if (vals[0] > 0 && isMuted) setIsMuted(false);
+                        if (vals[0] === 0) setIsMuted(true);
+                      }}
+                      className={cn("w-full cursor-pointer", isMuted && "opacity-50")}
+                    />
+                  </div>
+                </div>
                 {isTheater && (
                   <Button variant="secondary" size="icon" onClick={() => setShowChat(!showChat)} className="bg-black/50 text-white hover:bg-black/80 border-none">
                     {showChat ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
@@ -187,9 +204,17 @@ export default function Studio() {
                 </>
               ) : (
                 <ReactPlayer
-                  url={state.streamUrl}
+                  url={(() => {
+                    let finalUrl = state.streamUrl.trim();
+                    if (finalUrl.includes('youtu.be/')) {
+                      const videoId = finalUrl.split('youtu.be/')[1]?.split('?')[0];
+                      if (videoId) return `https://www.youtube.com/watch?v=${videoId}`;
+                    }
+                    return finalUrl;
+                  })()}
                   playing={true}
                   muted={isMuted}
+                  volume={volume}
                   controls={false}
                   width="100%"
                   height="100%"
@@ -214,8 +239,7 @@ export default function Studio() {
                   className={cn(
                     "absolute bg-black/80 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 transition-all duration-500 pointer-events-none",
                     getLogoSizeClasses(),
-                    getLogoPositionClasses(),
-                    isTheater && state.logoPosition.includes('top') ? "top-16" : "" // shift down if controls are top right
+                    getLogoPositionClasses()
                   )}
                 >
                   <div className="text-primary font-display font-extrabold animate-pulse">Tiki Taka</div>
