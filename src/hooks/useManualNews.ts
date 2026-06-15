@@ -35,7 +35,7 @@ function sortNews(items: ManualNewsRow[]) {
 }
 
 function isMissingTableError(error: { message?: string; code?: string } | null) {
-  return Boolean(error && (error.code === '42P01' || error.message?.includes('manual_news')));
+  return Boolean(error && error.code === '42P01');
 }
 
 export function useManualNews(publishedOnly = false) {
