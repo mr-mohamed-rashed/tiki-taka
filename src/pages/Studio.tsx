@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Mic, MicOff } from 'lucide-react';
+import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Mic, MicOff, Monitor, Camera, CameraOff } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
@@ -15,7 +15,37 @@ export default function Studio() {
   const [isTheater, setIsTheater] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [logoPosition, setLogoPosition] = useState<'none' | 'top-right' | 'top-left'>('top-right');
+  const [isCameraOn, setIsCameraOn] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleCamera = async () => {
+    if (isCameraOn) {
+      const stream = videoRef.current?.srcObject as MediaStream;
+      if (stream) stream.getTracks().forEach(track => track.stop());
+      if (videoRef.current) videoRef.current.srcObject = null;
+      setIsCameraOn(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        setIsCameraOn(true);
+      } catch (err) {
+        console.error("Error accessing camera:", err);
+        alert(lang === 'ar' ? 'حدث خطأ أثناء فتح الكاميرا. يرجى التأكد من الصلاحيات.' : 'Error accessing camera. Please check permissions.');
+      }
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        if (stream) stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -99,6 +129,28 @@ export default function Studio() {
                 <Button 
                   variant="secondary" 
                   size="icon" 
+                  onClick={toggleCamera} 
+                  className={cn("border-none text-white", isCameraOn ? "bg-live hover:bg-live/80" : "bg-black/50 hover:bg-black/80")}
+                  title={lang === 'ar' ? "فتح الكاميرا" : "Toggle Camera"}
+                >
+                  {isCameraOn ? <Camera className="h-4 w-4" /> : <CameraOff className="h-4 w-4" />}
+                </Button>
+                <Button 
+                  variant="secondary" 
+                  size="icon" 
+                  onClick={() => {
+                    if (logoPosition === 'none') setLogoPosition('top-right');
+                    else if (logoPosition === 'top-right') setLogoPosition('top-left');
+                    else setLogoPosition('none');
+                  }} 
+                  className={cn("border-none text-white", logoPosition !== 'none' ? "bg-primary hover:bg-primary/80" : "bg-black/50 hover:bg-black/80")}
+                  title={lang === 'ar' ? "تغطية لوجو القناة" : "Cover Channel Logo"}
+                >
+                  <Monitor className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="secondary" 
+                  size="icon" 
                   onClick={() => setIsListening(!isListening)} 
                   className={cn("border-none text-white", isListening ? "bg-live hover:bg-live/80" : "bg-black/50 hover:bg-black/80")}
                   title={lang === 'ar' ? "الترجمة الفورية (Captioning)" : "Live Captions"}
@@ -115,16 +167,42 @@ export default function Studio() {
                 </Button>
               </div>
 
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-              <Video className="h-16 w-16 text-muted-foreground mb-4 opacity-50" />
-              <h3 className={cn('text-xl font-bold text-white mb-2', lang === 'ar' && 'font-arabic')}>
-                {lang === 'ar' ? 'البث لم يبدأ بعد' : 'Broadcast not started yet'}
-              </h3>
-              <p className="text-white/50 text-sm max-w-md text-center px-4">
-                {lang === 'ar'
-                  ? 'انتظرونا قريباً في بث مباشر وتغطية حصرية. سيتم إشعاركم فور بدء البث.'
-                  : 'Stay tuned for our exclusive live broadcast. You will be notified when the stream starts.'}
-              </p>
+              {!isCameraOn && (
+                <>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                  <Video className="h-16 w-16 text-muted-foreground mb-4 opacity-50" />
+                  <h3 className={cn('text-xl font-bold text-white mb-2', lang === 'ar' && 'font-arabic')}>
+                    {lang === 'ar' ? 'البث لم يبدأ بعد' : 'Broadcast not started yet'}
+                  </h3>
+                  <p className="text-white/50 text-sm max-w-md text-center px-4">
+                    {lang === 'ar'
+                      ? 'انتظرونا قريباً في بث مباشر وتغطية حصرية. سيتم إشعاركم فور بدء البث.'
+                      : 'Stay tuned for our exclusive live broadcast. You will be notified when the stream starts.'}
+                  </p>
+                </>
+              )}
+
+              <video 
+                ref={videoRef}
+                autoPlay 
+                playsInline 
+                muted 
+                className={cn("w-full h-full object-cover", !isCameraOn && "hidden")}
+              />
+
+              {/* Channel Logo Cover / Broadcaster Box */}
+              {logoPosition !== 'none' && (
+                <div 
+                  className={cn(
+                    "absolute top-4 w-28 h-20 sm:w-40 sm:h-28 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 transition-all duration-300 pointer-events-none",
+                    logoPosition === 'top-right' ? "right-4" : "left-4",
+                    isTheater ? "top-16" : "top-4" // shift down if controls are top right
+                  )}
+                >
+                  <div className="text-primary font-display font-extrabold text-xl sm:text-2xl animate-pulse">Tiki Taka</div>
+                  <div className="text-white/50 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">Live Broadcast</div>
+                </div>
+              )}
 
               {/* Live Subtitles Overlay */}
               {transcript && (
