@@ -195,6 +195,16 @@ export default function Studio() {
                   height="100%"
                   className="absolute inset-0"
                   style={{ objectFit: 'contain' }}
+                  playsinline={true}
+                  config={{
+                    file: {
+                      forceHLS: state.streamUrl.includes('.m3u8'),
+                      attributes: {
+                        playsInline: true,
+                        autoPlay: true,
+                      }
+                    }
+                  }}
                 />
               )}
 
