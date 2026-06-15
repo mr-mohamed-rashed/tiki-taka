@@ -33,6 +33,20 @@ export default function Studio() {
   const [isTheater, setIsTheater] = useState(false);
   const [state, setState] = useState<LiveStudioState>(defaultState);
   const [viewers, setViewers] = useState(0);
+  const [activeServerIndex, setActiveServerIndex] = useState(0);
+
+  const servers = (() => {
+    if (!state.streamUrl) return [];
+    try {
+      const parsed = JSON.parse(state.streamUrl);
+      if (Array.isArray(parsed)) return parsed;
+    } catch(e) {
+      return [{ name: 'Server 1', url: state.streamUrl }];
+    }
+    return [];
+  })();
+
+  const activeServerUrl = servers[activeServerIndex]?.url || '';
 
   useEffect(() => {
     let interval: any;
@@ -148,6 +162,21 @@ export default function Studio() {
 
         <div className={cn("grid gap-6", isTheater ? "grid-cols-1" : (showChat ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1"))}>
           <div className={cn("relative transition-all", isTheater ? "h-[calc(100vh-64px)] w-full" : (showChat ? "lg:col-span-2" : "col-span-1"))}>
+            {servers.length > 1 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {servers.map((server: any, idx: number) => (
+                  <Button
+                    key={idx}
+                    variant={idx === activeServerIndex ? "default" : "secondary"}
+                    size="sm"
+                    onClick={() => setActiveServerIndex(idx)}
+                    className="font-bold text-xs shadow-sm"
+                  >
+                    {server.name || `Server ${idx + 1}`}
+                  </Button>
+                ))}
+              </div>
+            )}
             <Card className={cn("bg-black overflow-hidden flex flex-col items-center justify-center border-border relative group", isTheater ? "h-full w-full rounded-none" : "aspect-video rounded-xl")}>
               
               {/* Controls Overlay */}
@@ -162,7 +191,7 @@ export default function Studio() {
                 </Button>
               </div>
 
-              {!state.isLive || !state.streamUrl ? (
+              {!state.isLive || !activeServerUrl ? (
                 <>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                   <Video className="h-16 w-16 text-muted-foreground mb-4 opacity-50" />
@@ -178,7 +207,7 @@ export default function Studio() {
               ) : (
                 <iframe
                   src={(() => {
-                    let finalUrl = state.streamUrl.trim();
+                    let finalUrl = activeServerUrl.trim();
                     if (finalUrl.includes('youtube.com/watch?v=')) {
                       finalUrl = finalUrl.replace('watch?v=', 'embed/');
                     } else if (finalUrl.includes('youtu.be/')) {

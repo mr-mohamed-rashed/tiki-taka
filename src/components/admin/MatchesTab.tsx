@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Save, Loader2, Video } from 'lucide-react';
+import { CheckCircle, Save, Loader2, Video, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useResults } from '@/hooks/useFootballData';
 
@@ -13,6 +13,22 @@ export function MatchesTab() {
   const [urls, setUrls] = useState<Record<string, string>>({});
 
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleForceSync = async () => {
+    setIsSyncing(true);
+    try {
+      // Delete all cached data to force an immediate refetch from the API
+      await supabase.from('api_cache').delete().neq('endpoint', 'none');
+      alert('تم مسح الكاش بنجاح. سيتم طلب البيانات الجديدة من API.');
+      refetch();
+    } catch (e) {
+      console.error('Error clearing cache', e);
+      alert('حدث خطأ أثناء مسح الكاش.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const handleSave = async (matchId: string) => {
     const url = urls[matchId];
@@ -48,6 +64,15 @@ export function MatchesTab() {
           <h2 className="text-xl font-bold font-display">إدارة المباريات (الأرشيف)</h2>
           <p className="text-muted-foreground text-sm">المباريات التي انتهت من الـ API، قم بإضافة رابط ملخص (يوتيوب) لكل مباراة.</p>
         </div>
+        <Button 
+          variant="outline" 
+          className="gap-2 border-red-500/50 text-red-500 hover:bg-red-500/10"
+          onClick={handleForceSync}
+          disabled={isSyncing}
+        >
+          <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+          تحديث إجباري (مسح الكاش)
+        </Button>
       </div>
 
       <Card className="p-6 border-border bg-card/50 shadow-sm">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Video, Settings, Save, AlertCircle, RefreshCw, Send, Type, Link, Monitor, LayoutTemplate } from 'lucide-react';
+import { Video, Settings, Save, AlertCircle, RefreshCw, Send, Type, Link, Monitor, LayoutTemplate, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -114,16 +114,67 @@ export function StudioTab() {
         <div className="space-y-6">
           {/* Stream URL */}
           <div className="space-y-3">
-            <label className="text-sm font-semibold flex items-center gap-2">
-              <Link className="h-4 w-4 text-muted-foreground" />
-              {lang === 'ar' ? 'رابط البث (يوتيوب، تويتش، أو M3U8)' : 'Stream URL (YouTube, Twitch, M3U8)'}
+            <label className="text-sm font-semibold flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Link className="h-4 w-4 text-muted-foreground" />
+                {lang === 'ar' ? 'سيرفرات البث (يوتيوب، تويتش، إلخ)' : 'Stream Servers'}
+              </div>
+              <Button variant="outline" size="sm" onClick={() => {
+                let parsed = [];
+                try { parsed = JSON.parse(state.streamUrl) } catch(e) { if(state.streamUrl) parsed = [{name: 'Server 1', url: state.streamUrl}] }
+                parsed.push({ name: `Server ${parsed.length + 1}`, url: '' });
+                handleChange('streamUrl', JSON.stringify(parsed));
+              }}>
+                {lang === 'ar' ? 'إضافة سيرفر' : 'Add Server'}
+              </Button>
             </label>
-            <Input 
-              value={state.streamUrl}
-              onChange={(e) => handleChange('streamUrl', e.target.value)}
-              placeholder="https://youtube.com/watch?v=..."
-              className="font-mono bg-background/50"
-            />
+            
+            <div className="space-y-3">
+              {(() => {
+                let servers = [];
+                try { servers = JSON.parse(state.streamUrl) } catch(e) { if(state.streamUrl) servers = [{name: 'Server 1', url: state.streamUrl}] }
+                
+                if (servers.length === 0) {
+                  return <Input 
+                    value={state.streamUrl}
+                    onChange={(e) => handleChange('streamUrl', e.target.value)}
+                    placeholder="https://youtube.com/watch?v=..."
+                    className="font-mono bg-background/50"
+                  />;
+                }
+
+                return servers.map((server: any, idx: number) => (
+                  <div key={idx} className="flex items-center gap-2 animate-fade-in">
+                    <Input 
+                      value={server.name}
+                      onChange={(e) => {
+                        const newServers = [...servers];
+                        newServers[idx].name = e.target.value;
+                        handleChange('streamUrl', JSON.stringify(newServers));
+                      }}
+                      placeholder={lang === 'ar' ? "اسم السيرفر" : "Server Name"}
+                      className="w-1/3"
+                    />
+                    <Input 
+                      value={server.url}
+                      onChange={(e) => {
+                        const newServers = [...servers];
+                        newServers[idx].url = e.target.value;
+                        handleChange('streamUrl', JSON.stringify(newServers));
+                      }}
+                      placeholder="https://youtube.com/watch?v=..."
+                      className="font-mono bg-background/50 flex-1"
+                    />
+                    <Button variant="destructive" size="icon" onClick={() => {
+                      const newServers = servers.filter((_: any, i: number) => i !== idx);
+                      handleChange('streamUrl', JSON.stringify(newServers));
+                    }}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ));
+              })()}
+            </div>
           </div>
 
           {/* Overlay Text */}

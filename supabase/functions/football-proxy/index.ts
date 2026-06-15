@@ -98,8 +98,10 @@ Deno.serve(async (req: Request) => {
           const hasJustFinished = apiFootballData.response.some((f: any) => ['FT', 'AET', 'PEN'].includes(f.fixture.status.short));
           if (hasJustFinished) {
             await supabase.from('api_cache').delete().in('endpoint', [
+              `fixtures_1_2026_`,
               `results_1_2026_`,
               `standings_1_2026_`,
+              `groups_1_2026_`,
               `topscorers_1_2026_`
             ]);
           }
