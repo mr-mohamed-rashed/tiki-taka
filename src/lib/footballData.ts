@@ -180,7 +180,12 @@ const liveFallbackMatches: Match[] = [];
 export const getLiveMatches = (): Match[] => {
   const liveFromUpcoming = getUpcomingMatches()
     .filter(isInsideLiveWindow)
-    .map(m => ({ ...m, status: 'live' as MatchStatus, minute: "45'" }));
+    .map(m => {
+      const kickoff = new Date(m.date).getTime();
+      const now = Date.now();
+      const elapsedMins = Math.max(0, Math.floor((now - kickoff) / 60000));
+      return { ...m, status: 'live' as MatchStatus, minute: `${elapsedMins}'` };
+    });
   
   return [...liveFallbackMatches.filter(isInsideLiveWindow), ...liveFromUpcoming];
 };
