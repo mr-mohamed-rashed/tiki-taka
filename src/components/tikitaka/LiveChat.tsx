@@ -39,11 +39,23 @@ function getOrCreateUserId(): string {
 // Hardcoded moderator IDs for demo – in production, manage via the database
 const MODERATOR_IDS = new Set(['mod_tiki_taka_admin']);
 
-interface LiveChatProps {
-  matchId?: string;
+// Basic profanity filter
+const BAD_WORDS = ['شتيمة', 'لفظ', 'خارج', 'shit', 'fuck', 'bitch', 'احا', 'عرص', 'متناك', 'شرموط', 'خول', 'قحبة', 'منيوك'];
+function filterProfanity(text: string): string {
+  let filtered = text;
+  BAD_WORDS.forEach(word => {
+    const regex = new RegExp(word, 'gi');
+    filtered = filtered.replace(regex, '***');
+  });
+  return filtered;
 }
 
-export function LiveChat({ matchId = 'general' }: LiveChatProps) {
+interface LiveChatProps {
+  matchId?: string;
+  variant?: 'default' | 'overlay';
+}
+
+export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatProps) {
   const { lang } = useLanguage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [users, setUsers] = useState<Map<string, ChatUser>>(new Map());
@@ -137,10 +149,12 @@ export function LiveChat({ matchId = 'general' }: LiveChatProps) {
       .maybeSingle();
     if (userRow?.is_banned) return;
 
+    const filteredText = filterProfanity(text);
+
     await supabase.from('chat_messages').insert({
       user_id: userId,
       username,
-      message: text,
+      message: filteredText,
       match_id: matchId,
     });
     setInputMsg('');
@@ -162,19 +176,24 @@ export function LiveChat({ matchId = 'general' }: LiveChatProps) {
 
   if (!joined) {
     return (
-      <Card className="bg-gradient-card border-border overflow-hidden">
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-card/60">
-          <div className="p-2 rounded-lg bg-primary/15">
-            <MessageCircle className="h-5 w-5 text-primary" />
+      <Card className={cn(
+        "overflow-hidden flex flex-col",
+        variant === 'overlay' ? 'bg-transparent border-none shadow-none h-full justify-end' : 'bg-gradient-card border-border h-[500px]'
+      )}>
+        {variant !== 'overlay' && (
+          <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-card/60">
+            <div className="p-2 rounded-lg bg-primary/15">
+              <MessageCircle className="h-5 w-5 text-primary" />
+            </div>
+            <h3 className={cn('font-display font-extrabold text-xl', lang === 'ar' && 'font-arabic')}>
+              {t('liveChat', lang)}
+            </h3>
           </div>
-          <h3 className={cn('font-display font-extrabold text-xl', lang === 'ar' && 'font-arabic')}>
-            {t('liveChat', lang)}
-          </h3>
-        </div>
-        <div className="p-6 space-y-4">
+        )}
+        <div className={cn("p-6 space-y-4", variant === 'overlay' && "bg-black/60 rounded-xl backdrop-blur-md")}>
           <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground shrink-0" />
-            <span className={cn('text-sm text-muted-foreground', lang === 'ar' && 'font-arabic')}>
+            <User className="h-4 w-4 text-white shrink-0" />
+            <span className={cn('text-sm text-white', lang === 'ar' && 'font-arabic')}>
               {t('chatJoin', lang)}
             </span>
           </div>
@@ -183,7 +202,7 @@ export function LiveChat({ matchId = 'general' }: LiveChatProps) {
             value={usernameInput}
             onChange={(e) => setUsernameInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
-            className="bg-muted border-border"
+            className={cn("border-border", variant === 'overlay' ? "bg-white/10 text-white placeholder:text-white/50" : "bg-muted")}
             dir={lang === 'ar' ? 'rtl' : 'ltr'}
           />
           <Button onClick={handleJoin} disabled={!usernameInput.trim()} className="w-full bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
@@ -197,9 +216,13 @@ export function LiveChat({ matchId = 'general' }: LiveChatProps) {
   const visibleMessages = messages.filter((m) => !m.is_deleted);
 
   return (
-    <Card className="bg-gradient-card border-border overflow-hidden flex flex-col" style={{ height: '500px' }}>
+    <Card className={cn(
+      "overflow-hidden flex flex-col",
+      variant === 'overlay' ? 'bg-transparent border-none shadow-none h-full' : 'bg-gradient-card border-border h-[500px]'
+    )}>
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/60 shrink-0">
+      {variant !== 'overlay' && (
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/60 shrink-0">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/15">
             <MessageCircle className="h-4 w-4 text-primary" />
@@ -215,7 +238,8 @@ export function LiveChat({ matchId = 'general' }: LiveChatProps) {
             <span className={cn('text-xs font-bold', lang === 'ar' && 'font-arabic')}>{t('moderator', lang)}</span>
           </Badge>
         )}
-      </div>
+        </div>
+      )}
 
       {/* Messages */}
       <div ref={scrollRef} className="commentary-scroll flex-1 overflow-y-auto p-3 space-y-2">
@@ -260,14 +284,14 @@ export function LiveChat({ matchId = 'general' }: LiveChatProps) {
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-border shrink-0">
+      <div className={cn("p-3 shrink-0", variant === 'overlay' ? 'border-none' : 'border-t border-border')}>
         <div className="flex gap-2">
           <Input
             value={inputMsg}
             onChange={(e) => setInputMsg(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
             placeholder={t('chatPlaceholder', lang)}
-            className="bg-muted border-border flex-1 text-sm"
+            className={cn("border-border flex-1 text-sm", variant === 'overlay' ? "bg-black/40 text-white placeholder:text-white/50 border-none backdrop-blur-sm" : "bg-muted")}
             dir={lang === 'ar' ? 'rtl' : 'ltr'}
             maxLength={300}
           />

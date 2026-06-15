@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Video } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -217,6 +219,14 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 border-t border-border/60 pt-4">
+          <Link
+            to="/studio"
+            className="group flex h-10 items-center justify-center gap-2 rounded-full border border-live/50 bg-live/10 px-4 text-xs font-bold text-live shadow-card transition-all hover:-translate-y-0.5 hover:border-live hover:bg-live hover:text-live-foreground hover:shadow-neon"
+            title="الاستوديو المباشر"
+          >
+            <Video className="h-4 w-4 animate-pulse-live" />
+            <span className="font-arabic">الاستوديو</span>
+          </Link>
           {socialLinks.map((link) => (
             <a
               key={link.key}
