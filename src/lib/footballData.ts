@@ -249,12 +249,7 @@ export const getUpcomingMatches = (): Match[] => [
     home: teams.SWE, away: teams.TUN, homeScore: 0, awayScore: 0,
     venue: 'Gillette Stadium, Boston',
   },
-  {
-    id: 'u9', competition: 'FIFA World Cup 2026', stage: 'Group H - Match Day 1',
-    date: '2026-06-15T16:00:00Z', status: 'upcoming',
-    home: teams.ESP, away: teams.CPV, homeScore: 0, awayScore: 0,
-    venue: 'Hard Rock Stadium, Miami',
-  },
+
   {
     id: 'u10', competition: 'FIFA World Cup 2026', stage: 'Group G - Match Day 1',
     date: '2026-06-15T19:00:00Z', status: 'upcoming',
@@ -615,6 +610,12 @@ export const getUpcomingMatches = (): Match[] => [
  * "Results" tab â€” empty until the tournament starts (June 11, 2026)
  */
 export const getFinishedMatches = (): Match[] => [
+  {
+    id: 'u9', competition: 'FIFA World Cup 2026', stage: 'Group H - Match Day 1',
+    date: '2026-06-15T16:00:00Z', status: 'finished',
+    home: teams.ESP, away: teams.CPV, homeScore: 0, awayScore: 0,
+    venue: 'Hard Rock Stadium, Miami',
+  },
   {
     id: 'r1', competition: 'FIFA World Cup 2026', stage: 'Group A - Match Day 1',
     date: '2026-06-11T21:00:00Z', status: 'finished',
