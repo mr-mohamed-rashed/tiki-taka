@@ -166,24 +166,10 @@ function PaginatedMatchGrid({
               size="sm"
               onClick={() => goToPage(safePage - 1)}
               disabled={safePage === 1}
-              className="gap-1"
+              className="gap-1 h-9 px-3"
             >
-              <ChevronLeft className="h-4 w-4" />
               {lang === 'ar' ? 'السابق' : 'Prev'}
             </Button>
-
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-              <Button
-                key={pageNumber}
-                type="button"
-                variant={pageNumber === safePage ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => goToPage(pageNumber)}
-                className="h-9 w-9 p-0"
-              >
-                {pageNumber}
-              </Button>
-            ))}
 
             <Button
               type="button"
@@ -191,10 +177,9 @@ function PaginatedMatchGrid({
               size="sm"
               onClick={() => goToPage(safePage + 1)}
               disabled={safePage === totalPages}
-              className="gap-1"
+              className="gap-1 h-9 px-3"
             >
               {lang === 'ar' ? 'التالي' : 'Next'}
-              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

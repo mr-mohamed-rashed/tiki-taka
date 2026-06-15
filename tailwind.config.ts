@@ -22,7 +22,7 @@ export default {
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
 				display: ['Rajdhani', 'Inter', 'sans-serif'],
-				arabic: ['Cairo', 'system-ui', 'sans-serif'],
+				arabic: ['Tajawal', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

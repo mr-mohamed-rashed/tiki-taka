@@ -178,7 +178,7 @@ const Index = () => {
                 {visiblePulseNews.map(n => (
                   <div key={n.id} className="block p-4 rounded-lg border border-border bg-gradient-card hover:border-primary/50 hover:shadow-card transition-all group">
                     <Badge variant="outline" className="border-primary/40 text-primary text-[10px] font-bold mb-2">{n.title_en || 'PULSE'}</Badge>
-                    <p className={cn('text-sm font-semibold group-hover:text-primary transition-colors leading-snug', lang === 'ar' && 'font-arabic')}>
+                    <p className={cn('text-sm font-medium group-hover:text-primary transition-colors leading-relaxed', lang === 'ar' && 'font-arabic')}>
                       {lang === 'ar' ? n.title_ar || n.title_en : n.title_en || n.title_ar}
                     </p>
                   </div>
@@ -222,7 +222,7 @@ const Index = () => {
           </aside>
         </section>
 
-        <section className="hidden">
+        <section className="mb-10">
           <SectionHeader
             icon={<Trophy className="h-5 w-5" />}
             title={lang === 'ar' ? 'طريق كأس العالم' : 'Road to the World Cup'}
