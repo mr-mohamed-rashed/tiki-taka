@@ -10,12 +10,13 @@ import Results from './pages/Results';
 import Groups from './pages/Groups';
 import Admin from './pages/Admin';
 import Roadmap from './pages/Roadmap';
+import Studio from './pages/Studio';
 import { GlobalFloatingAd } from './components/tikitaka/GlobalFloatingAd';
 import { GoogleAuthGate } from './components/tikitaka/GoogleAuthGate';
 
 const Layout = () => {
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/studio');
   const isPublicHome = location.pathname === '/';
 
   if (isAdminRoute || isPublicHome) {
@@ -54,6 +55,7 @@ export const routers = [
       { path: '/live', name: 'live', element: <LiveMatches /> },
       { path: '/results', name: 'results', element: <Results /> },
       { path: '/admin', name: 'admin', element: <Admin /> },
+      { path: '/studio', name: 'studio', element: <Studio /> },
       { path: '*', name: '404', element: <NotFound /> },
     ],
   },
