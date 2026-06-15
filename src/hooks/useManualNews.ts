@@ -51,7 +51,7 @@ export function useManualNews(publishedOnly = false) {
 
   const fetch = useCallback(async () => {
     setLoading(true);
-    let q = supabase.from('manual_news').select('*').order('published_at', { ascending: false });
+    let q = supabase.from('manual_news').select('*').order('published_at', { ascending: false }).order('created_at', { ascending: false });
     if (publishedOnly) q = q.eq('is_published', true);
     const { data, error } = await q;
 
