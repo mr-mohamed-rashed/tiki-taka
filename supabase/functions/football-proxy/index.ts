@@ -3,7 +3,6 @@ const CORS = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-
 const API_FOOTBALL_BASE = 'https://v3.football.api-sports.io';
 
 type ProxyEndpoint = 'live' | 'fixtures' | 'results' | 'standings' | 'topscorers' | 'fixture_events' | 'groups';
@@ -15,35 +14,8 @@ type ProxyRequest = {
   fixtureId?: string;
 };
 
-
-
-type NormalizedMatch = {
-  id: string;
-  competition: string;
-  stage: string;
-  date: string;
-  status: 'live' | 'upcoming' | 'finished';
-  minute?: string;
-  home: {
-    id: string;
-    name: string;
-    shortName: string;
-    flag: string;
-    code: string;
-    color: string;
-  };
-  away: {
-    id: string;
-    name: string;
-    shortName: string;
-    flag: string;
-    code: string;
-    color: string;
-  };
-  homeScore: number;
-  awayScore: number;
-  venue: string;
-};
+// @ts-ignore - Import Supabase JS
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -58,13 +30,50 @@ Deno.serve(async (req: Request) => {
       return json({ error: 'Missing endpoint' }, 400);
     }
 
-    if (['live', 'fixtures', 'results'].includes(endpoint)) {
-      const worldCupData = await fetchWorldCupMatches(endpoint).catch(() => null);
-      if (worldCupData) {
-        return json({ provider: 'worldcup26', matches: worldCupData });
+    // @ts-ignore
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    // @ts-ignore
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+
+    const cacheKey = `${endpoint}_${body.league || '1'}_${body.season || '2026'}_${body.fixtureId || ''}`;
+
+    // SMART POLLING: Cache durations in seconds
+    const cacheDurations: Record<string, number> = {
+      live: 60 * 5,          // 5 minutes for live matches
+      fixtures: 86400,       // 24 hours (schedule)
+      results: 86400,        // 24 hours (cleared automatically after match finishes)
+      standings: 86400,      // 24 hours (cleared automatically after match finishes)
+      topscorers: 86400,     // 24 hours (cleared automatically after match finishes)
+    };
+
+    const maxAge = cacheDurations[endpoint] || 3600;
+
+    let cachedData = null;
+    let cacheAge = Infinity;
+
+    if (supabase) {
+      // SMART POLLING: Don't poll LIVE if no match is currently active
+      if (endpoint === 'live') {
+        const { data: fixturesCache } = await supabase.from('api_cache').select('data').eq('endpoint', `fixtures_1_2026_`).single();
+        if (fixturesCache && !isAnyMatchActive(fixturesCache.data)) {
+          return json({ provider: 'smart-polling-idle', response: [] }); // 0 API requests spent!
+        }
+      }
+
+      const { data: cacheRow } = await supabase.from('api_cache').select('*').eq('endpoint', cacheKey).single();
+      if (cacheRow) {
+        cachedData = cacheRow.data;
+        const updatedAt = new Date(cacheRow.updated_at).getTime();
+        cacheAge = (new Date().getTime() - updatedAt) / 1000;
+        
+        if (cacheAge < maxAge && cachedData && Object.keys(cachedData).length > 0) {
+          return json({ provider: 'cache', ...cachedData });
+        }
       }
     }
 
+    // FETCH FROM API-SPORTS
     const apiFootballData = await fetchApiFootball({
       endpoint,
       league: body.league ?? '1',
@@ -72,80 +81,61 @@ Deno.serve(async (req: Request) => {
       fixtureId: body.fixtureId,
     });
 
-    return json({ provider: 'api-football', ...apiFootballData });
+    const isRateLimited = apiFootballData.errors && Object.keys(apiFootballData.errors).length > 0;
+
+    if (!isRateLimited) {
+      if (supabase) {
+        // Save to cache
+        await supabase.from('api_cache').upsert({
+          endpoint: cacheKey,
+          data: apiFootballData,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'endpoint' });
+
+        // SMART POLLING: If we just fetched LIVE and a match is FINISHED ('FT', 'PEN', 'AET')
+        // We delete the old results/standings cache so they get refreshed on the next visit!
+        if (endpoint === 'live' && apiFootballData.response) {
+          const hasJustFinished = apiFootballData.response.some((f: any) => ['FT', 'AET', 'PEN'].includes(f.fixture.status.short));
+          if (hasJustFinished) {
+            await supabase.from('api_cache').delete().in('endpoint', [
+              `results_1_2026_`,
+              `standings_1_2026_`,
+              `topscorers_1_2026_`
+            ]);
+          }
+        }
+      }
+      return json({ provider: 'api-football', ...apiFootballData });
+    } else {
+      // Rate limit hit -> return stale cache!
+      if (cachedData) return json({ provider: 'cache-stale', ...cachedData });
+      return json({ error: 'API Rate limit reached' }, 429);
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     return json({ error: message }, 500);
   }
 });
 
-async function fetchWorldCupMatches(endpoint: ProxyEndpoint): Promise<NormalizedMatch[]> {
-  // Use ESPN API
-  const url = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard';
-  const data = await fetchJson(url).catch(() => ({ events: [] }));
-  const events = data.events || [];
-
-  return events
-    .map(normalizeESPNMatch)
-    .filter((match: NormalizedMatch) => {
-      if (endpoint === 'live') return match.status === 'live';
-      if (endpoint === 'results') return match.status === 'finished';
-      return match.status === 'upcoming';
-    })
-    .sort((a: NormalizedMatch, b: NormalizedMatch) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, endpoint === 'fixtures' ? 12 : 20);
-}
-
-function normalizeESPNMatch(event: any): NormalizedMatch {
-  const comp = event.competitions?.[0];
-  const home = comp?.competitors?.find((c: any) => c.homeAway === 'home');
-  const away = comp?.competitors?.find((c: any) => c.homeAway === 'away');
-  const statusType = event.status?.type || {};
+// Helper: check if any match is in the active window (15 mins before to 3 hours after)
+function isAnyMatchActive(fixturesData: any) {
+  if (!fixturesData?.response) return true;
+  const now = new Date().getTime();
   
-  // ESPN states: 'pre', 'in', 'post'
-  const state = statusType.state;
-  let status: 'live' | 'upcoming' | 'finished' = 'upcoming';
-  if (state === 'in') status = 'live';
-  if (state === 'post') status = 'finished';
-
-  const homeName = home?.team?.displayName || home?.team?.name || 'TBD';
-  const awayName = away?.team?.displayName || away?.team?.name || 'TBD';
-
-  return {
-    id: String(event.id),
-    competition: 'FIFA World Cup 2026',
-    stage: event.season?.type === 2 ? 'Group Stage' : 'Knockout',
-    date: event.date,
-    status,
-    minute: status === 'live' ? event.status?.displayClock : undefined,
-    home: buildTeam(homeName, home?.team?.logo),
-    away: buildTeam(awayName, away?.team?.logo),
-    homeScore: parseInt(home?.score || '0') || 0,
-    awayScore: parseInt(away?.score || '0') || 0,
-    venue: comp?.venue?.fullName || '',
-  };
+  for (const f of fixturesData.response) {
+    if (['FT', 'AET', 'PEN'].includes(f.fixture.status.short)) continue;
+    const matchTime = new Date(f.fixture.date).getTime();
+    if (now >= matchTime - 15 * 60 * 1000 && now <= matchTime + 180 * 60 * 1000) {
+      return true;
+    }
+  }
+  return false; 
 }
-
-function buildTeam(name: string, logo?: string) {
-  const code = name === 'TBD' ? 'TBD' : name.slice(0, 3).toUpperCase();
-
-  return {
-    id: name,
-    name,
-    shortName: code,
-    flag: logo || '',
-    code,
-    color: '#888888',
-  };
-}
-
 
 async function fetchApiFootball({ endpoint, league, season, fixtureId }: Required<Pick<ProxyRequest, 'endpoint' | 'league' | 'season'>> & Pick<ProxyRequest, 'fixtureId'>) {
-  // @ts-ignore - Deno is available in Supabase edge functions
+  // @ts-ignore
   const apiKey = Deno.env.get('API_FOOTBALL_KEY') ?? '';
-  if (!apiKey) {
-    return { response: [] };
-  }
+  if (!apiKey) return { response: [] };
 
   const headers: Record<string, string> = {
     'x-rapidapi-key': apiKey,
@@ -153,30 +143,15 @@ async function fetchApiFootball({ endpoint, league, season, fixtureId }: Require
   };
 
   let apiUrl = '';
-
   switch (endpoint) {
-    case 'live':
-      apiUrl = `${API_FOOTBALL_BASE}/fixtures?live=all`;
-      break;
-    case 'fixtures':
-      apiUrl = `${API_FOOTBALL_BASE}/fixtures?league=${league}&season=${season}&status=NS-1H-HT-2H-ET-P`;
-      break;
-    case 'results':
-      apiUrl = `${API_FOOTBALL_BASE}/fixtures?league=${league}&season=${season}&status=FT-AET-PEN`;
-      break;
+    case 'live': apiUrl = `${API_FOOTBALL_BASE}/fixtures?live=all`; break;
+    case 'fixtures': apiUrl = `${API_FOOTBALL_BASE}/fixtures?league=${league}&season=${season}&status=NS-1H-HT-2H-ET-P`; break;
+    case 'results': apiUrl = `${API_FOOTBALL_BASE}/fixtures?league=${league}&season=${season}&status=FT-AET-PEN`; break;
     case 'standings':
-    case 'groups':
-      apiUrl = `${API_FOOTBALL_BASE}/standings?league=${league}&season=${season}`;
-      break;
-    case 'topscorers':
-      apiUrl = `${API_FOOTBALL_BASE}/players/topscorers?league=${league}&season=${season}`;
-      break;
-    case 'fixture_events':
-      if (!fixtureId) throw new Error('fixtureId required');
-      apiUrl = `${API_FOOTBALL_BASE}/fixtures/events?fixture=${fixtureId}`;
-      break;
-    default:
-      throw new Error('Unknown endpoint');
+    case 'groups': apiUrl = `${API_FOOTBALL_BASE}/standings?league=${league}&season=${season}`; break;
+    case 'topscorers': apiUrl = `${API_FOOTBALL_BASE}/players/topscorers?league=${league}&season=${season}`; break;
+    case 'fixture_events': apiUrl = `${API_FOOTBALL_BASE}/fixtures/events?fixture=${fixtureId}`; break;
+    default: throw new Error('Unknown endpoint');
   }
 
   return await fetchJson(apiUrl, { headers });
@@ -184,15 +159,10 @@ async function fetchApiFootball({ endpoint, league, season, fixtureId }: Require
 
 async function fetchJson(url: string, init?: RequestInit) {
   const response = await fetch(url, init);
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
-  }
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
   return await response.json();
 }
 
 function json(data: unknown, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
-  });
+  return new Response(JSON.stringify(data), { status, headers: { ...CORS, 'Content-Type': 'application/json' } });
 }

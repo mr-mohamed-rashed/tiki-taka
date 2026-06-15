@@ -66,7 +66,7 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="studio">
-          <TabsList className="grid grid-cols-7 w-full mb-8 h-11 bg-muted border border-border">
+          <TabsList className="flex flex-wrap h-auto w-full mb-8 bg-muted border border-border justify-start gap-2 p-1">
             <TabsTrigger value="studio" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground text-live">
               <Video className="h-4 w-4" /> {lang === 'ar' ? 'استوديو البث' : 'Live Studio'}
             </TabsTrigger>
