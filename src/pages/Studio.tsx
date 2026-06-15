@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { LiveChat } from '@/components/tikitaka/LiveChat';
 import { supabase } from '@/integrations/supabase/client';
-import ReactPlayer from 'react-player';
 
 interface LiveStudioState {
   streamUrl: string;
@@ -32,8 +31,6 @@ export default function Studio() {
   const { lang, dir } = useLanguage();
   const [showChat, setShowChat] = useState(true);
   const [isTheater, setIsTheater] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [volume, setVolume] = useState(0.8);
   const [state, setState] = useState<LiveStudioState>(defaultState);
   const [viewers, setViewers] = useState(0);
 
@@ -154,31 +151,7 @@ export default function Studio() {
             <Card className={cn("bg-black overflow-hidden flex flex-col items-center justify-center border-border relative group", isTheater ? "h-full w-full rounded-none" : "aspect-video rounded-xl")}>
               
               {/* Controls Overlay */}
-              <div className="absolute top-4 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
-                <div className="flex items-center gap-2 bg-black/50 p-1.5 rounded-md hover:bg-black/80 transition-colors">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => setIsMuted(!isMuted)} 
-                    className="border-none text-white hover:bg-white/20 h-8 w-8"
-                    title={lang === 'ar' ? "كتم / تشغيل الصوت" : "Toggle Mute"}
-                  >
-                    {isMuted || volume === 0 ? <VolumeX className="h-4 w-4 text-red-500" /> : <Volume2 className="h-4 w-4" />}
-                  </Button>
-                  <div className="w-20 px-2 hidden sm:block">
-                    <Slider
-                      value={[isMuted ? 0 : volume * 100]}
-                      max={100}
-                      step={1}
-                      onValueChange={(vals) => {
-                        setVolume(vals[0] / 100);
-                        if (vals[0] > 0 && isMuted) setIsMuted(false);
-                        if (vals[0] === 0) setIsMuted(true);
-                      }}
-                      className={cn("w-full cursor-pointer", isMuted && "opacity-50")}
-                    />
-                  </div>
-                </div>
+              <div className="absolute bottom-16 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
                 {isTheater && (
                   <Button variant="secondary" size="icon" onClick={() => setShowChat(!showChat)} className="bg-black/50 text-white hover:bg-black/80 border-none">
                     {showChat ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
@@ -203,38 +176,23 @@ export default function Studio() {
                   </p>
                 </>
               ) : (
-                <ReactPlayer
-                  url={(() => {
+                <iframe
+                  src={(() => {
                     let finalUrl = state.streamUrl.trim();
-                    if (finalUrl.includes('youtu.be/')) {
+                    if (finalUrl.includes('youtube.com/watch?v=')) {
+                      finalUrl = finalUrl.replace('watch?v=', 'embed/');
+                    } else if (finalUrl.includes('youtu.be/')) {
                       const videoId = finalUrl.split('youtu.be/')[1]?.split('?')[0];
-                      if (videoId) return `https://www.youtube.com/watch?v=${videoId}`;
+                      if (videoId) finalUrl = `https://www.youtube.com/embed/${videoId}`;
+                    }
+                    if (finalUrl.includes('youtube.com/embed/')) {
+                      finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'autoplay=1';
                     }
                     return finalUrl;
                   })()}
-                  playing={true}
-                  muted={isMuted}
-                  volume={volume}
-                  controls={true}
-                  width="100%"
-                  height="100%"
-                  className="absolute inset-0"
-                  style={{ objectFit: 'contain' }}
-                  playsinline={true}
-                  config={{
-                    file: {
-                      forceHLS: state.streamUrl.includes('.m3u8'),
-                      attributes: {
-                        playsInline: true,
-                        autoPlay: true,
-                      }
-                    },
-                    youtube: {
-                      playerVars: {
-                        origin: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'
-                      }
-                    }
-                  }}
+                  className="absolute inset-0 w-full h-full bg-black"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                 />
               )}
 
