@@ -8,7 +8,7 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { WidgetLabelsTab } from '@/components/admin/WidgetLabelsTab';
 import { AdsTab } from '@/components/admin/AdsTab';
 import { NewsTab } from '@/components/admin/NewsTab';
-import { PageBuilder } from '@/components/admin/PageBuilder';
+
 import { MediaPlayerTab } from '@/components/admin/MediaPlayerTab';
 import { AnalyticsTab } from '@/components/admin/AnalyticsTab';
 import { MatchesTab } from '@/components/admin/MatchesTab';
@@ -65,15 +65,12 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="analytics">
-          <TabsList className="grid grid-cols-7 w-full mb-8 h-11 bg-muted border border-border">
+          <TabsList className="grid grid-cols-6 w-full mb-8 h-11 bg-muted border border-border">
             <TabsTrigger value="matches" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <CheckCircle className="h-4 w-4" /> المباريات
             </TabsTrigger>
             <TabsTrigger value="analytics" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <Activity className="h-4 w-4" /> {t('adminAnalytics', lang)}
-            </TabsTrigger>
-            <TabsTrigger value="builder" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
-              <Layers className="h-4 w-4" /> {t('adminPageBuilder', lang)}
             </TabsTrigger>
             <TabsTrigger value="widgets" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <Settings className="h-4 w-4" /> {t('adminLabels', lang)}
@@ -91,7 +88,6 @@ export default function Admin() {
 
           <TabsContent value="matches"><MatchesTab /></TabsContent>
           <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
-          <TabsContent value="builder"><PageBuilder /></TabsContent>
           <TabsContent value="widgets"><WidgetLabelsTab /></TabsContent>
           <TabsContent value="ads"><AdsTab /></TabsContent>
           <TabsContent value="news"><NewsTab /></TabsContent>
