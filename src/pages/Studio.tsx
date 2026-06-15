@@ -215,7 +215,7 @@ export default function Studio() {
                   playing={true}
                   muted={isMuted}
                   volume={volume}
-                  controls={false}
+                  controls={true}
                   width="100%"
                   height="100%"
                   className="absolute inset-0"
@@ -227,6 +227,11 @@ export default function Studio() {
                       attributes: {
                         playsInline: true,
                         autoPlay: true,
+                      }
+                    },
+                    youtube: {
+                      playerVars: {
+                        origin: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'
                       }
                     }
                   }}
