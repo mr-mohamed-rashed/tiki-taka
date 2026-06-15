@@ -16,14 +16,16 @@ export function WorldCupRoadmap() {
     <Card className="relative w-full overflow-hidden border-border bg-gradient-card h-[85vh] min-h-[600px] sm:h-auto sm:min-h-0">
       
       {/* Mobile Rotated View */}
-      <div 
-        className="sm:hidden absolute top-0 left-full origin-top-left rotate-90 p-2 flex items-center justify-center bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.18),transparent_34%)]"
-        style={{ width: 'max(85vh, 600px)', height: '100%' }}
-      >
-        <div className="w-full h-full grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <RoadSide slots={slots.slice(0, 16)} side="left" isAr={isAr} isMobile={true} />
-          <CenterCup isAr={isAr} isMobile={true} />
-          <RoadSide slots={slots.slice(16)} side="right" isAr={isAr} isMobile={true} />
+      <div className="sm:hidden absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.18),transparent_34%)]">
+        <div 
+          className="rotate-90 flex items-center justify-center"
+          style={{ width: 'max(85vh, 600px)', height: 'calc(100vw - 32px)' }}
+        >
+          <div className="w-full h-full grid grid-cols-[1fr_auto_1fr] items-center gap-2 p-2">
+            <RoadSide slots={slots.slice(0, 16)} side="left" isAr={isAr} isMobile={true} />
+            <CenterCup isAr={isAr} isMobile={true} />
+            <RoadSide slots={slots.slice(16)} side="right" isAr={isAr} isMobile={true} />
+          </div>
         </div>
       </div>
 
