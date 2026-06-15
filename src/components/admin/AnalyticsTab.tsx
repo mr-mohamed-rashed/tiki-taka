@@ -4,6 +4,8 @@ import { Users, Activity, MousePointerClick, Eye, Clock, ArrowUpRight, Globe } f
 import { useLanguage } from '@/context/LanguageContext';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfDay } from 'date-fns';
 
 interface VisitorEvent {
   id: string;
@@ -15,34 +17,70 @@ interface VisitorEvent {
   icon: React.ReactNode;
 }
 
-const generateMockEvents = (lang: 'en' | 'ar'): VisitorEvent[] => [
-  { id: '1', action: lang === 'ar' ? 'قام بزيارة الصفحة الرئيسية' : 'Visited Home Page', page: '/', time: 'Just now', ip: '192.168.1.1', device: 'Mobile', icon: <Eye className="w-4 h-4 text-blue-500" /> },
-  { id: '2', action: lang === 'ar' ? 'نقر على ملخص المباراة' : 'Clicked Match Highlight', page: '/highlights', time: '2 min ago', ip: '10.0.0.5', device: 'Desktop', icon: <MousePointerClick className="w-4 h-4 text-green-500" /> },
-  { id: '3', action: lang === 'ar' ? 'دخل إلى غرفة الدردشة' : 'Joined Live Chat', page: '/chat', time: '5 min ago', ip: '172.16.0.2', device: 'Mobile', icon: <Users className="w-4 h-4 text-purple-500" /> },
-  { id: '4', action: lang === 'ar' ? 'قرأ خبر: نيمار يعود' : 'Read News: Neymar is back', page: '/news/neymar', time: '12 min ago', ip: '192.168.1.10', device: 'Tablet', icon: <Eye className="w-4 h-4 text-blue-500" /> },
-  { id: '5', action: lang === 'ar' ? 'تصفح ترتيب المجموعات' : 'Viewed Group Standings', page: '/standings', time: '18 min ago', ip: '10.0.0.12', device: 'Desktop', icon: <Eye className="w-4 h-4 text-blue-500" /> },
-];
-
 export function AnalyticsTab() {
   const { lang } = useLanguage();
-  const [liveVisitors, setLiveVisitors] = useState(142);
-  const [dailyVisitors, setDailyVisitors] = useState(8543);
+  const [liveVisitors, setLiveVisitors] = useState(0);
+  const [dailyVisitors, setDailyVisitors] = useState(0);
+  const [pageViews, setPageViews] = useState(0);
   const [events, setEvents] = useState<VisitorEvent[]>([]);
 
-  useEffect(() => {
-    setEvents(generateMockEvents(lang));
-  }, [lang]);
-
-  // Simulate live data updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveVisitors(prev => prev + Math.floor(Math.random() * 5) - 2);
-      setDailyVisitors(prev => prev + Math.floor(Math.random() * 2));
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   const isAr = lang === 'ar';
+
+  useEffect(() => {
+    // 1. Fetch real page views from database
+    const fetchAnalytics = async () => {
+      const today = startOfDay(new Date()).toISOString();
+      
+      const { data, count, error } = await supabase
+        .from('page_views')
+        .select('*', { count: 'exact' })
+        .gte('created_at', today)
+        .order('created_at', { ascending: false });
+
+      if (data && !error) {
+        setPageViews(count || 0);
+        
+        // Count unique sessions by grouping by IP or user agent (since we might not have IP easily here without a backend, we just estimate or count total pageviews)
+        // Here we just use page views as a proxy for visitors for simplicity if no auth is present
+        const uniqueAgents = new Set(data.map(d => d.user_agent));
+        setDailyVisitors(uniqueAgents.size);
+
+        // Format latest 5 events for the feed
+        const latestEvents = data.slice(0, 5).map(v => ({
+          id: v.id,
+          action: isAr ? 'زيارة صفحة' : 'Page Visit',
+          page: v.path,
+          time: new Date(v.created_at).toLocaleTimeString(lang === 'ar' ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' }),
+          ip: v.ip_address || 'Unknown',
+          device: v.device_type || 'Desktop',
+          icon: <Eye className="w-4 h-4 text-blue-500" />
+        }));
+        setEvents(latestEvents);
+      }
+    };
+
+    fetchAnalytics();
+
+    // 2. Setup Realtime Presence for Live Visitors
+    const channel = supabase.channel('global_visitors');
+    
+    channel.on('presence', { event: 'sync' }, () => {
+      const presenceState = channel.presenceState();
+      // Count unique keys in presence state
+      const count = Object.keys(presenceState).length;
+      setLiveVisitors(count);
+    });
+
+    channel.subscribe();
+
+    // Refresh DB stats every 30 seconds
+    const interval = setInterval(fetchAnalytics, 30000);
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
+  }, [isAr, lang]);
 
   return (
     <div className="space-y-6" dir={isAr ? 'rtl' : 'ltr'}>
@@ -79,7 +117,7 @@ export function AnalyticsTab() {
               </span>
             </div>
             <p className={cn("text-xs text-muted-foreground mt-2", isAr && "font-arabic")}>
-              {isAr ? 'يتم التحديث كل 5 ثوانٍ' : 'Updates every 5 seconds'}
+              {isAr ? 'يتم التحديث فوراً' : 'Updates instantly'}
             </p>
           </CardContent>
         </Card>
@@ -95,13 +133,9 @@ export function AnalyticsTab() {
           <CardContent>
             <div className="text-4xl font-extrabold text-foreground tracking-tight flex items-baseline gap-2">
               {dailyVisitors.toLocaleString()}
-              <span className="text-sm font-medium text-green-500 flex items-center">
-                <ArrowUpRight className="w-4 h-4 mr-1" />
-                +12%
-              </span>
             </div>
             <p className={cn("text-xs text-muted-foreground mt-2", isAr && "font-arabic")}>
-              {isAr ? 'مقارنة باليوم السابق' : 'Compared to yesterday'}
+              {isAr ? 'الزوار الفريدين لليوم' : 'Unique visitors today'}
             </p>
           </CardContent>
         </Card>
@@ -116,10 +150,10 @@ export function AnalyticsTab() {
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-extrabold text-foreground tracking-tight">
-              {(dailyVisitors * 3.4).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+              {pageViews.toLocaleString()}
             </div>
             <p className={cn("text-xs text-muted-foreground mt-2", isAr && "font-arabic")}>
-              {isAr ? 'متوسط 3.4 صفحة لكل زائر' : 'Average 3.4 pages per visitor'}
+              {isAr ? 'إجمالي مشاهدات اليوم' : 'Total page views today'}
             </p>
           </CardContent>
         </Card>
@@ -137,29 +171,35 @@ export function AnalyticsTab() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
-            {events.map((event, i) => (
-              <div key={event.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                {/* Icon */}
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border border-border bg-background shadow-sm shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                  {event.icon}
-                </div>
-                
-                {/* Content */}
-                <div className={cn("w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-border bg-background/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-md hover:border-primary/50", isAr ? 'md:group-odd:text-right md:group-even:text-left' : 'md:group-odd:text-right md:group-even:text-left')}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-primary">{event.time}</span>
-                    <Badge variant="outline" className="text-[10px] uppercase">{event.device}</Badge>
+          {events.length === 0 ? (
+            <div className="text-center text-muted-foreground py-8">
+              {isAr ? 'لا يوجد نشاط بعد' : 'No activity yet'}
+            </div>
+          ) : (
+            <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
+              {events.map((event, i) => (
+                <div key={event.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                  {/* Icon */}
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full border border-border bg-background shadow-sm shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                    {event.icon}
                   </div>
-                  <h4 className={cn("text-sm font-bold text-foreground mb-1", isAr && "font-arabic")}>{event.action}</h4>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
-                    <span className="font-mono bg-muted px-1.5 py-0.5 rounded">{event.page}</span>
-                    <span className="opacity-60">{event.ip}</span>
+                  
+                  {/* Content */}
+                  <div className={cn("w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-border bg-background/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-md hover:border-primary/50", isAr ? 'md:group-odd:text-right md:group-even:text-left' : 'md:group-odd:text-right md:group-even:text-left')}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium text-primary">{event.time}</span>
+                      <Badge variant="outline" className="text-[10px] uppercase">{event.device}</Badge>
+                    </div>
+                    <h4 className={cn("text-sm font-bold text-foreground mb-1", isAr && "font-arabic")}>{event.action}</h4>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
+                      <span className="font-mono bg-muted px-1.5 py-0.5 rounded">{event.page}</span>
+                      <span className="opacity-60">{event.ip}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

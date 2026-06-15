@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Outlet, useLocation, ScrollRestoration } from 'react-router-dom';
+import { useAnalytics } from './hooks/useAnalytics';
 import Index from './pages/Index';
 import NotFound from './pages/NotFound';
 import WorldCupNews from './pages/WorldCupNews';
@@ -16,6 +17,7 @@ import { GoogleAuthGate } from './components/tikitaka/GoogleAuthGate';
 
 const Layout = () => {
   const location = useLocation();
+  useAnalytics();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/studio');
   const isPublicHome = location.pathname === '/';
 

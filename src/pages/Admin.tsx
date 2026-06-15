@@ -1,4 +1,4 @@
-import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity, PlayCircle } from 'lucide-react';
+import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity, PlayCircle, Video } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { NewsTab } from '@/components/admin/NewsTab';
 import { MediaPlayerTab } from '@/components/admin/MediaPlayerTab';
 import { AnalyticsTab } from '@/components/admin/AnalyticsTab';
 import { MatchesTab } from '@/components/admin/MatchesTab';
+import { StudioTab } from '@/components/admin/StudioTab';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
@@ -64,8 +65,11 @@ export default function Admin() {
           <p className="text-muted-foreground text-sm">{t('adminControlSub', lang)}</p>
         </div>
 
-        <Tabs defaultValue="analytics">
-          <TabsList className="grid grid-cols-6 w-full mb-8 h-11 bg-muted border border-border">
+        <Tabs defaultValue="studio">
+          <TabsList className="grid grid-cols-7 w-full mb-8 h-11 bg-muted border border-border">
+            <TabsTrigger value="studio" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground text-live">
+              <Video className="h-4 w-4" /> {lang === 'ar' ? 'استوديو البث' : 'Live Studio'}
+            </TabsTrigger>
             <TabsTrigger value="matches" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <CheckCircle className="h-4 w-4" /> المباريات
             </TabsTrigger>
@@ -86,6 +90,7 @@ export default function Admin() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="studio"><StudioTab /></TabsContent>
           <TabsContent value="matches"><MatchesTab /></TabsContent>
           <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
           <TabsContent value="widgets"><WidgetLabelsTab /></TabsContent>

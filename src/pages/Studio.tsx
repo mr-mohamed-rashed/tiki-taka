@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Mic, MicOff, Monitor, Camera, CameraOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Volume2, VolumeX } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
@@ -8,81 +8,108 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { LiveChat } from '@/components/tikitaka/LiveChat';
+import { supabase } from '@/integrations/supabase/client';
+import ReactPlayer from 'react-player';
+
+interface LiveStudioState {
+  streamUrl: string;
+  logoPosition: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'none';
+  logoSize: 'sm' | 'md' | 'lg';
+  overlayText: string;
+  isLive: boolean;
+}
+
+const defaultState: LiveStudioState = {
+  streamUrl: '',
+  logoPosition: 'top-right',
+  logoSize: 'md',
+  overlayText: '',
+  isLive: false
+};
 
 export default function Studio() {
   const { lang, dir } = useLanguage();
   const [showChat, setShowChat] = useState(true);
   const [isTheater, setIsTheater] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const [logoPosition, setLogoPosition] = useState<'none' | 'top-right' | 'top-left'>('top-right');
-  const [isCameraOn, setIsCameraOn] = useState(false);
-  const recognitionRef = useRef<any>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const toggleCamera = async () => {
-    if (isCameraOn) {
-      const stream = videoRef.current?.srcObject as MediaStream;
-      if (stream) stream.getTracks().forEach(track => track.stop());
-      if (videoRef.current) videoRef.current.srcObject = null;
-      setIsCameraOn(false);
-    } else {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        if (videoRef.current) videoRef.current.srcObject = stream;
-        setIsCameraOn(true);
-      } catch (err) {
-        console.error("Error accessing camera:", err);
-        alert(lang === 'ar' ? 'حدث خطأ أثناء فتح الكاميرا. يرجى التأكد من الصلاحيات.' : 'Error accessing camera. Please check permissions.');
-      }
-    }
-  };
+  const [isMuted, setIsMuted] = useState(true);
+  const [state, setState] = useState<LiveStudioState>(defaultState);
+  const [viewers, setViewers] = useState(0);
 
   useEffect(() => {
-    return () => {
-      if (videoRef.current) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        if (stream) stream.getTracks().forEach(track => track.stop());
+    let interval: any;
+    if (state.isLive) {
+      if (viewers === 0) setViewers(Math.floor(Math.random() * (46000 - 45000 + 1)) + 45000);
+      interval = setInterval(() => {
+        setViewers(prev => {
+          const change = Math.floor(Math.random() * 2000) - 800; // -800 to +1200
+          const newVal = prev + change;
+          if (newVal > 51000) return newVal - 1500;
+          if (newVal < 45000) return newVal + 1500;
+          return newVal;
+        });
+      }, 3500);
+    } else {
+      setViewers(0);
+    }
+    return () => clearInterval(interval);
+  }, [state.isLive]);
+
+  useEffect(() => {
+    // Initial fetch
+    const fetchState = async () => {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('value_en')
+        .eq('key', 'live_studio_state')
+        .single();
+      
+      if (!error && data?.value_en) {
+        setState(JSON.parse(data.value_en));
       }
+    };
+    fetchState();
+
+    // Subscribe to real-time changes
+    const channel = supabase.channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'site_settings',
+          filter: 'key=eq.live_studio_state',
+        },
+        (payload) => {
+          if (payload.new && (payload.new as any).value_en) {
+            setState(JSON.parse((payload.new as any).value_en));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
   }, []);
 
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition && !recognitionRef.current) {
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.lang = 'ar-SA';
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-
-      recognitionRef.current.onresult = (event: any) => {
-        let currentText = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          currentText += event.results[i][0].transcript;
-        }
-        setTranscript(currentText);
-      };
+  const getLogoSizeClasses = () => {
+    switch (state.logoSize) {
+      case 'sm': return 'w-20 h-12 text-sm sm:w-24 sm:h-16 sm:text-base';
+      case 'lg': return 'w-40 h-28 text-3xl sm:w-56 sm:h-36 sm:text-4xl';
+      case 'md':
+      default: return 'w-28 h-20 text-xl sm:w-40 sm:h-28 sm:text-2xl';
     }
+  };
 
-    if (recognitionRef.current) {
-      recognitionRef.current.onend = () => {
-        if (isListening) {
-          recognitionRef.current.start();
-        }
-      };
+  const getLogoPositionClasses = () => {
+    switch (state.logoPosition) {
+      case 'top-right': return 'top-4 right-4';
+      case 'top-left': return 'top-4 left-4';
+      case 'bottom-right': return 'bottom-4 right-4';
+      case 'bottom-left': return 'bottom-4 left-4';
+      default: return 'hidden';
     }
-  }, [isListening]);
-
-  useEffect(() => {
-    if (isListening) {
-      try {
-        recognitionRef.current?.start();
-      } catch (e) {}
-    } else {
-      recognitionRef.current?.stop();
-      setTimeout(() => setTranscript(''), 1000);
-    }
-  }, [isListening]);
+  };
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
@@ -129,33 +156,11 @@ export default function Studio() {
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  onClick={toggleCamera} 
-                  className={cn("border-none text-white", isCameraOn ? "bg-live hover:bg-live/80" : "bg-black/50 hover:bg-black/80")}
-                  title={lang === 'ar' ? "فتح الكاميرا" : "Toggle Camera"}
+                  onClick={() => setIsMuted(!isMuted)} 
+                  className={cn("border-none text-white", "bg-black/50 hover:bg-black/80")}
+                  title={lang === 'ar' ? "كتم / تشغيل الصوت" : "Toggle Mute"}
                 >
-                  {isCameraOn ? <Camera className="h-4 w-4" /> : <CameraOff className="h-4 w-4" />}
-                </Button>
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  onClick={() => {
-                    if (logoPosition === 'none') setLogoPosition('top-right');
-                    else if (logoPosition === 'top-right') setLogoPosition('top-left');
-                    else setLogoPosition('none');
-                  }} 
-                  className={cn("border-none text-white", logoPosition !== 'none' ? "bg-primary hover:bg-primary/80" : "bg-black/50 hover:bg-black/80")}
-                  title={lang === 'ar' ? "تغطية لوجو القناة" : "Cover Channel Logo"}
-                >
-                  <Monitor className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  onClick={() => setIsListening(!isListening)} 
-                  className={cn("border-none text-white", isListening ? "bg-live hover:bg-live/80" : "bg-black/50 hover:bg-black/80")}
-                  title={lang === 'ar' ? "الترجمة الفورية (Captioning)" : "Live Captions"}
-                >
-                  {isListening ? <Mic className="h-4 w-4 animate-pulse" /> : <MicOff className="h-4 w-4" />}
+                  {isMuted ? <VolumeX className="h-4 w-4 text-red-500" /> : <Volume2 className="h-4 w-4" />}
                 </Button>
                 {isTheater && (
                   <Button variant="secondary" size="icon" onClick={() => setShowChat(!showChat)} className="bg-black/50 text-white hover:bg-black/80 border-none">
@@ -167,7 +172,7 @@ export default function Studio() {
                 </Button>
               </div>
 
-              {!isCameraOn && (
+              {!state.isLive || !state.streamUrl ? (
                 <>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_50%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                   <Video className="h-16 w-16 text-muted-foreground mb-4 opacity-50" />
@@ -180,35 +185,40 @@ export default function Studio() {
                       : 'Stay tuned for our exclusive live broadcast. You will be notified when the stream starts.'}
                   </p>
                 </>
+              ) : (
+                <ReactPlayer
+                  url={state.streamUrl}
+                  playing={true}
+                  muted={isMuted}
+                  controls={false}
+                  width="100%"
+                  height="100%"
+                  className="absolute inset-0"
+                  style={{ objectFit: 'contain' }}
+                />
               )}
 
-              <video 
-                ref={videoRef}
-                autoPlay 
-                playsInline 
-                muted 
-                className={cn("w-full h-full object-cover", !isCameraOn && "hidden")}
-              />
-
-              {/* Channel Logo Cover / Broadcaster Box */}
-              {logoPosition !== 'none' && (
+              {/* Dynamic Logo Cover */}
+              {state.logoPosition !== 'none' && (
                 <div 
                   className={cn(
-                    "absolute top-4 w-28 h-20 sm:w-40 sm:h-28 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 transition-all duration-300 pointer-events-none",
-                    logoPosition === 'top-right' ? "right-4" : "left-4",
-                    isTheater ? "top-16" : "top-4" // shift down if controls are top right
+                    "absolute bg-black/80 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 transition-all duration-500 pointer-events-none",
+                    getLogoSizeClasses(),
+                    getLogoPositionClasses(),
+                    isTheater && state.logoPosition.includes('top') ? "top-16" : "" // shift down if controls are top right
                   )}
                 >
-                  <div className="text-primary font-display font-extrabold text-xl sm:text-2xl animate-pulse">Tiki Taka</div>
-                  <div className="text-white/50 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">Live Broadcast</div>
+                  <div className="text-primary font-display font-extrabold animate-pulse">Tiki Taka</div>
+                  {state.logoSize !== 'sm' && <div className="text-white/50 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">Live Broadcast</div>}
                 </div>
               )}
 
-              {/* Live Subtitles Overlay */}
-              {transcript && (
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 max-w-[90%] sm:max-w-[70%] z-50 pointer-events-none">
-                  <div className="bg-black/75 backdrop-blur-md text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-base sm:text-xl font-arabic font-bold text-center leading-relaxed border border-white/10 shadow-2xl animate-fade-in-up">
-                    {transcript}
+              {/* Scrolling Marquee / Overlay Text */}
+              {state.overlayText && (
+                <div className="absolute bottom-4 left-4 right-4 z-50 pointer-events-none overflow-hidden rounded-lg bg-black/60 backdrop-blur-sm border border-white/10 flex items-center h-10 px-4">
+                  <div className="whitespace-nowrap animate-ticker-ar font-arabic font-bold text-white tracking-wide">
+                    <span className="text-primary mx-4">● LIVE</span>
+                    {state.overlayText}
                   </div>
                 </div>
               )}
@@ -244,11 +254,10 @@ export default function Studio() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">{lang === 'ar' ? 'المشاهدين الآن' : 'Viewers'}</span>
-                  <span className="font-bold">0</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">{lang === 'ar' ? 'إجمالي المشاهدات' : 'Total Views'}</span>
-                  <span className="font-bold">0</span>
+                  <span className="font-bold text-live flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-live animate-pulse-live" />
+                    {state.isLive ? viewers.toLocaleString() : '0'}
+                  </span>
                 </div>
               </div>
             </Card>
