@@ -65,8 +65,6 @@ async function callProxy(body: object) {
   }
 }
 
-const allLocalMatches = [...getFinishedMatches(), ...getUpcomingMatches()];
-
 // ---------- Live fixtures ----------
 export function useLiveFixtures() {
   return useQuery({
@@ -74,12 +72,12 @@ export function useLiveFixtures() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'live' });
-        if (data?.matches?.length) return getLiveOnly(data.matches as Match[]);
-        if (!data?.response?.length) return getLiveOnly(allLocalMatches); // fallback to mock
+        if (data?.matches?.length) return data.matches as Match[];
+        if (!data?.response?.length) return getLiveMatches(); // fallback to mock
         // Map API-Football response to our Match type
-        return getLiveOnly(data.response.map(mapFixture));
+        return data.response.map(mapFixture);
       } catch {
-        return getLiveOnly(allLocalMatches);
+        return getLiveMatches();
       }
     },
     refetchInterval: 30_000,
@@ -94,10 +92,10 @@ export function useUpcomingFixtures() {
       try {
         const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.matches?.length) return getUpcomingOnly(data.matches as Match[]);
-        if (!data?.response?.length) return getUpcomingOnly(allLocalMatches);
+        if (!data?.response?.length) return getUpcomingOnly(getUpcomingMatches());
         return getUpcomingOnly(data.response.map(mapFixture));
       } catch {
-        return getUpcomingOnly(allLocalMatches);
+        return getUpcomingOnly(getUpcomingMatches());
       }
     },
     refetchInterval: 120_000,
@@ -115,40 +113,46 @@ export function useResults() {
         if (data?.matches?.length) proxyResults = getFinishedOnly(data.matches as Match[]);
         else if (data?.response?.length) proxyResults = getFinishedOnly(data.response.map(mapFixture));
         
-        // Merge with our hardcoded local results
-        const localResults = getFinishedOnly(allLocalMatches);
+        const mockResults = getFinishedMatches();
+        const teamsMap = Object.values(teams);
         
-        // If we have API results, merge them with local
-        if (proxyResults.length > 0) {
-          const combined = [...proxyResults, ...localResults];
-          // Remove duplicates by ID
-          const uniqueResults: Match[] = [];
-          const seen = new Set();
-          for (const m of combined) {
-            if (!seen.has(m.id)) {
-              seen.add(m.id);
-              uniqueResults.push(m);
-            }
-          }
-          
-          const sortedResults = uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        proxyResults = proxyResults.map(m => {
+          const homeTeam = teamsMap.find(t => t.name.toLowerCase() === m.home.name.toLowerCase() || t.id === m.home.id);
+          const awayTeam = teamsMap.find(t => t.name.toLowerCase() === m.away.name.toLowerCase() || t.id === m.away.id);
+          return {
+            ...m,
+            home: { ...m.home, flag: homeTeam?.flag || m.home.flag },
+            away: { ...m.away, flag: awayTeam?.flag || m.away.flag }
+          };
+        });
 
-          // Fetch highlights from Supabase
-          const { data: settings, error } = await supabase.from('site_settings').select('*').like('key', 'match_highlight_%');
-          if (!error && settings && settings.length > 0) {
-            return sortedResults.map(match => {
-              const h = settings.find((x: any) => x.key === `match_highlight_${match.id}`);
-              if (h) {
-                return { ...match, highlight_url: h.value_en };
-              }
-              return match;
-            });
+        const allResults = [...proxyResults, ...mockResults];
+        const uniqueResults: Match[] = [];
+        const seen = new Set();
+        for (const m of allResults) {
+          const key = `${m.home.name}-${m.away.name}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            uniqueResults.push(m);
           }
-          return sortedResults;
         }
-        return localResults;
+        
+        const sortedResults = uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        // Fetch highlights from Supabase
+        const { data: settings, error } = await supabase.from('site_settings').select('*').like('key', 'match_highlight_%');
+        if (!error && settings && settings.length > 0) {
+          return sortedResults.map(match => {
+            const h = settings.find((x: any) => x.key === `match_highlight_${match.id}`);
+            if (h) {
+              return { ...match, highlight_url: h.value_en };
+            }
+            return match;
+          });
+        }
+        return sortedResults;
       } catch {
-        return getFinishedOnly(allLocalMatches);
+        return getFinishedMatches();
       }
     },
     refetchInterval: 120_000,
@@ -241,44 +245,16 @@ function mapFixture(f: ApiFixture) {
   };
 }
 
-function autoTransitionMatches(matches: Match[]) {
-  const now = Date.now();
-  const twoHoursInMs = 2.5 * 60 * 60 * 1000;
-
-  return matches.map((match) => {
-    if (match.status === 'finished') return match;
-
-    const matchTime = new Date(match.date).getTime();
-
-    if (now > matchTime + twoHoursInMs) {
-      return { ...match, status: 'finished', minute: undefined } as Match;
-    }
-    
-    if (match.status === 'upcoming' && now >= matchTime && now <= matchTime + twoHoursInMs) {
-      const elapsed = Math.floor((now - matchTime) / 60000);
-      return { ...match, status: 'live', minute: elapsed > 90 ? "90+'" : `${elapsed}'` } as Match;
-    }
-
-    return match;
-  });
-}
-
 function getUpcomingOnly(matches: Match[]) {
-  return autoTransitionMatches(matches)
+  return matches
     .filter((match) => match.status === 'upcoming')
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
 function getFinishedOnly(matches: Match[]) {
-  return autoTransitionMatches(matches)
+  return matches
     .filter((match) => match.status === 'finished')
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-}
-
-function getLiveOnly(matches: Match[]) {
-  return autoTransitionMatches(matches)
-    .filter((match) => match.status === 'live')
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
 type ApiScorer = { player: { name: string }; statistics: [{ team: { name: string; logo: string }; goals: { total: number; assists: number | null }; games: { appearences: number } }] };
