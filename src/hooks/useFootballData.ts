@@ -65,6 +65,34 @@ async function callProxy(body: object) {
   }
 }
 
+function interpolateLiveMinutes(matches: Match[]): Match[] {
+  const now = Date.now();
+  return matches.map(match => {
+    if (match.status === 'live') {
+      const matchTime = new Date(match.date).getTime();
+      let elapsedMins = Math.floor((now - matchTime) / 60000);
+      
+      // If elapsedMins is negative (e.g. clock is slightly off), set to 0
+      if (elapsedMins < 0) elapsedMins = 0;
+
+      // Extrapolate minute to avoid being stuck during 5-minute cache windows
+      // but try to respect standard football half lengths
+      if (elapsedMins > 45 && elapsedMins <= 60) {
+        // Roughly halftime period
+        return { ...match, minute: 'HT' };
+      } else if (elapsedMins > 60) {
+        // Subtract typical 15-minute halftime to estimate second half minute
+        elapsedMins -= 15;
+      }
+      
+      if (elapsedMins > 120) elapsedMins = 120; // Cap it
+      
+      return { ...match, minute: `${elapsedMins}'` };
+    }
+    return match;
+  });
+}
+
 // ---------- Live fixtures ----------
 export function useLiveFixtures() {
   return useQuery({
@@ -72,12 +100,12 @@ export function useLiveFixtures() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'live' });
-        if (data?.matches?.length) return data.matches as Match[];
-        if (!data?.response?.length) return getLiveMatches(); // fallback to mock
+        if (data?.matches?.length) return interpolateLiveMinutes(data.matches as Match[]);
+        if (!data?.response?.length) return interpolateLiveMinutes(getLiveMatches()); // fallback to mock
         // Map API-Football response to our Match type
-        return data.response.map(mapFixture);
+        return interpolateLiveMinutes(data.response.map(mapFixture));
       } catch {
-        return getLiveMatches();
+        return interpolateLiveMinutes(getLiveMatches());
       }
     },
     refetchInterval: 30_000,
