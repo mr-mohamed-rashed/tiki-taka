@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
+import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
 
 interface Live2DTrackerProps {
@@ -56,6 +57,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
   ];
 
   const [activeServerIndex, setActiveServerIndex] = useState(0);
+  const [isTheater, setIsTheater] = useState(false);
 
   const servers = (() => {
     const raw = get('live_stream_url', 'en');
@@ -118,6 +120,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
 
       {/* Pitch */}
       <div className="p-3 sm:p-4 bg-background/40">
+
         {servers.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
             {servers.map((server, idx) => (
@@ -133,14 +136,25 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
             ))}
           </div>
         )}
-        <div className="relative w-full rounded-lg overflow-hidden ring-1 ring-primary/20 shadow-neon">
+        <div className={cn("relative w-full overflow-hidden bg-black ring-1 ring-primary/20 shadow-neon group", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none" : "rounded-lg aspect-video")}>
+          
+          {streamUrl && (
+            <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
+              <Button variant="secondary" size="icon" onClick={() => setIsTheater(!isTheater)} className="bg-black/50 text-white hover:bg-black/80 border-none">
+                {isTheater ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-minimize h-4 w-4"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-maximize h-4 w-4"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>}
+              </Button>
+            </div>
+          )}
+
           {streamUrl ? (
-            <iframe
-              src={streamUrl}
-              className="w-full aspect-video bg-black"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            <div className="absolute inset-0 overflow-hidden bg-black pointer-events-auto">
+              <iframe
+                src={streamUrl}
+                className="absolute w-full left-0 right-0 pointer-events-auto"
+                style={{ top: '-55px', height: 'calc(100% + 55px)' }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              />
+            </div>
           ) : (
             <svg viewBox="0 0 600 380" className="block w-full max-h-[300px] bg-gradient-pitch">
               {/* pitch stripes */}
