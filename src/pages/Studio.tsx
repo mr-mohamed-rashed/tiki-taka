@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Volume2, VolumeX } from 'lucide-react';
+import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Volume2, VolumeX, CircleDot } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
@@ -141,10 +141,10 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-[12%] h-[6%]';
-      case 'lg': return 'w-[20%] h-[12%]';
+      case 'sm': return 'w-[16%] h-[8%]';
+      case 'lg': return 'w-[28%] h-[14%]';
       case 'md':
-      default: return 'w-[16%] h-[8%]';
+      default: return 'w-[22%] h-[10%]';
     }
   };
 
@@ -239,7 +239,7 @@ export default function Studio() {
               >
               
               {/* Controls Overlay */}
-              <div className="absolute bottom-16 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
+              <div className="absolute bottom-16 right-4 z-50 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity items-center">
                 {isTheater && (
                   <Button variant="secondary" size="icon" onClick={() => setShowChat(!showChat)} className="bg-black/50 text-white hover:bg-black/80 border-none">
                     {showChat ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
@@ -290,21 +290,32 @@ export default function Studio() {
               {state.logoPosition !== 'none' && (
                 <div 
                   className={cn(
-                    "absolute bg-black/80 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 transition-all duration-500 pointer-events-none",
+                    "absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none",
                     getLogoSizeClasses(),
                     getLogoPositionClasses()
                   )}
                 >
-                  <div className={cn(
-                    "text-primary font-display font-extrabold animate-pulse",
-                    state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw]" :
-                    state.logoSize === 'lg' ? "text-[14px] sm:text-[1.5vw]" :
-                    "text-[10px] sm:text-[1.2vw] md:text-[1.5vw]"
-                  )}>Tiki Taka</div>
-                  {state.logoSize !== 'sm' && <div className={cn(
-                    "text-white/50 uppercase tracking-wider hidden sm:block mt-0.5",
-                    state.logoSize === 'lg' ? "text-[8px] md:text-[0.8vw]" : "text-[6px] md:text-[0.6vw]"
-                  )}>Live Broadcast</div>}
+                  <div className="flex flex-col items-end justify-center">
+                    <div className={cn(
+                      "text-primary font-display font-extrabold leading-none animate-pulse",
+                      state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw]" :
+                      state.logoSize === 'lg' ? "text-[14px] sm:text-[1.5vw]" :
+                      "text-[10px] sm:text-[1.2vw] md:text-[1.5vw]"
+                    )}>TIKI-TAKA</div>
+                    {state.logoSize !== 'sm' && <div className={cn(
+                      "text-white/50 uppercase tracking-wider hidden sm:block mt-0.5 leading-none",
+                      state.logoSize === 'lg' ? "text-[8px] md:text-[0.8vw]" : "text-[6px] md:text-[0.6vw]"
+                    )}>Live Broadcast</div>}
+                  </div>
+                  <CircleDot 
+                    className={cn(
+                      "text-primary",
+                      state.logoSize === 'sm' ? "w-2.5 h-2.5 sm:w-[1.2vw] sm:h-[1.2vw]" :
+                      state.logoSize === 'lg' ? "w-4 h-4 sm:w-[2.2vw] sm:h-[2.2vw]" :
+                      "w-3 h-3 sm:w-[1.8vw] sm:h-[1.8vw]"
+                    )} 
+                    strokeWidth={2.5} 
+                  />
                 </div>
               )}
 

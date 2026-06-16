@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video } from 'lucide-react';
+import { Video, CircleDot } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -181,7 +181,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
             style={isTheater ? { maxWidth: 'calc(100vh * (16 / 9))', maxHeight: 'calc(100vw * (9 / 16))', aspectRatio: '16/9' } : {}}
           >
           {streamUrl && (
-            <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
+            <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity items-center">
               <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none">
                 {isTheater ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-minimize h-4 w-4"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-maximize h-4 w-4"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>}
               </Button>
@@ -196,18 +196,21 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
-              {/* Dynamic Logo Cover to hide koora city watermark using pure percentages */}
+              {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
-                className="absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 pointer-events-none"
+                className="absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none"
                 style={{
                   top: '2%',
                   right: '2%',
-                  width: '16%',
-                  height: '8%'
+                  width: '22%',
+                  height: '10%'
                 }}
               >
-                <div className="text-primary font-display font-extrabold text-[10px] sm:text-[1.2vw] md:text-[1.5vw] animate-pulse">Tiki Taka</div>
-                <div className="text-white/50 text-[6px] sm:text-[0.6vw] md:text-[0.8vw] uppercase tracking-wider mt-0.5">Live Broadcast</div>
+                <div className="flex flex-col items-end justify-center">
+                  <div className="text-primary font-display font-extrabold text-[8px] sm:text-[1.2vw] md:text-[1.5vw] leading-none animate-pulse">TIKI-TAKA</div>
+                  <div className="text-white/50 text-[5px] sm:text-[0.6vw] md:text-[0.8vw] uppercase tracking-wider mt-0.5 leading-none">Live Broadcast</div>
+                </div>
+                <CircleDot className="text-primary w-3 h-3 sm:w-[1.8vw] sm:h-[1.8vw]" strokeWidth={2.5} />
               </div>
             </div>
           ) : (
