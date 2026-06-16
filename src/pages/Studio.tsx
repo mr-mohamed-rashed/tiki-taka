@@ -126,9 +126,9 @@ export default function Studio() {
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
-      <Navigation />
+      {!isTheater && <Navigation />}
 
-      <main className={cn("container mx-auto transition-all", isTheater ? "py-0 px-0 min-h-[calc(100vh-64px)]" : "py-10 px-4 lg:px-8 space-y-8 min-h-[70vh]")}>
+      <main className={cn("transition-all", isTheater ? "fixed inset-0 z-50 bg-black w-full h-full flex flex-col p-0 m-0" : "container mx-auto py-10 px-4 lg:px-8 space-y-8 min-h-[70vh]")}>
         {!isTheater && (
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
             <div className="flex items-center gap-3">
@@ -161,8 +161,8 @@ export default function Studio() {
         )}
 
         <div className={cn("grid gap-6", isTheater ? "grid-cols-1" : (showChat ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1"))}>
-          <div className={cn("relative transition-all", isTheater ? "h-[calc(100vh-64px)] w-full" : (showChat ? "lg:col-span-2" : "col-span-1"))}>
-            {servers.length > 1 && (
+          <div className={cn("relative transition-all", isTheater ? "flex-1 w-full h-full" : (showChat ? "lg:col-span-2" : "col-span-1"))}>
+            {servers.length > 1 && !isTheater && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {servers.map((server: any, idx: number) => (
                   <Button
@@ -177,7 +177,25 @@ export default function Studio() {
                 ))}
               </div>
             )}
-            <Card className={cn("bg-black overflow-hidden flex flex-col items-center justify-center border-border relative group", isTheater ? "h-full w-full rounded-none" : "aspect-video rounded-xl")}>
+            
+            {/* When in theater mode, show server tabs as overlay */}
+            {servers.length > 1 && isTheater && (
+              <div className="absolute top-4 left-4 z-50 flex flex-wrap gap-2 opacity-50 hover:opacity-100 transition-opacity">
+                {servers.map((server: any, idx: number) => (
+                  <Button
+                    key={idx}
+                    variant={idx === activeServerIndex ? "default" : "secondary"}
+                    size="sm"
+                    onClick={() => setActiveServerIndex(idx)}
+                    className="font-bold text-xs shadow-sm bg-black/60 text-white border-none hover:bg-black/80"
+                  >
+                    {server.name || `Server ${idx + 1}`}
+                  </Button>
+                ))}
+              </div>
+            )}
+
+            <Card className={cn("bg-black overflow-hidden flex flex-col items-center justify-center border-border relative group", isTheater ? "h-full w-full rounded-none border-none" : "aspect-video rounded-xl")}>
               
               {/* Controls Overlay */}
               <div className="absolute bottom-16 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
@@ -205,24 +223,26 @@ export default function Studio() {
                   </p>
                 </>
               ) : (
-                <iframe
-                  src={(() => {
-                    let finalUrl = activeServerUrl.trim();
-                    if (finalUrl.includes('youtube.com/watch?v=')) {
-                      finalUrl = finalUrl.replace('watch?v=', 'embed/');
-                    } else if (finalUrl.includes('youtu.be/')) {
-                      const videoId = finalUrl.split('youtu.be/')[1]?.split('?')[0];
-                      if (videoId) finalUrl = `https://www.youtube.com/embed/${videoId}`;
-                    }
-                    if (finalUrl.includes('youtube.com/embed/')) {
-                      finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'autoplay=1';
-                    }
-                    return finalUrl;
-                  })()}
-                  className="absolute inset-0 w-full h-full bg-black"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                <div className="absolute inset-0 overflow-hidden bg-black">
+                  <iframe
+                    src={(() => {
+                      let finalUrl = activeServerUrl.trim();
+                      if (finalUrl.includes('youtube.com/watch?v=')) {
+                        finalUrl = finalUrl.replace('watch?v=', 'embed/');
+                      } else if (finalUrl.includes('youtu.be/')) {
+                        const videoId = finalUrl.split('youtu.be/')[1]?.split('?')[0];
+                        if (videoId) finalUrl = `https://www.youtube.com/embed/${videoId}`;
+                      }
+                      if (finalUrl.includes('youtube.com/embed/')) {
+                        finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+                      }
+                      return finalUrl;
+                    })()}
+                    className="absolute w-full left-0 right-0 pointer-events-auto"
+                    style={{ top: '-55px', height: 'calc(100% + 55px)' }}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  />
+                </div>
               )}
 
               {/* Dynamic Logo Cover */}
@@ -239,23 +259,25 @@ export default function Studio() {
                 </div>
               )}
 
-              {/* Scrolling Marquee / Overlay Text */}
-              {state.overlayText && (
-                <div className="absolute bottom-4 left-4 right-4 z-50 pointer-events-none overflow-hidden rounded-lg bg-black/60 backdrop-blur-sm border border-white/10 flex items-center h-10 px-4">
-                  <div className="whitespace-nowrap animate-ticker-ar font-arabic font-bold text-white tracking-wide">
-                    <span className="text-primary mx-4">● LIVE</span>
-                    {state.overlayText}
+              {/* Overlay Chat in Theater Mode */}
+              {isTheater && showChat && (
+                <div className="absolute top-0 right-0 w-full sm:w-[350px] h-full z-40 bg-gradient-to-l from-black/90 via-black/40 to-transparent flex flex-col justify-end p-2 sm:p-4 pointer-events-none">
+                  <div className="pointer-events-auto">
+                    <LiveChat matchId="studio_live" variant="overlay" />
                   </div>
                 </div>
               )}
-
-              {/* Overlay Chat in Theater Mode */}
-              {isTheater && showChat && (
-                <div className="absolute top-0 right-0 w-full sm:w-[350px] h-full z-40 bg-gradient-to-l from-black/90 via-black/40 to-transparent flex flex-col justify-end p-2 sm:p-4">
-                  <LiveChat matchId="studio_live" variant="overlay" />
-                </div>
-              )}
             </Card>
+
+            {/* Scrolling Marquee / Overlay Text (Moved Below Video) */}
+            {state.overlayText && (
+              <div className={cn("w-full overflow-hidden flex items-center h-10 px-4", isTheater ? "bg-black text-white absolute bottom-0 left-0 right-0 z-50 opacity-80" : "bg-card border border-border rounded-lg mt-3")}>
+                <div className="whitespace-nowrap animate-ticker-ar font-arabic font-bold tracking-wide flex items-center">
+                  <span className="text-live mx-4 animate-pulse-live">● LIVE</span>
+                  <span className={isTheater ? "text-white" : "text-foreground"}>{state.overlayText}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {!isTheater && showChat && (
