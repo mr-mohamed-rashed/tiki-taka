@@ -136,8 +136,11 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
             ))}
           </div>
         )}
-        <div className={cn("relative w-full overflow-hidden bg-black ring-1 ring-primary/20 shadow-neon group", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none" : "rounded-lg aspect-video")}>
-          
+        <div className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none flex items-center justify-center overflow-hidden" : "rounded-lg aspect-video overflow-hidden")}>
+          <div 
+            className={cn("relative w-full h-full", isTheater ? "" : "absolute inset-0")}
+            style={isTheater ? { maxWidth: 'calc(100vh * (16 / 9))', maxHeight: 'calc(100vw * (9 / 16))', aspectRatio: '16/9' } : {}}
+          >
           {streamUrl && (
             <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
               <Button variant="secondary" size="icon" onClick={() => setIsTheater(!isTheater)} className="bg-black/50 text-white hover:bg-black/80 border-none">
@@ -221,6 +224,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               </g>
             </svg>
           )}
+        </div>
         </div>
 
         {/* Legend */}

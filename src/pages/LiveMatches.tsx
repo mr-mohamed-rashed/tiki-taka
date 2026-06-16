@@ -4,7 +4,6 @@ import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
 import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
 import { Live2DTracker } from '@/components/tikitaka/Live2DTracker';
 import { LiveChat } from '@/components/tikitaka/LiveChat';
-import { LiveCommentary } from '@/components/tikitaka/LiveCommentary';
 import { MatchCenter } from '@/components/tikitaka/MatchCenter';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
@@ -110,18 +109,8 @@ const LiveMatches = () => {
                 <Live2DTracker match={featured} />
               </div>
               <div className="lg:col-span-2">
-                <LiveCommentary />
+                <LiveChat matchId={featured.id} />
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 mb-5">
-              <MessageCircle className="h-5 w-5 text-primary" />
-              <h2 className={cn('font-display font-extrabold text-2xl', lang === 'ar' && 'font-arabic')}>
-                {t('liveChat', lang)}
-              </h2>
-            </div>
-            <div className="max-w-2xl">
-              <LiveChat matchId={featured.id} />
             </div>
           </section>
         ) : (

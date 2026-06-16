@@ -195,7 +195,11 @@ export default function Studio() {
               </div>
             )}
 
-            <Card className={cn("bg-black overflow-hidden flex flex-col items-center justify-center border-border relative group", isTheater ? "h-full w-full rounded-none border-none" : "aspect-video rounded-xl")}>
+            <Card className={cn("bg-black flex flex-col items-center justify-center border-border relative group", isTheater ? "h-full w-full rounded-none border-none overflow-hidden" : "aspect-video rounded-xl overflow-hidden")}>
+              <div 
+                className={cn("relative w-full h-full", isTheater ? "" : "absolute inset-0")}
+                style={isTheater ? { maxWidth: 'calc(100vh * (16 / 9))', maxHeight: 'calc(100vw * (9 / 16))', aspectRatio: '16/9' } : {}}
+              >
               
               {/* Controls Overlay */}
               <div className="absolute bottom-16 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
@@ -267,6 +271,7 @@ export default function Studio() {
                   </div>
                 </div>
               )}
+              </div>
             </Card>
 
             {/* Scrolling Marquee / Overlay Text (Moved Below Video) */}
