@@ -116,10 +116,10 @@ export default function Studio() {
 
   const getLogoPositionClasses = () => {
     switch (state.logoPosition) {
-      case 'top-right': return 'top-4 right-4';
-      case 'top-left': return 'top-4 left-4';
-      case 'bottom-right': return 'bottom-4 right-4';
-      case 'bottom-left': return 'bottom-4 left-4';
+      case 'top-right': return 'top-[8%] right-[8%]';
+      case 'top-left': return 'top-[8%] left-[8%]';
+      case 'bottom-right': return 'bottom-[8%] right-[8%]';
+      case 'bottom-left': return 'bottom-[8%] left-[8%]';
       default: return 'hidden';
     }
   };

@@ -154,6 +154,13 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
+              {/* Dynamic Logo Cover to hide koora city watermark */}
+              <div 
+                className="absolute top-[8%] right-[8%] w-24 h-16 sm:w-36 sm:h-24 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 transition-all duration-500 pointer-events-none"
+              >
+                <div className="text-primary font-display font-extrabold text-xs sm:text-xl animate-pulse">Tiki Taka</div>
+                <div className="text-white/50 text-[8px] sm:text-[10px] mt-1 uppercase tracking-wider hidden sm:block">Live Broadcast</div>
+              </div>
             </div>
           ) : (
             <svg viewBox="0 0 600 380" className="block w-full max-h-[300px] bg-gradient-pitch">
