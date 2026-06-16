@@ -107,19 +107,19 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-24 h-16 text-xs';
-      case 'lg': return 'w-48 h-32 text-3xl';
+      case 'sm': return 'w-[100px] h-[35px] text-xs';
+      case 'lg': return 'w-[200px] h-[60px] text-2xl';
       case 'md':
-      default: return 'w-36 h-24 text-xl';
+      default: return 'w-[140px] h-[45px] text-base';
     }
   };
 
   const getLogoPositionClasses = () => {
     switch (state.logoPosition) {
-      case 'top-right': return 'top-[8%] right-[8%]';
-      case 'top-left': return 'top-[8%] left-[8%]';
-      case 'bottom-right': return 'bottom-[8%] right-[8%]';
-      case 'bottom-left': return 'bottom-[8%] left-[8%]';
+      case 'top-right': return 'top-[3%] right-[2%]';
+      case 'top-left': return 'top-[3%] left-[2%]';
+      case 'bottom-right': return 'bottom-[3%] right-[2%]';
+      case 'bottom-left': return 'bottom-[3%] left-[2%]';
       default: return 'hidden';
     }
   };
@@ -255,7 +255,7 @@ export default function Studio() {
                   )}
                 >
                   <div className="text-primary font-display font-extrabold animate-pulse">Tiki Taka</div>
-                  {state.logoSize !== 'sm' && <div className="text-white/50 text-[10px] sm:text-xs mt-1 uppercase tracking-wider">Live Broadcast</div>}
+                  {state.logoSize !== 'sm' && <div className="text-white/50 text-[8px] uppercase tracking-wider hidden sm:block">Live Broadcast</div>}
                 </div>
               )}
 
