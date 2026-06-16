@@ -107,19 +107,19 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-[100px] h-[35px] text-xs';
-      case 'lg': return 'w-[200px] h-[60px] text-2xl';
+      case 'sm': return isTheater ? 'w-[130px] h-[50px] sm:w-[200px] sm:h-[65px] text-xs' : 'w-[110px] h-[40px] sm:w-[160px] sm:h-[55px] text-[10px]';
+      case 'lg': return isTheater ? 'w-[200px] h-[70px] sm:w-[300px] sm:h-[90px] text-2xl' : 'w-[160px] h-[60px] sm:w-[240px] sm:h-[80px] text-xl';
       case 'md':
-      default: return 'w-[140px] h-[45px] text-base';
+      default: return isTheater ? 'w-[150px] h-[60px] sm:w-[220px] sm:h-[75px] text-base' : 'w-[130px] h-[50px] sm:w-[180px] sm:h-[65px] text-sm';
     }
   };
 
   const getLogoPositionClasses = () => {
     switch (state.logoPosition) {
-      case 'top-right': return 'top-[3%] right-[2%]';
-      case 'top-left': return 'top-[3%] left-[2%]';
-      case 'bottom-right': return 'bottom-[3%] right-[2%]';
-      case 'bottom-left': return 'bottom-[3%] left-[2%]';
+      case 'top-right': return isTheater ? 'top-[10%] right-[10%] sm:top-[12%] sm:right-[14%]' : 'top-[5%] right-[5%] sm:top-[6%] sm:right-[6%]';
+      case 'top-left': return isTheater ? 'top-[10%] left-[10%] sm:top-[12%] sm:left-[14%]' : 'top-[5%] left-[5%] sm:top-[6%] sm:left-[6%]';
+      case 'bottom-right': return isTheater ? 'bottom-[10%] right-[10%] sm:bottom-[12%] sm:right-[14%]' : 'bottom-[5%] right-[5%] sm:bottom-[6%] sm:right-[6%]';
+      case 'bottom-left': return isTheater ? 'bottom-[10%] left-[10%] sm:bottom-[12%] sm:left-[14%]' : 'bottom-[5%] left-[5%] sm:bottom-[6%] sm:left-[6%]';
       default: return 'hidden';
     }
   };
