@@ -1,4 +1,4 @@
-import { MessageCircle, Radio, Tv, Loader2 } from 'lucide-react';
+import { MessageCircle, Radio, Tv, Loader2, CircleDot } from 'lucide-react';
 import { AdBanner } from '@/components/tikitaka/AdBanner';
 import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
 import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
@@ -54,42 +54,21 @@ const LiveMatches = () => {
         </header>
 
         {isLoading ? (
-          <section>
-            <div className="flex items-center gap-2 mb-5 opacity-50">
-              <Tv className="h-5 w-5 text-primary" />
-              <h2 className={cn('font-display font-extrabold text-2xl', lang === 'ar' && 'font-arabic')}>
-                {t('matchTracker', lang)}
-              </h2>
-              <Loader2 className="h-4 w-4 text-primary animate-spin ms-2" />
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-              <div className="lg:col-span-3">
-                <div className="h-[400px] w-full rounded-lg bg-muted animate-pulse border border-border flex flex-col items-center justify-center text-muted-foreground">
-                  <span className={cn('text-sm', lang === 'ar' && 'font-arabic')}>
-                    {lang === 'ar' ? 'جاري تحميل الملعب...' : 'Loading pitch...'}
+          <section className="flex flex-col items-center justify-center min-h-[50vh] space-y-6">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-primary rounded-full blur-xl opacity-30 animate-pulse" />
+              <div className="relative p-6 rounded-3xl bg-card border border-border shadow-2xl flex flex-col items-center justify-center gap-4">
+                <CircleDot className="h-16 w-16 text-primary animate-spin-slow" strokeWidth={2} />
+                <div className="font-display font-extrabold text-3xl tracking-wide">
+                  <span className="text-foreground">TIKI</span>
+                  <span className="text-primary">-TAKA</span>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
+                  <span className={cn('text-sm text-muted-foreground', lang === 'ar' && 'font-arabic')}>
+                    {lang === 'ar' ? 'جاري تجهيز البث والمحادثة...' : 'Preparing stream & chat...'}
                   </span>
                 </div>
-              </div>
-              <div className="lg:col-span-2">
-                <div className="h-[400px] w-full rounded-lg bg-muted animate-pulse border border-border flex flex-col items-center justify-center text-muted-foreground">
-                  <span className={cn('text-sm', lang === 'ar' && 'font-arabic')}>
-                    {lang === 'ar' ? 'جاري تحميل التعليق...' : 'Loading commentary...'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 mb-5 opacity-50">
-              <MessageCircle className="h-5 w-5 text-primary" />
-              <h2 className={cn('font-display font-extrabold text-2xl', lang === 'ar' && 'font-arabic')}>
-                {t('liveChat', lang)}
-              </h2>
-            </div>
-            <div className="max-w-2xl">
-              <div className="h-[500px] w-full rounded-lg bg-muted animate-pulse border border-border flex flex-col items-center justify-center text-muted-foreground">
-                <span className={cn('text-sm', lang === 'ar' && 'font-arabic')}>
-                  {lang === 'ar' ? 'جاري تحميل المحادثة...' : 'Loading chat...'}
-                </span>
               </div>
             </div>
           </section>
