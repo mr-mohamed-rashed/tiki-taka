@@ -52,6 +52,7 @@ export function Navigation() {
                     const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
                     return cn(
                       'relative px-3 py-2 font-semibold text-sm transition-colors rounded-md whitespace-nowrap',
+                      lang === 'ar' && 'font-arabic',
                       'hover:text-primary',
                       effectivelyActive ? 'text-primary' : 'text-foreground/80'
                     );
@@ -117,6 +118,7 @@ export function Navigation() {
                     const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
                     return cn(
                       'block px-4 py-3 rounded-lg font-semibold text-sm transition-colors',
+                      lang === 'ar' && 'font-arabic text-right',
                       effectivelyActive
                         ? 'bg-primary/15 text-primary'
                         : 'text-foreground/80 hover:bg-muted hover:text-primary'
