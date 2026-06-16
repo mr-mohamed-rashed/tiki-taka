@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Video } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -58,6 +58,42 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
 
   const [activeServerIndex, setActiveServerIndex] = useState(0);
   const [isTheater, setIsTheater] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsTheater(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (containerRef.current?.requestFullscreen) {
+          await containerRef.current.requestFullscreen();
+          // Attempt to lock orientation to landscape on mobile
+          if (screen.orientation && (screen.orientation as any).lock) {
+            await (screen.orientation as any).lock('landscape').catch(() => {});
+          }
+        }
+        setIsTheater(true);
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+          if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+          }
+        }
+        setIsTheater(false);
+      }
+    } catch (e) {
+      console.log('Fullscreen error:', e);
+      // Fallback to CSS theater mode
+      setIsTheater(!isTheater);
+    }
+  };
 
   const servers = (() => {
     const raw = get('live_stream_url', 'en');
@@ -136,14 +172,17 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
             ))}
           </div>
         )}
-        <div className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none flex items-center justify-center overflow-hidden" : "rounded-lg aspect-video overflow-hidden")}>
+        <div 
+          ref={containerRef}
+          className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none flex items-center justify-center overflow-hidden" : "rounded-lg aspect-video overflow-hidden")}
+        >
           <div 
             className={cn("relative w-full h-full", isTheater ? "" : "absolute inset-0")}
             style={isTheater ? { maxWidth: 'calc(100vh * (16 / 9))', maxHeight: 'calc(100vw * (9 / 16))', aspectRatio: '16/9' } : {}}
           >
           {streamUrl && (
             <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity items-center">
-              <Button variant="secondary" size="icon" onClick={() => setIsTheater(!isTheater)} className="bg-black/50 text-white hover:bg-black/80 border-none">
+              <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none">
                 {isTheater ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-minimize h-4 w-4"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-maximize h-4 w-4"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>}
               </Button>
             </div>
@@ -161,14 +200,14 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               <div 
                 className="absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 pointer-events-none"
                 style={{
-                  top: '4%',
+                  top: '2%',
                   right: '2%',
                   width: '16%',
                   height: '8%'
                 }}
               >
-                <div className="text-primary font-display font-extrabold text-[0.6vw] sm:text-[1vw] md:text-[1.2vw] animate-pulse">Tiki Taka</div>
-                <div className="text-white/50 text-[0.4vw] sm:text-[0.5vw] md:text-[0.6vw] uppercase tracking-wider mt-0.5">Live Broadcast</div>
+                <div className="text-primary font-display font-extrabold text-[10px] sm:text-[1.2vw] md:text-[1.5vw] animate-pulse">Tiki Taka</div>
+                <div className="text-white/50 text-[6px] sm:text-[0.6vw] md:text-[0.8vw] uppercase tracking-wider mt-0.5">Live Broadcast</div>
               </div>
             </div>
           ) : (

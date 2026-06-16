@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Volume2, VolumeX } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Navigation } from '@/components/tikitaka/Navigation';
@@ -34,6 +34,40 @@ export default function Studio() {
   const [state, setState] = useState<LiveStudioState>(defaultState);
   const [viewers, setViewers] = useState(0);
   const [activeServerIndex, setActiveServerIndex] = useState(0);
+  const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsTheater(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (mainRef.current?.requestFullscreen) {
+          await mainRef.current.requestFullscreen();
+          if (screen.orientation && (screen.orientation as any).lock) {
+            await (screen.orientation as any).lock('landscape').catch(() => {});
+          }
+        }
+        setIsTheater(true);
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+          if (screen.orientation && screen.orientation.unlock) {
+            screen.orientation.unlock();
+          }
+        }
+        setIsTheater(false);
+      }
+    } catch (e) {
+      console.log('Fullscreen error:', e);
+      setIsTheater(!isTheater);
+    }
+  };
 
   const servers = (() => {
     if (!state.streamUrl) return [];
@@ -116,10 +150,10 @@ export default function Studio() {
 
   const getLogoPositionClasses = () => {
     switch (state.logoPosition) {
-      case 'top-right': return 'top-[4%] right-[2%]';
-      case 'top-left': return 'top-[4%] left-[2%]';
-      case 'bottom-right': return 'bottom-[4%] right-[2%]';
-      case 'bottom-left': return 'bottom-[4%] left-[2%]';
+      case 'top-right': return 'top-[2%] right-[2%]';
+      case 'top-left': return 'top-[2%] left-[2%]';
+      case 'bottom-right': return 'bottom-[2%] right-[2%]';
+      case 'bottom-left': return 'bottom-[2%] left-[2%]';
       default: return 'hidden';
     }
   };
@@ -128,7 +162,10 @@ export default function Studio() {
     <div className="min-h-screen bg-background" dir={dir}>
       {!isTheater && <Navigation />}
 
-      <main className={cn("transition-all", isTheater ? "fixed inset-0 z-50 bg-black w-full h-full flex flex-col p-0 m-0" : "container mx-auto py-10 px-4 lg:px-8 space-y-8 min-h-[70vh]")}>
+      <main 
+        ref={mainRef}
+        className={cn("transition-all", isTheater ? "fixed inset-0 z-50 bg-black w-full h-full flex flex-col p-0 m-0" : "container mx-auto py-10 px-4 lg:px-8 space-y-8 min-h-[70vh]")}
+      >
         {!isTheater && (
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
             <div className="flex items-center gap-3">
@@ -208,7 +245,7 @@ export default function Studio() {
                     {showChat ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
                   </Button>
                 )}
-                <Button variant="secondary" size="icon" onClick={() => setIsTheater(!isTheater)} className="bg-black/50 text-white hover:bg-black/80 border-none">
+                <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none">
                   {isTheater ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
                 </Button>
               </div>
@@ -260,13 +297,13 @@ export default function Studio() {
                 >
                   <div className={cn(
                     "text-primary font-display font-extrabold animate-pulse",
-                    state.logoSize === 'sm' ? "text-[0.6vw] sm:text-[0.8vw]" :
-                    state.logoSize === 'lg' ? "text-[1vw] sm:text-[1.5vw]" :
-                    "text-[0.6vw] sm:text-[1vw] md:text-[1.2vw]"
+                    state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw]" :
+                    state.logoSize === 'lg' ? "text-[14px] sm:text-[1.5vw]" :
+                    "text-[10px] sm:text-[1.2vw] md:text-[1.5vw]"
                   )}>Tiki Taka</div>
                   {state.logoSize !== 'sm' && <div className={cn(
                     "text-white/50 uppercase tracking-wider hidden sm:block mt-0.5",
-                    state.logoSize === 'lg' ? "text-[0.6vw] md:text-[0.8vw]" : "text-[0.4vw] md:text-[0.6vw]"
+                    state.logoSize === 'lg' ? "text-[8px] md:text-[0.8vw]" : "text-[6px] md:text-[0.6vw]"
                   )}>Live Broadcast</div>}
                 </div>
               )}
