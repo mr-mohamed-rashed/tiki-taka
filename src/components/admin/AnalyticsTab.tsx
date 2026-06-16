@@ -61,24 +61,28 @@ export function AnalyticsTab() {
 
     fetchAnalytics();
 
-    // 2. Setup Realtime Presence for Live Visitors
+    // 2. Observe Realtime Presence for Live Visitors
+    // The channel is already created and subscribed globally by useAnalytics.
+    // Calling .on() after subscribe() throws an error, so we poll the presence state.
     const channel = supabase.channel('global_visitors');
     
-    channel.on('presence', { event: 'sync' }, () => {
-      const presenceState = channel.presenceState();
-      // Count unique keys in presence state
-      const count = Object.keys(presenceState).length;
-      setLiveVisitors(count);
-    });
+    const updatePresence = () => {
+      if (channel) {
+        const count = Object.keys(channel.presenceState()).length;
+        setLiveVisitors(count);
+      }
+    };
 
-    channel.subscribe();
+    updatePresence();
+    const presenceInterval = setInterval(updatePresence, 2000);
 
     // Refresh DB stats every 30 seconds
     const interval = setInterval(fetchAnalytics, 30000);
 
     return () => {
       clearInterval(interval);
-      supabase.removeChannel(channel);
+      clearInterval(presenceInterval);
+      // We do NOT remove the channel here because it's owned by useAnalytics
     };
   }, [isAr, lang]);
 
