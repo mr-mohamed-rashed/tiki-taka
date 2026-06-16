@@ -72,22 +72,21 @@ function interpolateLiveMinutes(matches: Match[]): Match[] {
       const matchTime = new Date(match.date).getTime();
       let elapsedMins = Math.floor((now - matchTime) / 60000);
       
-      // If elapsedMins is negative (e.g. clock is slightly off), set to 0
       if (elapsedMins < 0) elapsedMins = 0;
 
-      // Extrapolate minute to avoid being stuck during 5-minute cache windows
-      // but try to respect standard football half lengths
+      let newMinuteStr = '';
       if (elapsedMins > 45 && elapsedMins <= 60) {
-        // Roughly halftime period
-        return { ...match, minute: 'HT' };
-      } else if (elapsedMins > 60) {
-        // Subtract typical 15-minute halftime to estimate second half minute
-        elapsedMins -= 15;
+        newMinuteStr = 'HT';
+      } else {
+        if (elapsedMins > 60) elapsedMins -= 15;
+        if (elapsedMins > 120) elapsedMins = 120;
+        newMinuteStr = `${elapsedMins}'`;
       }
       
-      if (elapsedMins > 120) elapsedMins = 120; // Cap it
+      const originalMinuteNum = match.minute ? parseInt(match.minute.replace(/\D/g, ''), 10) : 0;
+      const isStale = newMinuteStr !== 'HT' && elapsedMins > originalMinuteNum;
       
-      return { ...match, minute: `${elapsedMins}'` };
+      return { ...match, minute: newMinuteStr, isScoreStale: isStale };
     }
     return match;
   });

@@ -119,7 +119,10 @@ export function MatchCard({ match }: MatchCardProps) {
               {formatTime(match.date)}
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 sm:gap-2 font-display font-extrabold text-xl sm:text-3xl tabular-nums">
+            <div className={cn(
+              "flex items-center gap-1.5 sm:gap-2 font-display font-extrabold text-xl sm:text-3xl tabular-nums",
+              match.isScoreStale && "animate-pulse opacity-60"
+            )}>
               <span className={cn(homeWin ? 'text-primary' : 'text-foreground')}>{match.homeScore}</span>
               <span className="text-border">-</span>
               <span className={cn(awayWin ? 'text-primary' : 'text-foreground')}>{match.awayScore}</span>

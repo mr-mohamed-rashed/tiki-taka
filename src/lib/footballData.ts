@@ -34,6 +34,7 @@ export interface Match {
   awayScore: number;
   venue: string;
   highlight_url?: string;
+  isScoreStale?: boolean;
 }
 
 export interface Scorer {
