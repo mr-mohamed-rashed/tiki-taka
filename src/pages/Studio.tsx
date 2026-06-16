@@ -107,10 +107,10 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-20 h-12 text-sm sm:w-24 sm:h-16 sm:text-base';
-      case 'lg': return 'w-40 h-28 text-3xl sm:w-56 sm:h-36 sm:text-4xl';
+      case 'sm': return 'w-20 h-12 text-[10px] sm:w-24 sm:h-16 sm:text-xs md:text-sm';
+      case 'lg': return 'w-40 h-28 text-xl sm:w-56 sm:h-36 sm:text-3xl md:text-4xl';
       case 'md':
-      default: return 'w-28 h-20 text-xl sm:w-40 sm:h-28 sm:text-2xl';
+      default: return 'w-28 h-20 text-sm sm:w-40 sm:h-28 sm:text-xl md:text-2xl';
     }
   };
 
@@ -160,8 +160,8 @@ export default function Studio() {
           </header>
         )}
 
-        <div className={cn("grid gap-6", isTheater ? "grid-cols-1" : (showChat ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1"))}>
-          <div className={cn("relative transition-all", isTheater ? "flex-1 w-full h-full" : (showChat ? "lg:col-span-2" : "col-span-1"))}>
+        <div className={cn("gap-6", isTheater ? "flex flex-1 w-full h-full min-h-0" : (showChat ? "grid grid-cols-1 lg:grid-cols-3" : "grid grid-cols-1"))}>
+          <div className={cn("relative transition-all flex flex-col min-h-0", isTheater ? "flex-1 w-full h-full" : (showChat ? "lg:col-span-2" : "col-span-1"))}>
             {servers.length > 1 && !isTheater && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {servers.map((server: any, idx: number) => (
