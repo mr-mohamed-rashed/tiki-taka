@@ -107,19 +107,19 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return isTheater ? 'w-[130px] h-[50px] sm:w-[200px] sm:h-[65px] text-xs' : 'w-[110px] h-[40px] sm:w-[160px] sm:h-[55px] text-[10px]';
-      case 'lg': return isTheater ? 'w-[200px] h-[70px] sm:w-[300px] sm:h-[90px] text-2xl' : 'w-[160px] h-[60px] sm:w-[240px] sm:h-[80px] text-xl';
+      case 'sm': return 'w-[12%] h-[6%]';
+      case 'lg': return 'w-[20%] h-[12%]';
       case 'md':
-      default: return isTheater ? 'w-[150px] h-[60px] sm:w-[220px] sm:h-[75px] text-base' : 'w-[130px] h-[50px] sm:w-[180px] sm:h-[65px] text-sm';
+      default: return 'w-[16%] h-[8%]';
     }
   };
 
   const getLogoPositionClasses = () => {
     switch (state.logoPosition) {
-      case 'top-right': return isTheater ? 'top-[10%] right-[10%] sm:top-[12%] sm:right-[14%]' : 'top-[5%] right-[5%] sm:top-[6%] sm:right-[6%]';
-      case 'top-left': return isTheater ? 'top-[10%] left-[10%] sm:top-[12%] sm:left-[14%]' : 'top-[5%] left-[5%] sm:top-[6%] sm:left-[6%]';
-      case 'bottom-right': return isTheater ? 'bottom-[10%] right-[10%] sm:bottom-[12%] sm:right-[14%]' : 'bottom-[5%] right-[5%] sm:bottom-[6%] sm:right-[6%]';
-      case 'bottom-left': return isTheater ? 'bottom-[10%] left-[10%] sm:bottom-[12%] sm:left-[14%]' : 'bottom-[5%] left-[5%] sm:bottom-[6%] sm:left-[6%]';
+      case 'top-right': return 'top-[4%] right-[2%]';
+      case 'top-left': return 'top-[4%] left-[2%]';
+      case 'bottom-right': return 'bottom-[4%] right-[2%]';
+      case 'bottom-left': return 'bottom-[4%] left-[2%]';
       default: return 'hidden';
     }
   };
@@ -258,8 +258,16 @@ export default function Studio() {
                     getLogoPositionClasses()
                   )}
                 >
-                  <div className="text-primary font-display font-extrabold animate-pulse">Tiki Taka</div>
-                  {state.logoSize !== 'sm' && <div className="text-white/50 text-[8px] uppercase tracking-wider hidden sm:block">Live Broadcast</div>}
+                  <div className={cn(
+                    "text-primary font-display font-extrabold animate-pulse",
+                    state.logoSize === 'sm' ? "text-[0.6vw] sm:text-[0.8vw]" :
+                    state.logoSize === 'lg' ? "text-[1vw] sm:text-[1.5vw]" :
+                    "text-[0.6vw] sm:text-[1vw] md:text-[1.2vw]"
+                  )}>Tiki Taka</div>
+                  {state.logoSize !== 'sm' && <div className={cn(
+                    "text-white/50 uppercase tracking-wider hidden sm:block mt-0.5",
+                    state.logoSize === 'lg' ? "text-[0.6vw] md:text-[0.8vw]" : "text-[0.4vw] md:text-[0.6vw]"
+                  )}>Live Broadcast</div>}
                 </div>
               )}
 

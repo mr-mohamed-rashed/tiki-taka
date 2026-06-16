@@ -157,17 +157,18 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
-              {/* Dynamic Logo Cover to hide koora city watermark */}
+              {/* Dynamic Logo Cover to hide koora city watermark using pure percentages */}
               <div 
-                className={cn(
-                  "absolute bg-black/90 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 transition-all duration-500 pointer-events-none",
-                  isTheater 
-                    ? "top-[10%] right-[10%] w-[130px] h-[50px] sm:top-[12%] sm:right-[14%] sm:w-[200px] sm:h-[65px]" 
-                    : "top-[5%] right-[5%] w-[110px] h-[40px] sm:top-[6%] sm:right-[6%] sm:w-[160px] sm:h-[55px]"
-                )}
+                className="absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex flex-col items-center justify-center z-40 pointer-events-none"
+                style={{
+                  top: '4%',
+                  right: '2%',
+                  width: '16%',
+                  height: '8%'
+                }}
               >
-                <div className="text-primary font-display font-extrabold text-sm sm:text-lg animate-pulse">Tiki Taka</div>
-                <div className="text-white/50 text-[8px] sm:text-[9px] uppercase tracking-wider hidden sm:block">Live Broadcast</div>
+                <div className="text-primary font-display font-extrabold text-[0.6vw] sm:text-[1vw] md:text-[1.2vw] animate-pulse">Tiki Taka</div>
+                <div className="text-white/50 text-[0.4vw] sm:text-[0.5vw] md:text-[0.6vw] uppercase tracking-wider mt-0.5">Live Broadcast</div>
               </div>
             </div>
           ) : (
