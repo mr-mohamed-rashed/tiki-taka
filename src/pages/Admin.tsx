@@ -1,4 +1,4 @@
-import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity, PlayCircle, Video } from 'lucide-react';
+import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity, PlayCircle, Video, Trophy } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +8,7 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { WidgetLabelsTab } from '@/components/admin/WidgetLabelsTab';
 import { AdsTab } from '@/components/admin/AdsTab';
 import { NewsTab } from '@/components/admin/NewsTab';
-
+import { RoadmapTab } from '@/components/admin/RoadmapTab';
 import { MediaPlayerTab } from '@/components/admin/MediaPlayerTab';
 import { AnalyticsTab } from '@/components/admin/AnalyticsTab';
 import { MatchesTab } from '@/components/admin/MatchesTab';
@@ -79,6 +79,9 @@ export default function Admin() {
             <TabsTrigger value="widgets" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <Settings className="h-4 w-4" /> {t('adminLabels', lang)}
             </TabsTrigger>
+            <TabsTrigger value="roadmap" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
+              <Trophy className="h-4 w-4" /> طريق كأس العالم
+            </TabsTrigger>
             <TabsTrigger value="ads" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <Megaphone className="h-4 w-4" /> {t('adminAds', lang)}
             </TabsTrigger>
@@ -94,6 +97,7 @@ export default function Admin() {
           <TabsContent value="matches"><MatchesTab /></TabsContent>
           <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
           <TabsContent value="widgets"><WidgetLabelsTab /></TabsContent>
+          <TabsContent value="roadmap"><RoadmapTab /></TabsContent>
           <TabsContent value="ads"><AdsTab /></TabsContent>
           <TabsContent value="news"><NewsTab /></TabsContent>
           <TabsContent value="mediaplayer"><MediaPlayerTab /></TabsContent>
