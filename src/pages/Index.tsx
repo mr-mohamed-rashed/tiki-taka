@@ -143,7 +143,7 @@ const Index = () => {
             linkLabel={<EditableSiteText settingKey="link_allMatches" fallbackEn={T.allMatches.en} fallbackAr={T.allMatches.ar} />}
             lang={lang}
           />
-          <MatchCenter defaultTab="fixtures" />
+          <MatchCenter defaultTab="live" />
         </section>
 
         {/* ApiSportsWidget removed temporarily */}
