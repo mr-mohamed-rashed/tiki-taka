@@ -107,10 +107,10 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-20 h-12 text-[10px] sm:w-24 sm:h-16 sm:text-xs md:text-sm';
-      case 'lg': return 'w-40 h-28 text-xl sm:w-56 sm:h-36 sm:text-3xl md:text-4xl';
+      case 'sm': return 'w-24 h-16 text-xs';
+      case 'lg': return 'w-48 h-32 text-3xl';
       case 'md':
-      default: return 'w-28 h-20 text-sm sm:w-40 sm:h-28 sm:text-xl md:text-2xl';
+      default: return 'w-36 h-24 text-xl';
     }
   };
 
