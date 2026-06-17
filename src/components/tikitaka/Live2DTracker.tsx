@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, CircleDot } from 'lucide-react';
+import { Video } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -198,19 +198,17 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               />
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
-                className="absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none"
+                className="absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none w-[22%] h-[10%] md:w-[14%] md:h-[7%] lg:w-[10%] lg:h-[6%]"
                 style={{
                   top: '2%',
-                  right: '2%',
-                  width: '22%',
-                  height: '10%'
+                  right: '2%'
                 }}
               >
                 <div className="flex flex-col items-end justify-center">
-                  <div className="text-primary font-display font-extrabold text-[8px] sm:text-[1.2vw] md:text-[1.5vw] leading-none animate-pulse">TIKI-TAKA</div>
-                  <div className="text-white/50 text-[5px] sm:text-[0.6vw] md:text-[0.8vw] uppercase tracking-wider mt-0.5 leading-none">Live Broadcast</div>
+                  <div className="text-primary font-display font-extrabold text-[8px] sm:text-[1vw] md:text-[0.8vw] leading-none animate-pulse">TIKI-TAKA</div>
+                  <div className="text-white/50 text-[5px] sm:text-[0.5vw] md:text-[0.4vw] uppercase tracking-wider mt-0.5 leading-none">Live Broadcast</div>
                 </div>
-                <CircleDot className="text-primary w-3 h-3 sm:w-[1.8vw] sm:h-[1.8vw]" strokeWidth={2.5} />
+                <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw] md:w-[1.2vw] md:h-[1.2vw] object-contain" />
               </div>
             </div>
           ) : (

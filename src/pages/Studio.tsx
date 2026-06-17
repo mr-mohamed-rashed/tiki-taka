@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Volume2, VolumeX, CircleDot } from 'lucide-react';
+import { Video, Users, MessageSquare, Radio, Maximize, Minimize, PanelRightClose, PanelRightOpen, Volume2, VolumeX } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
@@ -141,10 +141,10 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-[16%] h-[8%]';
-      case 'lg': return 'w-[28%] h-[14%]';
+      case 'sm': return 'w-[16%] h-[8%] md:w-[10%] md:h-[5%] lg:w-[8%] lg:h-[4%]';
+      case 'lg': return 'w-[28%] h-[14%] md:w-[18%] md:h-[9%] lg:w-[14%] lg:h-[7%]';
       case 'md':
-      default: return 'w-[22%] h-[10%]';
+      default: return 'w-[22%] h-[10%] md:w-[14%] md:h-[7%] lg:w-[10%] lg:h-[6%]';
     }
   };
 
@@ -300,21 +300,22 @@ export default function Studio() {
                       "text-primary font-display font-extrabold leading-none animate-pulse",
                       state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw]" :
                       state.logoSize === 'lg' ? "text-[14px] sm:text-[1.5vw]" :
-                      "text-[10px] sm:text-[1.2vw] md:text-[1.5vw]"
+                      "text-[10px] sm:text-[1vw] md:text-[0.8vw]"
                     )}>TIKI-TAKA</div>
                     {state.logoSize !== 'sm' && <div className={cn(
                       "text-white/50 uppercase tracking-wider hidden sm:block mt-0.5 leading-none",
-                      state.logoSize === 'lg' ? "text-[8px] md:text-[0.8vw]" : "text-[6px] md:text-[0.6vw]"
+                      state.logoSize === 'lg' ? "text-[8px] md:text-[0.6vw]" : "text-[6px] md:text-[0.4vw]"
                     )}>Live Broadcast</div>}
                   </div>
-                  <CircleDot 
+                  <img 
+                    src="/icons/tiki-taka-icon.png" 
+                    alt="World Cup" 
                     className={cn(
-                      "text-primary",
+                      "object-contain",
                       state.logoSize === 'sm' ? "w-2.5 h-2.5 sm:w-[1.2vw] sm:h-[1.2vw]" :
                       state.logoSize === 'lg' ? "w-4 h-4 sm:w-[2.2vw] sm:h-[2.2vw]" :
-                      "w-3 h-3 sm:w-[1.8vw] sm:h-[1.8vw]"
+                      "w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw] md:w-[1.2vw] md:h-[1.2vw]"
                     )} 
-                    strokeWidth={2.5} 
                   />
                 </div>
               )}
