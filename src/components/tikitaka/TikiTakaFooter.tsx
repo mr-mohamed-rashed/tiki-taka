@@ -84,18 +84,62 @@ export function TikiTakaFooter() {
       <div className="w-full px-6 md:px-12 lg:px-16">
         {/* Top Section */}
         <div className="pt-14 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-          <div className={`lg:col-span-5 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="flex items-center gap-2 mb-5">
-              <span className="font-display font-extrabold text-3xl">
-                <span className="text-white">TIKI</span>
-                <span className="text-primary">-TAKA</span>
-              </span>
+          {/* Neon Info Card */}
+          <div className={`lg:col-span-6 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className="relative overflow-hidden rounded-2xl p-[2px] z-10 group shadow-neon hover:shadow-[0_0_40px_hsl(var(--primary)/0.5)] transition-shadow duration-500">
+              {/* Rotating background */}
+              <div className="absolute inset-[-50%] z-[-2] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_70%,hsl(var(--primary))_100%)] opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Inner Card content */}
+              <div className="absolute inset-[2px] z-[-1] bg-[#0d1017]/95 backdrop-blur-xl rounded-[calc(1rem-2px)]" />
+
+              {/* Content */}
+              <div className="relative p-6 md:p-8 flex flex-col items-center text-center space-y-6">
+                <p className="text-[#A1A1AA] text-base leading-relaxed hover:text-[#D4D4D8] transition-colors duration-300">
+                  <EditableSiteText settingKey="footer_statement" fallbackEn={T.footerStatement.en} fallbackAr={T.footerStatement.ar} multiline />
+                </p>
+                
+                {/* Animated Tiki-Taka Text */}
+                <div className="flex items-center gap-2">
+                  <span className="font-display font-extrabold text-4xl tracking-wide animate-text-neon select-none">
+                    <span className="text-white">TIKI</span>
+                    <span className="text-primary">-TAKA</span>
+                  </span>
+                </div>
+
+                <div className="w-full h-[1px] bg-white/10 my-2"></div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+                  <div className={`flex flex-1 items-center bg-[#18181B] rounded-lg overflow-hidden transition-all duration-300 w-full ${focused ? 'ring-2 ring-primary/50 shadow-neon' : 'hover:bg-[#1F1F23]'}`}>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onFocus={() => setFocused(true)}
+                      onBlur={() => setFocused(false)}
+                      placeholder={t('footerEmail', lang)}
+                      className="bg-transparent px-4 py-3 text-white text-sm placeholder-[#52525B] focus:outline-none w-full min-w-[150px]"
+                    />
+                    <button className="group flex items-center gap-2 px-4 py-3 text-white text-sm font-medium hover:text-primary transition-all duration-300 whitespace-nowrap bg-white/5 hover:bg-white/10">
+                      <EditableSiteText settingKey="footer_subscribe" fallbackEn={T.footerSubscribe.en} fallbackAr={T.footerSubscribe.ar} />
+                      <span className="group-hover:scale-110 transition-transform duration-300"><ArrowIcon /></span>
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 shrink-0">
+                    {socialLinks.map((s, i) => (
+                      <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+                        className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 hover:-translate-y-1 hover:shadow-neon hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                        {s.icon}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-[#A1A1AA] text-lg leading-relaxed hover:text-[#D4D4D8] transition-colors duration-300">
-              <EditableSiteText settingKey="footer_statement" fallbackEn={T.footerStatement.en} fallbackAr={T.footerStatement.ar} multiline />
-            </p>
           </div>
-          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
+
+          <div className="lg:col-span-6 grid grid-cols-2 md:grid-cols-3 gap-10">
             {columns.map((col, i) => (
               <div
                 key={i}
@@ -106,7 +150,7 @@ export function TikiTakaFooter() {
                 <ul className="space-y-2.5">
                   {col.links.map((link, j) => (
                     <li key={j}>
-                      <NavLink to={link.href} className="text-[#71717A] text-sm hover:text-primary hover:translate-x-1 inline-block transition-all duration-200">
+                      <NavLink to={link.href} className="text-[#71717A] text-sm hover:text-primary hover:-translate-x-1 inline-block transition-all duration-200">
                         {link.label}
                       </NavLink>
                     </li>
@@ -114,36 +158,6 @@ export function TikiTakaFooter() {
                 </ul>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Newsletter */}
-        <div className={`py-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 border-t border-white/5 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '400ms' }}>
-          <h4 className="text-white font-semibold text-base whitespace-nowrap"><EditableSiteText settingKey="footer_newsletter" fallbackEn={T.footerNewsletter.en} fallbackAr={T.footerNewsletter.ar} /></h4>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-5">
-            <div className={`flex items-center bg-[#18181B] rounded-lg overflow-hidden transition-all duration-300 ${focused ? 'ring-2 ring-primary/50 shadow-neon' : 'hover:bg-[#1F1F23]'}`}>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                placeholder={t('footerEmail', lang)}
-                className="bg-transparent px-5 py-3 text-white text-sm placeholder-[#52525B] focus:outline-none w-full min-w-[200px] md:min-w-[280px]"
-              />
-              <button className="group flex items-center gap-2 px-5 py-3 text-white text-sm font-medium hover:text-primary transition-all duration-300 whitespace-nowrap">
-                <EditableSiteText settingKey="footer_subscribe" fallbackEn={T.footerSubscribe.en} fallbackAr={T.footerSubscribe.ar} />
-                <span className="group-hover:translate-x-1 transition-transform duration-300"><ArrowIcon /></span>
-              </button>
-            </div>
-            <div className="flex items-center gap-3">
-              {socialLinks.map((s, i) => (
-                <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 hover:-translate-y-1 hover:shadow-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                  {s.icon}
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </div>
