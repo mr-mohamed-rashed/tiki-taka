@@ -301,18 +301,18 @@ export default function Studio() {
                     
                     <div className="w-full relative z-10 flex flex-col items-center justify-center mt-[2%]">
                       {state.logoSize === 'sm' ? (
-                        <svg viewBox="0 0 100 20" className="w-full h-auto drop-shadow-md overflow-visible">
-                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
+                        <svg viewBox="0 0 110 20" className="w-full h-auto drop-shadow-md overflow-visible">
+                          <text x="110" y="16" textAnchor="end" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
                             TIKI-TAKA
                           </text>
                         </svg>
                       ) : (
-                        <svg viewBox="0 0 100 35" className="w-full h-auto drop-shadow-md overflow-visible">
-                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
+                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
+                          <text x="110" y="16" textAnchor="end" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
                             TIKI-TAKA
                           </text>
-                          <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
-                          <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
+                          <circle cx="36" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
+                          <text x="110" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
                             LIVE BROADCAST
                           </text>
                         </svg>
