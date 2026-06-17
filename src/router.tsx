@@ -15,6 +15,7 @@ import Roadmap from './pages/Roadmap';
 import Studio from './pages/Studio';
 import { GlobalFloatingAd } from './components/tikitaka/GlobalFloatingAd';
 import { GoogleAuthGate } from './components/tikitaka/GoogleAuthGate';
+import TermsOfService from './pages/TermsOfService';
 
 const Layout = () => {
   const location = useLocation();
@@ -70,6 +71,7 @@ export const routers = [
       { path: '/results', name: 'results', element: <Results /> },
       { path: '/admin', name: 'admin', element: <Admin /> },
       { path: '/studio', name: 'studio', element: <Studio /> },
+      { path: '/terms-of-service', name: 'terms', element: <TermsOfService /> },
       { path: '*', name: '404', element: <NotFound /> },
     ],
   },

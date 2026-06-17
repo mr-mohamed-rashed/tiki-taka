@@ -76,7 +76,7 @@ export function TikiTakaFooter() {
 
   const policyLinks = [
     { label: <EditableSiteText settingKey="footer_policy_1" fallbackEn="Privacy Policy" fallbackAr="سياسة الخصوصية" />, href: '#' },
-    { label: <EditableSiteText settingKey="footer_policy_2" fallbackEn="Terms of Service" fallbackAr="شروط الخدمة" />, href: '#' },
+    { label: <EditableSiteText settingKey="footer_policy_2" fallbackEn="Terms of Service" fallbackAr="شروط الخدمة" />, href: '/terms-of-service' },
   ];
 
   return (
@@ -186,9 +186,9 @@ export function TikiTakaFooter() {
               </div>
               <div className="flex items-center gap-6">
                 {policyLinks.map((l, i) => (
-                  <a key={i} href={l.href} className="text-[#71717A] text-sm hover:text-white hover:underline underline-offset-4 transition-all duration-200">
+                  <NavLink key={i} to={l.href} className="text-[#71717A] text-sm hover:text-white hover:underline underline-offset-4 transition-all duration-200">
                     {l.label}
-                  </a>
+                  </NavLink>
                 ))}
               </div>
             </div>
