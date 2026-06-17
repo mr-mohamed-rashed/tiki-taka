@@ -72,7 +72,9 @@ async function callProxy(body: object) {
   }
 }
 
-function interpolateLiveMinutes(matches: Match[]): Match[] {
+function interpolateLiveMinutes(matches: Match[], isMockData = false): Match[] {
+  if (!isMockData) return matches; // Never overwrite real API minutes
+  
   const now = Date.now();
   return matches.map(match => {
     if (match.status === 'live') {
@@ -85,15 +87,21 @@ function interpolateLiveMinutes(matches: Match[]): Match[] {
       if (elapsedMins > 45 && elapsedMins <= 60) {
         newMinuteStr = 'HT';
       } else {
-        if (elapsedMins > 60) elapsedMins -= 15;
-        if (elapsedMins > 120) elapsedMins = 120;
-        newMinuteStr = `${elapsedMins}'`;
+        if (elapsedMins > 60) elapsedMins -= 15; // Account for half time
+        
+        if (elapsedMins > 90 && elapsedMins <= 96) {
+          newMinuteStr = `90+${elapsedMins - 90}'`;
+        } else if (elapsedMins > 96) {
+          newMinuteStr = 'FT';
+        } else {
+          newMinuteStr = `${elapsedMins}'`;
+        }
       }
       
       const originalMinuteNum = match.minute ? parseInt(match.minute.replace(/\D/g, ''), 10) : 0;
-      const isStale = newMinuteStr !== 'HT' && elapsedMins > originalMinuteNum;
+      const isStale = newMinuteStr !== 'HT' && newMinuteStr !== 'FT' && elapsedMins > originalMinuteNum;
       
-      return { ...match, minute: newMinuteStr, isScoreStale: isStale };
+      return { ...match, minute: newMinuteStr, isScoreStale: isStale, status: newMinuteStr === 'FT' ? 'finished' : 'live' };
     }
     return match;
   });
@@ -106,16 +114,16 @@ export function useLiveFixtures() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'live' });
-        if (data?.matches?.length) return interpolateLiveMinutes(data.matches as Match[]);
-        if (!data?.response?.length) return interpolateLiveMinutes(getLiveMatches()); // fallback to mock
+        if (data?.matches?.length) return data.matches as Match[];
+        if (!data?.response?.length) return interpolateLiveMinutes(getLiveMatches(), true); // fallback to mock
         // Map API-Football response to our Match type
-        return interpolateLiveMinutes(data.response.map(mapFixture));
+        return data.response.map(mapFixture);
       } catch {
-        return interpolateLiveMinutes(getLiveMatches());
+        return interpolateLiveMinutes(getLiveMatches(), true);
       }
     },
     refetchInterval: 30_000,
-    initialData: interpolateLiveMinutes(getLiveMatches()),
+    initialData: interpolateLiveMinutes(getLiveMatches(), true),
   });
 }
 
