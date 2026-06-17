@@ -80,121 +80,106 @@ export function TikiTakaFooter() {
   ];
 
   return (
-    <footer className="w-full bg-[#0A0A0A] border-t border-primary/20">
-      <div className="w-full px-6 md:px-12 lg:px-16">
-        {/* Top Section */}
-        <div className="pt-14 pb-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-          {/* Neon Info Card */}
-          <div className={`lg:col-span-6 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="relative overflow-hidden rounded-2xl p-[2px] z-10 group shadow-neon hover:shadow-[0_0_40px_hsl(var(--primary)/0.5)] transition-shadow duration-500">
-              {/* Rotating background */}
-              <div className="absolute inset-[-50%] z-[-2] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_70%,hsl(var(--primary))_100%)] opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+    <div className="relative w-full mt-20 group overflow-hidden border-t border-primary/20">
+      {/* Rotating background for the entire footer */}
+      <div className="absolute inset-[-100%] z-0 animate-[spin_8s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_70%,hsl(var(--primary))_100%)] opacity-30 group-hover:opacity-70 transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute inset-[2px] z-0 bg-[#0A0A0A]" />
+
+      <footer className="relative z-10 w-full pt-16 pb-0">
+        <div className="w-full px-6 md:px-12 lg:px-16 mb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+            
+            {/* Description, Newsletter, Socials */}
+            <div className={`lg:col-span-6 flex flex-col justify-center space-y-8 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <p className="text-[#A1A1AA] text-xl leading-relaxed hover:text-[#D4D4D8] transition-colors duration-300 max-w-xl">
+                <EditableSiteText settingKey="footer_statement" fallbackEn={T.footerStatement.en} fallbackAr={T.footerStatement.ar} multiline />
+              </p>
               
-              {/* Inner Card content */}
-              <div className="absolute inset-[2px] z-[-1] bg-[#0d1017]/95 backdrop-blur-xl rounded-[calc(1rem-2px)]" />
-
-              {/* Content */}
-              <div className="relative p-6 md:p-8 flex flex-col items-center text-center space-y-6">
-                <p className="text-[#A1A1AA] text-base leading-relaxed hover:text-[#D4D4D8] transition-colors duration-300">
-                  <EditableSiteText settingKey="footer_statement" fallbackEn={T.footerStatement.en} fallbackAr={T.footerStatement.ar} multiline />
-                </p>
-                
-                {/* Animated Tiki-Taka Text */}
-                <div className="flex items-center gap-2">
-                  <span className="font-display font-extrabold text-4xl tracking-wide animate-text-neon select-none">
-                    <span className="text-white">TIKI</span>
-                    <span className="text-primary">-TAKA</span>
-                  </span>
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
+                <div className={`flex flex-1 items-center bg-[#18181B] rounded-lg overflow-hidden transition-all duration-300 w-full ${focused ? 'ring-2 ring-primary/50 shadow-neon' : 'hover:bg-[#1F1F23]'}`}>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
+                    placeholder={t('footerEmail', lang)}
+                    className="bg-transparent px-4 py-4 text-white text-sm placeholder-[#52525B] focus:outline-none w-full min-w-[150px]"
+                  />
+                  <button className="group flex items-center gap-2 px-5 py-4 text-white text-sm font-medium hover:text-primary transition-all duration-300 whitespace-nowrap bg-white/5 hover:bg-white/10">
+                    <EditableSiteText settingKey="footer_subscribe" fallbackEn={T.footerSubscribe.en} fallbackAr={T.footerSubscribe.ar} />
+                    <span className="group-hover:scale-110 transition-transform duration-300"><ArrowIcon /></span>
+                  </button>
                 </div>
-
-                <div className="w-full h-[1px] bg-white/10 my-2"></div>
-
-                <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
-                  <div className={`flex flex-1 items-center bg-[#18181B] rounded-lg overflow-hidden transition-all duration-300 w-full ${focused ? 'ring-2 ring-primary/50 shadow-neon' : 'hover:bg-[#1F1F23]'}`}>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onFocus={() => setFocused(true)}
-                      onBlur={() => setFocused(false)}
-                      placeholder={t('footerEmail', lang)}
-                      className="bg-transparent px-4 py-3 text-white text-sm placeholder-[#52525B] focus:outline-none w-full min-w-[150px]"
-                    />
-                    <button className="group flex items-center gap-2 px-4 py-3 text-white text-sm font-medium hover:text-primary transition-all duration-300 whitespace-nowrap bg-white/5 hover:bg-white/10">
-                      <EditableSiteText settingKey="footer_subscribe" fallbackEn={T.footerSubscribe.en} fallbackAr={T.footerSubscribe.ar} />
-                      <span className="group-hover:scale-110 transition-transform duration-300"><ArrowIcon /></span>
-                    </button>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 shrink-0">
-                    {socialLinks.map((s, i) => (
-                      <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 hover:-translate-y-1 hover:shadow-neon hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                        {s.icon}
-                      </a>
-                    ))}
-                  </div>
+                
+                <div className="flex items-center gap-2 shrink-0">
+                  {socialLinks.map((s, i) => (
+                    <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+                      className="w-12 h-12 rounded-full bg-[#18181B] text-white flex items-center justify-center hover:scale-110 hover:-translate-y-1 hover:shadow-neon hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                      {s.icon}
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="lg:col-span-6 grid grid-cols-2 md:grid-cols-3 gap-10">
-            {columns.map((col, i) => (
-              <div
-                key={i}
-                className={`transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: `${150 + i * 100}ms` }}
-              >
-                <h3 className="text-white font-semibold text-base mb-4">{col.title}</h3>
-                <ul className="space-y-2.5">
-                  {col.links.map((link, j) => (
-                    <li key={j}>
-                      <NavLink to={link.href} className="text-[#71717A] text-sm hover:text-primary hover:-translate-x-1 inline-block transition-all duration-200">
-                        {link.label}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
+            {/* Columns + Big Text */}
+            <div className="lg:col-span-6 flex flex-col justify-between">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-10 mb-10">
+                {columns.map((col, i) => (
+                  <div
+                    key={i}
+                    className={`transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                    style={{ transitionDelay: `${150 + i * 100}ms` }}
+                  >
+                    <h3 className="text-white font-semibold text-base mb-4">{col.title}</h3>
+                    <ul className="space-y-3">
+                      {col.links.map((link, j) => (
+                        <li key={j}>
+                          <NavLink to={link.href} className="text-[#71717A] text-sm hover:text-primary hover:-translate-x-1 inline-block transition-all duration-200">
+                            {link.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* Giant Brand + Bottom bar */}
-      <div className="relative min-h-[200px] md:min-h-[280px] flex flex-col">
-        <div className={`absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden transition-all duration-1000 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`} style={{ transitionDelay: '600ms' }}>
-          <span className="font-display font-bold" style={{ fontSize: '15vw', color: '#1C1C1E', lineHeight: 0.85, whiteSpace: 'nowrap', letterSpacing: '-0.03em' }}>
-            TIKI-TAKA
-          </span>
+              {/* Big TIKI-TAKA text under columns */}
+              <div className={`w-full flex justify-center md:justify-end transition-all duration-1000 delay-500 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                <span className="font-display font-black text-6xl md:text-8xl lg:text-[110px] tracking-tighter animate-text-sweep select-none leading-none">
+                  TIKI-TAKA
+                </span>
+              </div>
+            </div>
+
+          </div>
         </div>
 
         {/* Baseline */}
-        <div className="absolute bottom-0 left-0 right-0 z-10">
-          <div className="w-full px-6 md:px-12 lg:px-16">
-            <div className="py-5 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/5">
-              <div className="flex items-center gap-4">
-                <p className="text-[#71717A] text-sm"><EditableSiteText settingKey="footer_copyright" fallbackEn={T.footerCopyright.en} fallbackAr={T.footerCopyright.ar} /></p>
-                <NavLink
-                  to="/admin"
-                  className="flex items-center gap-1.5 text-[#52525B] text-xs font-medium hover:text-primary transition-colors duration-200"
-                >
-                  <LayoutGrid className="h-3 w-3" />
-                  {lang === 'ar' ? 'أدمن' : 'Admin'}
+        <div className="w-full px-6 md:px-12 lg:px-16 bg-[#0A0A0A]/80 backdrop-blur-sm border-t border-white/5 relative z-10">
+          <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <p className="text-[#71717A] text-sm"><EditableSiteText settingKey="footer_copyright" fallbackEn={T.footerCopyright.en} fallbackAr={T.footerCopyright.ar} /></p>
+              <NavLink
+                to="/admin"
+                className="flex items-center gap-1.5 text-[#52525B] text-xs font-medium hover:text-primary transition-colors duration-200"
+              >
+                <LayoutGrid className="h-3 w-3" />
+                {lang === 'ar' ? 'أدمن' : 'Admin'}
+              </NavLink>
+            </div>
+            <div className="flex items-center gap-6">
+              {policyLinks.map((l, i) => (
+                <NavLink key={i} to={l.href} className="text-[#71717A] text-sm hover:text-white hover:underline underline-offset-4 transition-all duration-200">
+                  {l.label}
                 </NavLink>
-              </div>
-              <div className="flex items-center gap-6">
-                {policyLinks.map((l, i) => (
-                  <NavLink key={i} to={l.href} className="text-[#71717A] text-sm hover:text-white hover:underline underline-offset-4 transition-all duration-200">
-                    {l.label}
-                  </NavLink>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
   );
 }
