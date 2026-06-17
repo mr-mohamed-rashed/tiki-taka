@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { LiveChat } from '@/components/tikitaka/LiveChat';
+import { ShareMenu } from '@/components/tikitaka/ShareMenu';
 import { supabase } from '@/integrations/supabase/client';
 
 interface LiveStudioState {
@@ -183,6 +184,7 @@ export default function Studio() {
               </div>
             </div>
             <div className="flex gap-2">
+              <ShareMenu />
               <Button onClick={() => setShowChat(!showChat)} variant="outline" className="gap-2">
                 {showChat ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
                 {showChat ? (lang === 'ar' ? 'إخفاء الشات' : 'Hide Chat') : (lang === 'ar' ? 'إظهار الشات' : 'Show Chat')}
@@ -190,7 +192,7 @@ export default function Studio() {
               <Button asChild variant="outline" className="gap-2">
                 <NavLink to="/live">
                   <Radio className="h-4 w-4 text-live" />
-                  {lang === 'ar' ? 'العودة للمباريات المباشرة' : 'Back to Live Matches'}
+                  <span className="hidden sm:inline">{lang === 'ar' ? 'العودة للمباريات المباشرة' : 'Back to Live Matches'}</span>
                 </NavLink>
               </Button>
             </div>

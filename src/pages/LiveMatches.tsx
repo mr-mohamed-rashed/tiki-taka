@@ -7,6 +7,7 @@ import { LiveChat } from '@/components/tikitaka/LiveChat';
 import { MatchCenter } from '@/components/tikitaka/MatchCenter';
 import { Navigation } from '@/components/tikitaka/Navigation';
 import { NewsTicker } from '@/components/tikitaka/NewsTicker';
+import { ShareMenu } from '@/components/tikitaka/ShareMenu';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
 import { TournamentCountdown } from '@/components/tikitaka/TournamentCountdown';
 import { useLanguage } from '@/context/LanguageContext';
@@ -35,7 +36,7 @@ const LiveMatches = () => {
 
       <main className="container mx-auto px-4 lg:px-8 py-10 space-y-12">
         <AdSlotSelector location="live-page" onAdd={() => {}} />
-        <header className="flex items-center justify-between gap-3">
+        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-lg bg-live/15 text-live">
               <Radio className="h-5 w-5 animate-pulse-live" />
@@ -49,9 +50,12 @@ const LiveMatches = () => {
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <AdBanner slotId="live-sidebar-1" />
-            <AdBanner slotId="live-sidebar-2" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <ShareMenu />
+            <div className="flex flex-col gap-4 hidden md:flex">
+              <AdBanner slotId="live-sidebar-1" />
+              <AdBanner slotId="live-sidebar-2" />
+            </div>
           </div>
         </header>
 
