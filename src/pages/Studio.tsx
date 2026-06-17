@@ -299,13 +299,13 @@ export default function Studio() {
                   <div className="flex flex-col items-end justify-center z-10 pl-2">
                     <div className={cn(
                       "text-primary font-display font-extrabold leading-none animate-pulse",
-                      state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw] md:text-[0.6vw]" :
-                      state.logoSize === 'lg' ? "text-[16px] sm:text-[2vw] md:text-[1.8vw]" :
-                      "text-[12px] sm:text-[1.5vw] md:text-[1.2vw]"
+                      state.logoSize === 'sm' ? "text-[6px] sm:text-[0.8vw] md:text-[0.6vw]" :
+                      state.logoSize === 'lg' ? "text-[12px] sm:text-[2vw] md:text-[1.8vw]" :
+                      "text-[9px] sm:text-[1.5vw] md:text-[1.2vw]"
                     )}>TIKI-TAKA</div>
                     {state.logoSize !== 'sm' && <div className={cn(
                       "text-white/50 uppercase tracking-wider hidden sm:block mt-1 leading-none",
-                      state.logoSize === 'lg' ? "text-[8px] md:text-[0.8vw]" : "text-[7px] md:text-[0.6vw]"
+                      state.logoSize === 'lg' ? "text-[6px] md:text-[0.8vw]" : "text-[5px] md:text-[0.6vw]"
                     )}>Live Broadcast</div>}
                   </div>
                   <img 
