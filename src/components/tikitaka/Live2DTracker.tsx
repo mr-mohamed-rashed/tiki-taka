@@ -198,14 +198,18 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               />
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
-                className="absolute flex items-center justify-center z-40 pointer-events-none top-[3%] right-[2%] w-1/6 h-1/6"
+                className="absolute flex items-center justify-between z-40 pointer-events-none top-[3%] right-[2%] w-1/6 h-1/6"
               >
-                <div className="absolute inset-0 bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl"></div>
-                <div className="flex flex-col items-end justify-center z-10 w-full pr-[12%]">
-                  <div className="text-primary font-display font-extrabold text-[1.2vw] leading-none animate-pulse">TIKI-TAKA</div>
-                  <div className="text-white/50 text-[0.6vw] uppercase tracking-wider mt-1 leading-none">Live Broadcast</div>
+                {/* Image Cropped to Golden Circle */}
+                <div className="relative h-[80%] aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_15px_rgba(0,0,0,0.8)] z-20">
+                  <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
                 </div>
-                <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute -left-[15%] h-[65%] aspect-square object-contain z-20" />
+
+                {/* Pill Shaped Box with Logo Blue Color */}
+                <div className="flex flex-col items-center justify-center h-[55%] flex-1 ml-[5%] bg-gradient-to-r from-[#091a33]/95 to-[#143d6e]/95 backdrop-blur-md rounded-full border border-white/10 shadow-2xl z-10">
+                  <div className="text-primary font-display font-extrabold text-[1.2vw] leading-none animate-pulse">TIKI-TAKA</div>
+                  <div className="text-white/50 text-[0.55vw] uppercase tracking-wider mt-1 leading-none">Live Broadcast</div>
+                </div>
               </div>
             </div>
           ) : (

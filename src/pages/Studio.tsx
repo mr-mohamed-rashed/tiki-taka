@@ -290,13 +290,17 @@ export default function Studio() {
               {state.logoPosition !== 'none' && (
                 <div 
                   className={cn(
-                    "absolute flex items-center justify-center z-40 pointer-events-none",
-                    getLogoSizeClasses(),
+                    "absolute flex items-center justify-between z-40 pointer-events-none w-1/6 h-1/6",
                     getLogoPositionClasses()
                   )}
                 >
-                  <div className="absolute inset-0 bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl"></div>
-                  <div className="flex flex-col items-end justify-center z-10 w-full pr-[12%]">
+                  {/* Image Cropped to Golden Circle */}
+                  <div className="relative h-[80%] aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_15px_rgba(0,0,0,0.8)] z-20">
+                    <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
+                  </div>
+
+                  {/* Pill Shaped Box with Logo Blue Color */}
+                  <div className="flex flex-col items-center justify-center h-[55%] flex-1 ml-[5%] bg-gradient-to-r from-[#091a33]/95 to-[#143d6e]/95 backdrop-blur-md rounded-full border border-white/10 shadow-2xl z-10">
                     <div className={cn(
                       "text-primary font-display font-extrabold leading-none animate-pulse",
                       state.logoSize === 'sm' ? "text-[0.9vw]" :
@@ -305,14 +309,9 @@ export default function Studio() {
                     )}>TIKI-TAKA</div>
                     {state.logoSize !== 'sm' && <div className={cn(
                       "text-white/50 uppercase tracking-wider hidden sm:block mt-1 leading-none",
-                      state.logoSize === 'lg' ? "text-[0.75vw]" : "text-[0.6vw]"
+                      state.logoSize === 'lg' ? "text-[0.7vw]" : "text-[0.55vw]"
                     )}>Live Broadcast</div>}
                   </div>
-                  <img 
-                    src="/icons/tiki-taka-icon.png" 
-                    alt="World Cup" 
-                    className="absolute -left-[15%] h-[65%] aspect-square object-contain z-20"
-                  />
                 </div>
               )}
 
