@@ -150,8 +150,8 @@ export default function Studio() {
 
   const getLogoPositionClasses = () => {
     switch (state.logoPosition) {
-      case 'top-right': return 'top-[3%] right-[2%]';
-      case 'top-left': return 'top-[3%] left-[2%]';
+      case 'top-right': return 'top-[1%] right-[1%]';
+      case 'top-left': return 'top-[1%] left-[1%]';
       case 'bottom-right': return 'bottom-[8%] right-[2%]';
       case 'bottom-left': return 'bottom-[8%] left-[2%]';
       default: return 'hidden';
@@ -291,7 +291,7 @@ export default function Studio() {
                 <div 
                   dir="ltr"
                   className={cn(
-                    "absolute flex items-center justify-end z-40 pointer-events-none w-1/6 h-1/6",
+                    "absolute flex items-center justify-end z-40 pointer-events-none w-[18%] h-[18%]",
                     getLogoPositionClasses()
                   )}
                 >
