@@ -141,19 +141,19 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-[16%] h-[8%]';
-      case 'lg': return 'w-[28%] h-[14%]';
+      case 'sm': return 'w-[16%] h-[8%] md:w-[12%] md:h-[6%] lg:w-[10%] lg:h-[5%]';
+      case 'lg': return 'w-[28%] h-[14%] md:w-[22%] md:h-[11%] lg:w-[20%] lg:h-[10%]';
       case 'md':
-      default: return 'w-[22%] h-[10%]';
+      default: return 'w-[22%] h-[10%] md:w-[18%] md:h-[9%] lg:w-[16%] lg:h-[8%]';
     }
   };
 
   const getLogoPositionClasses = () => {
     switch (state.logoPosition) {
-      case 'top-right': return 'top-[2%] right-[2%]';
-      case 'top-left': return 'top-[2%] left-[2%]';
-      case 'bottom-right': return 'bottom-[2%] right-[2%]';
-      case 'bottom-left': return 'bottom-[2%] left-[2%]';
+      case 'top-right': return 'top-[2%] md:top-[3%] right-[2%]';
+      case 'top-left': return 'top-[2%] md:top-[3%] left-[2%]';
+      case 'bottom-right': return 'bottom-[8%] right-[2%]';
+      case 'bottom-left': return 'bottom-[8%] left-[2%]';
       default: return 'hidden';
     }
   };
@@ -299,13 +299,13 @@ export default function Studio() {
                   <div className="flex flex-col items-end justify-center z-10">
                     <div className={cn(
                       "text-primary font-display font-extrabold leading-none animate-pulse",
-                      state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw]" :
-                      state.logoSize === 'lg' ? "text-[16px] sm:text-[2vw]" :
-                      "text-[12px] sm:text-[1.5vw]"
+                      state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw] md:text-[0.6vw]" :
+                      state.logoSize === 'lg' ? "text-[16px] sm:text-[2vw] md:text-[1.8vw]" :
+                      "text-[12px] sm:text-[1.5vw] md:text-[1.2vw]"
                     )}>TIKI-TAKA</div>
                     {state.logoSize !== 'sm' && <div className={cn(
                       "text-white/50 uppercase tracking-wider hidden sm:block mt-1 leading-none",
-                      state.logoSize === 'lg' ? "text-[8px] md:text-[1vw]" : "text-[7px] md:text-[0.8vw]"
+                      state.logoSize === 'lg' ? "text-[8px] md:text-[0.8vw]" : "text-[7px] md:text-[0.6vw]"
                     )}>Live Broadcast</div>}
                   </div>
                   <img 
@@ -313,9 +313,9 @@ export default function Studio() {
                     alt="World Cup" 
                     className={cn(
                       "object-contain z-10",
-                      state.logoSize === 'sm' ? "w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw]" :
-                      state.logoSize === 'lg' ? "w-6 h-6 sm:w-[3vw] sm:h-[3vw]" :
-                      "w-5 h-5 sm:w-[2.5vw] sm:h-[2.5vw]"
+                      state.logoSize === 'sm' ? "w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw] md:w-[2vw] md:h-[2vw]" :
+                      state.logoSize === 'lg' ? "w-6 h-6 sm:w-[3vw] sm:h-[3vw] md:w-[4vw] md:h-[4vw]" :
+                      "w-5 h-5 sm:w-[2.5vw] sm:h-[2.5vw] md:w-[3vw] md:h-[3vw] lg:w-[2.5vw] lg:h-[2.5vw]"
                     )} 
                   />
                 </div>

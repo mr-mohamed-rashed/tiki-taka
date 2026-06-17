@@ -58,9 +58,9 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 bg-gradient-hero opacity-90" />
-        <div className="absolute inset-0 opacity-40" style={{ backgroundImage: `url('/images/hero-bg.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'overlay' }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        <div className="absolute inset-0 opacity-100" style={{ backgroundImage: `url('/images/hero-bg.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
 
         <div className="container relative mx-auto px-4 lg:px-8 py-16 md:py-24">
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
