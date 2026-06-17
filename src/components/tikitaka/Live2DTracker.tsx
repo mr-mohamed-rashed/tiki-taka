@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
 
@@ -20,6 +21,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
   const home = match.home;
   const away = match.away;
   const { get } = useSiteSettingsContext();
+  const { lang } = useLanguage();
 
   const formatHref = (input: string) => {
     if (!input) return '#';
@@ -206,12 +208,27 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                     <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
                     
                     <div className="w-full relative z-10 flex flex-col items-center justify-center mt-[2%]">
-                      <svg viewBox="0 0 110 20" className="w-[90%] h-auto drop-shadow-md overflow-visible">
-                        <circle cx="20" cy="10" r="3" fill="#ef4444" className="animate-pulse" />
-                        <text x="28" y="13.5" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '9px' }}>
-                          LIVE BROADCAST
-                        </text>
-                      </svg>
+                      {lang === 'ar' ? (
+                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
+                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
+                            TIKI-TAKA
+                          </text>
+                          <circle cx="78" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
+                          <text x="72" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider font-arabic" style={{ fontSize: '10px' }}>
+                            بث مباشر
+                          </text>
+                        </svg>
+                      ) : (
+                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
+                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
+                            TIKI-TAKA
+                          </text>
+                          <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
+                          <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
+                            LIVE BROADCAST
+                          </text>
+                        </svg>
+                      )}
                     </div>
                   </div>
 
