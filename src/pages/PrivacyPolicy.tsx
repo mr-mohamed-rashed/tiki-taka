@@ -1,6 +1,6 @@
 import { Shield, Eye, Settings, Cookie, Lock, Link as LinkIcon, RefreshCw, Mail } from 'lucide-react';
-import TikiTakaHeader from '../components/tikitaka/TikiTakaHeader';
-import TikiTakaFooter from '../components/tikitaka/TikiTakaFooter';
+import { Navigation } from '../components/tikitaka/Navigation';
+import { TikiTakaFooter } from '../components/tikitaka/TikiTakaFooter';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function PrivacyPolicy() {
@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white selection:bg-primary/30 font-sans" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      <TikiTakaHeader />
+      <Navigation />
 
       <main className="pt-24 pb-20 px-4 md:px-8">
         <div className="max-w-4xl mx-auto">
