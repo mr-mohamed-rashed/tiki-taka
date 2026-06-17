@@ -21,23 +21,25 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 const Layout = () => {
   const location = useLocation();
   useAnalytics();
-  const { user, signInWithGoogle } = useAuth();
+  const { user, loading, signInWithGoogle } = useAuth();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/studio');
   const isPublicHome = location.pathname === '/';
 
   const handleInterceptClick = (e: React.MouseEvent) => {
-    if (!user) {
+    if (!loading && !user) {
       e.preventDefault();
       e.stopPropagation();
       signInWithGoogle();
     }
   };
 
+  const shouldIntercept = isPublicHome && !loading && !user;
+
   if (isAdminRoute || isPublicHome) {
     return (
-      <div onClickCapture={isPublicHome && !user ? handleInterceptClick : undefined} className={isPublicHome && !user ? 'cursor-pointer' : ''}>
+      <div onClickCapture={shouldIntercept ? handleInterceptClick : undefined} className={shouldIntercept ? 'cursor-pointer' : ''}>
         <ScrollRestoration />
-        <div className={isPublicHome && !user ? 'pointer-events-none' : ''}>
+        <div className={shouldIntercept ? 'pointer-events-none' : ''}>
           <Outlet />
         </div>
         <GlobalFloatingAd />

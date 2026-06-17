@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, CircleDot, Search, Languages } from 'lucide-react';
+import { Menu, X, CircleDot, Search, Languages, LogOut } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -7,10 +7,12 @@ import { useLanguage } from '@/context/LanguageContext';
 import { t, T } from '@/lib/i18n';
 import { EditableSiteText } from '@/components/tikitaka/EditableSiteText';
 import { useLiveFixtures } from '@/hooks/useFootballData';
+import { useAuth } from '@/hooks/useAuth';
 
 export function Navigation() {
   const [open, setOpen] = useState(false);
   const { lang, setLang, dir } = useLanguage();
+  const { user, signOut } = useAuth();
 
   const { data: liveMatches = [] } = useLiveFixtures();
 
@@ -91,6 +93,17 @@ export function Navigation() {
               <Languages className="h-3.5 w-3.5" />
               {t('switchToAr', lang)}
             </button>
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+                onClick={() => signOut()}
+                title={lang === 'ar' ? 'تسجيل الخروج' : 'Sign out'}
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"
