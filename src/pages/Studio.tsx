@@ -332,7 +332,7 @@ export default function Studio() {
                   </div>
 
                   {/* Circular Logo overlapping the text box */}
-                  <div className="relative h-[80%] aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 -ml-[12%] border-[0.15vw] border-[#1a4a85]">
+                  <div className="relative h-[80%] aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 -ml-[12%] border-[0.15vw] border-[#1a4a85] animate-roll-in-periodic">
                     <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
                     <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"></div>
                   </div>
