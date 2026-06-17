@@ -201,7 +201,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
-                className="absolute flex items-center justify-center z-40 pointer-events-none top-[2%] right-[1%] w-[18%] h-[18%]"
+                className="absolute flex items-center justify-center z-40 pointer-events-none top-[2%] right-[1%] w-[22%] h-[18%]"
               >
                 {/* Premium Broadcast Text Box / Full Pill */}
                   <div className="relative w-full h-[50%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-full shadow-2xl z-10 border border-white/20">
@@ -210,7 +210,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                       <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
                     </div>
                     
-                    <div className="relative w-full h-full z-10 flex flex-col items-center justify-center mt-[1%] pr-[35%] pl-[5%]">
+                    <div className="relative w-full h-full z-10 flex flex-col items-center justify-center mt-[1%] pr-[38%] pl-[5%]">
                       {lang === 'ar' ? (
                         <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
                           <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
@@ -236,7 +236,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                   </div>
 
                 {/* Circular Logo overlapping the text box */}
-                <div className="absolute right-[8%] h-[80%] aspect-square rounded-full overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 border-[0.15vw] border-[#1a4a85] animate-roll-in-periodic">
+                <div className="absolute right-[6%] h-[80%] aspect-square rounded-full overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 border-[0.15vw] border-[#1a4a85] animate-roll-in-periodic">
                   <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
                   <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"></div>
                 </div>
