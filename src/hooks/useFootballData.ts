@@ -22,35 +22,42 @@ async function callProxy(body: object) {
         const json = await res.json();
         const games = Array.isArray(json) ? json : json?.games;
         if (Array.isArray(games)) {
-          // Normalize directly using our getUpcomingMatches as a base
-          const baseMatches = [...getFinishedMatches(), ...getUpcomingMatches()];
-          const mapped = baseMatches.map(m => {
-            const apiGame = games.find((g: any) => {
-              const apiHome = (g.home_team_name_en || '').toLowerCase().replace('turkey', 'turkiye').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-              const apiAway = (g.away_team_name_en || '').toLowerCase().replace('turkey', 'turkiye').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-              const myHome = m.home.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-              const myAway = m.away.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-              return apiHome === myHome && apiAway === myAway;
-            });
-            if (apiGame) {
-              const finished = String(apiGame.finished ?? '').toLowerCase() === 'true';
-              const timeElapsed = String(apiGame.time_elapsed ?? '').toLowerCase();
-              const isLive = !finished && timeElapsed !== 'notstarted' && timeElapsed !== '' && timeElapsed !== 'null';
-              
-              return {
-                ...m,
-                homeScore: Number(apiGame.home_score) || 0,
-                awayScore: Number(apiGame.away_score) || 0,
-                status: isLive ? 'live' : finished ? 'finished' : 'upcoming',
-                minute: isLive ? `${timeElapsed}'` : undefined,
-              };
-            }
-            return m;
+          const teamsMap = Object.values(teams);
+          const normalize = (name: string) => (name || '').toLowerCase().replace('turkey', 'turkiye').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const mapped = games.map((g: any, index: number) => {
+            const apiHome = g.home_team_name_en || '';
+            const apiAway = g.away_team_name_en || '';
+            const nHome = normalize(apiHome);
+            const nAway = normalize(apiAway);
+            
+            const hTeam = teamsMap.find(t => normalize(t.name) === nHome) || { id: `H${index}`, name: apiHome, shortName: apiHome.slice(0,3).toUpperCase(), flag: '', code: '', color: '#888' };
+            const aTeam = teamsMap.find(t => normalize(t.name) === nAway) || { id: `A${index}`, name: apiAway, shortName: apiAway.slice(0,3).toUpperCase(), flag: '', code: '', color: '#888' };
+            
+            const finished = String(g.finished ?? '').toLowerCase() === 'true';
+            const timeElapsed = String(g.time_elapsed ?? '').toLowerCase();
+            const isLive = !finished && timeElapsed !== 'notstarted' && timeElapsed !== '' && timeElapsed !== 'null';
+            
+            // Try to find a real date from base matches just in case
+            const baseMatches = [...getFinishedMatches(), ...getUpcomingMatches()];
+            const existingMatch = baseMatches.find(m => normalize(m.home.name) === nHome && normalize(m.away.name) === nAway);
+
+            return {
+              id: existingMatch ? existingMatch.id : `wc26-${index}`,
+              competition: existingMatch ? existingMatch.competition : 'World Cup 2026',
+              stage: existingMatch ? existingMatch.stage : 'Group Stage',
+              date: existingMatch ? existingMatch.date : new Date().toISOString(),
+              home: hTeam,
+              away: aTeam,
+              homeScore: Number(g.home_score) || 0,
+              awayScore: Number(g.away_score) || 0,
+              status: isLive ? 'live' : finished ? 'finished' : 'upcoming',
+              minute: isLive ? `${timeElapsed}'` : undefined,
+            } as Match;
           });
           
           return {
             provider: 'worldcup26-direct',
-            matches: mapped.filter((m) => {
+            matches: mapped.filter((m: Match) => {
               if ((body as any).endpoint === 'live') return m.status === 'live';
               if ((body as any).endpoint === 'results') return m.status === 'finished';
               return m.status === 'upcoming';
@@ -275,8 +282,9 @@ function mapFixture(f: ApiFixture) {
 }
 
 function getUpcomingOnly(matches: Match[]) {
+  const cutoff = Date.now() - 4 * 60 * 60 * 1000;
   return matches
-    .filter((match) => match.status === 'upcoming')
+    .filter((match) => match.status === 'upcoming' && new Date(match.date).getTime() > cutoff)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
