@@ -198,27 +198,28 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               />
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
-                className="absolute top-[1%] right-[1%] md:top-[3%] md:right-[2%] w-[20%] md:w-[16%] aspect-[5/2] z-40 pointer-events-none flex items-center justify-end"
+                className="absolute flex items-center justify-end z-40 pointer-events-none top-[3%] right-[2%] w-1/6 h-1/6"
               >
-                {/* Premium Broadcast Text Box (Right side) */}
-                <div className="absolute right-0 w-[85%] h-[60%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-r-[50px] shadow-2xl z-10 flex flex-col justify-center pl-[35%] pr-[8%] border-y border-r border-white/20 overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
-                  
-                  <div className="w-full relative z-10 flex flex-col justify-center">
-                    <svg viewBox="0 0 100 35" className="w-full h-auto drop-shadow-md overflow-visible">
-                      <text x="0" y="16" textAnchor="start" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                        TIKI-TAKA
-                      </text>
-                      <circle cx="4" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
-                      <text x="10" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
-                        LIVE BROADCAST
-                      </text>
-                    </svg>
+                {/* Premium Broadcast Text Box */}
+                  <div className="relative flex flex-col items-center justify-center h-[50%] flex-1 bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-l-[50px] shadow-2xl z-10 pl-[5%] pr-[12%] border-y border-l border-white/20 overflow-hidden">
+                    {/* Glossy highlight effect */}
+                    <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
+                    
+                    <div className="w-full relative z-10 flex flex-col items-center justify-center mt-[2%]">
+                      <svg viewBox="0 0 100 35" className="w-full h-auto drop-shadow-md overflow-visible">
+                        <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
+                          TIKI-TAKA
+                        </text>
+                        <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
+                        <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
+                          LIVE BROADCAST
+                        </text>
+                      </svg>
+                    </div>
                   </div>
-                </div>
 
-                {/* Circular Logo (Left side) overlapping the text box */}
-                <div className="absolute left-0 h-full aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 border-[0.15vw] border-[#1a4a85]">
+                {/* Circular Logo overlapping the text box */}
+                <div className="relative h-[80%] aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 -ml-[12%] border-[0.15vw] border-[#1a4a85]">
                   <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
                   <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"></div>
                 </div>
