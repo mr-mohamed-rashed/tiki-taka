@@ -111,8 +111,8 @@ export default {
 					to: { height: '0' }
 				},
 				'roll-in-periodic': {
-					'0%': { transform: 'translateX(300%) rotate(360deg)', opacity: '0' },
-					'0.1%': { transform: 'translateX(300%) rotate(360deg)', opacity: '1' },
+					'0%': { transform: 'translateX(-400%) rotate(-720deg)', opacity: '0' },
+					'0.1%': { transform: 'translateX(-400%) rotate(-720deg)', opacity: '1' },
 					'1.5%, 100%': { transform: 'translateX(0) rotate(0)', opacity: '1' },
 				}
 			},
