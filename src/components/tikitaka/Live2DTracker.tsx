@@ -206,12 +206,9 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                     <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
                     
                     <div className="w-full relative z-10 flex flex-col items-center justify-center mt-[2%]">
-                      <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
-                        <text x="110" y="16" textAnchor="end" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                          TIKI-TAKA
-                        </text>
-                        <circle cx="36" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
-                        <text x="110" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
+                      <svg viewBox="0 0 110 20" className="w-[90%] h-auto drop-shadow-md overflow-visible">
+                        <circle cx="20" cy="10" r="3" fill="#ef4444" className="animate-pulse" />
+                        <text x="28" y="13.5" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '9px' }}>
                           LIVE BROADCAST
                         </text>
                       </svg>
