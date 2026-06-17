@@ -188,26 +188,43 @@ export function TikiTakaFooter() {
           <style>
             {`
               @keyframes snake-move {
-                0% { stroke-dashoffset: 1000; opacity: 0; }
-                15% { opacity: 1; }
-                85% { opacity: 1; }
+                0% { stroke-dashoffset: 2000; opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
                 100% { stroke-dashoffset: 0; opacity: 0; }
               }
               @keyframes snake-move-reverse {
                 0% { stroke-dashoffset: 0; opacity: 0; }
-                15% { opacity: 1; }
-                85% { opacity: 1; }
-                100% { stroke-dashoffset: 1000; opacity: 0; }
+                10% { opacity: 1; }
+                90% { opacity: 1; }
+                100% { stroke-dashoffset: 2000; opacity: 0; }
               }
             `}
           </style>
-          <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 100">
-            <path d="M-100 50 Q 250 120, 500 50 T 1100 50" fill="none" stroke="hsl(var(--primary))" strokeWidth="3" pathLength="1000"
-                  style={{ filter: 'drop-shadow(0 0 12px hsl(var(--primary)))', strokeDasharray: '150 850', animation: 'snake-move 8s linear infinite' }} />
-            <path d="M-100 80 Q 300 -20, 600 80 T 1100 80" fill="none" stroke="#10b981" strokeWidth="2" pathLength="1000"
-                  style={{ filter: 'drop-shadow(0 0 10px #10b981)', strokeDasharray: '250 750', animation: 'snake-move-reverse 12s linear infinite' }} />
-            <path d="M-100 20 Q 150 100, 300 20 T 700 100 T 1100 20" fill="none" stroke="#34d399" strokeWidth="1.5" pathLength="1000"
-                  style={{ filter: 'drop-shadow(0 0 8px #34d399)', strokeDasharray: '100 900', animation: 'snake-move 15s linear infinite', opacity: 0.6 }} />
+          <svg className="w-full h-full opacity-60" preserveAspectRatio="none" viewBox="0 0 1000 100">
+            {/* Group 1: Moving Right */}
+            <path d="M-200 40 C 0 10, 200 90, 400 50 S 800 10, 1000 50 S 1400 90, 1600 40" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.8" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 5px hsl(var(--primary)))', strokeDasharray: '60 1940', animation: 'snake-move 10s linear infinite' }} />
+            <path d="M-200 60 C 50 90, 150 10, 350 40 S 650 90, 850 50 S 1250 10, 1500 60" fill="none" stroke="#34d399" strokeWidth="0.5" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 4px #34d399)', strokeDasharray: '40 1960', animation: 'snake-move 12s linear infinite 2s' }} />
+            <path d="M-200 30 C 100 0, 300 80, 500 40 S 900 0, 1100 40 S 1500 80, 1700 30" fill="none" stroke="#10b981" strokeWidth="0.6" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 6px #10b981)', strokeDasharray: '80 1920', animation: 'snake-move 15s linear infinite 1s' }} />
+            <path d="M-200 70 C 150 100, 250 20, 450 60 S 750 100, 950 60 S 1350 20, 1600 70" fill="none" stroke="#6ee7b7" strokeWidth="0.4" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 3px #6ee7b7)', strokeDasharray: '30 1970', animation: 'snake-move 9s linear infinite 3s' }} />
+            <path d="M-200 50 C 200 20, 400 80, 600 50 S 1000 20, 1200 50 S 1600 80, 1800 50" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.7" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary)))', strokeDasharray: '50 1950', animation: 'snake-move 14s linear infinite 4s' }} />
+            
+            {/* Group 2: Moving Left */}
+            <path d="M-200 45 C 50 15, 250 85, 450 45 S 850 15, 1050 45 S 1450 85, 1650 45" fill="none" stroke="#059669" strokeWidth="0.5" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 5px #059669)', strokeDasharray: '45 1955', animation: 'snake-move-reverse 11s linear infinite' }} />
+            <path d="M-200 65 C 100 95, 200 15, 400 45 S 700 95, 900 55 S 1300 15, 1550 65" fill="none" stroke="#34d399" strokeWidth="0.6" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 4px #34d399)', strokeDasharray: '35 1965', animation: 'snake-move-reverse 13s linear infinite 2s' }} />
+            <path d="M-200 35 C 150 5, 350 85, 550 45 S 950 5, 1150 45 S 1550 85, 1750 35" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.4" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 3px hsl(var(--primary)))', strokeDasharray: '25 1975', animation: 'snake-move-reverse 16s linear infinite 1s' }} />
+            <path d="M-200 75 C 200 105, 300 25, 500 65 S 800 105, 1000 65 S 1400 25, 1650 75" fill="none" stroke="#10b981" strokeWidth="0.7" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 6px #10b981)', strokeDasharray: '70 1930', animation: 'snake-move-reverse 10s linear infinite 3s' }} />
+            <path d="M-200 55 C 250 25, 450 85, 650 55 S 1050 25, 1250 55 S 1650 85, 1850 55" fill="none" stroke="#6ee7b7" strokeWidth="0.5" pathLength="2000"
+                  style={{ filter: 'drop-shadow(0 0 4px #6ee7b7)', strokeDasharray: '55 1945', animation: 'snake-move-reverse 14s linear infinite 5s' }} />
           </svg>
         </div>
 
