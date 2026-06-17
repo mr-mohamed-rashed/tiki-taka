@@ -75,7 +75,7 @@ export function TikiTakaFooter() {
   ];
 
   const policyLinks = [
-    { label: <EditableSiteText settingKey="footer_policy_1" fallbackEn="Privacy Policy" fallbackAr="سياسة الخصوصية" />, href: '#' },
+    { label: <EditableSiteText settingKey="footer_policy_1" fallbackEn="Privacy Policy" fallbackAr="سياسة الخصوصية" />, href: '/privacy-policy' },
     { label: <EditableSiteText settingKey="footer_policy_2" fallbackEn="Terms of Service" fallbackAr="شروط الخدمة" />, href: '/terms-of-service' },
   ];
 

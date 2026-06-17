@@ -16,6 +16,7 @@ import Studio from './pages/Studio';
 import { GlobalFloatingAd } from './components/tikitaka/GlobalFloatingAd';
 import { GoogleAuthGate } from './components/tikitaka/GoogleAuthGate';
 import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 const Layout = () => {
   const location = useLocation();
@@ -72,6 +73,7 @@ export const routers = [
       { path: '/admin', name: 'admin', element: <Admin /> },
       { path: '/studio', name: 'studio', element: <Studio /> },
       { path: '/terms-of-service', name: 'terms', element: <TermsOfService /> },
+      { path: '/privacy-policy', name: 'privacy', element: <PrivacyPolicy /> },
       { path: '*', name: '404', element: <NotFound /> },
     ],
   },
