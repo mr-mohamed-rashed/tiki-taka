@@ -104,8 +104,12 @@ export default function PrivacyPolicy() {
                 <h2 className="text-2xl font-bold text-white">7. الاتصال بنا</h2>
               </div>
               <p className="text-[#A1A1AA] leading-relaxed text-lg mr-9">
-                إذا كان لديك أي أسئلة أو استفسارات بشأن سياسة الخصوصية هذه، يمكنك التواصل مع إدارة منصة تيكي تاكا عبر البريد الإلكتروني الرسمي للموقع أو من خلال صفحة "تواصل معنا".
+                إذا كان لديك أي أسئلة أو استفسارات بشأن سياسة الخصوصية هذه، يمكنك التواصل مع إدارة منصة تيكي تاكا من خلال وسائل التواصل التالية:
               </p>
+              <ul className="list-disc list-outside text-[#A1A1AA] space-y-3 mr-14 text-lg">
+                <li><strong className="text-white">البريد الإلكتروني:</strong> <a href="mailto:rishoshi@gmail.com" className="text-primary hover:underline" dir="ltr">rishoshi@gmail.com</a></li>
+                <li><strong className="text-white">واتساب:</strong> <a href="https://wa.me/201005144500" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" dir="ltr">+201005144500</a></li>
+              </ul>
             </section>
 
           </div>

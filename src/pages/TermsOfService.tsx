@@ -1,4 +1,4 @@
-import { Shield, FileText, CheckCircle, AlertTriangle, Scale, Settings } from 'lucide-react';
+import { Shield, FileText, CheckCircle, AlertTriangle, Scale, Settings, Mail } from 'lucide-react';
 import TikiTakaHeader from '../components/tikitaka/TikiTakaHeader';
 import TikiTakaFooter from '../components/tikitaka/TikiTakaFooter';
 import { useLanguage } from '../context/LanguageContext';
@@ -121,6 +121,20 @@ export default function TermsOfService() {
               <p className="text-[#A1A1AA] leading-relaxed text-lg mr-9">
                 تخضع هذه الشروط والأحكام وتُفسر وفقاً للقوانين واللوائح السارية في الدولة الحاضنة للموقع، وتخضع أي نزاعات قد تنشأ عن استخدام المنصة للاختصاص القضائي الحصري للمحاكم المختصة فيها.
               </p>
+            </section>
+
+            <section className="space-y-4">
+              <div className="flex items-center gap-3 text-primary">
+                <Mail size={24} />
+                <h2 className="text-2xl font-bold text-white">9. الاتصال بنا</h2>
+              </div>
+              <p className="text-[#A1A1AA] leading-relaxed text-lg mr-9">
+                إذا كان لديك أي أسئلة أو استفسارات بشأن شروط الخدمة، يمكنك التواصل معنا من خلال وسائل التواصل التالية:
+              </p>
+              <ul className="list-disc list-outside text-[#A1A1AA] space-y-3 mr-14 text-lg">
+                <li><strong className="text-white">البريد الإلكتروني:</strong> <a href="mailto:rishoshi@gmail.com" className="text-primary hover:underline" dir="ltr">rishoshi@gmail.com</a></li>
+                <li><strong className="text-white">واتساب:</strong> <a href="https://wa.me/201005144500" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" dir="ltr">+201005144500</a></li>
+              </ul>
             </section>
 
           </div>
