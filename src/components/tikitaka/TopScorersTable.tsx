@@ -33,10 +33,26 @@ const BootIcon = ({ className, rank }: { className?: string, rank: number }) => 
 };
 
 const getRankColors = (rank: number) => {
-  if (rank === 1) return { text: 'text-yellow-500', bg: 'bg-yellow-500', border: 'border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.2)]', rowBg: 'bg-gradient-to-r from-yellow-500/10 via-transparent to-transparent hover:from-yellow-500/15' };
-  if (rank === 2) return { text: 'text-slate-300', bg: 'bg-slate-300', border: 'border-slate-400/50 shadow-[0_0_15px_rgba(148,163,184,0.2)]', rowBg: 'bg-gradient-to-r from-slate-400/10 via-transparent to-transparent hover:from-slate-400/15' };
-  if (rank === 3) return { text: 'text-amber-600', bg: 'bg-amber-600', border: 'border-amber-600/50 shadow-[0_0_15px_rgba(217,119,6,0.2)]', rowBg: 'bg-gradient-to-r from-amber-600/10 via-transparent to-transparent hover:from-amber-600/15' };
-  return { text: 'text-foreground', bg: 'bg-muted', border: 'border-border', rowBg: 'hover:bg-muted/50' };
+  if (rank === 1) return { 
+    text: 'text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]', 
+    badge: 'bg-gradient-to-b from-[#FFF8DC] via-[#FFD700] to-[#B8860B] text-black shadow-[0_0_15px_rgba(255,215,0,0.5)] ring-1 ring-[#FFF8DC]', 
+    rowStyle: 'border-2 border-[#FFD700] bg-gradient-to-r from-[#FFD700]/20 via-[#FFD700]/5 to-transparent shadow-[inset_0_0_20px_rgba(255,215,0,0.15)] relative z-10' 
+  };
+  if (rank === 2) return { 
+    text: 'text-[#E2E8F0] drop-shadow-[0_0_8px_rgba(226,232,240,0.5)]', 
+    badge: 'bg-gradient-to-b from-[#FFFFFF] via-[#C0C0C0] to-[#808080] text-black shadow-[0_0_15px_rgba(192,192,192,0.5)] ring-1 ring-[#FFFFFF]', 
+    rowStyle: 'border-2 border-[#C0C0C0] bg-gradient-to-r from-[#C0C0C0]/20 via-[#C0C0C0]/5 to-transparent shadow-[inset_0_0_20px_rgba(192,192,192,0.15)] relative z-10' 
+  };
+  if (rank === 3) return { 
+    text: 'text-[#CD7F32] drop-shadow-[0_0_8px_rgba(205,127,50,0.5)]', 
+    badge: 'bg-gradient-to-b from-[#FFCC99] via-[#CD7F32] to-[#8B4513] text-white shadow-[0_0_15px_rgba(205,127,50,0.5)] ring-1 ring-[#FFCC99]', 
+    rowStyle: 'border-2 border-[#CD7F32] bg-gradient-to-r from-[#CD7F32]/20 via-[#CD7F32]/5 to-transparent shadow-[inset_0_0_20px_rgba(205,127,50,0.15)] relative z-10' 
+  };
+  return { 
+    text: 'text-foreground', 
+    badge: 'bg-muted text-foreground border border-border', 
+    rowStyle: 'border-y border-border hover:bg-muted/50' 
+  };
 };
 
 export function TopScorersTable() {
@@ -135,17 +151,22 @@ export function TopScorersTable() {
               <TableRow
                 key={scorer.name}
                 className={cn(
-                  'transition-colors border-y',
-                  colors.border,
-                  colors.rowBg
+                  'transition-colors',
+                  colors.rowStyle
                 )}
               >
                 <TableCell>
-                  <div className={cn(
-                    'w-7 h-7 rounded-md flex items-center justify-center text-sm font-bold font-display',
-                    isTop3 ? `${colors.bg} text-black shadow-card` : 'bg-muted text-foreground',
-                  )}>
-                    {scorer.rank}
+                  <div 
+                    className={cn(
+                      'w-8 h-9 flex items-center justify-center text-sm font-bold font-display relative mx-auto',
+                      colors.badge
+                    )}
+                    style={isTop3 ? {
+                      clipPath: 'polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%)',
+                      paddingBottom: '4px'
+                    } : { borderRadius: '6px' }}
+                  >
+                    {isTop3 ? `#${scorer.rank}` : scorer.rank}
                   </div>
                 </TableCell>
                 <TableCell>
