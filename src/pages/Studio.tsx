@@ -289,6 +289,7 @@ export default function Studio() {
               {/* Dynamic Logo Cover */}
               {state.logoPosition !== 'none' && (
                 <div 
+                  dir="ltr"
                   className={cn(
                     "absolute flex items-center justify-end z-40 pointer-events-none w-1/6 h-1/6",
                     getLogoPositionClasses()
