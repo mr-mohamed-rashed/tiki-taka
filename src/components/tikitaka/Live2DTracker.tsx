@@ -201,7 +201,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
-                className="absolute flex items-center justify-end z-40 pointer-events-none top-[3%] right-[2%] w-1/6 h-1/6"
+                className="absolute flex items-center justify-end z-40 pointer-events-none top-[1%] right-[2%] w-1/6 h-1/6"
               >
                 {/* Premium Broadcast Text Box */}
                   <div className="relative flex flex-col items-center justify-center h-[50%] flex-1 bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-l-[50px] shadow-2xl z-10 pl-[5%] pr-[12%] border-y border-l border-white/20 overflow-hidden">

@@ -10,12 +10,14 @@ import { NewsTicker } from '@/components/tikitaka/NewsTicker';
 import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
 import { TournamentCountdown } from '@/components/tikitaka/TournamentCountdown';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useLiveFixtures, useUpcomingFixtures } from '@/hooks/useFootballData';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
 const LiveMatches = () => {
   const { lang, dir } = useLanguage();
+  const { get } = useSiteSettingsContext();
   const { data: liveMatches = [], isLoading: liveLoading } = useLiveFixtures();
   const { data: upcomingMatches = [], isLoading: upcomingLoading } = useUpcomingFixtures();
   const isLoading = liveLoading || upcomingLoading;
