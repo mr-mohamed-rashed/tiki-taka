@@ -36,22 +36,22 @@ const getRankColors = (rank: number) => {
   if (rank === 1) return { 
     text: 'text-[#FFD700] drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]', 
     badge: 'bg-gradient-to-b from-[#FFF8DC] via-[#FFD700] to-[#B8860B] text-black shadow-[0_0_15px_rgba(255,215,0,0.5)] ring-1 ring-[#FFF8DC]', 
-    rowStyle: 'border-2 border-[#FFD700] bg-gradient-to-r from-[#FFD700]/20 via-[#FFD700]/5 to-transparent shadow-[inset_0_0_20px_rgba(255,215,0,0.15)] relative z-10' 
+    rowStyle: 'relative z-10 bg-gradient-to-r from-[#FFD700]/10 via-[#FFD700]/5 to-transparent [&>td]:border-y-2 [&>td]:border-[#FFD700] first:[&>td]:border-l-2 first:[&>td]:rounded-l-md last:[&>td]:border-r-2 last:[&>td]:rounded-r-md shadow-[inset_0_0_20px_rgba(255,215,0,0.15)]' 
   };
   if (rank === 2) return { 
     text: 'text-[#E2E8F0] drop-shadow-[0_0_8px_rgba(226,232,240,0.5)]', 
     badge: 'bg-gradient-to-b from-[#FFFFFF] via-[#C0C0C0] to-[#808080] text-black shadow-[0_0_15px_rgba(192,192,192,0.5)] ring-1 ring-[#FFFFFF]', 
-    rowStyle: 'border-2 border-[#C0C0C0] bg-gradient-to-r from-[#C0C0C0]/20 via-[#C0C0C0]/5 to-transparent shadow-[inset_0_0_20px_rgba(192,192,192,0.15)] relative z-10' 
+    rowStyle: 'relative z-10 bg-gradient-to-r from-[#C0C0C0]/10 via-[#C0C0C0]/5 to-transparent [&>td]:border-y-2 [&>td]:border-[#E2E8F0] first:[&>td]:border-l-2 first:[&>td]:rounded-l-md last:[&>td]:border-r-2 last:[&>td]:rounded-r-md shadow-[inset_0_0_20px_rgba(192,192,192,0.15)]' 
   };
   if (rank === 3) return { 
     text: 'text-[#CD7F32] drop-shadow-[0_0_8px_rgba(205,127,50,0.5)]', 
     badge: 'bg-gradient-to-b from-[#FFCC99] via-[#CD7F32] to-[#8B4513] text-white shadow-[0_0_15px_rgba(205,127,50,0.5)] ring-1 ring-[#FFCC99]', 
-    rowStyle: 'border-2 border-[#CD7F32] bg-gradient-to-r from-[#CD7F32]/20 via-[#CD7F32]/5 to-transparent shadow-[inset_0_0_20px_rgba(205,127,50,0.15)] relative z-10' 
+    rowStyle: 'relative z-10 bg-gradient-to-r from-[#CD7F32]/10 via-[#CD7F32]/5 to-transparent [&>td]:border-y-2 [&>td]:border-[#CD7F32] first:[&>td]:border-l-2 first:[&>td]:rounded-l-md last:[&>td]:border-r-2 last:[&>td]:rounded-r-md shadow-[inset_0_0_20px_rgba(205,127,50,0.15)]' 
   };
   return { 
     text: 'text-foreground', 
     badge: 'bg-muted text-foreground border border-border', 
-    rowStyle: 'border-y border-border hover:bg-muted/50' 
+    rowStyle: 'border-y border-border hover:bg-muted/50 [&>td]:border-y [&>td]:border-border' 
   };
 };
 
