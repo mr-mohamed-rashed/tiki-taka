@@ -204,10 +204,12 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
                 <div className="absolute right-0 w-[85%] h-[60%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-r-[50px] shadow-2xl z-10 flex flex-col justify-center pl-[35%] pr-[5%] border-y border-r border-white/20 overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
                   
-                  <div className="text-primary font-display font-extrabold text-[8px] md:text-[1.1vw] leading-none animate-pulse relative z-10 drop-shadow-md whitespace-nowrap">TIKI-TAKA</div>
-                  <div className="flex items-center gap-[0.3vw] mt-[0.2vw] relative z-10 whitespace-nowrap">
-                    <div className="w-[3px] md:w-[0.4vw] h-[3px] md:h-[0.4vw] rounded-full bg-red-500 animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.8)] shrink-0"></div>
-                    <div className="text-white/80 text-[5px] md:text-[0.5vw] uppercase tracking-wider leading-none font-bold">Live Broadcast</div>
+                  <div className="flex flex-col items-end transform max-md:scale-[0.45] max-md:origin-right w-full text-right">
+                    <div className="text-primary font-display font-extrabold text-base md:text-[1.1vw] leading-none animate-pulse relative z-10 drop-shadow-md whitespace-nowrap">TIKI-TAKA</div>
+                    <div className="flex items-center gap-1 md:gap-[0.3vw] mt-1 md:mt-[0.2vw] relative z-10 whitespace-nowrap">
+                      <div className="w-1.5 h-1.5 md:w-[0.4vw] md:h-[0.4vw] rounded-full bg-red-500 animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.8)] shrink-0"></div>
+                      <div className="text-white/80 text-[10px] md:text-[0.5vw] uppercase tracking-wider leading-none font-bold">Live Broadcast</div>
+                    </div>
                   </div>
                 </div>
 

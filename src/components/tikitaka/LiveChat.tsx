@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Shield, Ban, Trash2, MessageCircle, User } from 'lucide-react';
+import { Send, Shield, Ban, Trash2, MessageCircle, User, Smile } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,6 +60,8 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [users, setUsers] = useState<Map<string, ChatUser>>(new Map());
   const [inputMsg, setInputMsg] = useState('');
+  const [showEmojis, setShowEmojis] = useState(false);
+  const EMOJIS = ['😀','😂','😍','😎','😭','😡','👍','❤️','🔥','🎉','⚽','🏆','💪','👀','💯','👏'];
   const [username, setUsername] = useState(() => localStorage.getItem('tiki-username') ?? '');
   const [usernameInput, setUsernameInput] = useState('');
   const [joined, setJoined] = useState(() => !!localStorage.getItem('tiki-username'));
@@ -151,13 +153,31 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
 
     const filteredText = filterProfanity(text);
 
-    await supabase.from('chat_messages').insert({
+    // Optimistic update so it appears instantly
+    const newMsg: ChatMessage = {
+      id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(),
+      user_id: userId,
+      username,
+      message: filteredText,
+      match_id: matchId,
+      is_deleted: false,
+      created_at: new Date().toISOString()
+    };
+    
+    setMessages(prev => [...prev, newMsg]);
+    setInputMsg('');
+    setShowEmojis(false);
+
+    const { error } = await supabase.from('chat_messages').insert({
       user_id: userId,
       username,
       message: filteredText,
       match_id: matchId,
     });
-    setInputMsg('');
+    
+    if (error) {
+      console.error("Chat error:", error);
+    }
   };
 
   const deleteMessage = async (id: string) => {
@@ -242,34 +262,28 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
       )}
 
       {/* Messages */}
-      <div ref={scrollRef} className="commentary-scroll flex-1 overflow-y-auto p-3 space-y-2">
+      <div ref={scrollRef} className="commentary-scroll flex-1 overflow-y-auto p-3 space-y-1">
         {visibleMessages.map((msg) => {
           const isOwn = msg.user_id === userId;
           return (
-            <div key={msg.id} className={cn('group flex gap-2', isOwn && 'flex-row-reverse')}>
-              <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground shrink-0">
-                {msg.username.slice(0, 1).toUpperCase()}
-              </div>
-              <div className={cn('max-w-[80%] space-y-0.5', isOwn && 'items-end flex flex-col')}>
-                <div className={cn('flex items-center gap-2', isOwn && 'flex-row-reverse')}>
-                  <span className="text-[10px] font-bold text-muted-foreground">{msg.username}</span>
-                </div>
-                <div className={cn(
-                  'px-3 py-2 rounded-lg text-sm',
-                  isOwn
-                    ? 'bg-primary text-primary-foreground rounded-tr-none'
-                    : 'bg-muted text-foreground rounded-tl-none'
+            <div key={msg.id} className="group flex items-start gap-2 px-2 py-1.5 hover:bg-muted/50 rounded-lg transition-colors break-words text-sm relative">
+              <div className="flex-1 min-w-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                <span className={cn(
+                  "font-bold mr-1.5",
+                  isOwn ? "text-primary" : "text-blue-500"
                 )}>
-                  {msg.message}
-                </div>
+                  {msg.username} {lang === 'ar' ? ':' : ':'}
+                </span>
+                <span className="text-foreground/90">{msg.message}</span>
               </div>
+              
               {isModerator && !isOwn && (
-                <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity shrink-0 self-center">
-                  <button onClick={() => deleteMessage(msg.id)} className="p-1 rounded hover:bg-destructive/20 text-destructive transition-colors">
-                    <Trash2 className="h-3 w-3" />
+                <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity shrink-0 bg-background/80 px-1 rounded absolute top-1 right-1">
+                  <button onClick={() => deleteMessage(msg.id)} className="p-1 rounded hover:bg-destructive/20 text-destructive transition-colors" title={lang === 'ar' ? 'حذف' : 'Delete'}>
+                    <Trash2 className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => banUser(msg.user_id)} className="p-1 rounded hover:bg-destructive/20 text-destructive transition-colors">
-                    <Ban className="h-3 w-3" />
+                  <button onClick={() => banUser(msg.user_id)} className="p-1 rounded hover:bg-destructive/20 text-destructive transition-colors" title={lang === 'ar' ? 'حظر' : 'Ban'}>
+                    <Ban className="h-3.5 w-3.5" />
                   </button>
                 </div>
               )}
@@ -284,17 +298,44 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
       </div>
 
       {/* Input */}
-      <div className={cn("p-3 shrink-0", variant === 'overlay' ? 'border-none' : 'border-t border-border')}>
+      <div className={cn("p-3 shrink-0 relative", variant === 'overlay' ? 'border-none' : 'border-t border-border')}>
+        {showEmojis && (
+          <div className="absolute bottom-[110%] right-3 left-3 md:left-auto md:w-64 p-2 bg-card border border-border rounded-xl shadow-xl grid grid-cols-8 md:grid-cols-4 gap-1 z-50">
+            {EMOJIS.map(e => (
+              <button 
+                key={e} 
+                onClick={() => { setInputMsg(prev => prev + e); setShowEmojis(false); }}
+                className="text-xl hover:bg-muted p-1.5 rounded-lg flex items-center justify-center transition-colors"
+              >
+                {e}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex gap-2">
-          <Input
-            value={inputMsg}
-            onChange={(e) => setInputMsg(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder={t('chatPlaceholder', lang)}
-            className={cn("border-border flex-1 text-sm", variant === 'overlay' ? "bg-black/40 text-white placeholder:text-white/50 border-none backdrop-blur-sm" : "bg-muted")}
-            dir={lang === 'ar' ? 'rtl' : 'ltr'}
-            maxLength={300}
-          />
+          <div className="relative flex-1">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className={cn("absolute top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:text-foreground z-10", lang === 'ar' ? 'right-1' : 'left-1')}
+              onClick={() => setShowEmojis(!showEmojis)}
+            >
+              <Smile className="h-5 w-5" />
+            </Button>
+            <Input
+              value={inputMsg}
+              onChange={(e) => setInputMsg(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder={t('chatPlaceholder', lang)}
+              className={cn(
+                "border-border text-sm h-10 w-full", 
+                lang === 'ar' ? 'pr-10' : 'pl-10',
+                variant === 'overlay' ? "bg-black/40 text-white placeholder:text-white/50 border-none backdrop-blur-sm" : "bg-muted"
+              )}
+              dir={lang === 'ar' ? 'rtl' : 'ltr'}
+              maxLength={300}
+            />
+          </div>
           <Button
             onClick={sendMessage}
             disabled={!inputMsg.trim()}
