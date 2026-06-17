@@ -127,7 +127,16 @@ export function TikiTakaFooter() {
 
               {/* Big TIKI-TAKA text */}
               <div className={`w-full flex justify-start pt-4 transition-all duration-1000 delay-300 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-                <span className="font-display font-black text-6xl sm:text-7xl md:text-[90px] tracking-tighter animate-text-sweep select-none leading-none">
+                <span 
+                  className="font-display font-black text-6xl sm:text-7xl md:text-[110px] tracking-tighter select-none leading-none relative z-10"
+                  style={{
+                    background: 'repeating-linear-gradient(45deg, #4ade80, #4ade80 15px, #22c55e 15px, #22c55e 30px)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    filter: 'drop-shadow(0px 8px 4px rgba(0,0,0,0.8)) drop-shadow(0px 0px 20px rgba(34,197,94,0.4))',
+                    WebkitTextStroke: '2px #14532d'
+                  }}
+                >
                   TIKI-TAKA
                 </span>
               </div>
@@ -183,49 +192,60 @@ export function TikiTakaFooter() {
           </div>
         </div>
         
-        {/* Neon Snakes */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 overflow-hidden pointer-events-none z-0">
-          <style>
-            {`
-              @keyframes snake-move {
-                0% { stroke-dashoffset: 2000; opacity: 0; }
-                10% { opacity: 1; }
-                90% { opacity: 1; }
-                100% { stroke-dashoffset: 0; opacity: 0; }
-              }
-              @keyframes snake-move-reverse {
-                0% { stroke-dashoffset: 0; opacity: 0; }
-                10% { opacity: 1; }
-                90% { opacity: 1; }
-                100% { stroke-dashoffset: 2000; opacity: 0; }
-              }
-            `}
-          </style>
-          <svg className="w-full h-full opacity-60" preserveAspectRatio="none" viewBox="0 0 1000 100">
-            {/* Group 1: Moving Right */}
-            <path d="M-200 40 C 0 10, 200 90, 400 50 S 800 10, 1000 50 S 1400 90, 1600 40" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.8" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 5px hsl(var(--primary)))', strokeDasharray: '60 1940', animation: 'snake-move 10s linear infinite' }} />
-            <path d="M-200 60 C 50 90, 150 10, 350 40 S 650 90, 850 50 S 1250 10, 1500 60" fill="none" stroke="#34d399" strokeWidth="0.5" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 4px #34d399)', strokeDasharray: '40 1960', animation: 'snake-move 12s linear infinite 2s' }} />
-            <path d="M-200 30 C 100 0, 300 80, 500 40 S 900 0, 1100 40 S 1500 80, 1700 30" fill="none" stroke="#10b981" strokeWidth="0.6" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 6px #10b981)', strokeDasharray: '80 1920', animation: 'snake-move 15s linear infinite 1s' }} />
-            <path d="M-200 70 C 150 100, 250 20, 450 60 S 750 100, 950 60 S 1350 20, 1600 70" fill="none" stroke="#6ee7b7" strokeWidth="0.4" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 3px #6ee7b7)', strokeDasharray: '30 1970', animation: 'snake-move 9s linear infinite 3s' }} />
-            <path d="M-200 50 C 200 20, 400 80, 600 50 S 1000 20, 1200 50 S 1600 80, 1800 50" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.7" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 4px hsl(var(--primary)))', strokeDasharray: '50 1950', animation: 'snake-move 14s linear infinite 4s' }} />
-            
-            {/* Group 2: Moving Left */}
-            <path d="M-200 45 C 50 15, 250 85, 450 45 S 850 15, 1050 45 S 1450 85, 1650 45" fill="none" stroke="#059669" strokeWidth="0.5" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 5px #059669)', strokeDasharray: '45 1955', animation: 'snake-move-reverse 11s linear infinite' }} />
-            <path d="M-200 65 C 100 95, 200 15, 400 45 S 700 95, 900 55 S 1300 15, 1550 65" fill="none" stroke="#34d399" strokeWidth="0.6" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 4px #34d399)', strokeDasharray: '35 1965', animation: 'snake-move-reverse 13s linear infinite 2s' }} />
-            <path d="M-200 35 C 150 5, 350 85, 550 45 S 950 5, 1150 45 S 1550 85, 1750 35" fill="none" stroke="hsl(var(--primary))" strokeWidth="0.4" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 3px hsl(var(--primary)))', strokeDasharray: '25 1975', animation: 'snake-move-reverse 16s linear infinite 1s' }} />
-            <path d="M-200 75 C 200 105, 300 25, 500 65 S 800 105, 1000 65 S 1400 25, 1650 75" fill="none" stroke="#10b981" strokeWidth="0.7" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 6px #10b981)', strokeDasharray: '70 1930', animation: 'snake-move-reverse 10s linear infinite 3s' }} />
-            <path d="M-200 55 C 250 25, 450 85, 650 55 S 1050 25, 1250 55 S 1650 85, 1850 55" fill="none" stroke="#6ee7b7" strokeWidth="0.5" pathLength="2000"
-                  style={{ filter: 'drop-shadow(0 0 4px #6ee7b7)', strokeDasharray: '55 1945', animation: 'snake-move-reverse 14s linear infinite 5s' }} />
-          </svg>
+        {/* Neon Pitch Background */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-40 pointer-events-none overflow-hidden" style={{ perspective: '1000px' }}>
+          <div style={{ transform: 'rotateX(65deg) translateY(-100px) scale(1.5)' }} className="w-full max-w-[1400px] aspect-[2/1] relative">
+            <style>
+              {`
+                .pitch-line {
+                  fill: none;
+                  stroke: #22c55e;
+                  stroke-width: 3;
+                  stroke-dasharray: 4000;
+                  stroke-dashoffset: 4000;
+                  animation: draw-pitch 10s ease-in-out infinite;
+                  filter: drop-shadow(0 0 6px #22c55e);
+                }
+                @keyframes draw-pitch {
+                  0% { stroke-dashoffset: 4000; opacity: 0; }
+                  10% { opacity: 1; }
+                  50% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 15px #4ade80); }
+                  85% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 5px #22c55e); }
+                  100% { stroke-dashoffset: 0; opacity: 0; }
+                }
+              `}
+            </style>
+            <svg viewBox="0 0 1000 600" className="w-full h-full">
+              {/* Outer boundary */}
+              <rect x="50" y="50" width="900" height="500" className="pitch-line" />
+              {/* Center line */}
+              <line x1="500" y1="50" x2="500" y2="550" className="pitch-line" />
+              {/* Center circle */}
+              <circle cx="500" cy="300" r="80" className="pitch-line" />
+              {/* Center dot */}
+              <circle cx="500" cy="300" r="4" fill="#22c55e" className="pitch-line" />
+              
+              {/* Left Penalty Area */}
+              <rect x="50" y="150" width="150" height="300" className="pitch-line" />
+              {/* Left Goal Area */}
+              <rect x="50" y="225" width="50" height="150" className="pitch-line" />
+              {/* Left Penalty Arc */}
+              <path d="M 200 230 A 80 80 0 0 1 200 370" className="pitch-line" />
+              
+              {/* Right Penalty Area */}
+              <rect x="800" y="150" width="150" height="300" className="pitch-line" />
+              {/* Right Goal Area */}
+              <rect x="900" y="225" width="50" height="150" className="pitch-line" />
+              {/* Right Penalty Arc */}
+              <path d="M 800 230 A 80 80 0 0 0 800 370" className="pitch-line" />
+              
+              {/* Corner Arcs */}
+              <path d="M 50 80 A 30 30 0 0 0 80 50" className="pitch-line" />
+              <path d="M 920 50 A 30 30 0 0 0 950 80" className="pitch-line" />
+              <path d="M 950 520 A 30 30 0 0 0 920 550" className="pitch-line" />
+              <path d="M 80 550 A 30 30 0 0 0 50 520" className="pitch-line" />
+            </svg>
+          </div>
         </div>
 
       </footer>
