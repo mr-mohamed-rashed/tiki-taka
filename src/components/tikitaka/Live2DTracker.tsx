@@ -198,17 +198,24 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               />
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
-                className="absolute flex items-center justify-between z-40 pointer-events-none top-[3%] right-[2%] w-1/6 h-1/6"
+                className="absolute flex items-center justify-end z-40 pointer-events-none top-[3%] right-[2%] w-1/6 h-1/6"
               >
-                {/* Image Cropped to Golden Circle */}
-                <div className="relative h-[80%] aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_15px_rgba(0,0,0,0.8)] z-20">
-                  <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
+                {/* Premium Broadcast Text Box */}
+                <div className="relative flex flex-col items-center justify-center h-[50%] flex-1 bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-l-[50px] shadow-2xl z-10 pl-[5%] pr-[12%] border-y border-l border-white/20 overflow-hidden">
+                  {/* Glossy highlight effect */}
+                  <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
+                  
+                  <div className="text-primary font-display font-extrabold text-[1.2vw] leading-none animate-pulse relative z-10 drop-shadow-md">TIKI-TAKA</div>
+                  <div className="flex items-center gap-[0.3vw] mt-[0.4vw] relative z-10">
+                    <div className="w-[0.4vw] h-[0.4vw] rounded-full bg-red-500 animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.8)]"></div>
+                    <div className="text-white/80 text-[0.55vw] uppercase tracking-wider leading-none font-bold">Live Broadcast</div>
+                  </div>
                 </div>
 
-                {/* Pill Shaped Box with Logo Blue Color */}
-                <div className="flex flex-col items-center justify-center h-[55%] flex-1 ml-[5%] bg-gradient-to-r from-[#091a33]/95 to-[#143d6e]/95 backdrop-blur-md rounded-full border border-white/10 shadow-2xl z-10">
-                  <div className="text-primary font-display font-extrabold text-[1.2vw] leading-none animate-pulse">TIKI-TAKA</div>
-                  <div className="text-white/50 text-[0.55vw] uppercase tracking-wider mt-1 leading-none">Live Broadcast</div>
+                {/* Circular Logo overlapping the text box */}
+                <div className="relative h-[80%] aspect-square rounded-full overflow-hidden shrink-0 shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 -ml-[12%] border-[0.15vw] border-[#1a4a85]">
+                  <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
+                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"></div>
                 </div>
               </div>
             </div>
