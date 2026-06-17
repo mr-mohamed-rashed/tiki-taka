@@ -222,15 +222,6 @@ const Index = () => {
           </aside>
         </section>
 
-        <section className="mb-10">
-          <SectionHeader
-            icon={<Trophy className="h-5 w-5" />}
-            title={lang === 'ar' ? 'طريق كأس العالم' : 'Road to the World Cup'}
-            subtitle={lang === 'ar' ? 'خريطة تأهل 32 فريقاً نحو الكأس' : 'A 32-team qualification map leading to the trophy'}
-            lang={lang}
-          />
-          <WorldCupRoadmap />
-        </section>
       </main>
 
       <TikiTakaFooter />

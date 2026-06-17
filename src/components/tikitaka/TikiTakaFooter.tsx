@@ -162,7 +162,7 @@ export function TikiTakaFooter() {
 
         {/* Baseline */}
         <div className="w-full px-6 md:px-12 lg:px-16 bg-[#0A0A0A]/80 backdrop-blur-sm border-t border-white/5 relative z-10">
-          <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
             <div className="flex items-center gap-4">
               <p className="text-[#71717A] text-sm"><EditableSiteText settingKey="footer_copyright" fallbackEn={T.footerCopyright.en} fallbackAr={T.footerCopyright.ar} /></p>
               <NavLink
@@ -182,6 +182,35 @@ export function TikiTakaFooter() {
             </div>
           </div>
         </div>
+        
+        {/* Neon Snakes */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 overflow-hidden pointer-events-none z-0">
+          <style>
+            {`
+              @keyframes snake-move {
+                0% { stroke-dashoffset: 1000; opacity: 0; }
+                15% { opacity: 1; }
+                85% { opacity: 1; }
+                100% { stroke-dashoffset: 0; opacity: 0; }
+              }
+              @keyframes snake-move-reverse {
+                0% { stroke-dashoffset: 0; opacity: 0; }
+                15% { opacity: 1; }
+                85% { opacity: 1; }
+                100% { stroke-dashoffset: 1000; opacity: 0; }
+              }
+            `}
+          </style>
+          <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 100">
+            <path d="M-100 50 Q 250 120, 500 50 T 1100 50" fill="none" stroke="hsl(var(--primary))" strokeWidth="3" pathLength="1000"
+                  style={{ filter: 'drop-shadow(0 0 12px hsl(var(--primary)))', strokeDasharray: '150 850', animation: 'snake-move 8s linear infinite' }} />
+            <path d="M-100 80 Q 300 -20, 600 80 T 1100 80" fill="none" stroke="#10b981" strokeWidth="2" pathLength="1000"
+                  style={{ filter: 'drop-shadow(0 0 10px #10b981)', strokeDasharray: '250 750', animation: 'snake-move-reverse 12s linear infinite' }} />
+            <path d="M-100 20 Q 150 100, 300 20 T 700 100 T 1100 20" fill="none" stroke="#34d399" strokeWidth="1.5" pathLength="1000"
+                  style={{ filter: 'drop-shadow(0 0 8px #34d399)', strokeDasharray: '100 900', animation: 'snake-move 15s linear infinite', opacity: 0.6 }} />
+          </svg>
+        </div>
+
       </footer>
     </div>
   );
