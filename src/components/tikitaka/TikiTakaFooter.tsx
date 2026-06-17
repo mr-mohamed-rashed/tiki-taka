@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { t, T } from '@/lib/i18n';
 import { EditableSiteText } from '@/components/tikitaka/EditableSiteText';
+import { ShareMenu } from '@/components/tikitaka/ShareMenu';
 import { LayoutGrid } from 'lucide-react';
 
 const LinkedInIcon = () => (
@@ -89,13 +90,24 @@ export function TikiTakaFooter() {
         <div className="w-full px-6 md:px-12 lg:px-16 mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
             
-            {/* Description, Newsletter, Socials */}
-            <div className={`lg:col-span-6 flex flex-col justify-center space-y-8 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <p className="text-[#A1A1AA] text-xl leading-relaxed hover:text-[#D4D4D8] transition-colors duration-300 max-w-xl">
+            {/* Left Column: Description, Socials, Subscribe, Big Text */}
+            <div className={`lg:col-span-7 flex flex-col justify-start space-y-8 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <p className="text-[#A1A1AA] text-lg leading-relaxed hover:text-[#D4D4D8] transition-colors duration-300 max-w-xl">
                 <EditableSiteText settingKey="footer_statement" fallbackEn={T.footerStatement.en} fallbackAr={T.footerStatement.ar} multiline />
               </p>
               
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
+                <div className="flex items-center gap-2 shrink-0">
+                  {socialLinks.map((s, i) => (
+                    <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+                      className="w-11 h-11 rounded-full bg-[#18181B] text-white flex items-center justify-center hover:scale-110 hover:-translate-y-1 hover:shadow-neon hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                      {s.icon}
+                    </a>
+                  ))}
+                  <div className="h-6 w-[1px] bg-white/10 mx-2" />
+                  <ShareMenu />
+                </div>
+
                 <div className={`flex flex-1 items-center bg-[#18181B] rounded-lg overflow-hidden transition-all duration-300 w-full ${focused ? 'ring-2 ring-primary/50 shadow-neon' : 'hover:bg-[#1F1F23]'}`}>
                   <input
                     type="email"
@@ -104,28 +116,26 @@ export function TikiTakaFooter() {
                     onFocus={() => setFocused(true)}
                     onBlur={() => setFocused(false)}
                     placeholder={t('footerEmail', lang)}
-                    className="bg-transparent px-4 py-4 text-white text-sm placeholder-[#52525B] focus:outline-none w-full min-w-[150px]"
+                    className="bg-transparent px-4 py-3 text-white text-sm placeholder-[#52525B] focus:outline-none w-full min-w-[130px]"
                   />
-                  <button className="group flex items-center gap-2 px-5 py-4 text-white text-sm font-medium hover:text-primary transition-all duration-300 whitespace-nowrap bg-white/5 hover:bg-white/10">
+                  <button className="group flex items-center gap-2 px-4 py-3 text-white text-sm font-medium hover:text-primary transition-all duration-300 whitespace-nowrap bg-white/5 hover:bg-white/10">
                     <EditableSiteText settingKey="footer_subscribe" fallbackEn={T.footerSubscribe.en} fallbackAr={T.footerSubscribe.ar} />
-                    <span className="group-hover:scale-110 transition-transform duration-300"><ArrowIcon /></span>
+                    <span className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform duration-300"><ArrowIcon /></span>
                   </button>
                 </div>
-                
-                <div className="flex items-center gap-2 shrink-0">
-                  {socialLinks.map((s, i) => (
-                    <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                      className="w-12 h-12 rounded-full bg-[#18181B] text-white flex items-center justify-center hover:scale-110 hover:-translate-y-1 hover:shadow-neon hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                      {s.icon}
-                    </a>
-                  ))}
-                </div>
+              </div>
+
+              {/* Big TIKI-TAKA text */}
+              <div className={`w-full flex justify-start pt-4 transition-all duration-1000 delay-300 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                <span className="font-display font-black text-6xl sm:text-7xl md:text-[90px] tracking-tighter animate-text-sweep select-none leading-none">
+                  TIKI-TAKA
+                </span>
               </div>
             </div>
 
-            {/* Columns + Big Text */}
-            <div className="lg:col-span-6 flex flex-col justify-between">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-10 mb-10">
+            {/* Right Column: Links */}
+            <div className="lg:col-span-5 flex flex-col justify-start pt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 w-full justify-items-end text-right">
                 {columns.map((col, i) => (
                   <div
                     key={i}
@@ -144,13 +154,6 @@ export function TikiTakaFooter() {
                     </ul>
                   </div>
                 ))}
-              </div>
-
-              {/* Big TIKI-TAKA text under columns */}
-              <div className={`w-full flex justify-center md:justify-end transition-all duration-1000 delay-500 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-                <span className="font-display font-black text-6xl md:text-8xl lg:text-[110px] tracking-tighter animate-text-sweep select-none leading-none">
-                  TIKI-TAKA
-                </span>
               </div>
             </div>
 
