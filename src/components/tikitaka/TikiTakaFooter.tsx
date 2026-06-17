@@ -6,14 +6,14 @@ import { EditableSiteText } from '@/components/tikitaka/EditableSiteText';
 import { ShareMenu } from '@/components/tikitaka/ShareMenu';
 import { LayoutGrid } from 'lucide-react';
 
-const LinkedInIcon = () => (
+const FacebookIcon = () => (
   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+    <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
   </svg>
 );
-const XIcon = () => (
+const TikTokIcon = () => (
   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-.9 4.4-2.42 5.92-1.48 1.48-3.47 2.32-5.56 2.34-2.06.02-4.1-.81-5.56-2.27-1.54-1.54-2.41-3.66-2.45-5.83-.04-2.18.84-4.29 2.4-5.83 1.52-1.5 3.55-2.33 5.66-2.35 1.04-.01 2.08.16 3.08.51v4.11c-.53-.25-1.1-.38-1.68-.4-1.12-.03-2.22.4-3.03 1.18-.84.81-1.3 1.94-1.33 3.1-.03 1.15.38 2.29 1.14 3.12.8.87 1.95 1.34 3.15 1.35 1.25.01 2.47-.48 3.36-1.37.89-.89 1.39-2.11 1.4-3.37.04-4.8.02-9.6.02-14.4z" />
   </svg>
 );
 const YouTubeIcon = () => (
@@ -70,9 +70,9 @@ export function TikiTakaFooter() {
   ];
 
   const socialLinks = [
-    { icon: <XIcon />, href: 'https://twitter.com' },
+    { icon: <TikTokIcon />, href: 'https://tiktok.com' },
+    { icon: <FacebookIcon />, href: 'https://facebook.com' },
     { icon: <YouTubeIcon />, href: 'https://youtube.com' },
-    { icon: <LinkedInIcon />, href: 'https://linkedin.com' },
   ];
 
   const policyLinks = [
