@@ -108,6 +108,7 @@ export function useLiveFixtures() {
       }
     },
     refetchInterval: 30_000,
+    initialData: interpolateLiveMinutes(getLiveMatches()),
   });
 }
 
@@ -126,6 +127,7 @@ export function useUpcomingFixtures() {
       }
     },
     refetchInterval: 120_000,
+    initialData: getUpcomingOnly(getUpcomingMatches()),
   });
 }
 

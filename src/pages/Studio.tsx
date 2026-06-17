@@ -142,9 +142,9 @@ export default function Studio() {
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
       case 'sm': return 'w-[16%] h-[8%] md:w-[12%] md:h-[6%] lg:w-[10%] lg:h-[5%]';
-      case 'lg': return 'w-[28%] h-[14%] md:w-[22%] md:h-[11%] lg:w-[20%] lg:h-[10%]';
+      case 'lg': return 'w-[28%] h-[14%] md:w-[20%] md:h-[10%] lg:w-[18%] lg:h-[9%]';
       case 'md':
-      default: return 'w-[22%] h-[10%] md:w-[18%] md:h-[9%] lg:w-[16%] lg:h-[8%]';
+      default: return 'w-[22%] h-[10%] md:w-[15%] md:h-[8%] lg:w-[13%] lg:h-[7%]';
     }
   };
 
@@ -290,13 +290,13 @@ export default function Studio() {
               {state.logoPosition !== 'none' && (
                 <div 
                   className={cn(
-                    "absolute flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none",
+                    "absolute flex items-center justify-center z-40 pointer-events-none",
                     getLogoSizeClasses(),
                     getLogoPositionClasses()
                   )}
                 >
                   <div className="absolute inset-0 bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl"></div>
-                  <div className="flex flex-col items-end justify-center z-10">
+                  <div className="flex flex-col items-end justify-center z-10 pl-2">
                     <div className={cn(
                       "text-primary font-display font-extrabold leading-none animate-pulse",
                       state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw] md:text-[0.6vw]" :
@@ -312,10 +312,10 @@ export default function Studio() {
                     src="/icons/tiki-taka-icon.png" 
                     alt="World Cup" 
                     className={cn(
-                      "object-contain z-10",
-                      state.logoSize === 'sm' ? "w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw] md:w-[2vw] md:h-[2vw]" :
-                      state.logoSize === 'lg' ? "w-6 h-6 sm:w-[3vw] sm:h-[3vw] md:w-[4vw] md:h-[4vw]" :
-                      "w-5 h-5 sm:w-[2.5vw] sm:h-[2.5vw] md:w-[3vw] md:h-[3vw] lg:w-[2.5vw] lg:h-[2.5vw]"
+                      "absolute object-contain z-20",
+                      state.logoSize === 'sm' ? "-left-1 sm:-left-2 w-4 h-4 sm:w-[2vw] sm:h-[2vw] md:w-[2vw] md:h-[2vw]" :
+                      state.logoSize === 'lg' ? "-left-3 sm:-left-5 w-8 h-8 sm:w-[4vw] sm:h-[4vw] md:w-[4vw] md:h-[4vw]" :
+                      "-left-2 sm:-left-4 w-6 h-6 sm:w-[3.5vw] sm:h-[3.5vw] md:w-[3vw] md:h-[3vw]"
                     )} 
                   />
                 </div>

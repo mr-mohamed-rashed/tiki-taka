@@ -198,14 +198,14 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               />
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
-                className="absolute flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none top-[2%] md:top-[3%] right-[2%] w-[22%] h-[10%] md:w-[18%] md:h-[9%] lg:w-[16%] lg:h-[8%]"
+                className="absolute flex items-center justify-center z-40 pointer-events-none top-[2%] md:top-[3%] right-[2%] w-[22%] h-[10%] md:w-[15%] md:h-[8%] lg:w-[13%] lg:h-[7%]"
               >
                 <div className="absolute inset-0 bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl"></div>
-                <div className="flex flex-col items-end justify-center z-10">
+                <div className="flex flex-col items-end justify-center z-10 pl-2">
                   <div className="text-primary font-display font-extrabold text-[12px] sm:text-[1.5vw] md:text-[1.2vw] leading-none animate-pulse">TIKI-TAKA</div>
                   <div className="text-white/50 text-[7px] sm:text-[0.8vw] md:text-[0.6vw] uppercase tracking-wider mt-1 leading-none">Live Broadcast</div>
                 </div>
-                <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="w-5 h-5 sm:w-[2.5vw] sm:h-[2.5vw] md:w-[3vw] md:h-[3vw] lg:w-[2.5vw] lg:h-[2.5vw] object-contain z-10" />
+                <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute -left-2 sm:-left-4 w-6 h-6 sm:w-[3.5vw] sm:h-[3.5vw] md:w-[3vw] md:h-[3vw] object-contain z-20" />
               </div>
             </div>
           ) : (
