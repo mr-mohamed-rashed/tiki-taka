@@ -178,7 +178,7 @@ body::before {
   100% { transform: translateX(0); }
 }
 .animate-ticker-ar {
-  animation: ticker-scroll-ar 35s linear infinite;
+  animation: ticker-scroll-ar 15s linear infinite;
   width: max-content;
   min-width: max-content;
   will-change: transform;
