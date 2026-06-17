@@ -125,21 +125,7 @@ export function TikiTakaFooter() {
                 </div>
               </div>
 
-              {/* Big TIKI-TAKA text */}
-              <div className={`w-full flex justify-start pt-4 transition-all duration-1000 delay-300 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-                <span 
-                  className="font-display font-black text-6xl sm:text-7xl md:text-[110px] tracking-tighter select-none leading-none relative z-10"
-                  style={{
-                    background: 'repeating-linear-gradient(45deg, #4ade80, #4ade80 15px, #22c55e 15px, #22c55e 30px)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    filter: 'drop-shadow(0px 8px 4px rgba(0,0,0,0.8)) drop-shadow(0px 0px 20px rgba(34,197,94,0.4))',
-                    WebkitTextStroke: '2px #14532d'
-                  }}
-                >
-                  TIKI-TAKA
-                </span>
-              </div>
+              {/* The big text was moved to the bottom center */}
             </div>
 
             {/* Right Column: Links */}
@@ -165,10 +151,48 @@ export function TikiTakaFooter() {
                 ))}
               </div>
             </div>
-
           </div>
-        </div>
+          
+          {/* Big Centered TIKI-TAKA text */}
+          <div className={`w-full flex justify-center py-12 transition-all duration-1000 delay-300 relative z-10 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            <style>
+              {`
+                @keyframes light-sweep {
+                  0% { background-position: 200% center; }
+                  100% { background-position: -200% center; }
+                }
+              `}
+            </style>
+            <div className="relative group hover:scale-105 transition-transform duration-500">
+              <span 
+                className="font-display font-black text-7xl sm:text-8xl md:text-[140px] tracking-tighter select-none leading-none relative z-10 block"
+                style={{
+                  background: 'repeating-linear-gradient(45deg, #4ade80, #4ade80 20px, #22c55e 20px, #22c55e 40px)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  filter: 'drop-shadow(0px 15px 8px rgba(0,0,0,0.8)) drop-shadow(0px 0px 30px rgba(34,197,94,0.3))',
+                  WebkitTextStroke: '3px #14532d'
+                }}
+              >
+                TIKI-TAKA
+              </span>
+              {/* Light Sweep Overlay */}
+              <span 
+                className="font-display font-black text-7xl sm:text-8xl md:text-[140px] tracking-tighter select-none leading-none absolute inset-0 z-20 pointer-events-none"
+                style={{
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+                  backgroundSize: '200% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  animation: 'light-sweep 5s linear infinite'
+                }}
+              >
+                TIKI-TAKA
+              </span>
+            </div>
+          </div>
 
+        </div>
         {/* Baseline */}
         <div className="w-full px-6 md:px-12 lg:px-16 bg-[#0A0A0A]/80 backdrop-blur-sm border-t border-white/5 relative z-10">
           <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
