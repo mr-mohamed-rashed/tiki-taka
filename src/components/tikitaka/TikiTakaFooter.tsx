@@ -135,7 +135,7 @@ export function TikiTakaFooter() {
 
             {/* Right Column: Links */}
             <div className="lg:col-span-5 flex flex-col justify-start pt-2">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 w-full justify-items-end text-right">
+              <div className="grid grid-cols-3 gap-4 sm:gap-8 w-full justify-items-end text-right">
                 {columns.map((col, i) => (
                   <div
                     key={i}
