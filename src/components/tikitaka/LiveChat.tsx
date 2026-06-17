@@ -306,8 +306,10 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
               }}
               theme={Theme.DARK}
               lazyLoadEmojis={true}
-              searchDisabled={false}
+              searchDisabled={true}
               skinTonesDisabled={true}
+              width={280}
+              height={350}
             />
           </div>
         )}

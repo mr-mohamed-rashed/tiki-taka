@@ -263,12 +263,7 @@ export const getUpcomingMatches = (): Match[] => [
     home: teams.KSA, away: teams.URU, homeScore: 0, awayScore: 0,
     venue: 'NRG Stadium, Houston',
   },
-  {
-    id: 'u12', competition: 'FIFA World Cup 2026', stage: 'Group G - Match Day 1',
-    date: '2026-06-16T01:00:00Z', status: 'upcoming',
-    home: teams.IRN, away: teams.NZL, homeScore: 0, awayScore: 0,
-    venue: 'BC Place, Vancouver',
-  },
+
   {
     id: 'u13', competition: 'FIFA World Cup 2026', stage: 'Group I - Match Day 1',
     date: '2026-06-16T19:00:00Z', status: 'upcoming',
@@ -293,18 +288,7 @@ export const getUpcomingMatches = (): Match[] => [
     home: teams.AUT, away: teams.JOR, homeScore: 0, awayScore: 0,
     venue: 'Rose Bowl, Los Angeles',
   },
-  {
-    id: 'u17', competition: 'FIFA World Cup 2026', stage: 'Group K - Match Day 1',
-    date: '2026-06-17T17:00:00Z', status: 'upcoming',
-    home: teams.POR, away: teams.DRC, homeScore: 0, awayScore: 0,
-    venue: 'Estadio Azteca, Mexico City',
-  },
-  {
-    id: 'u18', competition: 'FIFA World Cup 2026', stage: 'Group L - Match Day 1',
-    date: '2026-06-17T20:00:00Z', status: 'upcoming',
-    home: teams.ENG, away: teams.CRO, homeScore: 0, awayScore: 0,
-    venue: 'AT&T Stadium, Dallas',
-  },
+
   {
     id: 'u19', competition: 'FIFA World Cup 2026', stage: 'Group L - Match Day 1',
     date: '2026-06-17T23:00:00Z', status: 'upcoming',
@@ -634,6 +618,24 @@ export const getFinishedMatches = (): Match[] => [
     date: '2026-06-12T23:00:00Z', status: 'finished',
     home: teams.CAN, away: teams.BIH, homeScore: 1, awayScore: 1,
     venue: 'BMO Field, Toronto',
+  },
+  {
+    id: 'u12', competition: 'FIFA World Cup 2026', stage: 'Group G - Match Day 1',
+    date: '2026-06-16T01:00:00Z', status: 'finished',
+    home: teams.IRN, away: teams.NZL, homeScore: 1, awayScore: 0,
+    venue: 'BC Place, Vancouver',
+  },
+  {
+    id: 'u17', competition: 'FIFA World Cup 2026', stage: 'Group K - Match Day 1',
+    date: '2026-06-17T17:00:00Z', status: 'finished',
+    home: teams.POR, away: teams.DRC, homeScore: 2, awayScore: 1,
+    venue: 'Estadio Azteca, Mexico City',
+  },
+  {
+    id: 'u18', competition: 'FIFA World Cup 2026', stage: 'Group L - Match Day 1',
+    date: '2026-06-17T20:00:00Z', status: 'finished',
+    home: teams.ENG, away: teams.CRO, homeScore: 1, awayScore: 1,
+    venue: 'AT&T Stadium, Dallas',
   },
 ];
 
