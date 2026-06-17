@@ -74,15 +74,17 @@ const LiveMatches = () => {
           </section>
         ) : featured ? (
           <section>
-            <div className="flex items-center gap-2 mb-5">
-              <Tv className="h-5 w-5 text-primary" />
-              <h2 className={cn('font-display font-extrabold text-2xl', lang === 'ar' && 'font-arabic')}>
-                {t('matchTracker', lang)}
-              </h2>
-              <span className="text-sm text-muted-foreground ms-1">
-                - {featured.home.name} vs {featured.away.name}
-              </span>
-            </div>
+            {(!get('live_stream_url', 'en') || get('live_stream_url', 'en') === '[]') && (
+              <div className="flex items-center gap-2 mb-5">
+                <Tv className="h-5 w-5 text-primary" />
+                <h2 className={cn('font-display font-extrabold text-2xl', lang === 'ar' && 'font-arabic')}>
+                  {t('matchTracker', lang)}
+                </h2>
+                <span className="text-sm text-muted-foreground ms-1">
+                  - {featured.home.name} vs {featured.away.name}
+                </span>
+              </div>
+            )}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
               <div className="lg:col-span-3">
                 <Live2DTracker match={featured} />

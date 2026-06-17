@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Outlet, useLocation, ScrollRestoration } from 'react-router-dom';
 import { useAnalytics } from './hooks/useAnalytics';
+import { useAuth } from './hooks/useAuth';
 import Index from './pages/Index';
 import NotFound from './pages/NotFound';
 import WorldCupNews from './pages/WorldCupNews';
@@ -18,16 +19,27 @@ import { GoogleAuthGate } from './components/tikitaka/GoogleAuthGate';
 const Layout = () => {
   const location = useLocation();
   useAnalytics();
+  const { user, signInWithGoogle } = useAuth();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/studio');
   const isPublicHome = location.pathname === '/';
 
+  const handleInterceptClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      e.stopPropagation();
+      signInWithGoogle();
+    }
+  };
+
   if (isAdminRoute || isPublicHome) {
     return (
-      <>
+      <div onClickCapture={isPublicHome && !user ? handleInterceptClick : undefined} className={isPublicHome && !user ? 'cursor-pointer' : ''}>
         <ScrollRestoration />
-        <Outlet />
+        <div className={isPublicHome && !user ? 'pointer-events-none' : ''}>
+          <Outlet />
+        </div>
         <GlobalFloatingAd />
-      </>
+      </div>
     );
   }
 
