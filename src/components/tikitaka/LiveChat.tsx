@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
+import { t } from '@/lib/i18n';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 interface ChatMessage {
@@ -57,7 +58,7 @@ interface LiveChatProps {
 }
 
 export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatProps) {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const { user, signInWithGoogle } = useAuth();
   
   const [messages, setMessages] = useState<ChatMessage[]>([]);
