@@ -141,10 +141,10 @@ export default function Studio() {
 
   const getLogoSizeClasses = () => {
     switch (state.logoSize) {
-      case 'sm': return 'w-[16%] h-[8%] md:w-[10%] md:h-[5%] lg:w-[8%] lg:h-[4%]';
-      case 'lg': return 'w-[28%] h-[14%] md:w-[18%] md:h-[9%] lg:w-[14%] lg:h-[7%]';
+      case 'sm': return 'w-[16%] h-[8%]';
+      case 'lg': return 'w-[28%] h-[14%]';
       case 'md':
-      default: return 'w-[22%] h-[10%] md:w-[14%] md:h-[7%] lg:w-[10%] lg:h-[6%]';
+      default: return 'w-[22%] h-[10%]';
     }
   };
 
@@ -290,31 +290,32 @@ export default function Studio() {
               {state.logoPosition !== 'none' && (
                 <div 
                   className={cn(
-                    "absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none",
+                    "absolute flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none",
                     getLogoSizeClasses(),
                     getLogoPositionClasses()
                   )}
                 >
-                  <div className="flex flex-col items-end justify-center">
+                  <div className="absolute inset-0 bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl"></div>
+                  <div className="flex flex-col items-end justify-center z-10">
                     <div className={cn(
                       "text-primary font-display font-extrabold leading-none animate-pulse",
                       state.logoSize === 'sm' ? "text-[8px] sm:text-[0.8vw]" :
-                      state.logoSize === 'lg' ? "text-[14px] sm:text-[1.5vw]" :
-                      "text-[10px] sm:text-[1vw] md:text-[0.8vw]"
+                      state.logoSize === 'lg' ? "text-[16px] sm:text-[2vw]" :
+                      "text-[12px] sm:text-[1.5vw]"
                     )}>TIKI-TAKA</div>
                     {state.logoSize !== 'sm' && <div className={cn(
-                      "text-white/50 uppercase tracking-wider hidden sm:block mt-0.5 leading-none",
-                      state.logoSize === 'lg' ? "text-[8px] md:text-[0.6vw]" : "text-[6px] md:text-[0.4vw]"
+                      "text-white/50 uppercase tracking-wider hidden sm:block mt-1 leading-none",
+                      state.logoSize === 'lg' ? "text-[8px] md:text-[1vw]" : "text-[7px] md:text-[0.8vw]"
                     )}>Live Broadcast</div>}
                   </div>
                   <img 
                     src="/icons/tiki-taka-icon.png" 
                     alt="World Cup" 
                     className={cn(
-                      "object-contain",
-                      state.logoSize === 'sm' ? "w-2.5 h-2.5 sm:w-[1.2vw] sm:h-[1.2vw]" :
-                      state.logoSize === 'lg' ? "w-4 h-4 sm:w-[2.2vw] sm:h-[2.2vw]" :
-                      "w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw] md:w-[1.2vw] md:h-[1.2vw]"
+                      "object-contain z-10",
+                      state.logoSize === 'sm' ? "w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw]" :
+                      state.logoSize === 'lg' ? "w-6 h-6 sm:w-[3vw] sm:h-[3vw]" :
+                      "w-5 h-5 sm:w-[2.5vw] sm:h-[2.5vw]"
                     )} 
                   />
                 </div>

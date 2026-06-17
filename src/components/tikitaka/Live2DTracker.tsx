@@ -198,17 +198,20 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               />
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
-                className="absolute bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none w-[22%] h-[10%] md:w-[14%] md:h-[7%] lg:w-[10%] lg:h-[6%]"
+                className="absolute flex items-center justify-center gap-1.5 sm:gap-2 z-40 pointer-events-none"
                 style={{
                   top: '2%',
-                  right: '2%'
+                  right: '2%',
+                  width: '22%',
+                  height: '10%'
                 }}
               >
-                <div className="flex flex-col items-end justify-center">
-                  <div className="text-primary font-display font-extrabold text-[8px] sm:text-[1vw] md:text-[0.8vw] leading-none animate-pulse">TIKI-TAKA</div>
-                  <div className="text-white/50 text-[5px] sm:text-[0.5vw] md:text-[0.4vw] uppercase tracking-wider mt-0.5 leading-none">Live Broadcast</div>
+                <div className="absolute inset-0 bg-black/95 backdrop-blur-md rounded-lg border border-white/10 shadow-2xl"></div>
+                <div className="flex flex-col items-end justify-center z-10">
+                  <div className="text-primary font-display font-extrabold text-[12px] sm:text-[1.5vw] md:text-[1.5vw] leading-none animate-pulse">TIKI-TAKA</div>
+                  <div className="text-white/50 text-[7px] sm:text-[0.8vw] md:text-[0.8vw] uppercase tracking-wider mt-1 leading-none">Live Broadcast</div>
                 </div>
-                <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="w-3 h-3 sm:w-[1.5vw] sm:h-[1.5vw] md:w-[1.2vw] md:h-[1.2vw] object-contain" />
+                <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="w-5 h-5 sm:w-[2.5vw] sm:h-[2.5vw] md:w-[2vw] md:h-[2vw] object-contain z-10" />
               </div>
             </div>
           ) : (
