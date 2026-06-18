@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video } from 'lucide-react';
+import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
+import { LiveChat } from '@/components/tikitaka/LiveChat';
 
 interface Live2DTrackerProps {
   match: Match;
@@ -60,7 +61,32 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
 
   const [activeServerIndex, setActiveServerIndex] = useState(0);
   const [isTheater, setIsTheater] = useState(false);
+  const [chatMode, setChatMode] = useState<'hidden' | 'overlay' | 'split'>('hidden');
+  const [controlsVisible, setControlsVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-hide controls when screen is idle for 3 seconds
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const handleActivity = () => {
+      setControlsVisible(true);
+      clearTimeout(timeout);
+      timeout = setTimeout(() => setControlsVisible(false), 3000);
+    };
+
+    document.addEventListener('mousemove', handleActivity);
+    document.addEventListener('touchstart', handleActivity);
+    document.addEventListener('keydown', handleActivity);
+
+    handleActivity(); // Initial start
+
+    return () => {
+      document.removeEventListener('mousemove', handleActivity);
+      document.removeEventListener('touchstart', handleActivity);
+      document.removeEventListener('keydown', handleActivity);
+      clearTimeout(timeout);
+    };
+  }, []);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -129,32 +155,7 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
 
   return (
     <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-border">
-      {/* Scoreboard */}
-      <div className="px-4 sm:px-5 py-3 border-b border-border bg-card/60 flex items-center justify-between">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <img src={home.flag} alt={home.name} className="w-8 h-8 rounded ring-1 ring-border" />
-          <span className="font-bold text-sm sm:text-base">{home.shortName}</span>
-        </div>
 
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex items-center gap-3 font-display font-extrabold text-2xl sm:text-3xl tabular-nums">
-            <span className="text-foreground">{match.homeScore}</span>
-            <span className="text-border">-</span>
-            <span className="text-foreground">{match.awayScore}</span>
-          </div>
-          {match.status === 'live' && (
-            <Badge className="bg-live text-live-foreground gap-1.5 px-2 py-0 text-[10px] font-bold">
-              <span className="w-1.5 h-1.5 bg-live-foreground rounded-full animate-pulse-live" />
-              LIVE {match.minute}
-            </Badge>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2 sm:gap-3 flex-row-reverse">
-          <img src={away.flag} alt={away.name} className="w-8 h-8 rounded ring-1 ring-border" />
-          <span className="font-bold text-sm sm:text-base">{away.shortName}</span>
-        </div>
-      </div>
 
       {/* Pitch */}
       <div className="p-3 sm:p-4 bg-background/40">
@@ -179,13 +180,23 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
           className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none flex items-center justify-center overflow-hidden" : "rounded-lg aspect-video overflow-hidden")}
         >
           <div 
-            className={cn("relative w-full h-full", isTheater ? "" : "absolute inset-0")}
+            className={cn("relative transition-all", isTheater ? (chatMode === 'split' ? "w-2/3 h-full flex items-center justify-center bg-black" : "w-full h-full flex items-center justify-center") : "w-full absolute inset-0")}
             style={isTheater ? { maxWidth: 'calc(100vh * (16 / 9))', maxHeight: 'calc(100vw * (9 / 16))', aspectRatio: '16/9' } : {}}
           >
           {streamUrl && (
-            <div className="absolute bottom-4 right-4 z-50 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity items-center">
-              <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none">
-                {isTheater ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-minimize h-4 w-4"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-maximize h-4 w-4"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>}
+            <div className={cn("absolute bottom-4 right-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100" : "opacity-0")}>
+              {isTheater && (
+                <Button 
+                  variant="secondary" 
+                  size="icon" 
+                  onClick={() => setChatMode(prev => prev === 'hidden' ? 'overlay' : (prev === 'overlay' ? 'split' : 'hidden'))} 
+                  className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg"
+                >
+                  {chatMode === 'hidden' ? <MessageSquare className="h-4 w-4" /> : chatMode === 'overlay' ? <MessageSquare className="h-4 w-4 text-primary" /> : <PanelRightOpen className="h-4 w-4 text-primary" />}
+                </Button>
+              )}
+              <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg">
+                {isTheater ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
               </Button>
             </div>
           )}
@@ -301,7 +312,27 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
               </g>
             </svg>
           )}
-        </div>
+
+              {/* Overlay Chat in Theater Mode */}
+              {isTheater && chatMode === 'overlay' && (
+                <div className="absolute top-0 right-0 w-full sm:w-[350px] h-full z-40 flex flex-col justify-end p-2 sm:p-4 pointer-events-none">
+                  <div className="pointer-events-none">
+                    <LiveChat matchId={match.id} variant="overlay" />
+                  </div>
+                </div>
+              )}
+          </div>
+
+          {/* Split Chat Mode in Theater */}
+          {isTheater && chatMode === 'split' && (
+            <div className="w-1/3 h-full bg-black border-l border-border flex flex-col animate-in fade-in slide-in-from-right-4 duration-300">
+               <div className="flex-1 min-h-0 relative h-full">
+                 <div className="absolute inset-0 overflow-y-auto">
+                   <LiveChat matchId={match.id} variant="default" isTheaterSplit={true} />
+                 </div>
+               </div>
+            </div>
+          )}
         </div>
 
         {/* Legend */}

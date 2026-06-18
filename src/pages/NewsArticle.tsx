@@ -15,7 +15,7 @@ const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1575361204480-aadea25e
 export default function NewsArticle() {
   const { id } = useParams();
   const { lang, dir } = useLanguage();
-  const { news, loading } = useManualNews(true);
+  const { news, loading } = useManualNews(false);
   const article = news.find((item) => item.id === id);
   const isArabic = lang === 'ar';
 
@@ -51,10 +51,22 @@ export default function NewsArticle() {
         </Button>
 
         <article className="overflow-hidden rounded-2xl border border-border bg-gradient-card shadow-card">
-          <div className="relative aspect-[16/8] min-h-56 overflow-hidden">
-            <img src={article.image_url || FALLBACK_IMAGE} alt={title} className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/45 to-transparent" />
-            <Badge className="absolute bottom-5 right-5 bg-primary text-primary-foreground shadow-neon">
+          <div className="relative w-full max-h-[500px] overflow-hidden bg-black flex items-center justify-center">
+            {/* Blurred Background for un-filled areas */}
+            <div 
+              className="absolute inset-0 opacity-40 blur-2xl scale-110"
+              style={{ backgroundImage: `url(${article.image_url || FALLBACK_IMAGE})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            />
+            
+            {/* Actual Image */}
+            <img 
+              src={article.image_url || FALLBACK_IMAGE} 
+              alt={title} 
+              className="relative z-10 w-full h-auto max-h-[500px] object-contain" 
+            />
+            
+            <div className="absolute inset-0 z-20 bg-gradient-to-t from-background via-background/10 to-transparent pointer-events-none" />
+            <Badge className="absolute bottom-5 right-5 z-30 bg-primary text-primary-foreground shadow-neon">
               {article.category}
             </Badge>
           </div>

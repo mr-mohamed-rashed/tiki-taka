@@ -96,7 +96,7 @@ const LiveMatches = () => {
                 <Live2DTracker match={featured} />
               </div>
               <div className="lg:col-span-2">
-                <LiveChat matchId={featured.id} />
+                <LiveChat matchId="main_live_stream" />
               </div>
             </div>
           </section>

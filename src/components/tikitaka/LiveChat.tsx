@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Shield, Ban, Trash2, MessageCircle, User, Smile } from 'lucide-react';
+import { Send, Shield, Ban, Trash2, MessageCircle, User, Smile, Pin, PinOff, Bot, BotOff } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,8 +8,10 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
+import { useManualNews } from '@/hooks/useManualNews';
 import { t } from '@/lib/i18n';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import { ADMIN_EMAILS_LIST } from '@/config/admins';
 
 interface ChatMessage {
   id: string;
@@ -17,6 +19,7 @@ interface ChatMessage {
   username: string;
   message: string;
   is_deleted: boolean;
+  is_pinned?: boolean;
   match_id: string;
   created_at: string;
 }
@@ -52,27 +55,58 @@ function filterProfanity(text: string): string {
   return filtered;
 }
 
+function renderMessageText(text: string) {
+  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (part.match(urlRegex)) {
+      const href = part.startsWith('www.') ? `https://${part}` : part;
+      return (
+        <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
+          {part}
+        </a>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 interface LiveChatProps {
   matchId?: string;
   variant?: 'default' | 'overlay';
+  isTheaterSplit?: boolean;
 }
 
-export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatProps) {
+export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSplit = false }: LiveChatProps) {
   const { lang } = useLanguage();
-  const { user, signInWithGoogle } = useAuth();
+  const { user, signInWithGoogle, loading: authLoading } = useAuth();
+  const { news } = useManualNews(true); // Fetch active news for the bots
   
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [users, setUsers] = useState<Map<string, ChatUser>>(new Map());
   const [loading, setLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
   const [inputMsg, setInputMsg] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
+  const [botsEnabled, setBotsEnabled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hasFetchedInitialRef = useRef(false);
 
   const userId = user?.id || getOrCreateUserId();
-  const username = user?.user_metadata?.full_name || (user?.email?.split('@')[0]) || 'Guest';
+  
+  const getNickname = () => {
+    if (user?.user_metadata?.full_name) {
+      const parts = user.user_metadata.full_name.trim().split(' ');
+      return parts.length > 1 ? parts[parts.length - 1] : parts[0];
+    }
+    return user?.email?.split('@')[0] || 'Guest';
+  };
+  
+  const username = getNickname();
   const joined = !!user;
 
-  const isModerator = MODERATOR_IDS.has(userId);
+  // Auto-detect admin by known emails, or hardcoded IDs
+  const isModerator = (user?.email && ADMIN_EMAILS_LIST?.includes(user.email.toLowerCase())) || user?.email === 'mrrashed0777@gmail.com' || user?.email === 'info@tiki-taka.cc' || MODERATOR_IDS.has(userId);
 
   // Auto-scroll
   useEffect(() => {
@@ -81,16 +115,19 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
     }
   }, [messages]);
 
-  // Load initial messages
+  // Load initial pinned messages only
   useEffect(() => {
-    if (!joined) return;
+    if (!joined || hasFetchedInitialRef.current) return;
+    hasFetchedInitialRef.current = true;
+    
     supabase
       .from('chat_messages')
       .select('*')
       .eq('match_id', matchId)
       .eq('is_deleted', false)
+      .eq('is_pinned', true)
       .order('created_at', { ascending: true })
-      .limit(50)
+      .limit(10)
       .then(({ data }) => {
         if (data) setMessages(data as ChatMessage[]);
         setLoading(false);
@@ -129,6 +166,40 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
     return () => { supabase.removeChannel(channel); };
   }, [matchId, joined, users]);
 
+  // Automated 5 Admins (Bots) sending news when chat is quiet
+  useEffect(() => {
+    // Only run this logic on the Moderator's client to prevent multiple clients from spamming the DB
+    if (!isModerator || news.length === 0 || !botsEnabled) return;
+
+    const BOT_NAMES = ['الكابتن (Tiki-Taka)', 'أدمن الأخبار', 'محلل تيكي تاكا', 'فار (VAR)', 'رادار الملاعب'];
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const lastMsgTime = messages.length > 0 
+        ? new Date(messages[messages.length - 1].created_at).getTime() 
+        : 0;
+      
+      // If chat is quiet for 45 seconds
+      if (now - lastMsgTime > 45000) {
+        const randomNews = news[Math.floor(Math.random() * news.length)];
+        const randomBot = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+        const title = lang === 'ar' ? (randomNews.title_ar || randomNews.title_en) : (randomNews.title_en || randomNews.title_ar);
+        const link = `${window.location.origin}/news/${randomNews.id}`;
+        
+        supabase.from('chat_messages').insert({
+          user_id: userId,
+          username: randomBot,
+          message: `📰 خبر عاجل: ${title} \n ${link}`,
+          match_id: matchId,
+        }).then(({ error }) => {
+          if (error) console.error("Bot insert error:", error);
+        });
+      }
+    }, 45000);
+
+    return () => clearInterval(interval);
+  }, [messages, isModerator, news, matchId, lang, botsEnabled, userId]);
+
   const handleJoin = async () => {
     try {
       await signInWithGoogle();
@@ -149,20 +220,45 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
       .maybeSingle();
     if (userRow?.is_banned) return;
 
-    const filteredText = filterProfanity(text);
+    let containsBadWord = false;
+    let filteredText = text;
+    BAD_WORDS.forEach(word => {
+      const regex = new RegExp(word, 'gi');
+      if (regex.test(filteredText)) {
+        containsBadWord = true;
+        filteredText = filteredText.replace(regex, '***');
+      }
+    });
 
-    // Optimistic update so it appears instantly
-    const newMsg: ChatMessage = {
-      id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(),
-      user_id: userId,
-      username,
-      message: filteredText,
-      match_id: matchId,
-      is_deleted: false,
-      created_at: new Date().toISOString()
-    };
-    
-    setMessages(prev => [...prev, newMsg]);
+    // 1. If message is entirely bad words, block it completely
+    if (filteredText.replace(/\*/g, '').trim() === '') {
+      setMessages(prev => [...prev, {
+        id: Math.random().toString(),
+        user_id: 'system',
+        username: '🤖 المساعد الذكي',
+        message: '🚫 عذراً، تعليقك غير لائق تماماً وتم رفضه. يرجى الالتزام بآداب الحديث.',
+        match_id: matchId,
+        is_deleted: false,
+        created_at: new Date().toISOString()
+      }]);
+      setInputMsg('');
+      return;
+    }
+
+    // 2. If it has a bad word in the middle, we warn the user but send the masked version
+    if (containsBadWord) {
+      setMessages(prev => [...prev, {
+        id: Math.random().toString(),
+        user_id: 'system',
+        username: '🤖 المساعد الذكي',
+        message: '⚠️ تنبيه: تم تشفير بعض الكلمات غير اللائقة في تعليقك.',
+        match_id: matchId,
+        is_deleted: false,
+        created_at: new Date().toISOString()
+      }]);
+    }
+
+    setIsSending(true);
     setInputMsg('');
     setShowEmojis(false);
 
@@ -176,6 +272,7 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
     if (error) {
       console.error("Chat error:", error);
     }
+    setIsSending(false);
   };
 
   const deleteMessage = async (id: string) => {
@@ -191,6 +288,18 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
       return m;
     });
   };
+
+  const togglePin = async (id: string, currentStatus: boolean) => {
+    await supabase.from('chat_messages').update({ is_pinned: !currentStatus }).eq('id', id);
+  };
+
+  if (authLoading) {
+    return (
+      <Card className={cn("flex items-center justify-center", variant === 'overlay' ? 'bg-transparent border-none shadow-none h-full' : 'bg-gradient-card border-border h-[500px]')}>
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </Card>
+    );
+  }
 
   if (!joined) {
     return (
@@ -232,11 +341,14 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
   }
 
   const visibleMessages = messages.filter((m) => !m.is_deleted);
+  const pinnedMessages = visibleMessages.filter((m) => m.is_pinned);
+  // Show all messages in the normal flow, except those that were ONLY loaded because they were pinned 
+  // (we load pinned messages on mount, so if they are old they will be at the top anyway)
 
   return (
     <Card className={cn(
-      "overflow-hidden flex flex-col",
-      variant === 'overlay' ? 'bg-transparent border-none shadow-none h-full' : 'bg-gradient-card border-border h-[500px]'
+      "overflow-hidden flex flex-col h-full",
+      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-gradient-card border-border h-[500px]')
     )}>
       {/* Header */}
       {variant !== 'overlay' && (
@@ -251,11 +363,43 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
           </div>
         </div>
         {isModerator && (
-          <Badge className="bg-gold text-gold-foreground gap-1">
-            <Shield className="h-3 w-3" />
-            <span className={cn('text-xs font-bold', lang === 'ar' && 'font-arabic')}>{t('moderator', lang)}</span>
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setBotsEnabled(!botsEnabled)}
+              className={cn("h-7 text-xs gap-1.5 border-dashed", botsEnabled ? "bg-primary/10 text-primary border-primary/30" : "text-muted-foreground")}
+            >
+              {botsEnabled ? <Bot className="h-3.5 w-3.5" /> : <BotOff className="h-3.5 w-3.5" />}
+              {lang === 'ar' ? (botsEnabled ? 'إيقاف البوتات' : 'تشغيل البوتات') : (botsEnabled ? 'Disable Bots' : 'Enable Bots')}
+            </Button>
+            <Badge className="bg-gold text-gold-foreground gap-1">
+              <Shield className="h-3 w-3" />
+              <span className={cn('text-xs font-bold', lang === 'ar' && 'font-arabic')}>{t('moderator', lang)}</span>
+            </Badge>
+          </div>
         )}
+        </div>
+      )}
+      {/* Pinned Messages */}
+      {pinnedMessages.length > 0 && (
+        <div className="bg-primary/10 border-b border-primary/20 p-3 shrink-0 flex flex-col gap-2">
+          {pinnedMessages.map((msg) => (
+            <div key={`pinned-${msg.id}`} className="flex items-start gap-2 text-sm relative group">
+              <Pin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                <span className="font-bold mr-1.5 text-primary">
+                  {msg.username} {lang === 'ar' ? ':' : ':'}
+                </span>
+                <span className={cn("text-foreground/90 font-medium", variant === 'overlay' && "text-white")}>{renderMessageText(msg.message)}</span>
+              </div>
+              {isModerator && (
+                <button onClick={() => togglePin(msg.id, true)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-primary/20 text-primary transition-opacity absolute top-0 right-0 shrink-0" title={lang === 'ar' ? 'إلغاء التثبيت' : 'Unpin'}>
+                  <PinOff className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          ))}
         </div>
       )}
 
@@ -268,21 +412,26 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
               <div className="flex-1 min-w-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <span className={cn(
                   "font-bold mr-1.5",
-                  isOwn ? "text-primary" : "text-blue-500"
+                  variant === 'overlay' ? "text-white drop-shadow-md" : (isOwn ? "text-primary" : "text-blue-500")
                 )}>
                   {msg.username} {lang === 'ar' ? ':' : ':'}
                 </span>
-                <span className="text-foreground/90">{msg.message}</span>
+                <span className={cn("text-foreground/90", variant === 'overlay' && "text-white drop-shadow-md font-medium")}>{renderMessageText(msg.message)}</span>
               </div>
               
-              {isModerator && !isOwn && (
+              {isModerator && (
                 <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity shrink-0 bg-background/80 px-1 rounded absolute top-1 right-1">
+                  <button onClick={() => togglePin(msg.id, !!msg.is_pinned)} className="p-1 rounded hover:bg-primary/20 text-primary transition-colors" title={lang === 'ar' ? (msg.is_pinned ? 'إلغاء التثبيت' : 'تثبيت') : (msg.is_pinned ? 'Unpin' : 'Pin')}>
+                    {msg.is_pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
+                  </button>
                   <button onClick={() => deleteMessage(msg.id)} className="p-1 rounded hover:bg-destructive/20 text-destructive transition-colors" title={lang === 'ar' ? 'حذف' : 'Delete'}>
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => banUser(msg.user_id)} className="p-1 rounded hover:bg-destructive/20 text-destructive transition-colors" title={lang === 'ar' ? 'حظر' : 'Ban'}>
-                    <Ban className="h-3.5 w-3.5" />
-                  </button>
+                  {!isOwn && (
+                    <button onClick={() => banUser(msg.user_id)} className="p-1 rounded hover:bg-destructive/20 text-destructive transition-colors" title={lang === 'ar' ? 'حظر' : 'Ban'}>
+                      <Ban className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -296,52 +445,52 @@ export function LiveChat({ matchId = 'general', variant = 'default' }: LiveChatP
       </div>
 
       {/* Input */}
-      <div className={cn("p-3 shrink-0 relative flex items-center gap-1", variant === 'overlay' ? 'border-none' : 'border-t border-border')}>
-        {showEmojis && (
-          <div className="absolute bottom-[110%] right-3 z-50 shadow-2xl rounded-xl overflow-hidden">
-            <EmojiPicker 
-              onEmojiClick={(emojiData) => {
-                setInputMsg(prev => prev + emojiData.emoji);
-                setShowEmojis(false);
-              }}
-              theme={Theme.DARK}
-              lazyLoadEmojis={true}
-              searchDisabled={true}
-              skinTonesDisabled={true}
-              width={280}
-              height={350}
-            />
-          </div>
-        )}
-        <div className="flex-1">
-            <Input
-              value={inputMsg}
-              onChange={(e) => setInputMsg(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-              placeholder={t('chatPlaceholder', lang)}
-              className={cn(
-                "border-border text-sm h-10 w-full", 
-                variant === 'overlay' ? "bg-black/40 text-white placeholder:text-white/50 border-none backdrop-blur-sm" : "bg-muted"
-              )}
-              dir={lang === 'ar' ? 'rtl' : 'ltr'}
-              maxLength={200}
-            />
-        </div>
-        <button
-          onClick={() => setShowEmojis(!showEmojis)}
-          className="p-3 text-muted-foreground hover:text-primary transition-colors bg-black/40 border-y border-l border-border rounded-l-xl focus:outline-none"
+      {variant !== 'overlay' && (
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            sendMessage();
+          }} 
+          className={cn("p-3 shrink-0 relative flex items-center gap-1 border-t border-border")}
         >
-          <Smile className="h-5 w-5" />
-        </button>
-        <Button
-            onClick={sendMessage}
-            disabled={!inputMsg.trim()}
-            size="icon"
-            className="bg-primary text-primary-foreground hover:bg-primary-glow shadow-neon shrink-0 ml-2"
+          {showEmojis && (
+            <div className="absolute bottom-[110%] right-3 z-50 shadow-2xl rounded-xl overflow-hidden">
+              <EmojiPicker 
+                onEmojiClick={(emojiData) => {
+                  setInputMsg(prev => prev + emojiData.emoji);
+                }}
+                theme={Theme.DARK}
+                lazyLoadEmojis={true}
+                searchDisabled={true}
+                skinTonesDisabled={true}
+                width={280}
+                height={350}
+              />
+            </div>
+          )}
+          <div className="flex-1">
+              <Input
+                value={inputMsg}
+                onChange={(e) => setInputMsg(e.target.value)}
+                placeholder={t('chatPlaceholder', lang)}
+                className="border-border text-sm h-10 w-full bg-muted"
+                dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                maxLength={200}
+                disabled={isSending}
+              />
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowEmojis(!showEmojis)}
+            className="p-3 text-muted-foreground hover:text-primary transition-colors bg-black/40 border-y border-l border-border rounded-l-xl focus:outline-none"
           >
-            <Send className="h-4 w-4" />
+            <Smile className="h-5 w-5" />
+          </button>
+          <Button type="submit" disabled={!inputMsg.trim() || isSending} size="icon" className="shrink-0 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full h-10 w-10 shadow-neon">
+            <Send className={cn("h-4 w-4", lang === 'ar' && "rotate-180")} />
           </Button>
-      </div>
+        </form>
+      )}
     </Card>
   );
 }

@@ -147,15 +147,22 @@ export function MatchCard({ match }: MatchCardProps) {
 
       {isFinished && (
         <div className="px-4 pb-4">
-          {match.highlight_url ? (
+          {getYouTubeEmbedUrl(match.highlight_url || '') ? (
             <div className="aspect-video w-full overflow-hidden rounded-xl bg-black/50 ring-1 ring-border shadow-lg relative">
                <iframe
-                  src={getYouTubeEmbedUrl(match.highlight_url)}
+                  src={getYouTubeEmbedUrl(match.highlight_url || '')!}
                   className="w-full h-full border-0 absolute inset-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
             </div>
+          ) : match.highlight_url ? (
+            <Button asChild variant="outline" className="w-full font-bold border-primary/40 text-primary hover:bg-primary/10">
+              <a href={match.highlight_url} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 me-2" />
+                {lang === 'ar' ? 'مشاهدة الملخص' : 'Watch Highlights'}
+              </a>
+            </Button>
           ) : (
             <Button onClick={openHighlights} variant="outline" className="w-full font-bold border-primary/40 text-primary hover:bg-primary/10">
               <ExternalLink className="h-4 w-4 me-2" />
@@ -171,27 +178,27 @@ export function MatchCard({ match }: MatchCardProps) {
           <span className="truncate">{match.venue}</span>
         </div>
         <span className="text-primary opacity-0 group-hover:opacity-100 transition-opacity font-semibold">
-          Match details
+          {lang === 'ar' ? 'تفاصيل المباراة' : 'Match details'}
         </span>
       </div>
     </Card>
   );
 }
 
-function getYouTubeEmbedUrl(url: string) {
-  if (!url) return '';
+function getYouTubeEmbedUrl(url: string): string | null {
+  if (!url) return null;
   try {
-    const urlObj = new URL(url);
+    const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
     if (urlObj.hostname.includes('youtube.com')) {
       const videoId = urlObj.searchParams.get('v');
-      return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : url;
+      return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : null;
     }
     if (urlObj.hostname === 'youtu.be') {
       const videoId = urlObj.pathname.slice(1);
-      return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : url;
+      return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0` : null;
     }
   } catch (e) {
-    return url;
+    return null;
   }
-  return url;
+  return null;
 }

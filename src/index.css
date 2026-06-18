@@ -116,13 +116,12 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    linear-gradient(90deg, transparent 49.6%, hsl(var(--primary) / 0.14) 49.8%, hsl(var(--primary) / 0.14) 50.2%, transparent 50.4%),
-    radial-gradient(circle at center, transparent 0 16%, hsl(var(--primary) / 0.12) 16.2% 16.8%, transparent 17%),
-    repeating-linear-gradient(90deg, hsl(140 55% 18% / 0.35) 0 72px, hsl(140 55% 14% / 0.35) 72px 144px);
-  opacity: 0.07;
+    radial-gradient(circle at center, transparent 0 16%, hsl(var(--primary) / 0.05) 16.2% 16.8%, transparent 17%),
+    repeating-linear-gradient(90deg, hsl(140 55% 18% / 0.2) 0 72px, hsl(140 55% 14% / 0.2) 72px 144px);
+  opacity: 0.1;
   pointer-events: none;
   z-index: 0;
-  mix-blend-mode: luminosity;
+  /* Removed mix-blend-mode: luminosity to fix mobile GPU tearing/smearing */
 }
 
 #root {

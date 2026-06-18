@@ -1,4 +1,6 @@
-const ADMIN_EMAILS = new Set(['rishoshi@gmail.com']);
+import { ADMIN_EMAILS_LIST } from '@/config/admins';
+
+const ADMIN_EMAILS = new Set(ADMIN_EMAILS_LIST.map(e => e.toLowerCase()));
 
 export function isAdminUser(user?: { email?: string | null; app_metadata?: { role?: string } } | null) {
   if (!user) return false;
