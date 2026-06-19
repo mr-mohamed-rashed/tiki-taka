@@ -245,16 +245,16 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   
                   <div className="relative z-10 flex items-center w-full h-full">
                     {/* Centered One2 Text */}
-                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%]">
+                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
                       <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
-                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
+                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold select-none" style={{ fontSize: '32px', letterSpacing: '0.02em', userSelect: 'none' }}>
                           <tspan fill="#4ade80">One</tspan>
                           <tspan fill="#ffffff">2</tspan>
                         </text>
                       </svg>
                     </div>
-                    {/* 'مباشر' box below the rectangle, shifted left to cover watermark */}
-                    <div className="absolute top-[100%] right-[15%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                    {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
+                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap select-none" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
                       مباشر
                     </div>
                   </div>
@@ -375,16 +375,16 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   
                   <div className="relative z-10 flex items-center w-full h-full">
                     {/* Centered One2 Text */}
-                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%]">
+                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
                       <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
-                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
+                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold select-none" style={{ fontSize: '32px', letterSpacing: '0.02em', userSelect: 'none' }}>
                           <tspan fill="#4ade80">One</tspan>
                           <tspan fill="#ffffff">2</tspan>
                         </text>
                       </svg>
                     </div>
-                    {/* 'مباشر' box below the rectangle, shifted left to cover watermark */}
-                    <div className="absolute top-[100%] right-[15%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                    {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
+                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap select-none" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
                       مباشر
                     </div>
                   </div>
