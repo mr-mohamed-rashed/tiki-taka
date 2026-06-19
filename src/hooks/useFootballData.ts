@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { getPlayerRankings, teams } from '@/lib/footballData';
+import { getPlayerRankings, teams, getLiveMatches, getUpcomingMatches, getFinishedMatches } from '@/lib/footballData';
 import type { Match, Scorer } from '@/lib/footballData';
 import { queryClient } from '@/App';
 
