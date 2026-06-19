@@ -333,7 +333,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     )}>
       {/* Header */}
       {variant !== 'overlay' && (
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/60 shrink-0">
+        <div className="hidden md:flex items-center justify-between px-5 py-3 border-b border-border bg-card/60 shrink-0">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/15">
             <MessageCircle className="h-4 w-4 text-primary" />

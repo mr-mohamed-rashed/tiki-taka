@@ -285,14 +285,14 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
       <div className="p-3 sm:p-4 bg-background/40">
 
         {servers.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-3 pb-1 md:flex-wrap md:overflow-visible md:pb-0">
             {servers.map((server, idx) => (
               <Button
                 key={idx}
                 variant={idx === activeServerIndex ? "default" : "secondary"}
                 size="sm"
                 onClick={() => setActiveServerIndex(idx)}
-                className="font-bold text-xs shadow-sm"
+                className="font-bold text-xs shadow-sm shrink-0 whitespace-nowrap"
               >
                 {server.name || `Server ${idx + 1}`}
               </Button>

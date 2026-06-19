@@ -42,6 +42,15 @@ const LiveMatches = () => {
       </div>
 
       <main className="flex-1 relative w-full h-full flex flex-col">
+        {/* Mobile Floating App Bar */}
+        <div className="z-[60] absolute top-0 left-0 w-full md:hidden pointer-events-none p-1 transition-opacity duration-300">
+           <div className="pointer-events-auto bg-black/60 backdrop-blur-md rounded-full px-2 shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10">
+             <div className="[&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-2 [&>nav]:h-12 flex items-center">
+               <Navigation />
+             </div>
+           </div>
+        </div>
+
         {isLoading ? (
           <section className="flex flex-col items-center justify-center h-full w-full">
             <div className="relative group">
