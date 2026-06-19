@@ -1,8 +1,8 @@
 import { CheckCircle2 } from 'lucide-react';
-import { Navigation } from '@/components/tikitaka/Navigation';
-import { NewsTicker } from '@/components/tikitaka/NewsTicker';
-import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
-import { MatchCenter } from '@/components/tikitaka/MatchCenter';
+import { Navigation } from '@/components/one2/Navigation';
+import { NewsTicker } from '@/components/one2/NewsTicker';
+import { One2Footer } from '@/components/one2/One2Footer';
+import { MatchCenter } from '@/components/one2/MatchCenter';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +32,7 @@ const Results = () => {
         <MatchCenter defaultTab="results" />
       </main>
 
-      <TikiTakaFooter />
+      <One2Footer />
     </div>
   );
 };

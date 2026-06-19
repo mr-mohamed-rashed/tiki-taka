@@ -1,5 +1,5 @@
 /**
- * Tiki-Taka Football Data Layer
+ * One2 Football Data Layer
  * -------------------------------------------------------
  * All data below is based on VERIFIED facts from FIFA.com and official sources
  * as of May 29, 2026. The FIFA World Cup 2026â„¢ begins June 11, 2026.
@@ -685,7 +685,7 @@ export const getCommentary = (): CommentaryEvent[] => [
   { id: 4,  minute: "4'",  type: 'info',   text: 'England drawn with Croatia, Ghana and Panama in Group L under Thomas Tuchel.' },
   { id: 3,  minute: "3'",  type: 'info',   text: 'France face Senegal and Norway in Group I â€” an intriguing European vs African clash.' },
   { id: 2,  minute: "2'",  type: 'info',   text: '48 teams, 12 groups, 104 matches, 3 host nations â€” a new era for the FIFA World Cup.' },
-  { id: 1,  minute: "1'",  type: 'info',   text: 'Welcome to Tiki-Taka â€” your live hub for the FIFA World Cup 2026 in Canada, Mexico & USA.' },
+  { id: 1,  minute: "1'",  type: 'info',   text: 'Welcome to One2 â€” your live hub for the FIFA World Cup 2026 in Canada, Mexico & USA.' },
 ];
 
 export const getHighlights = (): Highlight[] => [

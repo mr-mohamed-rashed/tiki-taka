@@ -40,11 +40,11 @@ Deno.serve(async (req: Request) => {
 
     // SMART POLLING: Cache durations in seconds
     const cacheDurations: Record<string, number> = {
-      live: 60 * 5,          // 5 minutes for live matches
-      fixtures: 86400,       // 24 hours (schedule)
-      results: 86400,        // 24 hours (cleared automatically after match finishes)
-      standings: 86400,      // 24 hours (cleared automatically after match finishes)
-      topscorers: 86400,     // 24 hours (cleared automatically after match finishes)
+      live: 240,             // 4 minutes exactly for live matches
+      fixtures: 43200,       // 12 hours (refreshed automatically when a match ends)
+      results: 43200,        // 12 hours
+      standings: 43200,      // 12 hours
+      topscorers: 43200,     // 12 hours
     };
 
     const maxAge = cacheDurations[endpoint] || 3600;

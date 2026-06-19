@@ -1,7 +1,7 @@
-const CACHE_NAME = 'tiki-taka-assets-v2';
+const CACHE_NAME = 'one2-assets-v2';
 const APP_SHELL = [
   '/manifest.webmanifest',
-  '/icons/tiki-taka-icon.png',
+  '/icons/one2-icon.png',
 ];
 
 self.addEventListener('install', (event) => {

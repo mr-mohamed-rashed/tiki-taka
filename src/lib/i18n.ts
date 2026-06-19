@@ -1,5 +1,5 @@
 /**
- * Bilingual translations for Tiki-Taka.
+ * Bilingual translations for One2.
  * Keys are in English; values are en/ar pairs.
  */
 
@@ -83,20 +83,20 @@ const T = {
   tickerLabel: { en: 'World Cup Live', ar: 'كأس العالم مباشر' },
 
   footerStatement: {
-    en: 'Tiki-Taka is your FIFA World Cup hub: live scores, 2D match tracking, Arabic commentary, and real-time standings in one place.',
-    ar: 'تيكي تاكا هو مركزك لمتابعة كأس العالم: نتائج مباشرة، متعقب ثنائي الأبعاد، تعليق عربي، وترتيب فوري في مكان واحد.',
+    en: 'One2 is your FIFA World Cup hub: live scores, 2D match tracking, Arabic commentary, and real-time standings in one place.',
+    ar: 'وان تو هو مركزك لمتابعة كأس العالم: نتائج مباشرة، متعقب ثنائي الأبعاد، تعليق عربي، وترتيب فوري في مكان واحد.',
   },
   footerNewsletter: { en: 'Get the latest World Cup updates', ar: 'احصل على آخر مستجدات كأس العالم' },
   footerEmail: { en: 'Email address', ar: 'البريد الإلكتروني' },
   footerSubscribe: { en: 'Subscribe', ar: 'اشترك' },
-  footerCopyright: { en: '© 2026 Tiki-Taka. All rights reserved.', ar: '© 2026 تيكي تاكا. جميع الحقوق محفوظة.' },
+  footerCopyright: { en: '© 2026 One2. All rights reserved.', ar: '© 2026 وان تو. جميع الحقوق محفوظة.' },
 
   switchToAr: { en: 'العربية', ar: 'English' },
   loading: { en: 'Loading...', ar: 'جاري التحميل...' },
   usingLiveData: { en: 'Live data from API-Football', ar: 'بيانات مباشرة من API-Football' },
 
   adminDashboard: { en: 'Dashboard', ar: 'لوحة القيادة' },
-  adminTitle: { en: 'Tiki-Taka Admin', ar: 'إدارة تيكي تاكا' },
+  adminTitle: { en: 'One2 Admin', ar: 'إدارة وان تو' },
   adminViewSite: { en: 'View Site', ar: 'عرض الموقع' },
   adminEditWidgets: { en: 'Edit Widgets', ar: 'تعديل الأدوات' },
   adminLogout: { en: 'Logout', ar: 'تسجيل الخروج' },

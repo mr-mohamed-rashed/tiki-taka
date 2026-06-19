@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { getLiveMatches, getUpcomingMatches, getFinishedMatches, getTopScorers, getPlayerRankings, teams } from '@/lib/footballData';
+import { getPlayerRankings, teams } from '@/lib/footballData';
 import type { Match, Scorer } from '@/lib/footballData';
 import { queryClient } from '@/App';
 
@@ -15,13 +15,11 @@ function getSmartPollingInterval(): number | false {
     const elapsedMins = (now - kickoff) / 60000;
     
     if (elapsedMins < 0) return false;
-    if (elapsedMins >= 0 && elapsedMins < 50) return 210_000;
-    if (elapsedMins >= 50 && elapsedMins < 65) return Math.max((65 - elapsedMins) * 60000, 10000);
-    if (elapsedMins >= 65 && elapsedMins < 115) return 210_000;
+    if (elapsedMins >= 0 && elapsedMins < 115) return 240_000;
     if (elapsedMins >= 115) return 240_000;
   }
   
-  const upcoming = queryClient.getQueryData<Match[]>(['upcoming-fixtures']) || getUpcomingMatches();
+  const upcoming = queryClient.getQueryData<Match[]>(['upcoming-fixtures']) || [];
   const nextUpcoming = upcoming
     .filter(m => new Date(m.date).getTime() > now)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -31,14 +29,13 @@ function getSmartPollingInterval(): number | false {
   const nextKickoff = new Date(nextUpcoming[0].date).getTime();
   const timeToKickoff = nextKickoff - now;
   
-  if (timeToKickoff <= 0) return 210_000;
+  if (timeToKickoff <= 0) return 240_000;
   return Math.min(timeToKickoff, 3600_000);
 }
 
 // World Cup 2026 league ID on API-Football is 1
 const WC_LEAGUE = '1';
 const WC_SEASON = '2026';
-const WORLD_CUP_API = 'https://worldcup26.ir';
 
 async function callProxy(body: object) {
   try {
@@ -47,96 +44,9 @@ async function callProxy(body: object) {
     if (data?.error) throw new Error(data.error);
     return data;
   } catch (err) {
-    console.error('Proxy failed, attempting direct fetch...', err);
-    if (['live', 'fixtures', 'results'].includes((body as any).endpoint)) {
-      try {
-        const res = await fetch(`${WORLD_CUP_API}/get/games`);
-        const json = await res.json();
-        const games = Array.isArray(json) ? json : json?.games;
-        if (Array.isArray(games)) {
-          const teamsMap = Object.values(teams);
-          const normalize = (name: string) => (name || '').toLowerCase().replace('turkey', 'turkiye').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          const mapped = games.map((g: any, index: number) => {
-            const apiHome = g.home_team_name_en || '';
-            const apiAway = g.away_team_name_en || '';
-            const nHome = normalize(apiHome);
-            const nAway = normalize(apiAway);
-            
-            const hTeam = teamsMap.find(t => normalize(t.name) === nHome) || { id: `H${index}`, name: apiHome, shortName: apiHome.slice(0,3).toUpperCase(), flag: '', code: '', color: '#888' };
-            const aTeam = teamsMap.find(t => normalize(t.name) === nAway) || { id: `A${index}`, name: apiAway, shortName: apiAway.slice(0,3).toUpperCase(), flag: '', code: '', color: '#888' };
-            
-            const finished = String(g.finished ?? '').toLowerCase() === 'true';
-            const timeElapsed = String(g.time_elapsed ?? '').toLowerCase();
-            const isLive = !finished && timeElapsed !== 'notstarted' && timeElapsed !== '' && timeElapsed !== 'null';
-            
-            // Try to find a real date from base matches just in case
-            const baseMatches = [...getFinishedMatches(), ...getUpcomingMatches()];
-            const existingMatch = baseMatches.find(m => normalize(m.home.name) === nHome && normalize(m.away.name) === nAway);
-
-            return {
-              id: existingMatch ? existingMatch.id : `wc26-${index}`,
-              competition: existingMatch ? existingMatch.competition : 'World Cup 2026',
-              stage: existingMatch ? existingMatch.stage : 'Group Stage',
-              date: existingMatch ? existingMatch.date : new Date().toISOString(),
-              home: hTeam,
-              away: aTeam,
-              homeScore: Number(g.home_score) || 0,
-              awayScore: Number(g.away_score) || 0,
-              status: isLive ? 'live' : finished ? 'finished' : 'upcoming',
-              minute: isLive ? `${timeElapsed}'` : undefined,
-            } as Match;
-          });
-          
-          return {
-            provider: 'worldcup26-direct',
-            matches: mapped.filter((m: Match) => {
-              if ((body as any).endpoint === 'live') return m.status === 'live';
-              if ((body as any).endpoint === 'results') return m.status === 'finished';
-              return m.status === 'upcoming';
-            })
-          };
-        }
-      } catch (directErr) {
-        console.error('Direct fetch also failed', directErr);
-      }
-    }
+    console.error('Proxy failed', err);
     throw err;
   }
-}
-
-function interpolateLiveMinutes(matches: Match[], isMockData = false): Match[] {
-  if (!isMockData) return matches; // Never overwrite real API minutes
-  
-  const now = Date.now();
-  return matches.map(match => {
-    if (match.status === 'live') {
-      const matchTime = new Date(match.date).getTime();
-      let elapsedMins = Math.floor((now - matchTime) / 60000);
-      
-      if (elapsedMins < 0) elapsedMins = 0;
-
-      let newMinuteStr = '';
-      if (elapsedMins > 45 && elapsedMins <= 60) {
-        newMinuteStr = 'HT';
-      } else {
-        if (elapsedMins > 60) elapsedMins -= 15; // Account for half time
-        
-        if (elapsedMins > 90 && elapsedMins <= 96) {
-          newMinuteStr = `90+${elapsedMins - 90}'`;
-        } else if (elapsedMins > 96) {
-          newMinuteStr = 'FT';
-        } else {
-          newMinuteStr = `${elapsedMins}'`;
-        }
-      }
-      
-      const originalMinuteNum = match.minute ? parseInt(match.minute.replace(/\D/g, ''), 10) : 0;
-      const isStale = newMinuteStr !== 'HT' && newMinuteStr !== 'FT' && elapsedMins > originalMinuteNum;
-      
-      return { ...match, minute: newMinuteStr, isScoreStale: isStale, status: newMinuteStr === 'FT' ? 'finished' : 'live' };
-    }
-    return match;
-  });
 }
 
 // ---------- Live fixtures ----------
@@ -150,7 +60,7 @@ export function useLiveFixtures() {
         let results: Match[] = [];
         if (data?.matches) results = data.matches as Match[];
         else if (data?.response) results = data.response.map(mapFixture);
-        else return interpolateLiveMinutes(getLiveMatches(), true);
+        else return [];
         
         const previousLive = queryClient.getQueryData<Match[]>(['live-fixtures']);
         const hadLive = previousLive?.some(m => m.status === 'live');
@@ -165,11 +75,11 @@ export function useLiveFixtures() {
         
         return results;
       } catch {
-        return interpolateLiveMinutes(getLiveMatches(), true);
+        return [];
       }
     },
     refetchInterval: getSmartPollingInterval,
-    initialData: interpolateLiveMinutes(getLiveMatches(), true),
+    initialData: [],
   });
 }
 
@@ -181,14 +91,14 @@ export function useUpcomingFixtures() {
       try {
         const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.matches?.length) return getUpcomingOnly(data.matches as Match[]);
-        if (!data?.response?.length) return getUpcomingOnly(getUpcomingMatches());
+        if (!data?.response?.length) return [];
         return getUpcomingOnly(data.response.map(mapFixture));
       } catch {
-        return getUpcomingOnly(getUpcomingMatches());
+        return [];
       }
     },
     refetchInterval: false,
-    initialData: getUpcomingOnly(getUpcomingMatches()),
+    initialData: [],
   });
 }
 
@@ -203,7 +113,6 @@ export function useResults() {
         if (data?.matches?.length) proxyResults = getFinishedOnly(data.matches as Match[]);
         else if (data?.response?.length) proxyResults = getFinishedOnly(data.response.map(mapFixture));
         
-        const mockResults = getFinishedMatches();
         const teamsMap = Object.values(teams);
         
         proxyResults = proxyResults.map(m => {
@@ -216,10 +125,9 @@ export function useResults() {
           };
         });
 
-        const allResults = [...proxyResults, ...mockResults];
         const uniqueResults: Match[] = [];
         const seen = new Set();
-        for (const m of allResults) {
+        for (const m of proxyResults) {
           const key = `${m.home.name}-${m.away.name}`;
           if (!seen.has(key)) {
             seen.add(key);
@@ -242,7 +150,7 @@ export function useResults() {
         }
         return sortedResults;
       } catch {
-        return getFinishedMatches();
+        return [];
       }
     },
     refetchInterval: false,
@@ -273,10 +181,10 @@ export function useTopScorers() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'topscorers', league: WC_LEAGUE, season: WC_SEASON });
-        if (!data?.response?.length) return await getWorldCupTopScorers();
+        if (!data?.response?.length) return [];
         return data.response.slice(0, 10).map(mapScorer);
       } catch {
-        return await getWorldCupTopScorers();
+        return [];
       }
     },
     refetchInterval: false,
@@ -368,111 +276,6 @@ function mapScorer(s: ApiScorer, i: number) {
     matches: stat.games.appearences ?? 0,
     isLeader: i === 0,
   };
-}
-
-type WorldCupGame = {
-  finished?: string;
-  home_team_name_en?: string;
-  away_team_name_en?: string;
-  home_scorers?: string | null;
-  away_scorers?: string | null;
-};
-
-async function getWorldCupTopScorers(): Promise<Scorer[]> {
-  try {
-    const response = await fetch(`${WORLD_CUP_API}/get/games`);
-    if (!response.ok) throw new Error('WorldCup26 scorers unavailable');
-    const data = await response.json();
-    const games: WorldCupGame[] = Array.isArray(data) ? data : data?.games;
-    if (!Array.isArray(games)) return getTopScorers();
-
-    const scorerMap = new Map<string, Scorer>();
-
-    for (const game of games) {
-      if (String(game.finished).toLowerCase() !== 'true') continue;
-      addScorersFromString(scorerMap, game.home_scorers, game.home_team_name_en || 'Team');
-      addScorersFromString(scorerMap, game.away_scorers, game.away_team_name_en || 'Team');
-    }
-
-    const scorers = Array.from(scorerMap.values())
-      .sort((a, b) => b.goals - a.goals || a.name.localeCompare(b.name))
-      .map((scorer, index) => ({
-        ...scorer,
-        rank: index + 1,
-        isLeader: index === 0,
-      }));
-
-    return scorers.length ? scorers.slice(0, 20) : getTopScorers();
-  } catch {
-    return getTopScorers();
-  }
-}
-
-function addScorersFromString(scorerMap: Map<string, Scorer>, raw: string | null | undefined, teamName: string) {
-  if (!raw || raw === 'null') return;
-
-  for (const scorerName of parseWorldCupScorers(raw)) {
-    const key = `${scorerName}|${teamName}`;
-    const existing = scorerMap.get(key);
-
-    if (existing) {
-      existing.goals += 1;
-      continue;
-    }
-
-    scorerMap.set(key, {
-      rank: 0,
-      name: scorerName,
-      club: teamName,
-      country: {
-        id: teamName,
-        name: teamName,
-        shortName: teamName.slice(0, 3).toUpperCase(),
-        flag: teamFlag(teamName),
-        code: teamName.slice(0, 2).toUpperCase(),
-        color: '#888888',
-      },
-      goals: 1,
-      assists: 0,
-      matches: 1,
-    });
-  }
-}
-
-function parseWorldCupScorers(raw: string) {
-  return raw
-    .replace(/[{}]/g, '')
-    .split(',')
-    .map((part) => part
-      .replace(/[“”"]/g, '')
-      .replace(/\([^)]*\)/g, '')
-      .replace(/\s+\d{1,3}'(?:\+\d+')?/g, '')
-      .replace(/\s+\d{1,3}'/g, '')
-      .trim())
-    .filter(Boolean);
-}
-
-function teamFlag(teamName: string) {
-  const team = Object.values(teams).find(t => t.name.toLowerCase() === teamName.toLowerCase() || t.id.toLowerCase() === teamName.toLowerCase());
-  if (team) return team.flag;
-
-  const flags: Record<string, string> = {
-    Mexico: 'mx',
-    'South Africa': 'za',
-    'South Korea': 'kr',
-    'Czech Republic': 'cz',
-    Canada: 'ca',
-    'Bosnia and Herzegovina': 'ba',
-    'United States': 'us',
-    Paraguay: 'py',
-  };
-
-  const code = flags[teamName];
-  return code ? `https://flagcdn.com/w160/${code}.png` : '';
-}
-
-function getMockResults() {
-  return getFinishedOnly([...getFinishedMatches()]);
 }
 
 export type { ApiStandingGroup };

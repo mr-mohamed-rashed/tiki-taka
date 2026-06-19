@@ -13,8 +13,8 @@ import Groups from './pages/Groups';
 import Admin from './pages/Admin';
 import Roadmap from './pages/Roadmap';
 import Studio from './pages/Studio';
-import { GlobalFloatingAd } from './components/tikitaka/GlobalFloatingAd';
-import { GoogleAuthGate } from './components/tikitaka/GoogleAuthGate';
+import { GlobalFloatingAd } from './components/one2/GlobalFloatingAd';
+import { GoogleAuthGate } from './components/one2/GoogleAuthGate';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 
@@ -50,7 +50,7 @@ const Layout = () => {
   return (
     <GoogleAuthGate
       autoStart
-      title="سجل دخولك لمتابعة تيكي تاكا"
+      title="سجل دخولك لمتابعة وان تو"
       description="أي تنقل داخل الموقع يحتاج تسجيل دخول مجاني بحساب Google لتسجيل الزيارة وحفظ تجربة كأس العالم."
     >
       <ScrollRestoration />

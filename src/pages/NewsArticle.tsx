@@ -2,10 +2,10 @@ import { Navigate, useParams } from 'react-router-dom';
 import { ArrowRight, Calendar, ExternalLink, Loader2, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
-import { Navigation } from '@/components/tikitaka/Navigation';
-import { NewsTicker } from '@/components/tikitaka/NewsTicker';
-import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
+import { EditModeToggle } from '@/components/one2/EditModeToggle';
+import { Navigation } from '@/components/one2/Navigation';
+import { NewsTicker } from '@/components/one2/NewsTicker';
+import { One2Footer } from '@/components/one2/One2Footer';
 import { useLanguage } from '@/context/LanguageContext';
 import { useManualNews } from '@/hooks/useManualNews';
 import { cn } from '@/lib/utils';
@@ -101,7 +101,7 @@ export default function NewsArticle() {
           </div>
         </article>
       </main>
-      <TikiTakaFooter />
+      <One2Footer />
     </div>
   );
 }

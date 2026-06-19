@@ -7,7 +7,7 @@ import { routers } from "./router";
 import { LanguageProvider } from "./context/LanguageContext";
 import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 import { AuthProvider } from "./context/AuthContext";
-import { AppErrorBoundary } from "./components/tikitaka/AppErrorBoundary";
+import { AppErrorBoundary } from "./components/one2/AppErrorBoundary";
 
 export const queryClient = new QueryClient({
   defaultOptions: {

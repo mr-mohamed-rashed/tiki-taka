@@ -1,8 +1,8 @@
-import { Navigation } from '@/components/tikitaka/Navigation';
-import { NewsTicker } from '@/components/tikitaka/NewsTicker';
-import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
-import { TopScorersTable } from '@/components/tikitaka/TopScorersTable';
-import { BestPlayersTable } from '@/components/tikitaka/BestPlayersTable';
+import { Navigation } from '@/components/one2/Navigation';
+import { NewsTicker } from '@/components/one2/NewsTicker';
+import { One2Footer } from '@/components/one2/One2Footer';
+import { TopScorersTable } from '@/components/one2/TopScorersTable';
+import { BestPlayersTable } from '@/components/one2/BestPlayersTable';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Trophy, Star, Award } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
@@ -48,7 +48,7 @@ const Standings = () => {
         </Tabs>
       </main>
 
-      <TikiTakaFooter />
+      <One2Footer />
     </div>
   );
 };

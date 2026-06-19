@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">One2</title>
+  <rect width="512" height="512" rx="96" fill="#07100c"/>
+  <circle cx="256" cy="256" r="174" fill="none" stroke="#00ff66" stroke-width="24"/>
+  <path d="M256 82v348M82 256h348" stroke="#00ff66" stroke-width="14" stroke-linecap="round" opacity=".35"/>
+  <path d="M161 168c42-32 114-34 156 0 43 34 43 96 0 130-42 34-114 32-156 0-43-34-43-96 0-130Z" fill="none" stroke="#f4d35e" stroke-width="20" stroke-linejoin="round"/>
+  <circle cx="256" cy="233" r="46" fill="#00ff66"/>
+  <path d="M221 348h70M190 386h132" stroke="#ffffff" stroke-width="20" stroke-linecap="round"/>
+</svg>

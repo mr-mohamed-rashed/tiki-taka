@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ArrowRight, Trophy, Radio, Newspaper, LayoutGrid, MapPin, Calendar } from 'lucide-react';
-import { Navigation } from '@/components/tikitaka/Navigation';
-import { NewsTicker } from '@/components/tikitaka/NewsTicker';
-import { MatchCenter } from '@/components/tikitaka/MatchCenter';
-import { TopScorersTable } from '@/components/tikitaka/TopScorersTable';
-import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
-import { ApiSportsWidget } from '@/components/tikitaka/ApiSportsWidget';
-import { WorldCupRoadmap } from '@/components/tikitaka/WorldCupRoadmap';
-import { TrendingSidebar } from '@/components/tikitaka/TrendingSidebar';
-import { AdBanner } from '@/components/tikitaka/AdBanner';
-import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
-import { EditableSiteText } from '@/components/tikitaka/EditableSiteText';
-import { EditableImage } from '@/components/tikitaka/EditableImage';
-import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
-import { TournamentCountdown } from '@/components/tikitaka/TournamentCountdown';
-import { SponsorMarquee } from '@/components/tikitaka/SponsorMarquee';
+import { Navigation } from '@/components/one2/Navigation';
+import { NewsTicker } from '@/components/one2/NewsTicker';
+import { MatchCenter } from '@/components/one2/MatchCenter';
+import { TopScorersTable } from '@/components/one2/TopScorersTable';
+import { One2Footer } from '@/components/one2/One2Footer';
+import { ApiSportsWidget } from '@/components/one2/ApiSportsWidget';
+import { WorldCupRoadmap } from '@/components/one2/WorldCupRoadmap';
+import { TrendingSidebar } from '@/components/one2/TrendingSidebar';
+import { AdBanner } from '@/components/one2/AdBanner';
+import { EditModeToggle } from '@/components/one2/EditModeToggle';
+import { EditableSiteText } from '@/components/one2/EditableSiteText';
+import { EditableImage } from '@/components/one2/EditableImage';
+import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
+import { TournamentCountdown } from '@/components/one2/TournamentCountdown';
+import { SponsorMarquee } from '@/components/one2/SponsorMarquee';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getFeaturedNews, getLiveMatches, getNextMatch } from '@/lib/footballData';
@@ -224,7 +224,7 @@ const Index = () => {
 
       </main>
 
-      <TikiTakaFooter />
+      <One2Footer />
     </div>
   );
 };

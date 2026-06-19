@@ -37,7 +37,7 @@ export function AdminGate() {
             <Shield className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <h1 className="text-2xl font-display font-extrabold mb-1">Tiki-Taka Admin</h1>
+        <h1 className="text-2xl font-display font-extrabold mb-1">One2 Admin</h1>
         <p className="text-sm text-muted-foreground mb-6">
           Sign in with the admin email or the Google account marked as admin.
         </p>

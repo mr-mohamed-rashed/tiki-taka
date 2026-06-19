@@ -1,8 +1,8 @@
-import { Navigation } from '@/components/tikitaka/Navigation';
-import { NewsTicker } from '@/components/tikitaka/NewsTicker';
-import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
-import { GroupTables } from '@/components/tikitaka/GroupTables';
-import { MatchCenter } from '@/components/tikitaka/MatchCenter';
+import { Navigation } from '@/components/one2/Navigation';
+import { NewsTicker } from '@/components/one2/NewsTicker';
+import { One2Footer } from '@/components/one2/One2Footer';
+import { GroupTables } from '@/components/one2/GroupTables';
+import { MatchCenter } from '@/components/one2/MatchCenter';
 import { Users } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
@@ -42,7 +42,7 @@ const Groups = () => {
         </section>
       </main>
 
-      <TikiTakaFooter />
+      <One2Footer />
     </div>
   );
 };

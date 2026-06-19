@@ -1,11 +1,11 @@
 import { Loader2, Newspaper, Sparkles } from 'lucide-react';
-import { AdBanner } from '@/components/tikitaka/AdBanner';
-import { AdSlotSelector } from '@/components/tikitaka/AdSlotSelector';
-import { EditModeToggle } from '@/components/tikitaka/EditModeToggle';
-import { GoogleAuthGate } from '@/components/tikitaka/GoogleAuthGate';
-import { Navigation } from '@/components/tikitaka/Navigation';
-import { NewsTicker } from '@/components/tikitaka/NewsTicker';
-import { TikiTakaFooter } from '@/components/tikitaka/TikiTakaFooter';
+import { AdBanner } from '@/components/one2/AdBanner';
+import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
+import { EditModeToggle } from '@/components/one2/EditModeToggle';
+import { GoogleAuthGate } from '@/components/one2/GoogleAuthGate';
+import { Navigation } from '@/components/one2/Navigation';
+import { NewsTicker } from '@/components/one2/NewsTicker';
+import { One2Footer } from '@/components/one2/One2Footer';
 import { ArticleCard } from '@/components/sports/ArticleCard';
 import { useLanguage } from '@/context/LanguageContext';
 import { useManualNews } from '@/hooks/useManualNews';
@@ -51,7 +51,7 @@ function NewsContent() {
             category={article.category}
             image={article.image_url || NEWS_IMAGES[index % NEWS_IMAGES.length]}
             timestamp={article.published_at}
-            author={lang === 'ar' ? 'تيكي تاكا' : 'Tiki-Taka'}
+            author={lang === 'ar' ? 'وان تو' : 'One2'}
             sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
             detailUrl={`/news/${article.id}`}
           />
@@ -120,7 +120,7 @@ const WorldCupNews = () => {
           <NewsContent />
         </GoogleAuthGate>
       </main>
-      <TikiTakaFooter />
+      <One2Footer />
     </div>
   );
 };

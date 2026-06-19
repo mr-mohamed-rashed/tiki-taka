@@ -1,4 +1,4 @@
--- Tiki-Taka fresh Supabase setup.
+-- One2 fresh Supabase setup.
 -- Run this once in Supabase SQL Editor for the new project.
 
 create table if not exists public.site_settings (

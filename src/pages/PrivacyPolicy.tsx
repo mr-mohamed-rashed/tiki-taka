@@ -1,6 +1,6 @@
 import { Shield, Eye, Settings, Cookie, Lock, Link as LinkIcon, RefreshCw, Mail } from 'lucide-react';
-import { Navigation } from '../components/tikitaka/Navigation';
-import { TikiTakaFooter } from '../components/tikitaka/TikiTakaFooter';
+import { Navigation } from '../components/one2/Navigation';
+import { One2Footer } from '../components/one2/One2Footer';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function PrivacyPolicy() {
@@ -17,10 +17,10 @@ export default function PrivacyPolicy() {
             <div className="inline-flex items-center justify-center p-4 rounded-full bg-primary/10 text-primary mb-2 shadow-neon">
               <Shield size={40} />
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold">سياسة الخصوصية لمنصة "تيكي تاكا"</h1>
+            <h1 className="text-4xl md:text-5xl font-display font-bold">سياسة الخصوصية لمنصة "وان تو"</h1>
             <h2 className="text-xl md:text-2xl text-primary font-medium mt-2">التابعة لشركة سفاري مصر (M M R)</h2>
             <p className="text-[#A1A1AA] text-lg max-w-2xl mx-auto leading-relaxed mt-4">
-              تُولي منصة تيكي تاكا (Tiki-Taka)، المملوكة والمدارة من قِبل شركة سفاري مصر (M M R)، أهمية قصوى لخصوصية زوارها ومستخدميها. توضح هذه الوثيقة أنواع البيانات الشخصية التي نجمعها، وكيفية استخدامها وحمايتها، وذلك لضمان تجربة تصفح آمنة وشفافة.
+              تُولي منصة وان تو (One2)، المملوكة والمدارة من قِبل شركة سفاري مصر (M M R)، أهمية قصوى لخصوصية زوارها ومستخدميها. توضح هذه الوثيقة أنواع البيانات الشخصية التي نجمعها، وكيفية استخدامها وحمايتها، وذلك لضمان تجربة تصفح آمنة وشفافة.
             </p>
           </div>
 
@@ -50,7 +50,7 @@ export default function PrivacyPolicy() {
                 نستخدم المعلومات التي نجمعها للأغراض التالية:
               </p>
               <ul className="list-disc list-outside text-[#A1A1AA] space-y-3 mr-14 text-lg">
-                <li>إدارة حسابك الشخصي وتخصيص تجربتك داخل موقع "تيكي تاكا".</li>
+                <li>إدارة حسابك الشخصي وتخصيص تجربتك داخل موقع "وان تو".</li>
                 <li>تحسين أداء الموقع، وتطوير المحتوى الرياضي والإحصائي بناءً على تفضيلات المستخدمين.</li>
                 <li>التواصل معك لإرسال تحديثات هامة، أو إشعارات متعلقة بحسابك، أو الرد على استفساراتك.</li>
               </ul>
@@ -63,7 +63,7 @@ export default function PrivacyPolicy() {
               </div>
               <ul className="list-disc list-outside text-[#A1A1AA] space-y-3 mr-14 text-lg">
                 <li><strong className="text-white">ملفات الكوكيز:</strong> نستخدم ملفات تعريف الارتباط لتخزين معلومات حول تفضيلات الزوار، وتسجيل معلومات محددة للمستخدم حول الصفحات التي يصل إليها أو يزورها، وذلك لتقديم خدمة مخصصة.</li>
-                <li><strong className="text-white">إعلانات الأطراف الثالثة:</strong> يستعين موقع "تيكي تاكا" بشركات إعلانات خارجية (مثل Google AdSense) لعرض الإعلانات عندما تزور موقعنا. تستخدم هذه الشركات ملفات تعريف الارتباط (مثل ملف تعريف الارتباط DART من جوجل) لخدمة الإعلانات بناءً على زياراتك لموقعنا والمواقع الأخرى على الإنترنت.</li>
+                <li><strong className="text-white">إعلانات الأطراف الثالثة:</strong> يستعين موقع "وان تو" بشركات إعلانات خارجية (مثل Google AdSense) لعرض الإعلانات عندما تزور موقعنا. تستخدم هذه الشركات ملفات تعريف الارتباط (مثل ملف تعريف الارتباط DART من جوجل) لخدمة الإعلانات بناءً على زياراتك لموقعنا والمواقع الأخرى على الإنترنت.</li>
                 <li><strong className="text-white">إلغاء الاشتراك:</strong> يمكن للمستخدمين اختيار إلغاء استخدام ملف تعريف الارتباط DART بزيارة سياسة الخصوصية الخاصة بشبكة جوجل الإعلانية والمحتوى.</li>
               </ul>
             </section>
@@ -104,7 +104,7 @@ export default function PrivacyPolicy() {
                 <h2 className="text-2xl font-bold text-white">7. الاتصال بنا</h2>
               </div>
               <p className="text-[#A1A1AA] leading-relaxed text-lg mr-9">
-                إذا كان لديك أي أسئلة أو استفسارات بشأن سياسة الخصوصية هذه، يمكنك التواصل مع إدارة منصة تيكي تاكا من خلال وسائل التواصل التالية:
+                إذا كان لديك أي أسئلة أو استفسارات بشأن سياسة الخصوصية هذه، يمكنك التواصل مع إدارة منصة وان تو من خلال وسائل التواصل التالية:
               </p>
               <ul className="list-disc list-outside text-[#A1A1AA] space-y-3 mr-14 text-lg">
                 <li><strong className="text-white">البريد الإلكتروني:</strong> <a href="mailto:rishoshi@gmail.com" className="text-primary hover:underline" dir="ltr">rishoshi@gmail.com</a></li>
@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
         </div>
       </main>
 
-      <TikiTakaFooter />
+      <One2Footer />
     </div>
   );
 }
