@@ -12,7 +12,6 @@ import { NewsTicker } from '@/components/one2/NewsTicker';
 import { ShareMenu } from '@/components/one2/ShareMenu';
 import { One2Footer } from '@/components/one2/One2Footer';
 import { TournamentCountdown } from '@/components/one2/TournamentCountdown';
-import { TournamentCountdown } from '@/components/one2/TournamentCountdown';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useLiveFixtures, useUpcomingFixtures } from '@/hooks/useFootballData';
@@ -33,11 +32,11 @@ const LiveMatches = () => {
 
 
   return (
-    <div className="h-[100dvh] flex flex-col overflow-hidden bg-black text-white" dir={dir}>
+    <div className="h-[100dvh] md:h-auto md:min-h-screen flex flex-col overflow-hidden md:overflow-visible bg-black text-white" dir={dir}>
       <EditModeToggle />
       
-      {/* App Bar (Navigation & Ticker) at the top */}
-      <div className="z-50 relative shrink-0 bg-background">
+      {/* App Bar (Navigation & Ticker) at the top - Hidden on mobile */}
+      <div className="z-50 relative shrink-0 bg-background hidden md:block">
         <NewsTicker />
         <Navigation />
       </div>
@@ -63,22 +62,25 @@ const LiveMatches = () => {
             </div>
           </section>
         ) : featured ? (
-          <section className="absolute inset-0 w-full h-full">
-            <div className="flex flex-col lg:flex-row h-full w-full">
-              <div className="flex-1 relative h-[60%] lg:h-full">
-                <Live2DTracker match={featured} hideSocials={true} />
-              </div>
-              <div className="h-[40%] lg:h-full lg:w-[400px] bg-background border-l border-border/50">
-                <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
-              </div>
+          <section className="flex flex-col lg:flex-row w-full h-full md:min-h-[600px] md:h-[calc(100vh-200px)]">
+            <div className="relative h-[35vh] sm:h-[40vh] md:h-auto md:flex-1 shrink-0">
+              <Live2DTracker match={featured} hideSocials={true} />
+            </div>
+            <div className="flex-1 min-h-0 md:min-h-[auto] md:h-full lg:w-[400px] xl:w-[450px] bg-background md:border-l border-border/50">
+              <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
             </div>
           </section>
         ) : (
-          <section className="flex items-center justify-center h-full w-full">
+          <section className="flex items-center justify-center h-full w-full min-h-[600px]">
             {nextMatch ? <TournamentCountdown match={nextMatch} /> : null}
           </section>
         )}
       </main>
+
+      {/* Footer - Hidden on mobile */}
+      <div className="hidden md:block">
+        <One2Footer />
+      </div>
     </div>
   );
 };
