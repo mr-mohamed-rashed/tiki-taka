@@ -32,7 +32,7 @@ const LiveMatches = () => {
 
 
   return (
-    <div className="h-[100dvh] md:h-auto flex flex-col overflow-hidden md:overflow-visible bg-black text-white" dir={dir}>
+    <div className="h-[100dvh] md:h-auto flex flex-col overflow-hidden md:overflow-visible bg-black text-white select-none" dir={dir}>
       <EditModeToggle />
       
       {/* App Bar (Navigation & Ticker) at the top - Hidden on mobile */}

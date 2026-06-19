@@ -137,7 +137,7 @@ export default function Studio() {
   // MOBILE LAYOUT (YouTube Style)
   if (!isDesktop) {
     return (
-      <div className="h-[100dvh] w-full bg-background flex flex-col overflow-hidden" dir={dir}>
+      <div className="h-[100dvh] w-full bg-background flex flex-col overflow-hidden select-none" dir={dir}>
         <header className="flex items-center justify-between p-3 border-b border-border bg-card shrink-0 shadow-sm z-10">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
@@ -193,7 +193,7 @@ export default function Studio() {
   // DESKTOP LAYOUT (Original Style)
   const viewers = state.viewersCount || 10243;
   return (
-    <div className="min-h-screen bg-background flex flex-col" dir={dir}>
+    <div className="min-h-screen bg-background flex flex-col select-none" dir={dir}>
       {!isTheater && <Navigation />}
 
       <main className={cn("flex-1 w-full max-w-[1920px] mx-auto", isTheater ? "p-0 h-screen overflow-hidden" : "p-4 sm:p-6 lg:p-8")}>
