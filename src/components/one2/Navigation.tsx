@@ -36,8 +36,8 @@ export function Navigation() {
               <CircleDot className="relative h-7 w-7 text-primary" strokeWidth={2.5} />
             </div>
             <div className="font-display font-extrabold text-2xl tracking-wide">
-              <span className="text-foreground">TIKI</span>
-              <span className="text-primary">-TAKA</span>
+              <span className="text-foreground">One</span>
+              <span className="text-primary font-bold">2</span>
             </div>
           </NavLink>
 

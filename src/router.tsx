@@ -22,8 +22,7 @@ const Layout = () => {
   const location = useLocation();
   useAnalytics();
   const { user, loading, signInWithGoogle } = useAuth();
-  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/studio');
-  const isPublicHome = location.pathname === '/';
+  const isPublicRoute = !location.pathname.startsWith('/admin');
 
   const handleInterceptClick = (e: React.MouseEvent) => {
     if (!loading && !user) {
@@ -33,15 +32,13 @@ const Layout = () => {
     }
   };
 
-  const shouldIntercept = isPublicHome && !loading && !user;
+  const shouldIntercept = false; // Disable intercept click globally for better UX
 
-  if (isAdminRoute || isPublicHome) {
+  if (isPublicRoute) {
     return (
-      <div onClickCapture={shouldIntercept ? handleInterceptClick : undefined} className={shouldIntercept ? 'cursor-pointer' : ''}>
+      <div>
         <ScrollRestoration />
-        <div className={shouldIntercept ? 'pointer-events-none' : ''}>
-          <Outlet />
-        </div>
+        <Outlet />
         <GlobalFloatingAd />
       </div>
     );
