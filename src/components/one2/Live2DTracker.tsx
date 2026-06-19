@@ -227,28 +227,39 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               </div>
 
-              {/* Smart Responsive Logo Cover */}
+              {/* Smart Responsive Logo Cover & Live Text */}
               <div 
                 dir="ltr"
-                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none px-[4%]"
+                className="absolute z-40 flex flex-col items-center pointer-events-none"
                 style={{ 
                   top: '4%', 
                   right: '2%', 
                   width: '24%', 
-                  aspectRatio: '3.5 / 1',
                   minWidth: '90px'
                 }}
               >
-                <div className="flex items-center justify-between w-full h-full">
-                  <svg viewBox="0 0 100 40" className="w-[65%] h-full pt-[2%]">
-                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
-                      <tspan fill="#4ade80">One</tspan>
-                      <tspan fill="#ffffff">2</tspan>
-                    </text>
-                  </svg>
-                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
-                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
+                {/* Logo Box with Map Pattern */}
+                <div className="relative flex items-center justify-between w-full aspect-[3.5/1] bg-gradient-to-br from-[#0a2351] via-[#1d4ed8] to-[#1e3a8a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] rounded-full border border-blue-400/30 px-[4%] overflow-hidden">
+                  <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]"></div>
+                  
+                  <div className="relative z-10 flex items-center justify-between w-full h-full">
+                    <svg viewBox="0 0 100 40" className="w-[65%] h-full pt-[2%]">
+                      <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
+                        <tspan fill="#4ade80">One</tspan>
+                        <tspan fill="#ffffff">2</tspan>
+                      </text>
+                    </svg>
+                    <div className="relative flex items-center justify-center w-[25%] aspect-square" style={{ perspective: '1000px' }}>
+                      <img src="/trophy.png" alt="Trophy" className="w-[140%] h-[140%] object-contain animate-spin-3d mix-blend-screen drop-shadow-2xl" />
+                    </div>
                   </div>
+                </div>
+
+                {/* Red Glow Live Text */}
+                <div className="w-full text-center mt-[3%] animate-pulse">
+                  <span className="font-bold text-white whitespace-nowrap" style={{ fontSize: 'clamp(9px, 1.4vw, 16px)', textShadow: '0 0 8px rgba(239, 68, 68, 1), 0 0 15px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.6)' }}>
+                    بث مباشر عربى وانجليزى
+                  </span>
                 </div>
               </div>
 
@@ -348,28 +359,39 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               </div>
 
-              {/* Smart Responsive Logo Cover */}
+              {/* Smart Responsive Logo Cover & Live Text */}
               <div 
                 dir="ltr"
-                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none px-[4%]"
+                className="absolute z-40 flex flex-col items-center pointer-events-none"
                 style={{ 
                   top: '4%', 
                   right: '2%', 
                   width: '24%', 
-                  aspectRatio: '3.5 / 1',
                   minWidth: '90px'
                 }}
               >
-                <div className="flex items-center justify-between w-full h-full">
-                  <svg viewBox="0 0 100 40" className="w-[65%] h-full pt-[2%]">
-                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
-                      <tspan fill="#4ade80">One</tspan>
-                      <tspan fill="#ffffff">2</tspan>
-                    </text>
-                  </svg>
-                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
-                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
+                {/* Logo Box with Map Pattern */}
+                <div className="relative flex items-center justify-between w-full aspect-[3.5/1] bg-gradient-to-br from-[#0a2351] via-[#1d4ed8] to-[#1e3a8a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] rounded-full border border-blue-400/30 px-[4%] overflow-hidden">
+                  <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]"></div>
+                  
+                  <div className="relative z-10 flex items-center justify-between w-full h-full">
+                    <svg viewBox="0 0 100 40" className="w-[65%] h-full pt-[2%]">
+                      <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
+                        <tspan fill="#4ade80">One</tspan>
+                        <tspan fill="#ffffff">2</tspan>
+                      </text>
+                    </svg>
+                    <div className="relative flex items-center justify-center w-[25%] aspect-square" style={{ perspective: '1000px' }}>
+                      <img src="/trophy.png" alt="Trophy" className="w-[140%] h-[140%] object-contain animate-spin-3d mix-blend-screen drop-shadow-2xl" />
+                    </div>
                   </div>
+                </div>
+
+                {/* Red Glow Live Text */}
+                <div className="w-full text-center mt-[3%] animate-pulse">
+                  <span className="font-bold text-white whitespace-nowrap" style={{ fontSize: 'clamp(9px, 1.4vw, 16px)', textShadow: '0 0 8px rgba(239, 68, 68, 1), 0 0 15px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.6)' }}>
+                    بث مباشر عربى وانجليزى
+                  </span>
                 </div>
               </div>
             </div>

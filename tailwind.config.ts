@@ -114,12 +114,17 @@ export default {
 					'0%': { transform: 'translateX(-400%) rotate(-720deg)', opacity: '0' },
 					'0.1%': { transform: 'translateX(-400%) rotate(-720deg)', opacity: '1' },
 					'1.5%, 100%': { transform: 'translateX(0) rotate(0)', opacity: '1' },
+				},
+				'spin-3d': {
+					'0%': { transform: 'rotateY(0deg)' },
+					'100%': { transform: 'rotateY(360deg)' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'roll-in-periodic': 'roll-in-periodic 60s cubic-bezier(0.34, 1.56, 0.64, 1) infinite',
+				'spin-3d': 'spin-3d 4s linear infinite',
 			}
 		}
 	},
