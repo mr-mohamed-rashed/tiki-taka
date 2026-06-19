@@ -9,7 +9,7 @@ import { isAdminUser } from '@/lib/admin';
 
 export function AdminGate() {
   const { loading, user, signInWithGoogle, signInWithPassword, signOut } = useAuth();
-  const [email, setEmail] = useState('rishoshi@gmail.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');

@@ -2,6 +2,38 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { getLiveMatches, getUpcomingMatches, getFinishedMatches, getTopScorers, getPlayerRankings, teams } from '@/lib/footballData';
 import type { Match, Scorer } from '@/lib/footballData';
+import { queryClient } from '@/App';
+
+function getSmartPollingInterval(): number | false {
+  const now = Date.now();
+  const liveMatches = queryClient.getQueryData<Match[]>(['live-fixtures']) || [];
+  const currentLive = liveMatches.filter(m => m.status === 'live');
+  
+  if (currentLive.length > 0) {
+    const activeMatch = currentLive.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+    const kickoff = new Date(activeMatch.date).getTime();
+    const elapsedMins = (now - kickoff) / 60000;
+    
+    if (elapsedMins < 0) return false;
+    if (elapsedMins >= 0 && elapsedMins < 50) return 210_000;
+    if (elapsedMins >= 50 && elapsedMins < 65) return Math.max((65 - elapsedMins) * 60000, 10000);
+    if (elapsedMins >= 65 && elapsedMins < 115) return 210_000;
+    if (elapsedMins >= 115) return 240_000;
+  }
+  
+  const upcoming = queryClient.getQueryData<Match[]>(['upcoming-fixtures']) || getUpcomingMatches();
+  const nextUpcoming = upcoming
+    .filter(m => new Date(m.date).getTime() > now)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+  if (nextUpcoming.length === 0) return false;
+  
+  const nextKickoff = new Date(nextUpcoming[0].date).getTime();
+  const timeToKickoff = nextKickoff - now;
+  
+  if (timeToKickoff <= 0) return 210_000;
+  return Math.min(timeToKickoff, 3600_000);
+}
 
 // World Cup 2026 league ID on API-Football is 1
 const WC_LEAGUE = '1';
@@ -114,15 +146,29 @@ export function useLiveFixtures() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'live' });
-        if (data?.matches?.length) return data.matches as Match[];
-        if (!data?.response?.length) return interpolateLiveMinutes(getLiveMatches(), true); // fallback to mock
-        // Map API-Football response to our Match type
-        return data.response.map(mapFixture);
+        
+        let results: Match[] = [];
+        if (data?.matches) results = data.matches as Match[];
+        else if (data?.response) results = data.response.map(mapFixture);
+        else return interpolateLiveMinutes(getLiveMatches(), true);
+        
+        const previousLive = queryClient.getQueryData<Match[]>(['live-fixtures']);
+        const hadLive = previousLive?.some(m => m.status === 'live');
+        const hasLiveNow = results.some(m => m.status === 'live');
+        
+        if (hadLive && !hasLiveNow) {
+           queryClient.invalidateQueries({ queryKey: ['results'] });
+           queryClient.invalidateQueries({ queryKey: ['upcoming-fixtures'] });
+           queryClient.invalidateQueries({ queryKey: ['standings'] });
+           queryClient.invalidateQueries({ queryKey: ['topscorers'] });
+        }
+        
+        return results;
       } catch {
         return interpolateLiveMinutes(getLiveMatches(), true);
       }
     },
-    refetchInterval: 30_000,
+    refetchInterval: getSmartPollingInterval,
     initialData: interpolateLiveMinutes(getLiveMatches(), true),
   });
 }
@@ -141,7 +187,7 @@ export function useUpcomingFixtures() {
         return getUpcomingOnly(getUpcomingMatches());
       }
     },
-    refetchInterval: 120_000,
+    refetchInterval: false,
     initialData: getUpcomingOnly(getUpcomingMatches()),
   });
 }
@@ -199,7 +245,7 @@ export function useResults() {
         return getFinishedMatches();
       }
     },
-    refetchInterval: 120_000,
+    refetchInterval: false,
   });
 }
 
@@ -216,7 +262,7 @@ export function useStandings() {
         return null;
       }
     },
-    refetchInterval: 120_000,
+    refetchInterval: false,
   });
 }
 
@@ -233,7 +279,7 @@ export function useTopScorers() {
         return await getWorldCupTopScorers();
       }
     },
-    refetchInterval: 180_000,
+    refetchInterval: false,
   });
 }
 

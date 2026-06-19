@@ -9,7 +9,7 @@ import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 import { AuthProvider } from "./context/AuthContext";
 import { AppErrorBoundary } from "./components/tikitaka/AppErrorBoundary";
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,

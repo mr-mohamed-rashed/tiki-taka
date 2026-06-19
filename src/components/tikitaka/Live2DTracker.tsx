@@ -12,13 +12,15 @@ import { LiveChat } from '@/components/tikitaka/LiveChat';
 
 interface Live2DTrackerProps {
   match: Match;
+  hideSocials?: boolean;
+  forceMode?: 'video-only' | 'default';
 }
 
 /**
  * SVG-rendered 2D pitch. The animated ball uses the `animate-ball` keyframe
  * defined in index.css to simulate movement across the field.
  */
-export function Live2DTracker({ match }: Live2DTrackerProps) {
+export function Live2DTracker({ match, hideSocials = false, forceMode = 'default' }: Live2DTrackerProps) {
   const home = match.home;
   const away = match.away;
   const { get } = useSiteSettingsContext();
@@ -64,6 +66,44 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
   const [chatMode, setChatMode] = useState<'hidden' | 'overlay' | 'split'>('hidden');
   const [controlsVisible, setControlsVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null || touchStartY === null || servers.length <= 1) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const distanceX = touchStartX - touchEndX;
+    const distanceY = touchStartY - touchEndY;
+    
+    if (Math.abs(distanceY) > Math.abs(distanceX)) {
+      // Vertical swipe
+      if (forceMode === 'video-only') {
+        if (distanceY > 50) { // Swipe Up (Next Server)
+          setActiveServerIndex((prev) => (prev + 1) % servers.length);
+        } else if (distanceY < -50) { // Swipe Down (Prev Server)
+          setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length);
+        }
+      }
+    } else {
+      // Horizontal swipe
+      if (forceMode !== 'video-only') {
+        if (distanceX > 50) { // Swipe Left (Next Server)
+          setActiveServerIndex((prev) => (prev + 1) % servers.length);
+        } else if (distanceX < -50) { // Swipe Right (Prev Server)
+          setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length);
+        }
+      }
+    }
+    
+    setTouchStartX(null);
+    setTouchStartY(null);
+  };
 
   // Auto-hide controls when screen is idle for 3 seconds
   useEffect(() => {
@@ -123,6 +163,15 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
     }
   };
 
+  // When entering theater mode, default chat to overlay
+  useEffect(() => {
+    if (isTheater) {
+      setChatMode('overlay');
+    } else {
+      setChatMode('hidden');
+    }
+  }, [isTheater]);
+
   const servers = (() => {
     const raw = get('live_stream_url', 'en');
     if (!raw) return [];
@@ -152,6 +201,84 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
     }
     return activeServerUrl;
   })();
+
+  if (forceMode === 'video-only') {
+    return (
+      <div 
+        ref={containerRef}
+        className={cn("relative w-full bg-black overflow-hidden flex items-center justify-center", isTheater ? "fixed inset-0 z-[100] h-screen w-screen" : "h-full")}
+      >
+        {streamUrl ? (
+            <div className="absolute inset-0 overflow-hidden bg-black pointer-events-auto">
+              <iframe
+                src={streamUrl}
+                className="absolute w-full left-0 right-0 pointer-events-auto"
+                style={{ top: '-55px', height: 'calc(100% + 55px)' }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              />
+              <div 
+                dir="ltr"
+                className="absolute flex items-center justify-center z-40 pointer-events-none top-[2%] right-[1%] w-[22%] h-[18%]"
+              >
+                  <div className="relative w-full h-[50%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-full shadow-2xl z-10 border border-white/20">
+                    <div className="absolute inset-0 rounded-full overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
+                    </div>
+                    <div className="relative w-full h-full z-10 flex flex-col items-center justify-center mt-[1%] pr-[38%] pl-[5%]">
+                      {lang === 'ar' ? (
+                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
+                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
+                            TIKI-TAKA
+                          </text>
+                          <circle cx="78" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
+                          <text x="72" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider font-arabic" style={{ fontSize: '10px' }}>
+                            بث مباشر
+                          </text>
+                        </svg>
+                      ) : (
+                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
+                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
+                            TIKI-TAKA
+                          </text>
+                          <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
+                          <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
+                            LIVE BROADCAST
+                          </text>
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                <div className="absolute right-[6%] h-[80%] aspect-square rounded-full overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 border-[0.15vw] border-[#1a4a85] animate-roll-in-periodic">
+                  <img src="/icons/tiki-taka-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
+                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"></div>
+                </div>
+              </div>
+
+              {/* Fullscreen Button for TikTok Mode */}
+              <div className="absolute top-4 right-4 z-50 pointer-events-auto">
+                <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg rounded-full">
+                  {isTheater ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+                </Button>
+              </div>
+
+              {/* Server Swipe Area Overlay (Left Side) */}
+              <div className="absolute left-0 top-0 bottom-0 w-1/4 z-50 flex flex-col items-center justify-center pointer-events-auto touch-pan-y" 
+                   onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchMove={(e) => e.preventDefault()}>
+                {servers.length > 1 && (
+                  <div className="flex flex-col gap-2 bg-black/40 p-2 rounded-full backdrop-blur-sm opacity-50 hover:opacity-100 transition-opacity">
+                    {servers.map((_, idx) => (
+                      <div key={idx} className={cn("w-2 h-2 rounded-full transition-all", idx === activeServerIndex ? "bg-primary h-4" : "bg-white/50")} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="text-white text-sm">البث غير متاح حاليا</div>
+          )}
+      </div>
+    );
+  }
 
   return (
     <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-border">
@@ -351,31 +478,60 @@ export function Live2DTracker({ match }: Live2DTrackerProps) {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 border-t border-border/60 pt-4">
-          <Link
-            to="/studio"
-            className="group flex h-10 items-center justify-center gap-2 rounded-full border border-live/50 bg-live/10 px-4 text-xs font-bold text-live shadow-card transition-all hover:-translate-y-0.5 hover:border-live hover:bg-live hover:text-live-foreground hover:shadow-neon"
-            title="الاستوديو المباشر"
-          >
-            <Video className="h-4 w-4 animate-pulse-live" />
-            <span className="font-arabic">الاستوديو</span>
-          </Link>
-          {socialLinks.map((link) => (
-            <a
-              key={link.key}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex h-10 items-center justify-center gap-2 rounded-full border border-primary/25 bg-background/75 px-3 text-xs font-bold text-foreground shadow-card transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-neon"
-              title={link.label}
-            >
-              {link.icon}
-              <span>{link.label}</span>
-            </a>
-          ))}
-        </div>
+        {!hideSocials && (
+          <div className="mt-4 border-t border-border/60 pt-4">
+            <LiveSocials />
+          </div>
+        )}
       </div>
     </Card>
+  );
+}
+
+export function LiveSocials() {
+  const { get } = useSiteSettingsContext();
+
+  const formatHref = (input: string) => {
+    if (!input) return '#';
+    const urlMatch = input.match(/(https?:\/\/[^\s]+)/);
+    let url = urlMatch ? urlMatch[0] : input.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = `https://${url.split(' ')[0]}`;
+    }
+    return url;
+  };
+
+  const socialLinks = [
+    { key: 'social_facebook_url', label: get('social_facebook_url', 'ar') || 'Facebook', href: formatHref(get('social_facebook_url', 'en') || 'https://facebook.com'), icon: <FacebookIcon /> },
+    { key: 'social_tiktok_url', label: get('social_tiktok_url', 'ar') || 'TikTok', href: formatHref(get('social_tiktok_url', 'en') || 'https://tiktok.com'), icon: <TikTokIcon /> },
+    { key: 'social_youtube_url', label: get('social_youtube_url', 'ar') || 'YouTube', href: formatHref(get('social_youtube_url', 'en') || 'https://youtube.com'), icon: <YouTubeIcon /> },
+    { key: 'social_website_url', label: get('social_website_url', 'ar') || 'Website', href: formatHref(get('social_website_url', 'en') || '/'), icon: <WebIcon /> },
+  ];
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <Link
+        to="/studio"
+        className="group flex h-10 items-center justify-center gap-2 rounded-full border border-live/50 bg-live/10 px-4 text-xs font-bold text-live shadow-card transition-all hover:-translate-y-0.5 hover:border-live hover:bg-live hover:text-live-foreground hover:shadow-neon"
+        title="الاستوديو المباشر"
+      >
+        <Video className="h-4 w-4 animate-pulse-live" />
+        <span className="font-arabic">الاستوديو</span>
+      </Link>
+      {socialLinks.map((link) => (
+        <a
+          key={link.key}
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex h-10 items-center justify-center gap-2 rounded-full border border-primary/25 bg-background/75 px-3 text-xs font-bold text-foreground shadow-card transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-neon"
+          title={link.label}
+        >
+          {link.icon}
+          <span>{link.label}</span>
+        </a>
+      ))}
+    </div>
   );
 }
 

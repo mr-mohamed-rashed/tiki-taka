@@ -61,9 +61,14 @@ function renderMessageText(text: string) {
   return parts.map((part, i) => {
     if (part.match(urlRegex)) {
       const href = part.startsWith('www.') ? `https://${part}` : part;
+      let displayText = part;
+      // Shorten long news links
+      if (part.includes('/news/') && part.length > 40) {
+        displayText = "🔗 التفاصيل من هنا";
+      }
       return (
-        <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
-          {part}
+        <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold" onClick={(e) => e.stopPropagation()}>
+          {displayText}
         </a>
       );
     }
@@ -88,9 +93,10 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
   const [isSending, setIsSending] = useState(false);
   const [inputMsg, setInputMsg] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
-  const [botsEnabled, setBotsEnabled] = useState(false);
+  const [botsEnabled, setBotsEnabled] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasFetchedInitialRef = useRef(false);
+  const mountTimeRef = useRef<number>(new Date().getTime());
 
   const userId = user?.id || getOrCreateUserId();
   
@@ -115,28 +121,18 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     }
   }, [messages]);
 
-  // Load initial pinned messages only
+  // Do not load historical messages (TikTok style)
   useEffect(() => {
-    if (!joined || hasFetchedInitialRef.current) return;
+    if (hasFetchedInitialRef.current) return;
     hasFetchedInitialRef.current = true;
     
-    supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('match_id', matchId)
-      .eq('is_deleted', false)
-      .eq('is_pinned', true)
-      .order('created_at', { ascending: true })
-      .limit(10)
-      .then(({ data }) => {
-        if (data) setMessages(data as ChatMessage[]);
-        setLoading(false);
-      });
-  }, [matchId, joined]);
+    // Start with an empty chat, just finish loading
+    setMessages([]);
+    setLoading(false);
+  }, [matchId]);
 
   // Real-time subscription
   useEffect(() => {
-    if (!joined) return;
     const channel = supabase
       .channel(`chat:${matchId}`)
       .on('postgres_changes', {
@@ -164,7 +160,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [matchId, joined, users]);
+  }, [matchId, users]);
 
   // Automated 5 Admins (Bots) sending news when chat is quiet
   useEffect(() => {
@@ -177,10 +173,21 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
       const now = new Date().getTime();
       const lastMsgTime = messages.length > 0 
         ? new Date(messages[messages.length - 1].created_at).getTime() 
-        : 0;
+        : mountTimeRef.current;
       
-      // If chat is quiet for 45 seconds
-      if (now - lastMsgTime > 45000) {
+      let consecutiveBotMessages = 0;
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (BOT_NAMES.includes(messages[i].username)) {
+          consecutiveBotMessages++;
+        } else {
+          break;
+        }
+      }
+      
+      const multiplier = Math.pow(2, Math.min(consecutiveBotMessages, 5));
+      const requiredWaitTime = 45000 * multiplier;
+      
+      if (now - lastMsgTime > requiredWaitTime) {
         const randomNews = news[Math.floor(Math.random() * news.length)];
         const randomBot = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
         const title = lang === 'ar' ? (randomNews.title_ar || randomNews.title_en) : (randomNews.title_en || randomNews.title_ar);
@@ -195,7 +202,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
           if (error) console.error("Bot insert error:", error);
         });
       }
-    }, 45000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [messages, isModerator, news, matchId, lang, botsEnabled, userId]);
@@ -279,6 +286,17 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     await supabase.from('chat_messages').update({ is_deleted: true }).eq('id', id);
   };
 
+  const clearChat = async () => {
+    if (!window.confirm(lang === 'ar' ? 'هل أنت متأكد من حذف جميع الرسائل في هذه المحادثة؟' : 'Are you sure you want to clear the chat?')) return;
+    
+    const { error } = await supabase.from('chat_messages').update({ is_deleted: true }).eq('match_id', matchId);
+    if (!error) {
+      setMessages([]);
+    } else {
+      console.error("Failed to clear chat:", error);
+    }
+  };
+
   const banUser = async (targetUserId: string) => {
     await supabase.from('chat_users').update({ is_banned: true }).eq('user_id', targetUserId);
     setUsers((prev) => {
@@ -301,44 +319,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     );
   }
 
-  if (!joined) {
-    return (
-      <Card className={cn(
-        "overflow-hidden flex flex-col",
-        variant === 'overlay' ? 'bg-transparent border-none shadow-none h-full justify-end' : 'bg-gradient-card border-border h-[500px]'
-      )}>
-        {variant !== 'overlay' && (
-          <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-card/60">
-            <div className="p-2 rounded-lg bg-primary/15">
-              <MessageCircle className="h-5 w-5 text-primary" />
-            </div>
-            <h3 className={cn('font-display font-extrabold text-xl', lang === 'ar' && 'font-arabic')}>
-              {t('liveChat', lang)}
-            </h3>
-          </div>
-        )}
-        <div className={cn("p-6 space-y-4", variant === 'overlay' && "bg-black/60 rounded-xl backdrop-blur-md")}>
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-white shrink-0" />
-            <span className={cn('text-sm text-white', lang === 'ar' && 'font-arabic')}>
-              {lang === 'ar' ? 'سجل دخول بجوجل للمشاركة في المحادثة' : 'Sign in with Google to participate'}
-            </span>
-          </div>
-          <Button onClick={handleJoin} className="w-full bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon flex items-center justify-center gap-2">
-            <svg viewBox="0 0 24 24" className="w-5 h-5 bg-white rounded-full p-0.5" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            <span className={lang === 'ar' ? 'font-arabic' : ''}>
-              {lang === 'ar' ? 'تسجيل الدخول' : 'Sign in'}
-            </span>
-          </Button>
-        </div>
-      </Card>
-    );
-  }
+
 
   const visibleMessages = messages.filter((m) => !m.is_deleted);
   const pinnedMessages = visibleMessages.filter((m) => m.is_pinned);
@@ -367,13 +348,23 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
             <Button
               variant="outline"
               size="sm"
+              onClick={clearChat}
+              className="h-7 text-xs gap-1.5 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+              title={lang === 'ar' ? 'مسح المحادثة بالكامل' : 'Clear Chat'}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{lang === 'ar' ? 'تفريغ الشات' : 'Clear'}</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setBotsEnabled(!botsEnabled)}
               className={cn("h-7 text-xs gap-1.5 border-dashed", botsEnabled ? "bg-primary/10 text-primary border-primary/30" : "text-muted-foreground")}
             >
               {botsEnabled ? <Bot className="h-3.5 w-3.5" /> : <BotOff className="h-3.5 w-3.5" />}
               {lang === 'ar' ? (botsEnabled ? 'إيقاف البوتات' : 'تشغيل البوتات') : (botsEnabled ? 'Disable Bots' : 'Enable Bots')}
             </Button>
-            <Badge className="bg-gold text-gold-foreground gap-1">
+            <Badge className="bg-gold text-gold-foreground gap-1 hidden sm:flex">
               <Shield className="h-3 w-3" />
               <span className={cn('text-xs font-bold', lang === 'ar' && 'font-arabic')}>{t('moderator', lang)}</span>
             </Badge>
@@ -391,7 +382,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
                 <span className="font-bold mr-1.5 text-primary">
                   {msg.username} {lang === 'ar' ? ':' : ':'}
                 </span>
-                <span className={cn("text-foreground/90 font-medium", variant === 'overlay' && "text-white")}>{renderMessageText(msg.message)}</span>
+                <span className={cn("text-foreground/90 font-medium whitespace-pre-wrap", variant === 'overlay' && "text-white")}>{renderMessageText(msg.message)}</span>
               </div>
               {isModerator && (
                 <button onClick={() => togglePin(msg.id, true)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-primary/20 text-primary transition-opacity absolute top-0 right-0 shrink-0" title={lang === 'ar' ? 'إلغاء التثبيت' : 'Unpin'}>
@@ -416,7 +407,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
                 )}>
                   {msg.username} {lang === 'ar' ? ':' : ':'}
                 </span>
-                <span className={cn("text-foreground/90", variant === 'overlay' && "text-white drop-shadow-md font-medium")}>{renderMessageText(msg.message)}</span>
+                <span className={cn("text-foreground/90 whitespace-pre-wrap", variant === 'overlay' && "text-white drop-shadow-md font-medium")}>{renderMessageText(msg.message)}</span>
               </div>
               
               {isModerator && (
@@ -444,52 +435,68 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
         )}
       </div>
 
-      {/* Input */}
-      {variant !== 'overlay' && (
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            sendMessage();
-          }} 
-          className={cn("p-3 shrink-0 relative flex items-center gap-1 border-t border-border")}
-        >
-          {showEmojis && (
-            <div className="absolute bottom-[110%] right-3 z-50 shadow-2xl rounded-xl overflow-hidden">
-              <EmojiPicker 
-                onEmojiClick={(emojiData) => {
-                  setInputMsg(prev => prev + emojiData.emoji);
-                }}
-                theme={Theme.DARK}
-                lazyLoadEmojis={true}
-                searchDisabled={true}
-                skinTonesDisabled={true}
-                width={280}
-                height={350}
-              />
-            </div>
-          )}
-          <div className="flex-1">
-              <Input
-                value={inputMsg}
-                onChange={(e) => setInputMsg(e.target.value)}
-                placeholder={t('chatPlaceholder', lang)}
-                className="border-border text-sm h-10 w-full bg-muted"
-                dir={lang === 'ar' ? 'rtl' : 'ltr'}
-                maxLength={200}
-                disabled={isSending}
-              />
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowEmojis(!showEmojis)}
-            className="p-3 text-muted-foreground hover:text-primary transition-colors bg-black/40 border-y border-l border-border rounded-l-xl focus:outline-none"
-          >
-            <Smile className="h-5 w-5" />
-          </button>
-          <Button type="submit" disabled={!inputMsg.trim() || isSending} size="icon" className="shrink-0 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full h-10 w-10 shadow-neon">
-            <Send className={cn("h-4 w-4", lang === 'ar' && "rotate-180")} />
+      {/* Input or Sign In */}
+      {!joined ? (
+        <div className={cn("p-4 shrink-0 border-t border-border bg-card/60")}>
+          <Button onClick={handleJoin} className="w-full bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon flex items-center justify-center gap-2">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 bg-white rounded-full p-0.5" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            <span className={lang === 'ar' ? 'font-arabic' : ''}>
+              {lang === 'ar' ? 'تسجيل الدخول للمشاركة' : 'Sign in to chat'}
+            </span>
           </Button>
-        </form>
+        </div>
+      ) : (
+        variant !== 'overlay' && (
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage();
+            }} 
+            className={cn("p-3 shrink-0 relative flex items-center gap-1 border-t border-border")}
+          >
+            {showEmojis && (
+              <div className="absolute bottom-[110%] right-3 z-50 shadow-2xl rounded-xl overflow-hidden">
+                <EmojiPicker 
+                  onEmojiClick={(emojiData) => {
+                    setInputMsg(prev => prev + emojiData.emoji);
+                  }}
+                  theme={Theme.DARK}
+                  lazyLoadEmojis={true}
+                  searchDisabled={true}
+                  skinTonesDisabled={true}
+                  width={280}
+                  height={350}
+                />
+              </div>
+            )}
+            <div className="flex-1">
+                <Input
+                  value={inputMsg}
+                  onChange={(e) => setInputMsg(e.target.value)}
+                  placeholder={t('chatPlaceholder', lang)}
+                  className="border-border text-sm h-10 w-full bg-muted"
+                  dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                  maxLength={200}
+                  disabled={isSending}
+                />
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowEmojis(!showEmojis)}
+              className="p-3 text-muted-foreground hover:text-primary transition-colors bg-black/40 border-y border-l border-border rounded-l-xl focus:outline-none"
+            >
+              <Smile className="h-5 w-5" />
+            </button>
+            <Button type="submit" disabled={!inputMsg.trim() || isSending} size="icon" className="shrink-0 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full h-10 w-10 shadow-neon">
+              <Send className={cn("h-4 w-4", lang === 'ar' && "rotate-180")} />
+            </Button>
+          </form>
+        )
       )}
     </Card>
   );

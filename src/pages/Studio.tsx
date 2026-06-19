@@ -9,7 +9,9 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { LiveChat } from '@/components/tikitaka/LiveChat';
+import { Drawer, DrawerContent, DrawerTrigger, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { ShareMenu } from '@/components/tikitaka/ShareMenu';
+import { MessageCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface LiveStudioState {
@@ -185,7 +187,7 @@ export default function Studio() {
             </div>
             <div className="flex gap-2">
               <ShareMenu />
-              <Button onClick={() => setShowChat(!showChat)} variant="outline" className="gap-2">
+              <Button onClick={() => setShowChat(!showChat)} variant="outline" className="gap-2 hidden lg:inline-flex">
                 {showChat ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
                 {showChat ? (lang === 'ar' ? 'إخفاء الشات' : 'Hide Chat') : (lang === 'ar' ? 'إظهار الشات' : 'Show Chat')}
               </Button>
@@ -351,6 +353,36 @@ export default function Studio() {
                   </div>
                 </div>
               )}
+              
+              {/* Mobile Floating Action Button for Chat (TikTok Style) */}
+              {!isTheater && (
+                <div className="lg:hidden absolute bottom-4 right-4 z-[60] flex flex-col gap-3">
+                  <Drawer>
+                    <DrawerTrigger asChild>
+                      <Button size="icon" className="h-12 w-12 rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)] bg-primary/90 backdrop-blur hover:bg-primary hover:scale-105 transition-all">
+                        <MessageCircle className="h-6 w-6 text-white" />
+                      </Button>
+                    </DrawerTrigger>
+                    <DrawerContent className="h-[75vh] max-h-[75vh] bg-background/95 backdrop-blur-xl border-border flex flex-col">
+                      <DrawerHeader className="border-b border-border/50 py-3 flex items-center justify-between">
+                        <DrawerTitle className="text-left font-display text-lg">
+                          {lang === 'ar' ? 'الدردشة الحية' : 'Live Chat'}
+                        </DrawerTitle>
+                        <DrawerClose asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-muted/50 hover:bg-muted">
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </DrawerClose>
+                      </DrawerHeader>
+                      <div className="flex-1 min-h-0 relative p-2">
+                        <div className="absolute inset-0 overflow-y-auto">
+                          <LiveChat matchId="studio_live" />
+                        </div>
+                      </div>
+                    </DrawerContent>
+                  </Drawer>
+                </div>
+              )}
               </div>
             </Card>
 
@@ -366,7 +398,7 @@ export default function Studio() {
           </div>
 
           {!isTheater && showChat && (
-            <div className="space-y-6 flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="space-y-6 flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300 hidden lg:flex">
               <Card className="p-4 border-border bg-card/60 backdrop-blur flex-1 flex flex-col min-h-[500px]">
                 <h3 className={cn('font-bold text-lg mb-4 flex items-center gap-2', lang === 'ar' && 'font-arabic')}>
                   <MessageSquare className="h-5 w-5 text-primary" />

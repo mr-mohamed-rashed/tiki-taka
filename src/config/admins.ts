@@ -8,8 +8,5 @@ export const ADMIN_EMAILS_LIST = [
   'mrrashed0777@gmail.com',    // إيميل المبرمج / المالك
   'info@tiki-taka.cc',         // إيميل الموقع الرسمي
   'rishoshi@gmail.com',        // إيميل الدعم الفني
-  
-  // ضف إيميل أي أدمن جديد هنا بالشكل ده بين علامات التنصيص ومتبوع بفاصلة:
-  // 'admin2@gmail.com',
-  // 'mohamed@yahoo.com',
+  'ahm3dsalam4@gmail.com',     // أدمن جديد
 ];
