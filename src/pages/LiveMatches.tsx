@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
 import { EditModeToggle } from '@/components/one2/EditModeToggle';
 import { Live2DTracker } from '@/components/one2/Live2DTracker';
-import { FacebookCommentsWidget } from '@/components/one2/FacebookCommentsWidget';
+import { LiveChat } from '@/components/one2/LiveChat';
 import { MatchCenter } from '@/components/one2/MatchCenter';
 import { Navigation } from '@/components/one2/Navigation';
 import { NewsTicker } from '@/components/one2/NewsTicker';
@@ -44,19 +44,13 @@ const LiveMatches = () => {
       <main className="relative w-full flex-1 flex flex-col min-h-0 md:h-auto md:pb-8">
         {/* Mobile Floating App Bar */}
         <div className="z-[60] absolute top-2 left-2 right-2 md:hidden pointer-events-none p-1 transition-opacity duration-300">
-           <div className="pointer-events-auto bg-[#16181d] backdrop-blur-md rounded-[20px] px-2 py-1.5 shadow-2xl border border-white/5 flex items-center justify-between" dir="ltr">
-              
-              {/* Left Side: Hamburger Menu via Navigation Component */}
-              <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
-                <Navigation />
+           <div className="pointer-events-auto bg-black/60 backdrop-blur-md rounded-full px-3 py-1 shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <img src="/icons/one2-icon-192.png" alt="One2" className="h-6 w-6 rounded-full shadow-neon" />
+                <span className="font-display font-extrabold text-lg text-primary tracking-wide leading-none mt-1">ONE2</span>
               </div>
-
-              {/* Right Side: ONE2 Logo + Green Dot */}
-              <div className="flex items-center gap-2 pr-3">
-                <span className="font-display font-extrabold text-xl text-white tracking-wide leading-none mt-1">One2</span>
-                <div className="relative flex items-center justify-center h-5 w-5 rounded-full border border-green-500/50 bg-green-500/10">
-                  <div className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
-                </div>
+              <div className="scale-90 origin-right flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-8 [&>nav>div>div>a]:hidden [&>nav>div>div>div]:hidden">
+                <Navigation />
               </div>
            </div>
         </div>
@@ -85,8 +79,8 @@ const LiveMatches = () => {
             <div className="relative shrink-0 w-full lg:max-w-3xl lg:flex-1 h-[35vh] sm:h-[40vh] md:h-auto">
               <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
-            <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto bg-white rounded-lg overflow-hidden">
-              <FacebookCommentsWidget />
+            <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto">
+              <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
             </div>
           </section>
         ) : (
