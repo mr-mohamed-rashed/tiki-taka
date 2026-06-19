@@ -225,10 +225,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </div>
 
                   {/* Right Side: ONE2 Logo + Green Dot (Watermark Cover) */}
-                  <div className="absolute top-[10%] right-[3%] md:top-[12%] md:right-[4%] flex items-center gap-2 md:gap-4 px-4 md:px-8 py-2 md:py-4 bg-[#16181d] rounded-full shadow-2xl border border-white/5">
-                    <span className="font-display font-extrabold text-2xl md:text-5xl text-white tracking-wide leading-none mt-1 md:mt-2">One2</span>
-                    <div className="relative flex items-center justify-center h-6 w-6 md:h-10 md:w-10 rounded-full border border-green-500/50 bg-green-500/10">
-                      <div className="h-3 w-3 md:h-5 md:w-5 rounded-full bg-green-500 shadow-[0_0_12px_rgba(34,197,94,1)]"></div>
+                  <div className="flex items-center justify-center gap-2 px-3 py-1.5 w-[140px] h-[35px] bg-[#16181d] rounded-lg shadow-lg border border-white/5 mt-[-4px]">
+                    <span className="font-display font-extrabold text-lg text-white tracking-wide leading-none mt-1">One2</span>
+                    <div className="relative flex items-center justify-center h-4 w-4 rounded-full border border-green-500/50 bg-green-500/10">
+                      <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
                     </div>
                   </div>
                 </div>
@@ -328,10 +328,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </div>
 
                   {/* Right Side: ONE2 Logo + Green Dot (Watermark Cover) */}
-                  <div className="absolute top-[10%] right-[3%] md:top-[12%] md:right-[4%] flex items-center gap-2 md:gap-4 px-4 md:px-8 py-2 md:py-4 bg-[#16181d] rounded-full shadow-2xl border border-white/5">
-                    <span className="font-display font-extrabold text-2xl md:text-5xl text-white tracking-wide leading-none mt-1 md:mt-2">One2</span>
-                    <div className="relative flex items-center justify-center h-6 w-6 md:h-10 md:w-10 rounded-full border border-green-500/50 bg-green-500/10">
-                      <div className="h-3 w-3 md:h-5 md:w-5 rounded-full bg-green-500 shadow-[0_0_12px_rgba(34,197,94,1)]"></div>
+                  <div className="flex items-center justify-center gap-2 px-3 py-1.5 w-[140px] h-[35px] bg-[#16181d] rounded-lg shadow-lg border border-white/5 mt-[-4px]">
+                    <span className="font-display font-extrabold text-lg text-white tracking-wide leading-none mt-1">One2</span>
+                    <div className="relative flex items-center justify-center h-4 w-4 rounded-full border border-green-500/50 bg-green-500/10">
+                      <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
                     </div>
                   </div>
                 </div>
