@@ -129,7 +129,6 @@ export default function Studio() {
           })()}
           className="w-full h-full border-none"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
         />
       </div>
     );

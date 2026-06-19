@@ -210,8 +210,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 src={streamUrl}
                 className="absolute w-full left-0 right-0 pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                allowFullScreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
               <div 
                 dir="ltr"
@@ -331,8 +330,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 src={streamUrl}
                 className="absolute w-full left-0 right-0 pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                allowFullScreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
