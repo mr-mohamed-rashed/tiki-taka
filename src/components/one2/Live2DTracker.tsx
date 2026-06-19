@@ -216,7 +216,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
-                className="absolute top-2 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
+                className="absolute top-1 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
               >
                 <div className="pointer-events-auto flex items-center justify-between w-full pr-1 pl-1">
                   {/* Left Side: Hamburger Menu via Navigation Component */}
@@ -225,7 +225,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </div>
 
                   {/* Right Side: ONE2 Logo + Green Dot */}
-                  <div className="flex items-center gap-2 pr-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-[#16181d] rounded-full shadow-lg border border-white/5 mt-[-4px]">
                     <span className="font-display font-extrabold text-xl text-white tracking-wide leading-none mt-1">One2</span>
                     <div className="relative flex items-center justify-center h-5 w-5 rounded-full border border-green-500/50 bg-green-500/10">
                       <div className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
@@ -319,7 +319,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
-                className="absolute top-2 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
+                className="absolute top-1 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
               >
                 <div className="pointer-events-auto flex items-center justify-between w-full pr-1 pl-1">
                   {/* Left Side: Hamburger Menu via Navigation Component */}
@@ -328,7 +328,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </div>
 
                   {/* Right Side: ONE2 Logo + Green Dot */}
-                  <div className="flex items-center gap-2 pr-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-[#16181d] rounded-full shadow-lg border border-white/5 mt-[-4px]">
                     <span className="font-display font-extrabold text-xl text-white tracking-wide leading-none mt-1">One2</span>
                     <div className="relative flex items-center justify-center h-5 w-5 rounded-full border border-green-500/50 bg-green-500/10">
                       <div className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
