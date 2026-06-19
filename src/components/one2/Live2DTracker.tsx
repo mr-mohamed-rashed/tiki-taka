@@ -215,7 +215,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               />
               <div 
                 dir="ltr"
-                className="absolute flex items-center justify-center z-40 pointer-events-none top-[2%] right-[1%] w-[22%] h-[18%]"
+                className="absolute flex items-center justify-center z-40 pointer-events-none top-[3%] right-[2%] w-[35%] max-w-[180px] h-[18%] max-h-[65px]"
               >
                   <div className="relative w-full h-[50%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-full shadow-2xl z-10 border border-white/20">
                     <div className="absolute inset-0 rounded-full overflow-hidden">
@@ -337,7 +337,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
-                className="absolute flex items-center justify-center z-40 pointer-events-none top-[2%] right-[1%] w-[22%] h-[18%]"
+                className="absolute flex items-center justify-center z-40 pointer-events-none top-[3%] right-[2%] w-[35%] max-w-[180px] h-[18%] max-h-[65px]"
               >
                 {/* Premium Broadcast Text Box / Full Pill */}
                   <div className="relative w-full h-[50%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-full shadow-2xl z-10 border border-white/20">
