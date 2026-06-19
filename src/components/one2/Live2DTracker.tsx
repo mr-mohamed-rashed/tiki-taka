@@ -230,23 +230,25 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Smart Responsive Logo Cover */}
               <div 
                 dir="ltr"
-                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none"
+                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none px-[4%]"
                 style={{ 
-                  top: '3%', 
+                  top: '4%', 
                   right: '2%', 
-                  width: '16%', 
+                  width: '24%', 
                   aspectRatio: '3.5 / 1',
-                  minWidth: '70px',
-                  containerType: 'inline-size',
-                  padding: '0 6cqi'
+                  minWidth: '90px'
                 }}
               >
-                <div className="font-display font-extrabold tracking-wide flex items-center leading-none mt-[2cqi]" style={{ fontSize: '32cqi' }}>
-                  <span className="text-green-400">One</span>
-                  <span className="text-white">2</span>
-                </div>
-                <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: '22cqi', height: '22cqi' }}>
-                  <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
+                <div className="flex items-center justify-between w-full h-full">
+                  <svg viewBox="0 0 100 40" className="w-[65%] h-full pt-[2%]">
+                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
+                      <tspan fill="#4ade80">One</tspan>
+                      <tspan fill="#ffffff">2</tspan>
+                    </text>
+                  </svg>
+                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
+                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
+                  </div>
                 </div>
               </div>
 
@@ -349,23 +351,25 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Smart Responsive Logo Cover */}
               <div 
                 dir="ltr"
-                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none"
+                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none px-[4%]"
                 style={{ 
-                  top: '3%', 
+                  top: '4%', 
                   right: '2%', 
-                  width: '16%', 
+                  width: '24%', 
                   aspectRatio: '3.5 / 1',
-                  minWidth: '70px',
-                  containerType: 'inline-size',
-                  padding: '0 6cqi'
+                  minWidth: '90px'
                 }}
               >
-                <div className="font-display font-extrabold tracking-wide flex items-center leading-none mt-[2cqi]" style={{ fontSize: '32cqi' }}>
-                  <span className="text-green-400">One</span>
-                  <span className="text-white">2</span>
-                </div>
-                <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: '22cqi', height: '22cqi' }}>
-                  <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
+                <div className="flex items-center justify-between w-full h-full">
+                  <svg viewBox="0 0 100 40" className="w-[65%] h-full pt-[2%]">
+                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
+                      <tspan fill="#4ade80">One</tspan>
+                      <tspan fill="#ffffff">2</tspan>
+                    </text>
+                  </svg>
+                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
+                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
+                  </div>
                 </div>
               </div>
             </div>
