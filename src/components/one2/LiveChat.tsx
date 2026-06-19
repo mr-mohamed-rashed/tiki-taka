@@ -408,11 +408,11 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
               <div className="flex-1 min-w-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <span className={cn(
                   "font-bold mr-1.5",
-                  variant === 'overlay' ? "text-white drop-shadow-md" : (isOwn ? "text-primary" : "text-blue-500")
+                  isOwn ? "text-primary" : "text-blue-500"
                 )}>
                   {msg.username} {lang === 'ar' ? ':' : ':'}
                 </span>
-                <span className={cn("text-foreground/90 whitespace-pre-wrap", variant === 'overlay' && "text-white drop-shadow-md font-medium")}>{renderMessageText(msg.message)}</span>
+                <span className={cn("text-foreground/90 whitespace-pre-wrap font-medium")}>{renderMessageText(msg.message)}</span>
               </div>
               
               {isModerator && (
