@@ -61,10 +61,10 @@ const LiveMatches = () => {
               </div>
             </div>
           </section>
-        ) : featured ? (
+        ) : featured || get('live_stream_url', 'en') ? (
           <section className="flex flex-col lg:flex-row w-full h-full md:min-h-[600px] md:h-[calc(100vh-200px)]">
             <div className="relative h-[35vh] sm:h-[40vh] md:h-auto md:flex-1 shrink-0">
-              <Live2DTracker match={featured} hideSocials={true} />
+              <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
             <div className="flex-1 min-h-0 md:min-h-[auto] md:h-full lg:w-[400px] xl:w-[450px] bg-background md:border-l border-border/50">
               <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
@@ -72,7 +72,7 @@ const LiveMatches = () => {
           </section>
         ) : (
           <section className="flex items-center justify-center h-full w-full min-h-[600px]">
-            {nextMatch ? <TournamentCountdown match={nextMatch} /> : null}
+            {nextMatch ? <TournamentCountdown match={nextMatch} /> : <div className="text-muted-foreground text-xl font-arabic">{lang === 'ar' ? 'لا توجد مباريات حالياً' : 'No matches available at the moment'}</div>}
           </section>
         )}
       </main>
