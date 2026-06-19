@@ -334,18 +334,18 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
   return (
     <Card className={cn(
       "overflow-hidden flex flex-col h-full",
-      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-gradient-card border-border h-[500px] md:h-full')
+      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-white border-border h-[500px] md:h-full')
     )}>
       {/* Header */}
       {variant !== 'overlay' && (
-        <div className="hidden md:flex items-center justify-between px-5 py-3 border-b border-border bg-card/60 shrink-0">
+        <div className="hidden md:flex items-center justify-between px-5 py-3 border-b border-gray-200 bg-white shrink-0">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/15">
             <MessageCircle className="h-4 w-4 text-primary" />
           </div>
           <div>
-            <h3 className={cn('font-display font-extrabold text-lg', lang === 'ar' && 'font-arabic')}>{t('liveChat', lang)}</h3>
-            <p className="text-xs text-muted-foreground">{username}</p>
+            <h3 className={cn('font-display font-extrabold text-lg text-gray-900', lang === 'ar' && 'font-arabic')}>{t('liveChat', lang)}</h3>
+            <p className="text-xs text-gray-500">{username}</p>
           </div>
         </div>
         {isModerator && (
@@ -387,7 +387,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
                 <span className="font-bold mr-1.5 text-primary">
                   {msg.username} {lang === 'ar' ? ':' : ':'}
                 </span>
-                <span className={cn("text-foreground/90 font-medium whitespace-pre-wrap", variant === 'overlay' && "text-white")}>{renderMessageText(msg.message)}</span>
+                <span className={cn("text-gray-900 font-medium whitespace-pre-wrap", variant === 'overlay' && "text-white")}>{renderMessageText(msg.message)}</span>
               </div>
               {isModerator && (
                 <button onClick={() => togglePin(msg.id, true)} className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-primary/20 text-primary transition-opacity absolute top-0 right-0 shrink-0" title={lang === 'ar' ? 'إلغاء التثبيت' : 'Unpin'}>
@@ -408,11 +408,11 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
               <div className="flex-1 min-w-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <span className={cn(
                   "font-bold mr-1.5",
-                  variant === 'overlay' ? "text-white drop-shadow-md" : (isOwn ? "text-primary" : "text-blue-500")
+                  variant === 'overlay' ? "text-white drop-shadow-md" : (isOwn ? "text-primary" : "text-blue-600")
                 )}>
                   {msg.username} {lang === 'ar' ? ':' : ':'}
                 </span>
-                <span className={cn("text-foreground/90 whitespace-pre-wrap", variant === 'overlay' && "text-white drop-shadow-md font-medium")}>{renderMessageText(msg.message)}</span>
+                <span className={cn("text-gray-900 whitespace-pre-wrap", variant === 'overlay' && "text-white drop-shadow-md font-medium")}>{renderMessageText(msg.message)}</span>
               </div>
               
               {isModerator && (
@@ -434,7 +434,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
           );
         })}
         {visibleMessages.length === 0 && (
-          <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+          <div className="flex items-center justify-center h-full text-gray-500 text-sm">
             {lang === 'ar' ? 'لا توجد رسائل بعد. كن الأول!' : 'No messages yet. Be the first!'}
           </div>
         )}
@@ -462,7 +462,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
               e.preventDefault();
               sendMessage();
             }} 
-            className={cn("p-3 shrink-0 relative flex items-center gap-1 border-t border-border")}
+            className={cn("p-3 shrink-0 relative flex items-center gap-2 border-t border-gray-200 bg-white")}
           >
             {showEmojis && (
               <div className="absolute bottom-[110%] right-3 z-50 shadow-2xl rounded-xl overflow-hidden">
@@ -470,7 +470,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
                   onEmojiClick={(emojiData) => {
                     setInputMsg(prev => prev + emojiData.emoji);
                   }}
-                  theme={Theme.DARK}
+                  theme={Theme.LIGHT}
                   lazyLoadEmojis={true}
                   searchDisabled={true}
                   skinTonesDisabled={true}
@@ -479,26 +479,27 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
                 />
               </div>
             )}
-            <div className="flex-1">
-                <Input
-                  value={inputMsg}
-                  onChange={(e) => setInputMsg(e.target.value)}
-                  placeholder={t('chatPlaceholder', lang)}
-                  className="border-border text-sm h-10 w-full bg-muted"
-                  dir={lang === 'ar' ? 'rtl' : 'ltr'}
-                  maxLength={200}
-                  disabled={isSending}
-                />
+            
+            <div className="flex-1 bg-[#f0f2f5] rounded-full flex items-center px-4 h-12">
+              <Input
+                value={inputMsg}
+                onChange={(e) => setInputMsg(e.target.value)}
+                placeholder={lang === 'ar' ? `تعليق باسم ${username}` : `Comment as ${username}`}
+                className="border-none bg-transparent shadow-none text-gray-900 text-sm h-full w-full focus-visible:ring-0 px-0 placeholder:text-gray-500"
+                dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                maxLength={200}
+                disabled={isSending}
+              />
+              <button
+                type="button"
+                onClick={() => setShowEmojis(!showEmojis)}
+                className="p-2 text-gray-500 hover:text-primary transition-colors focus:outline-none shrink-0"
+              >
+                <Smile className="h-5 w-5" />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowEmojis(!showEmojis)}
-              className="p-3 text-muted-foreground hover:text-primary transition-colors bg-black/40 border-y border-l border-border rounded-l-xl focus:outline-none"
-            >
-              <Smile className="h-5 w-5" />
-            </button>
-            <Button type="submit" disabled={!inputMsg.trim() || isSending} size="icon" className="shrink-0 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full h-10 w-10 shadow-neon">
-              <Send className={cn("h-4 w-4", lang === 'ar' && "rotate-180")} />
+            <Button type="submit" disabled={!inputMsg.trim() || isSending} size="icon" className="shrink-0 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full h-12 w-12 shadow-md">
+              <Send className={cn("h-5 w-5", lang === 'ar' && "rotate-180")} />
             </Button>
           </form>
         )

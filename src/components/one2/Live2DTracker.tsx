@@ -9,6 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
+import { Navigation } from '@/components/one2/Navigation';
 
 interface Live2DTrackerProps {
   match: Match;
@@ -212,41 +213,24 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
+              {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
-                className="absolute flex items-center justify-center z-40 pointer-events-none top-[3%] right-[2%] w-[35%] max-w-[180px] h-[18%] max-h-[65px]"
+                className="absolute top-2 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
               >
-                  <div className="relative w-full h-[50%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-full shadow-2xl z-10 border border-white/20">
-                    <div className="absolute inset-0 rounded-full overflow-hidden">
-                      <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
-                    </div>
-                    <div className="relative w-full h-full z-10 flex flex-col items-center justify-center mt-[1%] pr-[38%] pl-[5%]">
-                      {lang === 'ar' ? (
-                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
-                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            ONE2
-                          </text>
-                          <circle cx="78" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
-                          <text x="72" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider font-arabic" style={{ fontSize: '10px' }}>
-                            بث مباشر
-                          </text>
-                        </svg>
-                      ) : (
-                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
-                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            ONE2
-                          </text>
-                          <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
-                          <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
-                            LIVE BROADCAST
-                          </text>
-                        </svg>
-                      )}
+                <div className="pointer-events-auto bg-[#16181d] backdrop-blur-md rounded-[20px] px-2 py-1.5 shadow-2xl border border-white/5 flex items-center justify-between">
+                  {/* Left Side: Hamburger Menu via Navigation Component */}
+                  <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
+                    <Navigation />
+                  </div>
+
+                  {/* Right Side: ONE2 Logo + Green Dot */}
+                  <div className="flex items-center gap-2 pr-3">
+                    <span className="font-display font-extrabold text-xl text-white tracking-wide leading-none mt-1">One2</span>
+                    <div className="relative flex items-center justify-center h-5 w-5 rounded-full border border-green-500/50 bg-green-500/10">
+                      <div className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
                     </div>
                   </div>
-                <div className="absolute right-[6%] h-[80%] aspect-square rounded-full overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 border-[0.15vw] border-[#1a4a85] animate-roll-in-periodic">
-                  <img src="/icons/one2-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
-                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"></div>
                 </div>
               </div>
 
@@ -335,44 +319,21 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
-                className="absolute flex items-center justify-center z-40 pointer-events-none top-[3%] right-[2%] w-[35%] max-w-[180px] h-[18%] max-h-[65px]"
+                className="absolute top-2 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
               >
-                {/* Premium Broadcast Text Box / Full Pill */}
-                  <div className="relative w-full h-[50%] bg-gradient-to-r from-[#091a33]/95 to-[#1a4a85]/95 backdrop-blur-md rounded-full shadow-2xl z-10 border border-white/20">
-                    {/* Glossy highlight effect */}
-                    <div className="absolute inset-0 rounded-full overflow-hidden">
-                      <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/10 to-transparent"></div>
-                    </div>
-                    
-                    <div className="relative w-full h-full z-10 flex flex-col items-center justify-center mt-[1%] pr-[38%] pl-[5%]">
-                      {lang === 'ar' ? (
-                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
-                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            ONE2
-                          </text>
-                          <circle cx="78" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
-                          <text x="72" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider font-arabic" style={{ fontSize: '10px' }}>
-                            بث مباشر
-                          </text>
-                        </svg>
-                      ) : (
-                        <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
-                          <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            ONE2
-                          </text>
-                          <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
-                          <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
-                            LIVE BROADCAST
-                          </text>
-                        </svg>
-                      )}
-                    </div>
+                <div className="pointer-events-auto bg-[#16181d] backdrop-blur-md rounded-[20px] px-2 py-1.5 shadow-2xl border border-white/5 flex items-center justify-between">
+                  {/* Left Side: Hamburger Menu via Navigation Component */}
+                  <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
+                    <Navigation />
                   </div>
 
-                {/* Circular Logo overlapping the text box */}
-                <div className="absolute right-[6%] h-[80%] aspect-square rounded-full overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.9)] z-20 border-[0.15vw] border-[#1a4a85] animate-roll-in-periodic">
-                  <img src="/icons/one2-icon.png" alt="World Cup" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] max-w-none object-cover" />
-                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"></div>
+                  {/* Right Side: ONE2 Logo + Green Dot */}
+                  <div className="flex items-center gap-2 pr-3">
+                    <span className="font-display font-extrabold text-xl text-white tracking-wide leading-none mt-1">One2</span>
+                    <div className="relative flex items-center justify-center h-5 w-5 rounded-full border border-green-500/50 bg-green-500/10">
+                      <div className="h-2.5 w-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
