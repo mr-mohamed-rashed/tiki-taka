@@ -60,7 +60,12 @@ export function useLiveFixtures() {
         let results: Match[] = [];
         if (data?.matches) results = data.matches as Match[];
         else if (data?.response) results = data.response.map(mapFixture);
-        else return [];
+        
+        if (!results || results.length === 0) {
+          results = getLiveMatches();
+        }
+        
+        if (!results) return [];
         
         const previousLive = queryClient.getQueryData<Match[]>(['live-fixtures']);
         const hadLive = previousLive?.some(m => m.status === 'live');
@@ -90,9 +95,14 @@ export function useUpcomingFixtures() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
-        if (data?.matches?.length) return getUpcomingOnly(data.matches as Match[]);
-        if (!data?.response?.length) return [];
-        return getUpcomingOnly(data.response.map(mapFixture));
+        let results: Match[] = [];
+        if (data?.matches?.length) results = getUpcomingOnly(data.matches as Match[]);
+        else if (data?.response?.length) results = getUpcomingOnly(data.response.map(mapFixture));
+        
+        if (!results || results.length === 0) {
+          results = getUpcomingMatches();
+        }
+        return results;
       } catch {
         return [];
       }

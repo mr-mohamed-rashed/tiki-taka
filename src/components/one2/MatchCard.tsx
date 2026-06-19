@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Calendar, ExternalLink, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,8 @@ import type { Match } from '@/lib/footballData';
 
 interface MatchCardProps {
   match: Match;
+  showCountdown?: boolean;
+  onClick?: () => void;
 }
 
 const formatTime = (iso: string) =>
@@ -18,6 +21,30 @@ const formatTime = (iso: string) =>
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+
+function MiniCountdown({ targetDate }: { targetDate: string }) {
+  const [timeLeft, setTimeLeft] = useState('');
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const diff = new Date(targetDate).getTime() - Date.now();
+      if (diff <= 0) {
+        setTimeLeft('00:00:00');
+        return;
+      }
+      const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+      const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+      setTimeLeft(`${h}:${m}:${s}`);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [targetDate]);
+
+  return <span>{timeLeft}</span>;
+}
 
 function TeamRow({
   team,
@@ -110,13 +137,13 @@ export function MatchCard({ match }: MatchCardProps) {
         )}
       </div>
 
-      <div className="px-2 py-3 sm:px-4 sm:py-4 flex items-center gap-1 sm:gap-4">
+      <div className="px-2 py-3 sm:px-4 sm:py-4 flex items-center gap-1 sm:gap-4 cursor-pointer" onClick={onClick}>
         <TeamRow team={match.home} isWinner={homeWin} align="left" />
 
         <div className="shrink-0 px-1 sm:px-4 text-center">
           {isUpcoming ? (
             <div className="font-display font-bold text-base sm:text-2xl text-primary tabular-nums">
-              {formatTime(match.date)}
+              {showCountdown ? <MiniCountdown targetDate={match.date} /> : formatTime(match.date)}
             </div>
           ) : (
             <div className={cn(
@@ -132,7 +159,9 @@ export function MatchCard({ match }: MatchCardProps) {
             <div className="text-[9px] sm:text-[10px] font-bold text-live mt-0.5 uppercase tracking-wider">{match.minute}</div>
           )}
           {isUpcoming && (
-            <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider">Kick-off</div>
+            <div className="text-[9px] sm:text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wider">
+               {showCountdown ? (lang === 'ar' ? 'الوقت المتبقي' : 'Time Left') : 'Kick-off'}
+            </div>
           )}
         </div>
 

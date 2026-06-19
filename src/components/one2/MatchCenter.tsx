@@ -68,7 +68,11 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
           </div>
         )}
         {!liveLoading && live.length === 0 && (
-          nextMatch ? <TournamentCountdown match={nextMatch} /> : <EmptyMatchesMessage type="live" lang={lang} />
+          nextMatch ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+               <MatchCard match={nextMatch} showCountdown onClick={() => navigate('/live')} />
+            </div>
+          ) : <EmptyMatchesMessage type="live" lang={lang} />
         )}
       </TabsContent>
 

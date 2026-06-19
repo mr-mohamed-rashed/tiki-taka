@@ -14,7 +14,6 @@ import { EditModeToggle } from '@/components/one2/EditModeToggle';
 import { EditableSiteText } from '@/components/one2/EditableSiteText';
 import { EditableImage } from '@/components/one2/EditableImage';
 import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
-import { TournamentCountdown } from '@/components/one2/TournamentCountdown';
 import { SponsorMarquee } from '@/components/one2/SponsorMarquee';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
