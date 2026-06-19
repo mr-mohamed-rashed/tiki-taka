@@ -253,8 +253,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                         </text>
                       </svg>
                     </div>
-                    {/* 'مباشر' box overlapping bottom-right edge */}
-                    <div className="absolute -bottom-[15%] right-0 bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                    {/* 'مباشر' box below the rectangle, shifted left to cover watermark */}
+                    <div className="absolute top-[100%] right-[15%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
                       مباشر
                     </div>
                   </div>
@@ -383,8 +383,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                         </text>
                       </svg>
                     </div>
-                    {/* 'مباشر' box overlapping bottom-right edge */}
-                    <div className="absolute -bottom-[15%] right-0 bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                    {/* 'مباشر' box below the rectangle, shifted left to cover watermark */}
+                    <div className="absolute top-[100%] right-[15%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
                       مباشر
                     </div>
                   </div>
