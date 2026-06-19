@@ -41,13 +41,17 @@ const LiveMatches = () => {
         <Navigation />
       </div>
 
-      <main className="relative w-full flex flex-col md:pb-8">
+      <main className="relative w-full flex-1 flex flex-col min-h-0 md:h-auto md:pb-8">
         {/* Mobile Floating App Bar */}
-        <div className="z-[60] absolute top-0 left-0 w-full md:hidden pointer-events-none p-1 transition-opacity duration-300">
-           <div className="pointer-events-auto bg-black/60 backdrop-blur-md rounded-full px-2 shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10">
-             <div className="[&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-2 [&>nav]:h-12 flex items-center">
-               <Navigation />
-             </div>
+        <div className="z-[60] absolute top-2 left-2 right-2 md:hidden pointer-events-none p-1 transition-opacity duration-300">
+           <div className="pointer-events-auto bg-black/60 backdrop-blur-md rounded-full px-3 py-1 shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <img src="/icons/one2-icon-192.png" alt="One2" className="h-6 w-6 rounded-full shadow-neon" />
+                <span className="font-display font-extrabold text-lg text-primary tracking-wide leading-none mt-1">ONE2</span>
+              </div>
+              <div className="scale-90 origin-right flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-8 [&>nav>div>div>a]:hidden [&>nav>div>div>div]:hidden">
+                <Navigation />
+              </div>
            </div>
         </div>
 
@@ -71,11 +75,11 @@ const LiveMatches = () => {
             </div>
           </section>
         ) : featured || get('live_stream_url', 'en') ? (
-          <section className="flex flex-col lg:flex-row w-full lg:max-w-7xl lg:mx-auto lg:p-6 lg:gap-6 lg:items-stretch">
-            <div className="relative h-[35vh] sm:h-[40vh] md:h-auto lg:flex-1 shrink-0 w-full lg:max-w-3xl">
+          <section className="flex-1 flex flex-col min-h-0 lg:flex-row w-full lg:max-w-7xl lg:mx-auto lg:p-6 lg:gap-6 lg:items-stretch">
+            <div className="relative shrink-0 w-full lg:max-w-3xl lg:flex-1 h-[35vh] sm:h-[40vh] md:h-auto">
               <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
-            <div className="flex-1 min-h-0 md:min-h-[auto] w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto">
+            <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto">
               <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
             </div>
           </section>

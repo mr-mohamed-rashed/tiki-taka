@@ -259,8 +259,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               </div>
 
               {/* Server Swipe Area Overlay (Left Side) */}
-              <div className="absolute left-0 top-0 bottom-0 w-1/4 z-50 flex flex-col items-center justify-center pointer-events-auto touch-pan-y" 
-                   onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchMove={(e) => e.preventDefault()}>
+              <div className="absolute left-0 top-0 bottom-0 w-1/4 z-50 flex flex-col items-center justify-center pointer-events-auto touch-pan-y touch-pan-x" 
+                   onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                 {servers.length > 1 && (
                   <div className="flex flex-col gap-2 bg-black/40 p-2 rounded-full backdrop-blur-sm opacity-50 hover:opacity-100 transition-opacity">
                     {servers.map((_, idx) => (
@@ -285,7 +285,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
       <div className="p-3 sm:p-4 bg-background/40">
 
         {servers.length > 0 && (
-          <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-3 pb-1 md:flex-wrap md:overflow-visible md:pb-0">
+          <div className="flex overflow-x-auto touch-pan-x hide-scrollbar gap-2 mb-3 pb-1 md:flex-wrap md:overflow-visible md:pb-0">
             {servers.map((server, idx) => (
               <Button
                 key={idx}

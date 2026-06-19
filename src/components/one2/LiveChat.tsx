@@ -131,6 +131,11 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     setLoading(false);
   }, [matchId]);
 
+  const usersRef = useRef(users);
+  useEffect(() => {
+    usersRef.current = users;
+  }, [users]);
+
   // Real-time subscription
   useEffect(() => {
     const channel = supabase
@@ -143,7 +148,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
       }, (payload) => {
         const msg = payload.new as ChatMessage;
         // Check if sender is banned
-        const sender = users.get(msg.user_id);
+        const sender = usersRef.current.get(msg.user_id);
         if (!sender?.is_banned) {
           setMessages((prev) => [...prev, msg]);
         }
@@ -160,7 +165,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [matchId, users]);
+  }, [matchId]);
 
   // Automated 5 Admins (Bots) sending news when chat is quiet
   useEffect(() => {
