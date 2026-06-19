@@ -228,7 +228,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                       {lang === 'ar' ? (
                         <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
                           <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            TIKI-TAKA
+                            ONE2
                           </text>
                           <circle cx="78" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
                           <text x="72" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider font-arabic" style={{ fontSize: '10px' }}>
@@ -238,7 +238,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                       ) : (
                         <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
                           <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            TIKI-TAKA
+                            ONE2
                           </text>
                           <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
                           <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>
@@ -352,7 +352,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                       {lang === 'ar' ? (
                         <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
                           <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            TIKI-TAKA
+                            ONE2
                           </text>
                           <circle cx="78" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
                           <text x="72" y="31" textAnchor="end" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider font-arabic" style={{ fontSize: '10px' }}>
@@ -362,7 +362,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                       ) : (
                         <svg viewBox="0 0 110 35" className="w-full h-auto drop-shadow-md overflow-visible">
                           <text x="50" y="16" textAnchor="middle" fill="currentColor" className="font-display font-extrabold text-primary animate-pulse" style={{ fontSize: '18px', letterSpacing: '-0.5px' }}>
-                            TIKI-TAKA
+                            ONE2
                           </text>
                           <circle cx="22" cy="28" r="2.5" fill="#ef4444" className="animate-pulse" />
                           <text x="28" y="31" textAnchor="start" fill="rgba(255,255,255,0.8)" className="font-bold uppercase tracking-wider" style={{ fontSize: '8px' }}>

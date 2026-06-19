@@ -153,7 +153,7 @@ export function One2Footer() {
             </div>
           </div>
           
-          {/* Big Centered TIKI-TAKA text */}
+          {/* Big Centered ONE2 text */}
           <div className={`w-full flex justify-center py-12 transition-all duration-1000 delay-300 relative z-10 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
             <style>
               {`
@@ -174,7 +174,7 @@ export function One2Footer() {
                   WebkitTextStroke: '3px #14532d'
                 }}
               >
-                TIKI-TAKA
+                ONE2
               </span>
               {/* Light Sweep Overlay */}
               <span 
@@ -187,7 +187,7 @@ export function One2Footer() {
                   animation: 'light-sweep 5s linear infinite'
                 }}
               >
-                TIKI-TAKA
+                ONE2
               </span>
             </div>
           </div>
