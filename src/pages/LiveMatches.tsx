@@ -57,38 +57,18 @@ const LiveMatches = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background" dir={dir}>
+    <div className="h-[100dvh] flex flex-col overflow-hidden bg-black text-white" dir={dir}>
       <EditModeToggle />
-      <NewsTicker />
-      <Navigation />
+      
+      {/* App Bar (Navigation & Ticker) at the top */}
+      <div className="z-50 relative shrink-0 bg-background">
+        <NewsTicker />
+        <Navigation />
+      </div>
 
-      <main className="container mx-auto px-4 lg:px-8 py-10 space-y-12">
-        <AdSlotSelector location="live-page" onAdd={() => {}} />
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-live/15 text-live">
-              <Radio className="h-5 w-5 animate-pulse-live" />
-            </div>
-            <div>
-              <h1 className={cn('font-display font-extrabold text-3xl sm:text-4xl', lang === 'ar' && 'font-arabic')}>
-                {t('liveTitle', lang)}
-              </h1>
-              <p className={cn('text-sm text-muted-foreground', lang === 'ar' && 'font-arabic')}>
-                {t('liveSub', lang)}
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <ShareMenu />
-            <div className="flex flex-col gap-4 hidden md:flex">
-              <AdBanner slotId="live-sidebar-1" />
-              <AdBanner slotId="live-sidebar-2" />
-            </div>
-          </div>
-        </header>
-
+      <main className="flex-1 relative w-full h-full flex flex-col">
         {isLoading ? (
-          <section className="flex flex-col items-center justify-center min-h-[50vh] space-y-6">
+          <section className="flex flex-col items-center justify-center h-full w-full">
             <div className="relative group">
               <div className="absolute inset-0 bg-primary rounded-full blur-xl opacity-30 animate-pulse" />
               <div className="relative p-6 rounded-3xl bg-card border border-border shadow-2xl flex flex-col items-center justify-center gap-4">
@@ -107,27 +87,21 @@ const LiveMatches = () => {
             </div>
           </section>
         ) : featured ? (
-          <section>
-            <LiveLayoutSwitcher currentMode={layoutMode} onModeChange={setLayoutMode} />
+          <section className="absolute inset-0 w-full h-full">
             
-            {(!get('live_stream_url', 'en') || get('live_stream_url', 'en') === '[]') && (
-              <div className="flex items-center gap-2 mb-5">
-                <Tv className="h-5 w-5 text-primary" />
-                <h2 className={cn('font-display font-extrabold text-2xl', lang === 'ar' && 'font-arabic')}>
-                  {t('matchTracker', lang)}
-                </h2>
-                <span className="text-sm text-muted-foreground ms-1">
-                  - {featured.home.name} vs {featured.away.name}
-                </span>
+            {/* The 3 Buttons Over the Video */}
+            <div className="absolute top-4 left-0 right-0 z-40 flex justify-center pointer-events-none">
+              <div className="pointer-events-auto bg-black/50 backdrop-blur-md rounded-full p-1 shadow-2xl border border-white/10">
+                <LiveLayoutSwitcher currentMode={layoutMode} onModeChange={setLayoutMode} />
               </div>
-            )}
+            </div>
 
             {layoutMode === 'youtube' && (
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8 flex-col lg:flex-row">
-                <div className="lg:col-span-3 order-1 relative">
+              <div className="flex flex-col lg:flex-row h-full w-full">
+                <div className="flex-1 relative h-[60%] lg:h-full">
                   <Live2DTracker match={featured} hideSocials={true} />
                 </div>
-                <div className="lg:col-span-2 order-2 h-[500px] lg:h-auto">
+                <div className="h-[40%] lg:h-full lg:w-[400px] bg-background border-l border-border/50">
                   <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
                 </div>
               </div>
@@ -135,13 +109,13 @@ const LiveMatches = () => {
 
             {layoutMode === 'tiktok' && (
               <div 
-                className="relative w-full h-[85vh] lg:h-[85vh] bg-black rounded-xl overflow-hidden mb-8 shadow-2xl"
+                className="relative w-full h-full bg-black overflow-hidden"
                 onTouchStart={handleTiktokTouchStart}
                 onTouchEnd={handleTiktokTouchEnd}
               >
-                {/* Dynamic Blurred Background representing TikTok's background */}
+                {/* Dynamic Blurred Background */}
                 <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                   <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-black to-destructive/20 animate-pulse-slow blur-3xl opacity-50 transform scale-150"></div>
+                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-black to-destructive/20 animate-pulse-slow blur-3xl opacity-50 transform scale-150"></div>
                    <div className="absolute inset-0 bg-black/60 backdrop-blur-3xl"></div>
                 </div>
 
@@ -175,29 +149,28 @@ const LiveMatches = () => {
             )}
 
             {layoutMode === 'facebook' && (
-              <div className="flex flex-col gap-4 mb-8">
-                <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden">
+              <div className="flex flex-col h-full w-full overflow-hidden bg-background">
+                <div className="relative w-full aspect-video lg:h-[65%] bg-black shrink-0">
                   <Live2DTracker match={featured} hideSocials={true} forceMode="video-only" />
-                  {/* Floating emojis layer for facebook can go here */}
                   <div className="absolute bottom-4 right-4 pointer-events-none flex gap-2">
                     <div className="animate-bounce text-2xl">👍</div>
                     <div className="animate-bounce delay-100 text-2xl">❤️</div>
                   </div>
                 </div>
-                <div className="h-[400px]">
-                  <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
+                <div className="flex-1 min-h-0 bg-background relative">
+                  <div className="absolute inset-0 overflow-hidden">
+                    <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
+                  </div>
                 </div>
               </div>
             )}
           </section>
         ) : (
-          <section className="max-w-2xl mx-auto mb-12">
+          <section className="flex items-center justify-center h-full w-full">
             {nextMatch ? <TournamentCountdown match={nextMatch} /> : null}
           </section>
         )}
       </main>
-
-      <TikiTakaFooter />
     </div>
   );
 };
