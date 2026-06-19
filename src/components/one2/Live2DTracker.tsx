@@ -229,23 +229,24 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
               {/* Smart Responsive Logo Cover */}
               <div 
-                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-[min(1vw,10px)] shadow-lg border border-white/5 pointer-events-none px-[2%]"
+                dir="ltr"
+                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none"
                 style={{ 
-                  top: '5%', 
+                  top: '3%', 
                   right: '2%', 
                   width: '16%', 
                   aspectRatio: '3.5 / 1',
                   minWidth: '70px',
-                  minHeight: '20px'
+                  containerType: 'inline-size',
+                  padding: '0 6cqi'
                 }}
               >
-                <div className="flex items-center justify-between w-full h-full">
-                  <svg viewBox="0 0 100 40" className="w-[70%] h-full">
-                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold fill-white" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>One2</text>
-                  </svg>
-                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
-                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
-                  </div>
+                <div className="font-display font-extrabold tracking-wide flex items-center leading-none mt-[2cqi]" style={{ fontSize: '32cqi' }}>
+                  <span className="text-green-400">One</span>
+                  <span className="text-white">2</span>
+                </div>
+                <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: '22cqi', height: '22cqi' }}>
+                  <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
                 </div>
               </div>
 
@@ -347,23 +348,24 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
               {/* Smart Responsive Logo Cover */}
               <div 
-                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-[min(1vw,10px)] shadow-lg border border-white/5 pointer-events-none px-[2%]"
+                dir="ltr"
+                className="absolute z-40 flex items-center justify-between bg-blue-600 rounded-full shadow-lg border border-white/10 pointer-events-none"
                 style={{ 
-                  top: '5%', 
+                  top: '3%', 
                   right: '2%', 
                   width: '16%', 
                   aspectRatio: '3.5 / 1',
                   minWidth: '70px',
-                  minHeight: '20px'
+                  containerType: 'inline-size',
+                  padding: '0 6cqi'
                 }}
               >
-                <div className="flex items-center justify-between w-full h-full">
-                  <svg viewBox="0 0 100 40" className="w-[70%] h-full">
-                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold fill-white" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>One2</text>
-                  </svg>
-                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
-                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
-                  </div>
+                <div className="font-display font-extrabold tracking-wide flex items-center leading-none mt-[2cqi]" style={{ fontSize: '32cqi' }}>
+                  <span className="text-green-400">One</span>
+                  <span className="text-white">2</span>
+                </div>
+                <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: '22cqi', height: '22cqi' }}>
+                  <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
                 </div>
               </div>
             </div>
