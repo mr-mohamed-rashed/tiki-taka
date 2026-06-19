@@ -243,22 +243,19 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   {/* Map Pattern Layer (rounded to stay inside box) */}
                   <div className="absolute inset-0 opacity-20 rounded-full overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]"></div>
                   
-                  <div className="relative z-10 flex items-center justify-between w-full h-full">
-                    <div className="relative flex flex-col justify-center w-[65%] h-full pt-[2%]">
-                      <svg viewBox="0 0 100 40" className="w-full">
+                  <div className="relative z-10 flex items-center w-full h-full">
+                    {/* Centered One2 Text */}
+                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%]">
+                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
                         <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
                           <tspan fill="#4ade80">One</tspan>
                           <tspan fill="#ffffff">2</tspan>
                         </text>
                       </svg>
-                      {/* 'مباشر' box overlapping bottom edge */}
-                      <div className="absolute -bottom-[20%] right-[5%] bg-black/60 px-1.5 rounded text-white text-[clamp(7px,0.8vw,12px)] font-bold border border-white/10" dir="rtl">
-                        مباشر
-                      </div>
                     </div>
-                    {/* Large Static Transparent Trophy */}
-                    <div className="relative flex items-center justify-center w-[25%] aspect-square z-20">
-                      <img src="/trophy_transparent.png" alt="Trophy" className="absolute w-[200%] h-[200%] max-w-none object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]" />
+                    {/* 'مباشر' box overlapping bottom-right edge */}
+                    <div className="absolute -bottom-[15%] right-0 bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                      مباشر
                     </div>
                   </div>
                 </div>
@@ -376,22 +373,19 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   {/* Map Pattern Layer (rounded to stay inside box) */}
                   <div className="absolute inset-0 opacity-20 rounded-full overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]"></div>
                   
-                  <div className="relative z-10 flex items-center justify-between w-full h-full">
-                    <div className="relative flex flex-col justify-center w-[65%] h-full pt-[2%]">
-                      <svg viewBox="0 0 100 40" className="w-full">
+                  <div className="relative z-10 flex items-center w-full h-full">
+                    {/* Centered One2 Text */}
+                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%]">
+                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
                         <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>
                           <tspan fill="#4ade80">One</tspan>
                           <tspan fill="#ffffff">2</tspan>
                         </text>
                       </svg>
-                      {/* 'مباشر' box overlapping bottom edge */}
-                      <div className="absolute -bottom-[20%] right-[5%] bg-black/60 px-1.5 rounded text-white text-[clamp(7px,0.8vw,12px)] font-bold border border-white/10" dir="rtl">
-                        مباشر
-                      </div>
                     </div>
-                    {/* Large Static Transparent Trophy */}
-                    <div className="relative flex items-center justify-center w-[25%] aspect-square z-20">
-                      <img src="/trophy_transparent.png" alt="Trophy" className="absolute w-[200%] h-[200%] max-w-none object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]" />
+                    {/* 'مباشر' box overlapping bottom-right edge */}
+                    <div className="absolute -bottom-[15%] right-0 bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                      مباشر
                     </div>
                   </div>
                 </div>
