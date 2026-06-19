@@ -462,21 +462,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
           )}
         </div>
 
-        {/* Legend */}
-        <div className="mt-4 flex items-center justify-center gap-6 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full border-2 border-white" style={{ background: home.color }} />
-            <span className="font-semibold">{home.name}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-white" />
-            <span className="font-semibold">Ball</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full border-2 border-white" style={{ background: away.color }} />
-            <span className="font-semibold">{away.name}</span>
-          </div>
-        </div>
+
 
         {!hideSocials && (
           <div className="mt-4 border-t border-border/60 pt-4">

@@ -59,6 +59,7 @@ export function NewsTab() {
   const [saving, setSaving] = useState(false);
   const [savingSpeed, setSavingSpeed] = useState(false);
   const [tickerSpeed, setTickerSpeed] = useState('70');
+  const [tickerSpeedMobile, setTickerSpeedMobile] = useState('120');
   const [ticker, setTicker] = useState(blankTicker());
   const [pulse, setPulse] = useState(blankPulse());
   const [article, setArticle] = useState(blankArticle());
@@ -69,6 +70,7 @@ export function NewsTab() {
 
   useEffect(() => {
     setTickerSpeed(settings.find((setting) => setting.key === 'ticker_speed_seconds')?.value_en || '70');
+    setTickerSpeedMobile(settings.find((setting) => setting.key === 'ticker_speed_mobile_seconds')?.value_en || '120');
   }, [settings]);
 
   const addItem = async (draft: NewsDraft, reset: () => void) => {
@@ -80,10 +82,13 @@ export function NewsTab() {
   };
 
   const saveTickerSpeed = async () => {
-    const seconds = Math.max(25, Math.min(180, Number(tickerSpeed) || 70)).toString();
+    const seconds = Math.max(25, Math.min(500, Number(tickerSpeed) || 70)).toString();
+    const mobileSeconds = Math.max(25, Math.min(500, Number(tickerSpeedMobile) || 120)).toString();
     setTickerSpeed(seconds);
+    setTickerSpeedMobile(mobileSeconds);
     setSavingSpeed(true);
     await saveSetting('ticker_speed_seconds', seconds, seconds);
+    await saveSetting('ticker_speed_mobile_seconds', mobileSeconds, mobileSeconds);
     setSavingSpeed(false);
   };
 
@@ -147,13 +152,24 @@ export function NewsTab() {
               </Button>
             </div>
             <div className="mt-3 flex flex-col gap-2 rounded-lg border border-border bg-background/40 p-3 sm:flex-row sm:items-end">
-              <Field label="سرعة الشريط بالثواني" className="sm:w-48">
+              <Field label="سرعة الكمبيوتر (ثواني)" className="sm:w-48">
                 <Input
                   type="number"
                   min={25}
-                  max={180}
+                  max={500}
                   value={tickerSpeed}
                   onChange={(event) => setTickerSpeed(event.target.value)}
+                  className="h-10 text-center"
+                  dir="ltr"
+                />
+              </Field>
+              <Field label="سرعة الموبايل (ثواني)" className="sm:w-48">
+                <Input
+                  type="number"
+                  min={25}
+                  max={500}
+                  value={tickerSpeedMobile}
+                  onChange={(event) => setTickerSpeedMobile(event.target.value)}
                   className="h-10 text-center"
                   dir="ltr"
                 />
@@ -168,7 +184,7 @@ export function NewsTab() {
                 {savingSpeed ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 حفظ السرعة
               </Button>
-              <p className="pb-2 text-xs text-muted-foreground">رقم أقل = حركة أسرع. الأفضل من 55 إلى 90.</p>
+              <p className="pb-2 text-xs text-muted-foreground">رقم أقل = حركة أسرع. أقصى رقم 500.</p>
             </div>
           </Card>
           <NewsList items={tickerItems} empty="لا توجد سطور في الشريط حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} />

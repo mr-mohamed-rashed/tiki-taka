@@ -10,7 +10,8 @@ export function NewsTicker() {
   const { get } = useSiteSettingsContext();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
   const { data: realNews, isLoading } = useRealNews(lang);
-  const tickerSpeed = Math.max(25, Math.min(180, Number(get('ticker_speed_seconds') || 70)));
+  const desktopSpeed = Math.max(25, Math.min(500, Number(get('ticker_speed_seconds') || 70)));
+  const mobileSpeed = Math.max(25, Math.min(500, Number(get('ticker_speed_mobile_seconds') || 120)));
 
   const manualItems = manualNews
     .filter((item) => item.category === 'Ticker')
@@ -49,8 +50,11 @@ export function NewsTicker() {
         </div>
         <div className="flex-1 overflow-hidden relative bg-gradient-ticker" dir="ltr">
           <div
-            className={`flex whitespace-nowrap py-2.5 ${lang === 'ar' ? 'animate-ticker-ar' : 'animate-ticker'}`}
-            style={{ animationDuration: `${tickerSpeed}s` }}
+            className={`flex whitespace-nowrap py-2.5 ${lang === 'ar' ? 'animate-ticker-ar' : 'animate-ticker'} ticker-responsive-speed`}
+            style={{ 
+              '--desktop-speed': `${desktopSpeed}s`, 
+              '--mobile-speed': `${mobileSpeed}s` 
+            } as React.CSSProperties}
           >
             {loop.map((item, index) => (
               <span

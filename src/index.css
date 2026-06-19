@@ -255,3 +255,13 @@ body::before {
   background-clip: text;
   animation: text-sweep-light 3s linear infinite;
 }
+
+.ticker-responsive-speed {
+  animation-duration: var(--desktop-speed, 70s);
+}
+
+@media (max-width: 768px) {
+  .ticker-responsive-speed {
+    animation-duration: var(--mobile-speed, 120s);
+  }
+}
