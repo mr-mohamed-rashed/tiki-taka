@@ -42,18 +42,7 @@ const LiveMatches = () => {
       </div>
 
       <main className="relative w-full flex-1 flex flex-col min-h-0 md:h-auto md:pb-8">
-        {/* Mobile Floating App Bar */}
-        <div className="z-[60] absolute top-2 left-2 right-2 md:hidden pointer-events-none p-1 transition-opacity duration-300">
-           <div className="pointer-events-auto bg-black/60 backdrop-blur-md rounded-full px-3 py-1 shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <img src="/icons/one2-icon-192.png" alt="One2" className="h-6 w-6 rounded-full shadow-neon" />
-                <span className="font-display font-extrabold text-lg text-primary tracking-wide leading-none mt-1">ONE2</span>
-              </div>
-              <div className="scale-90 origin-right flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-8 [&>nav>div>div>a]:hidden [&>nav>div>div>div]:hidden">
-                <Navigation />
-              </div>
-           </div>
-        </div>
+
 
         {isLoading ? (
           <section className="flex flex-col items-center justify-center h-full w-full">
