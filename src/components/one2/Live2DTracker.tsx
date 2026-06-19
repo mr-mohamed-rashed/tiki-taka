@@ -163,13 +163,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     }
   };
 
-  // When entering theater mode, default chat to overlay
+  // When entering theater mode, default chat to hidden
   useEffect(() => {
-    if (isTheater) {
-      setChatMode('overlay');
-    } else {
-      setChatMode('hidden');
-    }
+    setChatMode('hidden');
   }, [isTheater]);
 
   const servers = (() => {
