@@ -223,13 +223,26 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
                     <Navigation />
                   </div>
+                  {/* Removed right side logo from here, moved to responsive container below */}
+                </div>
+              </div>
 
-                  {/* Right Side: ONE2 Logo + Green Dot (Watermark Cover) */}
-                  <div className="flex items-center justify-center gap-2 px-3 py-1.5 w-[140px] h-[35px] bg-[#16181d] rounded-lg shadow-lg border border-white/5 mt-[-4px]">
-                    <span className="font-display font-extrabold text-lg text-white tracking-wide leading-none mt-1">One2</span>
-                    <div className="relative flex items-center justify-center h-4 w-4 rounded-full border border-green-500/50 bg-green-500/10">
-                      <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
-                    </div>
+              {/* Smart Responsive Logo Cover */}
+              <div 
+                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-lg shadow-lg border border-white/5 pointer-events-none"
+                style={{ 
+                  top: '5%', 
+                  right: '2%', 
+                  width: '16%', 
+                  minWidth: '90px',
+                  height: '9%',
+                  minHeight: '30px'
+                }}
+              >
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="font-display font-extrabold text-white tracking-wide leading-none mt-1" style={{ fontSize: 'clamp(14px, 2vw, 24px)' }}>One2</span>
+                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: 'clamp(12px, 1.5vw, 20px)', height: 'clamp(12px, 1.5vw, 20px)' }}>
+                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
                   </div>
                 </div>
               </div>
@@ -326,13 +339,26 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
                     <Navigation />
                   </div>
+                  {/* Removed right side logo from here, moved to responsive container below */}
+                </div>
+              </div>
 
-                  {/* Right Side: ONE2 Logo + Green Dot (Watermark Cover) */}
-                  <div className="flex items-center justify-center gap-2 px-3 py-1.5 w-[140px] h-[35px] bg-[#16181d] rounded-lg shadow-lg border border-white/5 mt-[-4px]">
-                    <span className="font-display font-extrabold text-lg text-white tracking-wide leading-none mt-1">One2</span>
-                    <div className="relative flex items-center justify-center h-4 w-4 rounded-full border border-green-500/50 bg-green-500/10">
-                      <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]"></div>
-                    </div>
+              {/* Smart Responsive Logo Cover */}
+              <div 
+                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-lg shadow-lg border border-white/5 pointer-events-none"
+                style={{ 
+                  top: '5%', 
+                  right: '2%', 
+                  width: '16%', 
+                  minWidth: '90px',
+                  height: '9%',
+                  minHeight: '30px'
+                }}
+              >
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="font-display font-extrabold text-white tracking-wide leading-none mt-1" style={{ fontSize: 'clamp(14px, 2vw, 24px)' }}>One2</span>
+                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: 'clamp(12px, 1.5vw, 20px)', height: 'clamp(12px, 1.5vw, 20px)' }}>
+                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
                   </div>
                 </div>
               </div>
