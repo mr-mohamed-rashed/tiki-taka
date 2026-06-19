@@ -80,7 +80,7 @@ export function useLiveFixtures() {
         
         return results;
       } catch {
-        return [];
+        return getLiveMatches();
       }
     },
     refetchInterval: getSmartPollingInterval,
@@ -104,7 +104,7 @@ export function useUpcomingFixtures() {
         }
         return results;
       } catch {
-        return [];
+        return getUpcomingMatches();
       }
     },
     refetchInterval: false,
@@ -160,7 +160,7 @@ export function useResults() {
         }
         return sortedResults;
       } catch {
-        return [];
+        return getFinishedMatches();
       }
     },
     refetchInterval: false,
