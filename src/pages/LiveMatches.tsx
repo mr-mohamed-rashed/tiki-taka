@@ -74,8 +74,8 @@ const LiveMatches = () => {
               <div className="relative p-6 rounded-3xl bg-card border border-border shadow-2xl flex flex-col items-center justify-center gap-4">
                 <CircleDot className="h-16 w-16 text-primary animate-spin-slow" strokeWidth={2} />
                 <div className="font-display font-extrabold text-3xl tracking-wide">
-                  <span className="text-foreground">TIKI</span>
-                  <span className="text-primary">-TAKA</span>
+                  <span className="text-foreground">ONE</span>
+                  <span className="text-primary">2</span>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />

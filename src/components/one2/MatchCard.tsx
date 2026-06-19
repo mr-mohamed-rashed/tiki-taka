@@ -72,7 +72,7 @@ function TeamRow({
   );
 }
 
-export function MatchCard({ match }: MatchCardProps) {
+export function MatchCard({ match, showCountdown, onClick }: MatchCardProps) {
   const { lang } = useLanguage();
   const { user, signInWithGoogle } = useAuth();
   const isLive = match.status === 'live';
