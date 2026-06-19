@@ -462,7 +462,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
               e.preventDefault();
               sendMessage();
             }} 
-            className={cn("p-3 shrink-0 relative flex items-center gap-1 border-t border-border")}
+            className={cn("p-3 shrink-0 relative flex items-center gap-2 border-t border-border")}
           >
             {showEmojis && (
               <div className="absolute bottom-[110%] right-3 z-50 shadow-2xl rounded-xl overflow-hidden">
@@ -479,26 +479,27 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
                 />
               </div>
             )}
-            <div className="flex-1">
-                <Input
-                  value={inputMsg}
-                  onChange={(e) => setInputMsg(e.target.value)}
-                  placeholder={t('chatPlaceholder', lang)}
-                  className="border-border text-sm h-10 w-full bg-muted"
-                  dir={lang === 'ar' ? 'rtl' : 'ltr'}
-                  maxLength={200}
-                  disabled={isSending}
-                />
+            
+            <div className="flex-1 bg-[#1e2025] rounded-[24px] flex items-center px-4 h-12 border border-border/50">
+              <Input
+                value={inputMsg}
+                onChange={(e) => setInputMsg(e.target.value)}
+                placeholder={lang === 'ar' ? `تعليق باسم ${username}` : `Comment as ${username}`}
+                className="border-none bg-transparent shadow-none text-foreground text-sm h-full w-full focus-visible:ring-0 px-0 placeholder:text-muted-foreground"
+                dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                maxLength={200}
+                disabled={isSending}
+              />
+              <button
+                type="button"
+                onClick={() => setShowEmojis(!showEmojis)}
+                className="p-2 text-muted-foreground hover:text-primary transition-colors focus:outline-none shrink-0"
+              >
+                <Smile className="h-5 w-5" />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowEmojis(!showEmojis)}
-              className="p-3 text-muted-foreground hover:text-primary transition-colors bg-black/40 border-y border-l border-border rounded-l-xl focus:outline-none"
-            >
-              <Smile className="h-5 w-5" />
-            </button>
-            <Button type="submit" disabled={!inputMsg.trim() || isSending} size="icon" className="shrink-0 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full h-10 w-10 shadow-neon">
-              <Send className={cn("h-4 w-4", lang === 'ar' && "rotate-180")} />
+            <Button type="submit" disabled={!inputMsg.trim() || isSending} size="icon" className="shrink-0 bg-primary hover:bg-primary-glow text-primary-foreground rounded-full h-12 w-12 shadow-md">
+              <Send className={cn("h-5 w-5", lang === 'ar' && "rotate-180")} />
             </Button>
           </form>
         )
