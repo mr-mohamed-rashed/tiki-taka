@@ -313,7 +313,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
 
   if (authLoading) {
     return (
-      <Card className={cn("flex items-center justify-center", variant === 'overlay' ? 'bg-transparent border-none shadow-none h-full' : 'bg-gradient-card border-border h-[500px]')}>
+      <Card className={cn("flex items-center justify-center", variant === 'overlay' ? 'bg-transparent border-none shadow-none h-full' : 'bg-gradient-card border-border h-[500px] md:h-full')}>
         <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </Card>
     );
@@ -329,7 +329,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
   return (
     <Card className={cn(
       "overflow-hidden flex flex-col h-full",
-      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-gradient-card border-border h-[500px]')
+      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-gradient-card border-border h-[500px] md:h-full')
     )}>
       {/* Header */}
       {variant !== 'overlay' && (

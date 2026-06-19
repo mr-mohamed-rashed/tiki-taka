@@ -32,7 +32,7 @@ const LiveMatches = () => {
 
 
   return (
-    <div className="h-[100dvh] md:h-auto md:min-h-screen flex flex-col overflow-hidden md:overflow-visible bg-black text-white" dir={dir}>
+    <div className="h-[100dvh] md:h-auto flex flex-col overflow-hidden md:overflow-visible bg-black text-white" dir={dir}>
       <EditModeToggle />
       
       {/* App Bar (Navigation & Ticker) at the top - Hidden on mobile */}
@@ -41,7 +41,7 @@ const LiveMatches = () => {
         <Navigation />
       </div>
 
-      <main className="flex-1 relative w-full h-full flex flex-col">
+      <main className="relative w-full flex flex-col md:pb-8">
         {/* Mobile Floating App Bar */}
         <div className="z-[60] absolute top-0 left-0 w-full md:hidden pointer-events-none p-1 transition-opacity duration-300">
            <div className="pointer-events-auto bg-black/60 backdrop-blur-md rounded-full px-2 shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10">
@@ -71,11 +71,11 @@ const LiveMatches = () => {
             </div>
           </section>
         ) : featured || get('live_stream_url', 'en') ? (
-          <section className="flex flex-col lg:flex-row w-full h-full md:min-h-[600px] md:h-[calc(100vh-200px)]">
-            <div className="relative h-[35vh] sm:h-[40vh] md:h-auto md:flex-1 shrink-0">
+          <section className="flex flex-col lg:flex-row w-full lg:max-w-7xl lg:mx-auto lg:p-6 lg:gap-6 lg:items-stretch">
+            <div className="relative h-[35vh] sm:h-[40vh] md:h-auto lg:flex-1 shrink-0 w-full lg:max-w-3xl">
               <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
-            <div className="flex-1 min-h-0 md:min-h-[auto] md:h-full lg:w-[400px] xl:w-[450px] bg-background md:border-l border-border/50">
+            <div className="flex-1 min-h-0 md:min-h-[auto] w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto">
               <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} />
             </div>
           </section>
