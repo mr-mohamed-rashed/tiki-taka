@@ -229,20 +229,22 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
               {/* Smart Responsive Logo Cover */}
               <div 
-                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-lg shadow-lg border border-white/5 pointer-events-none"
+                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-[min(1vw,10px)] shadow-lg border border-white/5 pointer-events-none px-[2%]"
                 style={{ 
                   top: '5%', 
                   right: '2%', 
                   width: '16%', 
-                  minWidth: '90px',
-                  height: '9%',
-                  minHeight: '30px'
+                  aspectRatio: '3.5 / 1',
+                  minWidth: '70px',
+                  minHeight: '20px'
                 }}
               >
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="font-display font-extrabold text-white tracking-wide leading-none mt-1" style={{ fontSize: 'clamp(14px, 2vw, 24px)' }}>One2</span>
-                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: 'clamp(12px, 1.5vw, 20px)', height: 'clamp(12px, 1.5vw, 20px)' }}>
-                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
+                <div className="flex items-center justify-between w-full h-full">
+                  <svg viewBox="0 0 100 40" className="w-[70%] h-full">
+                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold fill-white" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>One2</text>
+                  </svg>
+                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
+                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
                   </div>
                 </div>
               </div>
@@ -345,20 +347,22 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
               {/* Smart Responsive Logo Cover */}
               <div 
-                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-lg shadow-lg border border-white/5 pointer-events-none"
+                className="absolute z-40 flex items-center justify-center bg-[#16181d] rounded-[min(1vw,10px)] shadow-lg border border-white/5 pointer-events-none px-[2%]"
                 style={{ 
                   top: '5%', 
                   right: '2%', 
                   width: '16%', 
-                  minWidth: '90px',
-                  height: '9%',
-                  minHeight: '30px'
+                  aspectRatio: '3.5 / 1',
+                  minWidth: '70px',
+                  minHeight: '20px'
                 }}
               >
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className="font-display font-extrabold text-white tracking-wide leading-none mt-1" style={{ fontSize: 'clamp(14px, 2vw, 24px)' }}>One2</span>
-                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10" style={{ width: 'clamp(12px, 1.5vw, 20px)', height: 'clamp(12px, 1.5vw, 20px)' }}>
-                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)]" style={{ width: '50%', height: '50%' }}></div>
+                <div className="flex items-center justify-between w-full h-full">
+                  <svg viewBox="0 0 100 40" className="w-[70%] h-full">
+                    <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold fill-white" style={{ fontSize: '32px', letterSpacing: '0.02em' }}>One2</text>
+                  </svg>
+                  <div className="relative flex items-center justify-center rounded-full border border-green-500/50 bg-green-500/10 w-[22%] aspect-square">
+                    <div className="rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,1)] w-[50%] h-[50%]"></div>
                   </div>
                 </div>
               </div>
