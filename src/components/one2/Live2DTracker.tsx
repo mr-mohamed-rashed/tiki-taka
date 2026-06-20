@@ -273,11 +273,11 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     
                     {/* The new circular logo jumping from inside */}
                     <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
-                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-[1px] border-[#cda23d]/80 overflow-hidden bg-black/70 backdrop-blur-sm">
+                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden">
                         <img 
-                          src="/trophy_transparent.png" 
+                          src="/logo_new.png" 
                           alt="Trophy Logo" 
-                          className="relative z-10 w-full h-full object-contain p-2 drop-shadow-xl" 
+                          className="relative z-10 w-full h-full object-cover scale-[1.05]" 
                         />
                       </div>
                     </div>
@@ -424,11 +424,11 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
                     {/* The new circular logo jumping from inside */}
                     <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
-                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-[1px] border-[#cda23d]/80 overflow-hidden bg-black/70 backdrop-blur-sm">
+                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden">
                         <img 
-                          src="/trophy_transparent.png" 
+                          src="/logo_new.png" 
                           alt="Trophy Logo" 
-                          className="relative z-10 w-full h-full object-contain p-2" 
+                          className="relative z-10 w-full h-full object-cover scale-[1.05]" 
                         />
                       </div>
                     </div>
