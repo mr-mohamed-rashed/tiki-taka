@@ -8,7 +8,6 @@ import { LanguageProvider } from "./context/LanguageContext";
 import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 import { AuthProvider } from "./context/AuthContext";
 import { AppErrorBoundary } from "./components/one2/AppErrorBoundary";
-import { PwaInstallPrompt } from "./components/one2/PwaInstallPrompt";
 import { useEffect } from "react";
 
 export const queryClient = new QueryClient({
@@ -44,7 +43,6 @@ const App = () => {
                 <Toaster />
                 <Sonner />
                 <RouterProvider router={router} />
-                <PwaInstallPrompt />
               </TooltipProvider>
             </SiteSettingsProvider>
           </LanguageProvider>
