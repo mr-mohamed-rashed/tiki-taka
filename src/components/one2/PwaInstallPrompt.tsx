@@ -35,15 +35,12 @@ export function PwaInstallPrompt() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIos(isIosDevice);
 
-    if (isIosDevice) {
-      // For iOS, we just show instructions since prompt() is not supported
-      setIsVisible(true);
-    }
+    // ALWAYS show the prompt if not installed
+    setIsVisible(true);
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault(); // Prevent the mini-infobar from appearing on mobile
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setIsVisible(true); // Show our custom UI
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -63,6 +60,8 @@ export function PwaInstallPrompt() {
       setDeferredPrompt(null);
     } else if (isIos) {
       alert(lang === 'ar' ? 'لتثبيت التطبيق على آيفون: اضغط على زر المشاركة (Share) بالأسفل ثم اختر (Add to Home Screen)' : 'To install on iOS: Tap the Share button below and select "Add to Home Screen"');
+    } else {
+      alert(lang === 'ar' ? 'لتثبيت التطبيق: اضغط على أيقونة التحميل في شريط المتصفح أعلى الشاشة (Install App)' : 'To install: Click the install icon in the browser address bar');
     }
   };
 
