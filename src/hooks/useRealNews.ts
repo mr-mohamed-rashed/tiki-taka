@@ -39,7 +39,7 @@ export function useRealNews(lang: string = 'en') {
         ? 'https://news.google.com/rss/search?q=كأس+العالم+كرة+القدم&hl=ar&gl=EG&ceid=EG:ar'
         : 'https://news.google.com/rss/search?q=world+cup+football&hl=en-US&gl=US&ceid=US:en';
 
-      const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&api_key=`;
+      const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
       const response = await fetch(url);
 
       if (!response.ok) {
