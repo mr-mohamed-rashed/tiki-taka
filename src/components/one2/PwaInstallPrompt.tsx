@@ -84,7 +84,7 @@ export function PwaInstallPrompt() {
         
         <div className="flex items-center gap-4">
           <div className="bg-white p-2 rounded-xl shrink-0">
-            <img src="/icons/icon-192x192.png" alt="One2 App" className="w-10 h-10 rounded-lg object-cover" />
+            <img src="/icons/one2-icon-192.png" alt="One2 App" className="w-10 h-10 rounded-lg object-cover" />
           </div>
           <div className="flex-1">
             <h3 className="font-bold text-lg leading-tight">
