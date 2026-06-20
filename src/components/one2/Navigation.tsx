@@ -116,7 +116,7 @@ export function Navigation() {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side={lang === 'ar' ? 'right' : 'left'} className="w-[80vw] sm:w-[350px] z-[99999] bg-background/95 backdrop-blur-xl border-border p-0">
+              <SheetContent side="left" className="w-[60vw] sm:w-[250px] z-[99999] bg-background/95 backdrop-blur-xl border-border p-0">
                 <div className="flex flex-col h-full py-8 px-4">
                   <div className="flex-1 overflow-y-auto space-y-2 mt-4">
                     {links.map((link) => {
@@ -130,7 +130,7 @@ export function Navigation() {
                           className={({ isActive }) => {
                             const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
                             return cn(
-                              'block px-4 py-3 rounded-lg font-semibold text-base transition-colors',
+                              'block px-3 py-2.5 rounded-lg font-semibold text-sm transition-colors',
                               lang === 'ar' && 'font-arabic text-right',
                               effectivelyActive
                                 ? 'bg-primary/15 text-primary'
