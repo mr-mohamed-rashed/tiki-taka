@@ -116,9 +116,9 @@ export function Navigation() {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[60vw] sm:w-[250px] z-[99999] bg-background/95 backdrop-blur-xl border-border p-0">
-                <div className="flex flex-col h-full py-8 px-4">
-                  <div className="flex-1 overflow-y-auto space-y-2 mt-4">
+              <SheetContent side="left" className="w-[45vw] sm:w-[250px] !h-fit !bottom-auto rounded-br-3xl z-[99999] bg-background/95 backdrop-blur-xl border-border p-0 pb-4 shadow-2xl">
+                <div className="flex flex-col py-6 px-3">
+                  <div className="space-y-1.5 mt-2">
                     {links.map((link) => {
                       const isHomeLink = link.nameKey === 'home';
                       return (
