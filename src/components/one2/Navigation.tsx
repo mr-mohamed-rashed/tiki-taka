@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Menu, X, CircleDot, Search, Languages, LogOut } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/LanguageContext';
 import { t, T } from '@/lib/i18n';
@@ -104,46 +105,47 @@ export function Navigation() {
                 <LogOut className="h-4 w-4" />
               </Button>
             )}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden rounded-full hover:bg-primary/10 hover:text-primary"
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Toggle menu"
-            >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {open && (
-          <div className="md:hidden fixed top-14 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border py-4 px-4 space-y-2 animate-fade-in-down shadow-2xl z-[9999] max-h-[60vh] overflow-y-auto pointer-events-auto">
-            {links.map((link) => {
-              const isHomeLink = link.nameKey === 'home';
-              return (
-                <NavLink
-                  key={link.nameKey}
-                  to={link.to}
-                  end={isHomeLink || link.to === '/'}
-                  onClick={() => setOpen(false)}
-                  className={({ isActive }) => {
-                    const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
-                    return cn(
-                      'block px-4 py-3 rounded-lg font-semibold text-sm transition-colors',
-                      lang === 'ar' && 'font-arabic text-right',
-                      effectivelyActive
-                        ? 'bg-primary/15 text-primary'
-                        : 'text-foreground/80 hover:bg-muted hover:text-primary'
-                    );
-                  }}
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden rounded-full hover:bg-primary/10 hover:text-primary"
+                  aria-label="Toggle menu"
                 >
-                  <EditableSiteText settingKey={`nav_${link.nameKey}`} fallbackEn={T[link.nameKey].en} fallbackAr={T[link.nameKey].ar} />
-                </NavLink>
-              );
-            })}
-          </div>
-        )}
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side={lang === 'ar' ? 'right' : 'left'} className="w-[80vw] sm:w-[350px] z-[99999] bg-background/95 backdrop-blur-xl border-border p-0">
+                <div className="flex flex-col h-full py-8 px-4">
+                  <div className="flex-1 overflow-y-auto space-y-2 mt-4">
+                    {links.map((link) => {
+                      const isHomeLink = link.nameKey === 'home';
+                      return (
+                        <NavLink
+                          key={link.nameKey}
+                          to={link.to}
+                          end={isHomeLink || link.to === '/'}
+                          onClick={() => setOpen(false)}
+                          className={({ isActive }) => {
+                            const effectivelyActive = isActive && (!isHomeLink && link.to === '/' ? false : true);
+                            return cn(
+                              'block px-4 py-3 rounded-lg font-semibold text-base transition-colors',
+                              lang === 'ar' && 'font-arabic text-right',
+                              effectivelyActive
+                                ? 'bg-primary/15 text-primary'
+                                : 'text-foreground/80 hover:bg-muted hover:text-primary'
+                            );
+                          }}
+                        >
+                          <EditableSiteText settingKey={`nav_${link.nameKey}`} fallbackEn={T[link.nameKey].en} fallbackAr={T[link.nameKey].ar} />
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
       </div>
     </nav>
   );
