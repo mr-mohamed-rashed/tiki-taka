@@ -353,14 +353,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
             </div>
           )}
 
-          {/* Horizontal Dots Indicator for Servers */}
-          {servers.length > 1 && (
-            <div className={cn("absolute bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm transition-opacity", controlsVisible ? "opacity-100" : "opacity-0")}>
-              {servers.map((_, idx) => (
-                <div key={idx} className={cn("rounded-full transition-all duration-300", idx === activeServerIndex ? "bg-primary w-4 h-1.5" : "bg-white/50 w-1.5 h-1.5")} />
-              ))}
-            </div>
-          )}
 
           {streamUrl ? (
             <div 
