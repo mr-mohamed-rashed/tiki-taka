@@ -116,10 +116,34 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
 
   // Auto-scroll
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    const scrollToBottom = () => {
+      if (scrollRef.current) {
+        setTimeout(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+          }
+        }, 50);
+      }
+    };
+    
+    // Scroll on new messages
+    scrollToBottom();
   }, [messages]);
+
+  // Scroll on keyboard open / resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (scrollRef.current) {
+        setTimeout(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+          }
+        }, 50);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Do not load historical messages (TikTok style)
   useEffect(() => {
