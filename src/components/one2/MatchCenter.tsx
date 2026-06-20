@@ -69,7 +69,7 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
         )}
         {!liveLoading && live.length === 0 && (
           nextMatch ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="w-full">
                <MatchCard match={nextMatch} showCountdown onClick={() => navigate('/live')} />
             </div>
           ) : <EmptyMatchesMessage type="live" lang={lang} />
