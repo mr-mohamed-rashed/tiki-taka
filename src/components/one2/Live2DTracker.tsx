@@ -243,20 +243,30 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 style={{ 
                   top: '4%', 
                   right: '2%', 
-                  width: '15%', 
-                  minWidth: '60px'
+                  width: '24%', 
+                  minWidth: '90px'
                 }}
               >
-                <div className="relative flex flex-col items-center justify-center w-full aspect-square animate-zoom-bounce">
-                  <img 
-                    src="/logo_new.png" 
-                    alt="Logo" 
-                    className="w-full h-full object-cover rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 bg-[#0a2351]" 
-                  />
-                  {/* 'مباشر' box below the image */}
-                  <div className="absolute -bottom-4 bg-[#16181d]/90 px-[12%] py-[6%] rounded-full text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.2vw, 14px)' }}>
-                    <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
-                    <span>{lang === 'ar' ? 'مباشر' : 'LIVE'}</span>
+                {/* Logo Box with Map Pattern (no overflow hidden so trophy can overlap) */}
+                <div className="relative flex items-center justify-between w-full aspect-[3.5/1] bg-gradient-to-br from-[#0a2351] via-[#1d4ed8] to-[#1e3a8a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] rounded-full border border-blue-400/30 px-[4%]">
+                  {/* Map Pattern Layer (rounded to stay inside box) */}
+                  <div className="absolute inset-0 opacity-20 rounded-full overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]"></div>
+                  
+                  <div className="relative z-10 flex items-center w-full h-full">
+                    {/* Centered One2 Text */}
+                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
+                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
+                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold select-none" style={{ fontSize: '32px', letterSpacing: '0.02em', userSelect: 'none' }}>
+                          <tspan fill="#4ade80">One</tspan>
+                          <tspan fill="#ffffff">2</tspan>
+                        </text>
+                      </svg>
+                    </div>
+                    {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
+                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                      <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
+                      <span>{lang === 'ar' ? 'مباشر' : 'LIVE'}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -372,20 +382,30 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 style={{ 
                   top: '4%', 
                   right: '2%', 
-                  width: '15%', 
-                  minWidth: '60px'
+                  width: '24%', 
+                  minWidth: '90px'
                 }}
               >
-                <div className="relative flex flex-col items-center justify-center w-full aspect-square animate-zoom-bounce">
-                  <img 
-                    src="/logo_new.png" 
-                    alt="Logo" 
-                    className="w-full h-full object-cover rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 bg-[#0a2351]" 
-                  />
-                  {/* 'مباشر' box below the image */}
-                  <div className="absolute -bottom-4 bg-[#16181d]/90 px-[12%] py-[6%] rounded-full text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.2vw, 14px)' }}>
-                    <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
-                    <span>{lang === 'ar' ? 'مباشر' : 'LIVE'}</span>
+                {/* Logo Box with Map Pattern (no overflow hidden so trophy can overlap) */}
+                <div className="relative flex items-center justify-between w-full aspect-[3.5/1] bg-gradient-to-br from-[#0a2351] via-[#1d4ed8] to-[#1e3a8a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] rounded-full border border-blue-400/30 px-[4%]">
+                  {/* Map Pattern Layer (rounded to stay inside box) */}
+                  <div className="absolute inset-0 opacity-20 rounded-full overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]"></div>
+                  
+                  <div className="relative z-10 flex items-center w-full h-full">
+                    {/* Centered One2 Text */}
+                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
+                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
+                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold select-none" style={{ fontSize: '32px', letterSpacing: '0.02em', userSelect: 'none' }}>
+                          <tspan fill="#4ade80">One</tspan>
+                          <tspan fill="#ffffff">2</tspan>
+                        </text>
+                      </svg>
+                    </div>
+                    {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
+                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                      <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
+                      <span>{lang === 'ar' ? 'مباشر' : 'LIVE'}</span>
+                    </div>
                   </div>
                 </div>
               </div>
