@@ -295,7 +295,7 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
         id: Math.random().toString(),
         user_id: 'system',
         username: '🤖 المساعد الذكي',
-        message: '🚫 عذراً، تعليقك غير لائق تماماً وتم رفضه. يرجى الالتزام بآداب الحديث.',
+        message: '🚫 تم الرفض: كلمات غير لائقة.',
         match_id: matchId,
         is_deleted: false,
         created_at: new Date().toISOString()
@@ -310,7 +310,7 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
         id: Math.random().toString(),
         user_id: 'system',
         username: '🤖 المساعد الذكي',
-        message: '⚠️ تنبيه: تم تشفير بعض الكلمات غير اللائقة في تعليقك.',
+        message: '⚠️ تنبيه: تم التشفير.',
         match_id: matchId,
         is_deleted: false,
         created_at: new Date().toISOString()
