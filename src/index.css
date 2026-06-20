@@ -212,11 +212,9 @@ body::before {
   animation: commentary-slide 0.45s ease-out;
 }
 
-/* Custom scroll-bar in the commentary panel */
-.commentary-scroll::-webkit-scrollbar { width: 6px; }
-.commentary-scroll::-webkit-scrollbar-track { background: hsl(var(--muted)); border-radius: 3px; }
-.commentary-scroll::-webkit-scrollbar-thumb { background: hsl(var(--primary) / 0.4); border-radius: 3px; }
-.commentary-scroll::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.7); }
+/* Hide scroll-bar in the commentary panel but keep it scrollable */
+.commentary-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.commentary-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
 @keyframes text-neon-pulse {
   0%, 100% {
