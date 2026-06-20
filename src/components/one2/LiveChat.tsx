@@ -334,7 +334,7 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
   return (
     <Card className={cn(
       "overflow-hidden flex flex-col h-full select-text",
-      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-gradient-card border-border h-[500px] md:h-full')
+      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-gradient-card border-border')
     )}>
       {/* Header */}
       {variant !== 'overlay' && (
@@ -400,11 +400,12 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
       )}
 
       {/* Messages */}
-      <div ref={scrollRef} className="commentary-scroll flex-1 overflow-y-auto p-3 space-y-1">
+      <div ref={scrollRef} className="commentary-scroll flex-1 overflow-y-auto p-3 flex flex-col gap-1">
+        <div className="flex-1 min-h-0" />
         {visibleMessages.map((msg) => {
           const isOwn = msg.user_id === userId;
           return (
-            <div key={msg.id} className="group flex items-start gap-2 px-2 py-1.5 hover:bg-muted/50 rounded-lg transition-colors break-words text-sm relative">
+            <div key={msg.id} className="group flex items-start gap-2 px-2 py-1.5 hover:bg-muted/50 rounded-lg transition-colors break-words text-sm relative animate-in slide-in-from-bottom-2 fade-in duration-300">
               <div className="flex-1 min-w-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <span className={cn(
                   "font-bold mr-1.5",
