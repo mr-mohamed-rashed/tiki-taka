@@ -32,7 +32,7 @@ const LiveMatches = () => {
 
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-black text-white select-none relative" dir={dir}>
+    <div className="h-[100dvh] md:h-auto flex flex-col overflow-hidden md:overflow-visible bg-black text-white select-none" dir={dir}>
       <EditModeToggle />
       
       {/* App Bar (Navigation & Ticker) at the top - Hidden on mobile */}
@@ -64,11 +64,11 @@ const LiveMatches = () => {
             </div>
           </section>
         ) : featured || get('live_stream_url', 'en') ? (
-          <section className="flex-1 flex flex-col lg:flex-row w-full lg:max-w-7xl lg:mx-auto lg:p-6 lg:gap-6 lg:items-stretch relative">
-            <div className="sticky top-0 z-40 shrink-0 w-full lg:max-w-3xl lg:flex-1 md:relative bg-black pt-2 md:pt-0">
+          <section className="flex-1 flex flex-col min-h-0 lg:flex-row w-full lg:max-w-7xl lg:mx-auto lg:p-6 lg:gap-6 lg:items-stretch">
+            <div className="relative shrink-0 w-full lg:max-w-3xl lg:flex-1 md:h-auto z-40">
               <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
-            <div className="flex-1 min-h-[400px] w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto">
+            <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto relative z-10 -mt-4 lg:mt-0">
               <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} isTheaterSplit={true} />
             </div>
           </section>

@@ -137,55 +137,53 @@ export default function Studio() {
   // MOBILE LAYOUT (YouTube Style)
   if (!isDesktop) {
     return (
-      <div className="min-h-[100dvh] w-full bg-background flex flex-col select-none relative" dir={dir}>
-        <div className="sticky top-0 z-40 bg-background shadow-md flex flex-col shrink-0">
-          <header className="flex items-center justify-between p-3 border-b border-border bg-card shrink-0 z-10">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
-                {lang === 'ar' ? <ArrowRight className="h-5 w-5" /> : <ArrowLeft className="h-5 w-5" />}
-              </Button>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20 text-primary shadow-neon">
-                  <Video className="h-5 w-5" />
-                </div>
-                <div>
-                  <h1 className={cn('font-bold text-lg leading-none', lang === 'ar' && 'font-arabic')}>
-                    {lang === 'ar' ? 'الاستوديو المباشر' : 'Live Studio'}
-                  </h1>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-live animate-pulse-live" />
-                    <span className="text-xs text-muted-foreground">{lang === 'ar' ? 'مباشر الآن' : 'Live Now'}</span>
-                  </div>
+      <div className="h-[100dvh] w-full bg-background flex flex-col overflow-hidden select-none" dir={dir}>
+        <header className="flex items-center justify-between p-3 border-b border-border bg-card shrink-0 z-10 shadow-sm">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
+              {lang === 'ar' ? <ArrowRight className="h-5 w-5" /> : <ArrowLeft className="h-5 w-5" />}
+            </Button>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20 text-primary shadow-neon">
+                <Video className="h-5 w-5" />
+              </div>
+              <div>
+                <h1 className={cn('font-bold text-lg leading-none', lang === 'ar' && 'font-arabic')}>
+                  {lang === 'ar' ? 'الاستوديو المباشر' : 'Live Studio'}
+                </h1>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-live animate-pulse-live" />
+                  <span className="text-xs text-muted-foreground">{lang === 'ar' ? 'مباشر الآن' : 'Live Now'}</span>
                 </div>
               </div>
             </div>
-            <div>
-              <ShareMenu />
-            </div>
-          </header>
-
-          <div className="w-full bg-black relative shrink-0 z-0 flex flex-col aspect-video">
-            {renderVideoPlayer()}
           </div>
+          <div>
+            <ShareMenu />
+          </div>
+        </header>
 
-          {servers.length > 1 && (
-            <div className="bg-card px-3 py-2 flex flex-wrap gap-2 border-b border-border shrink-0 overflow-x-auto">
-              {servers.map((server: any, idx: number) => (
-                <Button
-                  key={idx}
-                  variant={idx === activeServerIndex ? "default" : "secondary"}
-                  size="sm"
-                  onClick={() => setActiveServerIndex(idx)}
-                  className="font-bold text-xs h-7 rounded-full whitespace-nowrap"
-                >
-                  {server.name || `Server ${idx + 1}`}
-                </Button>
-              ))}
-            </div>
-          )}
+        <div className="w-full bg-black relative shrink-0 z-40 flex flex-col aspect-video">
+          {renderVideoPlayer()}
         </div>
 
-        <div className="flex-1 w-full min-h-[400px] bg-background relative z-10 flex flex-col">
+        {servers.length > 1 && (
+          <div className="bg-card px-3 py-2 flex flex-wrap gap-2 border-b border-border shrink-0 overflow-x-auto relative z-40 shadow-sm">
+            {servers.map((server: any, idx: number) => (
+              <Button
+                key={idx}
+                variant={idx === activeServerIndex ? "default" : "secondary"}
+                size="sm"
+                onClick={() => setActiveServerIndex(idx)}
+                className="font-bold text-xs h-7 rounded-full whitespace-nowrap"
+              >
+                {server.name || `Server ${idx + 1}`}
+              </Button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex-1 w-full min-h-0 bg-background relative z-10 flex flex-col">
           <LiveChat matchId="studio_live" variant="default" isTheaterSplit={true} />
         </div>
       </div>
