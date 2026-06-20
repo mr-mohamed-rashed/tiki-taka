@@ -374,7 +374,11 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
   return (
     <Card className={cn(
       "overflow-hidden flex flex-col h-full select-text",
-      variant === 'overlay' ? 'bg-transparent border-none shadow-none' : (isTheaterSplit ? 'bg-black border-none rounded-none' : 'bg-gradient-card border-border')
+      variant === 'overlay' 
+        ? 'bg-transparent border-none shadow-none' 
+        : (isTheaterSplit 
+            ? 'bg-black border-none rounded-none lg:bg-gradient-card lg:border-solid lg:border lg:border-border lg:rounded-xl' 
+            : 'bg-gradient-card border-border')
     )}>
       {/* Header */}
       {variant !== 'overlay' && (
