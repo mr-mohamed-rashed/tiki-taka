@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Save, Loader2, Video, RefreshCw, Bell } from 'lucide-react';
+import { CheckCircle, Save, Loader2, Video, RefreshCw, Bell, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useResults, useUpcomingFixtures } from '@/hooks/useFootballData';
 
@@ -17,13 +17,24 @@ export function MatchesTab() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isPushing, setIsPushing] = useState<string | null>(null);
 
-  const sendPushNotification = async (matchId: string, homeName: string, awayName: string) => {
+  const [customTitle, setCustomTitle] = useState('🔥 قمة كروية تبدأ قريباً!');
+  const [customMsg, setCustomMsg] = useState('');
+
+  // Auto-fill message for the next match
+  useEffect(() => {
+    if (upcoming.length > 0 && !customMsg) {
+      const next = upcoming[0];
+      setCustomMsg(`لا تفوت مشاهدة مباراة ${next.home.name} ضد ${next.away.name} بث مباشر الآن على وان تو.`);
+    }
+  }, [upcoming]);
+
+  const sendPushNotification = async (matchId: string, title: string, message: string) => {
     setIsPushing(matchId);
     try {
       const { data, error } = await supabase.functions.invoke('match-alerts', {
         body: {
-          title: '🔥 قمة كروية تبدأ قريباً!',
-          message: `لا تفوت مشاهدة مباراة ${homeName} ضد ${awayName} بث مباشر الآن على وان تو.`,
+          title: title || '🔥 قمة كروية تبدأ قريباً!',
+          message: message,
           url: 'https://one2.link'
         }
       });
@@ -102,7 +113,7 @@ export function MatchesTab() {
       <Card className="p-6 border-border bg-card/50 shadow-sm">
         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
           <Bell className="h-5 w-5 text-primary" />
-          إرسال إشعارات (المباريات القادمة)
+          إرسال إشعارات (المباراة القادمة)
         </h3>
         {isUpcomingLoading ? (
           <div className="flex justify-center py-8">
@@ -111,34 +122,52 @@ export function MatchesTab() {
         ) : upcoming.length === 0 ? (
           <p className="text-center py-8 text-muted-foreground">لا توجد مباريات قادمة اليوم.</p>
         ) : (
-          <div className="space-y-4">
-            {upcoming.map(match => (
-              <div key={`upcoming-${match.id}`} className="flex flex-col xl:flex-row items-center justify-between p-4 border border-border/60 rounded-lg bg-background gap-4">
-                <div className="flex items-center gap-4 min-w-[300px]">
-                  <div className="text-center w-16">
+          <div className="space-y-6">
+            {(() => {
+              const nextMatch = upcoming[0];
+              return (
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-4 p-4 border border-border/60 rounded-lg bg-background">
                     <Badge variant="outline" className="text-xs">
-                      {new Date(match.date).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
+                      المباراة القادمة: {new Date(nextMatch.date).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
                     </Badge>
+                    <div className="flex items-center gap-3 font-bold">
+                      <span>{nextMatch.home.name}</span>
+                      <span className="text-primary">VS</span>
+                      <span>{nextMatch.away.name}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 font-bold">
-                    <span>{match.home.name}</span>
-                    <span className="text-xl text-primary">VS</span>
-                    <span>{match.away.name}</span>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-muted-foreground">عنوان الإشعار</label>
+                      <Input 
+                        value={customTitle} 
+                        onChange={e => setCustomTitle(e.target.value)} 
+                        className="bg-background"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-muted-foreground">محتوى الرسالة</label>
+                      <Input 
+                        value={customMsg} 
+                        onChange={e => setCustomMsg(e.target.value)} 
+                        className="bg-background"
+                      />
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex-1 flex justify-end w-full">
+
                   <Button 
-                    onClick={() => sendPushNotification(match.id, match.home.name, match.away.name)}
-                    disabled={isPushing === match.id}
-                    className="gap-2 shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white"
+                    onClick={() => sendPushNotification(nextMatch.id, customTitle, customMsg)}
+                    disabled={isPushing === nextMatch.id}
+                    className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white w-full py-6 text-lg mt-2"
                   >
-                    {isPushing === match.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4" />}
-                    إرسال إشعار للمشتركين (Push)
+                    {isPushing === nextMatch.id ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                    إرسال الإشعار الآن للمشتركين
                   </Button>
                 </div>
-              </div>
-            ))}
+              );
+            })()}
           </div>
         )}
       </Card>
