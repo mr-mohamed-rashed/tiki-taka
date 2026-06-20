@@ -265,3 +265,15 @@ body::before {
     animation-duration: var(--mobile-speed, 120s);
   }
 }
+
+@keyframes zoom-bounce {
+  0% { transform: scale(0) translateY(-100px); opacity: 0; }
+  40% { transform: scale(1) translateY(0); opacity: 1; }
+  55% { transform: scale(1) translateY(-30px); }
+  70% { transform: scale(1) translateY(0); }
+  85% { transform: scale(1) translateY(-15px); }
+  100% { transform: scale(1) translateY(0); }
+}
+.animate-zoom-bounce {
+  animation: zoom-bounce 1.5s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
+}

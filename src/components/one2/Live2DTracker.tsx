@@ -262,6 +262,16 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                         </text>
                       </svg>
                     </div>
+                    
+                    {/* The new circular logo jumping from inside */}
+                    <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 w-[38%] aspect-square animate-zoom-bounce pointer-events-none z-20">
+                      <img 
+                        src="/logo_new.png" 
+                        alt="Trophy Logo" 
+                        className="w-full h-full object-cover rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 bg-[#0a2351]" 
+                      />
+                    </div>
+
                     {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
                     <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
                       <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
@@ -401,6 +411,16 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                         </text>
                       </svg>
                     </div>
+
+                    {/* The new circular logo jumping from inside */}
+                    <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 w-[38%] aspect-square animate-zoom-bounce pointer-events-none z-20">
+                      <img 
+                        src="/logo_new.png" 
+                        alt="Trophy Logo" 
+                        className="w-full h-full object-cover rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 bg-[#0a2351]" 
+                      />
+                    </div>
+
                     {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
                     <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
                       <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
