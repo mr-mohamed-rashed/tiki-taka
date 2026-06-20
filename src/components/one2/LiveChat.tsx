@@ -44,16 +44,7 @@ function getOrCreateUserId(): string {
 // Hardcoded moderator IDs for demo – in production, manage via the database
 const MODERATOR_IDS = new Set(['mod_tiki_taka_admin']);
 
-// Basic profanity filter
-const BAD_WORDS = ['شتيمة', 'لفظ', 'خارج', 'shit', 'fuck', 'bitch', 'احا', 'احه', 'عرص', 'معرص', 'متناك', 'تناك', 'شرموط', 'شرموطه', 'شرموطة', 'خول', 'قحبة', 'قحبه', 'منيوك', 'نيكا', 'زب', 'كسم', 'كس', 'طيز', 'مومس', 'عاهر', 'عاهرة', 'دعارة', 'كلب', 'وسخ', 'ابن الكلب'];
-function filterProfanity(text: string): string {
-  let filtered = text;
-  BAD_WORDS.forEach(word => {
-    const regex = new RegExp(word, 'gi');
-    filtered = filtered.replace(regex, '***');
-  });
-  return filtered;
-}
+// Removed static BAD_WORDS and filterProfanity. It's handled dynamically inside the component now.
 
 function renderMessageText(text: string) {
   const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
@@ -95,6 +86,7 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
   const [inputMsg, setInputMsg] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [botsEnabled, setBotsEnabled] = useState(true);
+  const [bannedWords, setBannedWords] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasFetchedInitialRef = useRef(false);
   const mountTimeRef = useRef<number>(new Date().getTime());
@@ -147,11 +139,16 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Do not load historical messages (TikTok style)
+  // Load banned words and initialize
   useEffect(() => {
     if (hasFetchedInitialRef.current) return;
     hasFetchedInitialRef.current = true;
     
+    // Fetch dynamic banned words
+    supabase.from('chat_banned_words').select('word').then(({ data }) => {
+      if (data) setBannedWords(data.map(d => d.word));
+    });
+
     // Start with an empty chat, just finish loading
     setMessages([]);
     setLoading(false);
@@ -271,9 +268,10 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
 
     let containsBadWord = false;
     let filteredText = text;
-    BAD_WORDS.forEach(word => {
-      const regex = new RegExp(word, 'gi');
-      const newText = filteredText.replace(regex, '***');
+    bannedWords.forEach(word => {
+      // Use boundaries that work for Arabic (space, start/end of string, or punctuation)
+      const regex = new RegExp(`(^|\\s|[.,!؟،؛"'])(${word})(?=\\s|$|[.,!؟،؛"'])`, 'gi');
+      const newText = filteredText.replace(regex, '$1***');
       if (newText !== filteredText) {
         containsBadWord = true;
         filteredText = newText;
