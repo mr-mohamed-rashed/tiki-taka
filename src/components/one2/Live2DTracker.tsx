@@ -264,7 +264,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     </div>
                     
                     {/* The new circular logo jumping from inside */}
-                    <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 w-[38%] aspect-square animate-zoom-bounce pointer-events-none z-20">
+                    <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
                       <img 
                         src="/logo_new.png" 
                         alt="Trophy Logo" 
@@ -413,7 +413,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     </div>
 
                     {/* The new circular logo jumping from inside */}
-                    <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 w-[38%] aspect-square animate-zoom-bounce pointer-events-none z-20">
+                    <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
                       <img 
                         src="/logo_new.png" 
                         alt="Trophy Logo" 
