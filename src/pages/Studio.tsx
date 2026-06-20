@@ -13,6 +13,7 @@ import { One2Footer } from '@/components/one2/One2Footer';
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/drawer';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useLiveFixtures, useUpcomingFixtures } from '@/hooks/useFootballData';
 
 interface LiveStudioState {
   streamUrl: string;
@@ -38,6 +39,14 @@ export default function Studio() {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const [isTheater, setIsTheater] = useState(false);
   const [showChat, setShowChat] = useState(true);
+
+  const { data: liveMatches = [] } = useLiveFixtures();
+  const { data: upcomingMatches = [] } = useUpcomingFixtures();
+  const nextMatch = upcomingMatches
+    .filter((match) => new Date(match.date).getTime() >= Date.now())
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcomingMatches[0];
+  const featured = liveMatches[0] || nextMatch;
+  const activeMatchId = featured?.id?.toString() || 'main_live_stream';
 
   // Resize listener
   useEffect(() => {
@@ -184,7 +193,7 @@ export default function Studio() {
         )}
 
         <div className="flex-1 w-full min-h-0 bg-background relative z-10 flex flex-col">
-          <LiveChat matchId="studio_live" variant="default" isTheaterSplit={true} />
+          <LiveChat matchId={activeMatchId} variant="default" isTheaterSplit={true} />
         </div>
       </div>
     );
@@ -334,7 +343,7 @@ export default function Studio() {
                 {isTheater && showChat && (
                   <div className="absolute top-0 right-0 w-full sm:w-[350px] h-full z-40 bg-gradient-to-l from-black/90 via-black/40 to-transparent flex flex-col justify-end p-2 sm:p-4 pointer-events-none">
                     <div className="pointer-events-auto h-full">
-                      <LiveChat matchId="studio_live" variant="overlay" />
+                      <LiveChat matchId={activeMatchId} variant="overlay" />
                     </div>
                   </div>
                 )}
@@ -360,7 +369,7 @@ export default function Studio() {
                 </h3>
                 <div className="flex-1 min-h-0 relative">
                   <div className="absolute inset-0 overflow-y-auto pr-2">
-                    <LiveChat matchId="studio_live" />
+                    <LiveChat matchId={activeMatchId} />
                   </div>
                 </div>
               </Card>
