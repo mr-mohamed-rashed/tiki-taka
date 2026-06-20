@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen } from 'lucide-react';
+import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -298,6 +298,28 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </Button>
               </div>
 
+              {/* Server Navigation Chevrons */}
+              {servers.length > 1 && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("absolute left-2 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/80 hover:text-white rounded-full transition-opacity shadow-lg", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
+                  >
+                    <ChevronLeft className="h-8 w-8" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("absolute right-2 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/80 hover:text-white rounded-full transition-opacity shadow-lg", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
+                  >
+                    <ChevronRight className="h-8 w-8" />
+                  </Button>
+                </>
+              )}
+
               {/* Server Swipe Area Overlay (Left Side) */}
               <div className="absolute left-0 top-0 bottom-0 w-1/4 z-50 flex flex-col items-center justify-center pointer-events-auto touch-pan-y touch-pan-x" 
                    onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
@@ -370,6 +392,29 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
+              
+              {/* Server Navigation Chevrons */}
+              {servers.length > 1 && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("absolute left-2 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/80 hover:text-white rounded-full transition-opacity shadow-lg", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
+                  >
+                    <ChevronLeft className="h-8 w-8" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("absolute right-2 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/80 hover:text-white rounded-full transition-opacity shadow-lg", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
+                  >
+                    <ChevronRight className="h-8 w-8" />
+                  </Button>
+                </>
+              )}
+
               {/* Dynamic Logo Cover to hide koora city watermark */}
               <div 
                 dir="ltr"
