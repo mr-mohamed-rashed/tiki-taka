@@ -204,12 +204,21 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
       <div 
         ref={containerRef}
         className={cn("relative w-full bg-black overflow-hidden flex items-center justify-center", isTheater ? "fixed inset-0 z-[100] h-screen w-screen" : "h-full")}
+        style={{ containerType: 'size' }}
       >
         {streamUrl ? (
-            <div className="absolute inset-0 overflow-hidden bg-black pointer-events-auto">
+            <div 
+              className="relative overflow-hidden bg-black pointer-events-auto"
+              style={{
+                width: '100%',
+                height: '100%',
+                maxWidth: 'calc(100cqh * (16 / 9))',
+                maxHeight: 'calc(100cqw * (9 / 16))'
+              }}
+            >
               <iframe
                 src={streamUrl}
-                className="absolute w-full left-0 right-0 pointer-events-auto"
+                className="absolute inset-0 w-full h-full pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
@@ -254,8 +263,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                       </svg>
                     </div>
                     {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
-                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap select-none" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
-                      مباشر
+                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                      <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
+                      <span>{lang === 'ar' ? 'مباشر' : 'LIVE'}</span>
                     </div>
                   </div>
                 </div>
@@ -311,11 +321,11 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
         )}
         <div 
           ref={containerRef}
-          className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none flex items-center justify-center overflow-hidden" : "rounded-lg aspect-video overflow-hidden")}
+          className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group flex items-center justify-center overflow-hidden", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none" : "rounded-lg aspect-video")}
         >
           <div 
-            className={cn("relative transition-all", isTheater ? (chatMode === 'split' ? "w-2/3 h-full flex items-center justify-center bg-black" : "w-full h-full flex items-center justify-center") : "w-full absolute inset-0")}
-            style={isTheater ? { maxWidth: 'calc(100vh * (16 / 9))', maxHeight: 'calc(100vw * (9 / 16))', aspectRatio: '16/9' } : {}}
+            className={cn("relative transition-all w-full h-full flex items-center justify-center bg-black", isTheater && chatMode === 'split' ? "w-2/3" : "")}
+            style={{ containerType: 'size' }}
           >
           {streamUrl && (
             <div className={cn("absolute bottom-4 right-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100" : "opacity-0")}>
@@ -336,10 +346,18 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
           )}
 
           {streamUrl ? (
-            <div className="absolute inset-0 overflow-hidden bg-black pointer-events-auto">
+            <div 
+              className="relative overflow-hidden bg-black pointer-events-auto"
+              style={{
+                width: '100%',
+                height: '100%',
+                maxWidth: 'calc(100cqh * (16 / 9))',
+                maxHeight: 'calc(100cqw * (9 / 16))'
+              }}
+            >
               <iframe
                 src={streamUrl}
-                className="absolute w-full left-0 right-0 pointer-events-auto"
+                className="absolute inset-0 w-full h-full pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
@@ -384,8 +402,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                       </svg>
                     </div>
                     {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
-                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center whitespace-nowrap select-none" dir="rtl" style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
-                      مباشر
+                    <div className="absolute top-[100%] right-[8%] bg-[#16181d]/90 px-[6%] py-[2%] rounded-[0.3vw] text-white font-bold border border-white/20 shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap select-none" dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{ fontSize: 'clamp(8px, 1.1vw, 14px)' }}>
+                      <span className="w-[0.5em] h-[0.5em] rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
+                      <span>{lang === 'ar' ? 'مباشر' : 'LIVE'}</span>
                     </div>
                   </div>
                 </div>
