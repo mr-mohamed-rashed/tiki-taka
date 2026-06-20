@@ -43,7 +43,16 @@ serve(async (req) => {
     }
 
     // Call Gemini API
-    const prompt = `أنت صحفي رياضي خبير. اكتب خبر صحفي قصير جداً ومثير (بحد أقصى 50 كلمة) عن المباراة القادمة بين ${home} و ${away} في كأس العالم (${stage || 'المجموعات'}). تحدث عن استعدادات الفريقين وأهمية المباراة. لا تستخدم هاشتاجات. اكتب العنوان في السطر الأول، والخبر في السطر الثاني.`;
+    const prompt = `أنت صحفي رياضي خبير. بناءً على المباراة القادمة في كأس العالم بين ${home} و ${away} (${stage || 'المجموعات'}):
+اكتب خبرين منفصلين باللغة العربية (خبر عن استعدادات ${home} وخبر عن استعدادات ${away}).
+يجب أن يكون كل خبر قصيراً جداً (سطر واحد فقط) مع عنوان جذاب يتكون من كلمتين أو ثلاثة (مثل "قوة ألمانية:", "حماس إيفواري:").
+لا تستخدم هاشتاجات.
+
+يجب أن ترد بصيغة مصفوفة JSON فقط (بدون أي نص آخر أو markdown)، بهذا الشكل:
+[
+  { "title": "عنوان قصير:", "excerpt": "نص الخبر في سطر واحد." },
+  { "title": "عنوان قصير:", "excerpt": "نص الخبر في سطر واحد." }
+]`;
     
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
     
@@ -62,26 +71,31 @@ serve(async (req) => {
     }
 
     const generatedText = aiData.candidates[0].content.parts[0].text;
-    const lines = generatedText.split('\n').filter((l: string) => l.trim().length > 0);
-    const title = lines[0].replace(/[*#]/g, '').trim();
-    const excerpt = lines.slice(1).join(' ').replace(/[*#]/g, '').trim();
+    
+    // Extract JSON array from text (in case it wraps it in markdown)
+    const jsonMatch = generatedText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+    if (!jsonMatch) {
+      throw new Error("Failed to parse JSON from AI response");
+    }
+    
+    const articles = JSON.parse(jsonMatch[0]);
 
     // Insert into manual_news
-    const newsItem = {
-      title_ar: title,
-      title_en: `${home} vs ${away}: Pre-match updates`,
-      excerpt_ar: excerpt,
+    const newsItems = articles.map((article: any, index: number) => ({
+      title_ar: article.title,
+      title_en: `${index === 0 ? home : away} Pre-match updates`,
+      excerpt_ar: article.excerpt,
       excerpt_en: `Preparations are underway for the clash between ${home} and ${away}.`,
       category: 'Pulse',
       image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80',
       is_published: true,
-      published_at: new Date().toISOString(),
-    };
+      published_at: new Date(Date.now() - index * 1000).toISOString(), // slightly offset time
+    }));
 
-    const { error: insertError } = await supabase.from('manual_news').insert(newsItem);
+    const { error: insertError } = await supabase.from('manual_news').insert(newsItems);
     if (insertError) throw insertError;
 
-    return new Response(JSON.stringify({ success: true, news: newsItem }), {
+    return new Response(JSON.stringify({ success: true, news: newsItems }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
