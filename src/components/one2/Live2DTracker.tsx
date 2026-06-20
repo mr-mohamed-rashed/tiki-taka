@@ -348,16 +348,16 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   }
 
   return (
-    <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-border">
+    <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-none rounded-none sm:border-solid sm:border-border sm:rounded-xl">
 
 
       {/* Pitch */}
-      <div className="p-3 sm:p-4 bg-background/40">
+      <div className="p-0 pb-[1px] sm:p-4 bg-background/40">
 
 
         <div 
           ref={containerRef}
-          className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group flex items-center justify-center overflow-hidden touch-pan-y", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none" : "rounded-lg aspect-video")}
+          className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group flex items-center justify-center overflow-hidden touch-pan-y", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none" : "rounded-none sm:rounded-lg aspect-video")}
           onTouchStart={handleTouchStart} 
           onTouchEnd={handleTouchEnd}
         >
