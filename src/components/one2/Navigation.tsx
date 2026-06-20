@@ -118,7 +118,7 @@ export function Navigation() {
 
         {/* Mobile menu */}
         {open && (
-          <div className="md:hidden border-t border-border py-3 space-y-1 animate-fade-in-up">
+          <div className="md:hidden fixed top-14 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border py-4 px-4 space-y-2 animate-fade-in-down shadow-2xl z-[9999] max-h-[60vh] overflow-y-auto pointer-events-auto">
             {links.map((link) => {
               const isHomeLink = link.nameKey === 'home';
               return (
