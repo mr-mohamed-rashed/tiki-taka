@@ -47,6 +47,26 @@ const Index = () => {
   const liveMatch = liveMatches[0] || getLiveMatches()[0];
   const isEditMode = useEditMode();
 
+  useEffect(() => {
+    if (!nextMatch) return;
+    const triggerPulseNews = async () => {
+      try {
+        const { supabase } = await import('@/integrations/supabase/client');
+        await supabase.functions.invoke('generate-pulse-news', {
+          body: {
+            matchId: nextMatch.id,
+            home: nextMatch.home.name,
+            away: nextMatch.away.name,
+            stage: nextMatch.stage,
+          }
+        });
+      } catch (err) {
+        console.error('Failed to trigger AI Pulse News:', err);
+      }
+    };
+    triggerPulseNews();
+  }, [nextMatch?.id]);
+
   const label = (key: string, fallback: string) => get(key, lang) ?? fallback;
 
   return (
