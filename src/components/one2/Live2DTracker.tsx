@@ -275,7 +275,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
                       <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden">
                         <img 
-                          src="/logo_new.png" 
+                          src="/logo_new.png?v=2" 
                           alt="Trophy Logo" 
                           className="relative z-10 w-full h-full object-cover scale-[1.05]" 
                         />
@@ -426,7 +426,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
                       <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden">
                         <img 
-                          src="/logo_new.png" 
+                          src="/logo_new.png?v=2" 
                           alt="Trophy Logo" 
                           className="relative z-10 w-full h-full object-cover scale-[1.05]" 
                         />
