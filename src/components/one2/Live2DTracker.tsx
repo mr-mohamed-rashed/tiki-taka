@@ -324,24 +324,12 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
       {/* Pitch */}
       <div className="p-3 sm:p-4 bg-background/40">
 
-        {servers.length > 0 && (
-          <div className="flex overflow-x-auto touch-pan-x hide-scrollbar gap-2 mb-3 pb-1 md:flex-wrap md:overflow-visible md:pb-0">
-            {servers.map((server, idx) => (
-              <Button
-                key={idx}
-                variant={idx === activeServerIndex ? "default" : "secondary"}
-                size="sm"
-                onClick={() => setActiveServerIndex(idx)}
-                className="font-bold text-xs shadow-sm shrink-0 whitespace-nowrap"
-              >
-                {server.name || `Server ${idx + 1}`}
-              </Button>
-            ))}
-          </div>
-        )}
+
         <div 
           ref={containerRef}
-          className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group flex items-center justify-center overflow-hidden", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none" : "rounded-lg aspect-video")}
+          className={cn("relative w-full bg-black ring-1 ring-primary/20 shadow-neon group flex items-center justify-center overflow-hidden touch-pan-y", isTheater ? "fixed inset-0 z-[100] h-screen w-screen rounded-none" : "rounded-lg aspect-video")}
+          onTouchStart={handleTouchStart} 
+          onTouchEnd={handleTouchEnd}
         >
           <div 
             className={cn("relative transition-all w-full h-full flex items-center justify-center bg-black", isTheater && chatMode === 'split' ? "w-2/3" : "")}
@@ -362,6 +350,15 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg">
                 {isTheater ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
               </Button>
+            </div>
+          )}
+
+          {/* Horizontal Dots Indicator for Servers */}
+          {servers.length > 1 && (
+            <div className={cn("absolute bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm transition-opacity", controlsVisible ? "opacity-100" : "opacity-0")}>
+              {servers.map((_, idx) => (
+                <div key={idx} className={cn("rounded-full transition-all duration-300", idx === activeServerIndex ? "bg-primary w-4 h-1.5" : "bg-white/50 w-1.5 h-1.5")} />
+              ))}
             </div>
           )}
 
