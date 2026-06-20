@@ -348,11 +348,11 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   }
 
   return (
-    <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-none md:border-border rounded-none md:rounded-xl">
+    <Card className="mx-auto max-w-2xl overflow-hidden bg-gradient-card border-border">
 
 
       {/* Pitch */}
-      <div className="md:p-4 bg-background/40">
+      <div className="p-3 sm:p-4 bg-background/40">
 
 
         <div 
