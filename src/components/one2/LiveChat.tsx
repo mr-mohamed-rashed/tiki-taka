@@ -100,7 +100,11 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
 
   const userId = user?.id || getOrCreateUserId();
   
+  // Auto-detect admin by known emails, or hardcoded IDs
+  const isModerator = (user?.email && ADMIN_EMAILS_LIST?.includes(user.email.toLowerCase())) || user?.email === 'mrrashed0777@gmail.com' || user?.email === 'info@one2.cc' || MODERATOR_IDS.has(userId);
+
   const getNickname = () => {
+    if (isModerator) return lang === 'ar' ? 'سوبر أدمن' : 'Super Admin';
     if (user?.user_metadata?.full_name) {
       const parts = user.user_metadata.full_name.trim().split(' ');
       return parts.length > 1 ? parts[parts.length - 1] : parts[0];
@@ -110,9 +114,6 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
   
   const username = getNickname();
   const joined = !!user;
-
-  // Auto-detect admin by known emails, or hardcoded IDs
-  const isModerator = (user?.email && ADMIN_EMAILS_LIST?.includes(user.email.toLowerCase())) || user?.email === 'mrrashed0777@gmail.com' || user?.email === 'info@one2.cc' || MODERATOR_IDS.has(userId);
 
   // Auto-scroll
   useEffect(() => {
