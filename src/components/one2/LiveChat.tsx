@@ -45,7 +45,7 @@ function getOrCreateUserId(): string {
 const MODERATOR_IDS = new Set(['mod_tiki_taka_admin']);
 
 // Basic profanity filter
-const BAD_WORDS = ['شتيمة', 'لفظ', 'خارج', 'shit', 'fuck', 'bitch', 'احا', 'عرص', 'متناك', 'شرموط', 'خول', 'قحبة', 'منيوك'];
+const BAD_WORDS = ['شتيمة', 'لفظ', 'خارج', 'shit', 'fuck', 'bitch', 'احا', 'احه', 'عرص', 'معرص', 'متناك', 'تناك', 'شرموط', 'شرموطه', 'شرموطة', 'خول', 'قحبة', 'قحبه', 'منيوك', 'نيكا', 'زب', 'كسم', 'كس', 'طيز', 'مومس', 'عاهر', 'عاهرة', 'دعارة', 'كلب', 'وسخ', 'ابن الكلب'];
 function filterProfanity(text: string): string {
   let filtered = text;
   BAD_WORDS.forEach(word => {
@@ -271,9 +271,10 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     let filteredText = text;
     BAD_WORDS.forEach(word => {
       const regex = new RegExp(word, 'gi');
-      if (regex.test(filteredText)) {
+      const newText = filteredText.replace(regex, '***');
+      if (newText !== filteredText) {
         containsBadWord = true;
-        filteredText = filteredText.replace(regex, '***');
+        filteredText = newText;
       }
     });
 
