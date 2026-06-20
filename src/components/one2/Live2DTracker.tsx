@@ -352,7 +352,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
 
       {/* Pitch */}
-      <div className="p-3 sm:p-4 bg-background/40">
+      <div className="p-3 pb-0 sm:p-4 sm:pb-0 bg-background/40">
 
 
         <div 

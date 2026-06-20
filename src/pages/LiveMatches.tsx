@@ -65,7 +65,7 @@ const LiveMatches = () => {
           </section>
         ) : featured || get('live_stream_url', 'en') ? (
           <section className="flex-1 flex flex-col min-h-0 lg:flex-row w-full lg:max-w-7xl lg:mx-auto lg:p-6 lg:gap-6 lg:items-stretch">
-            <div className="relative shrink-0 w-full lg:max-w-3xl lg:flex-1 h-[35vh] sm:h-[40vh] md:h-auto">
+            <div className="relative shrink-0 w-full lg:max-w-3xl lg:flex-1 md:h-auto">
               <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
             <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto">

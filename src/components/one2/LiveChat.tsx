@@ -400,7 +400,11 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
       )}
 
       {/* Messages */}
-      <div ref={scrollRef} className="commentary-scroll flex-1 overflow-y-auto p-3 flex flex-col gap-1">
+      <div 
+        ref={scrollRef} 
+        className="commentary-scroll flex-1 overflow-y-auto p-3 flex flex-col gap-1"
+        style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 16px)', maskImage: 'linear-gradient(to bottom, transparent, black 16px)' }}
+      >
         <div className="flex-1 min-h-0" />
         {visibleMessages.map((msg) => {
           const isOwn = msg.user_id === userId;
@@ -481,12 +485,12 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
               </div>
             )}
             
-            <div className="flex-1 bg-[#1e2025] rounded-[24px] flex items-center px-4 h-12 border border-border/50">
-              <Input
+            <div className="flex-1 bg-[#1e2025] rounded-[24px] flex items-center px-4 h-12 border border-border/50 overflow-hidden">
+              <input
                 value={inputMsg}
                 onChange={(e) => setInputMsg(e.target.value)}
                 placeholder={lang === 'ar' ? `تعليق باسم ${username}` : `Comment as ${username}`}
-                className="border-none bg-transparent shadow-none text-foreground text-sm h-full w-full focus-visible:ring-0 px-0 placeholder:text-muted-foreground"
+                className="bg-transparent text-foreground text-sm h-full w-full outline-none focus:ring-0 px-0 placeholder:text-muted-foreground"
                 dir={lang === 'ar' ? 'rtl' : 'ltr'}
                 maxLength={200}
                 disabled={isSending}
