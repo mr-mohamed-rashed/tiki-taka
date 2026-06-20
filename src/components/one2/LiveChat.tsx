@@ -82,7 +82,8 @@ interface LiveChatProps {
   isTheaterSplit?: boolean;
 }
 
-export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSplit = false }: LiveChatProps) {
+export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'default', isTheaterSplit = false }: LiveChatProps) {
+  const matchId = 'global'; // Force all chats to use a single global pipe
   const { lang } = useLanguage();
   const { user, signInWithGoogle, loading: authLoading } = useAuth();
   const { news } = useManualNews(true); // Fetch active news for the bots
