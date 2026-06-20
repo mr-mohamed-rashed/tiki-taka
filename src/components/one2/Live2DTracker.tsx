@@ -273,11 +273,13 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     
                     {/* The new circular logo jumping from inside */}
                     <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
-                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden">
+                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] ring-2 ring-[#1d4ed8] border-[3px] border-white/90 overflow-hidden bg-gradient-to-br from-[#1e3a8a] via-[#1e40af] to-[#0f172a]">
+                        {/* Gold Map Background */}
+                        <div className="absolute inset-0 opacity-40 mix-blend-screen bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NkYTIzZCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz48L3N2Zz4=')]"></div>
                         <img 
-                          src="/logo_new.png" 
+                          src="/trophy_transparent.png" 
                           alt="Trophy Logo" 
-                          className="relative z-10 w-full h-full object-cover scale-[1.05]" 
+                          className="relative z-10 w-full h-full object-contain p-[10%] drop-shadow-2xl" 
                         />
                       </div>
                     </div>
@@ -424,11 +426,13 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
                     {/* The new circular logo jumping from inside */}
                     <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
-                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] overflow-hidden">
+                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] ring-2 ring-[#1d4ed8] border-[3px] border-white/90 overflow-hidden bg-gradient-to-br from-[#1e3a8a] via-[#1e40af] to-[#0f172a]">
+                        {/* Gold Map Background */}
+                        <div className="absolute inset-0 opacity-40 mix-blend-screen bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2NkYTIzZCIgc3Ryb2tlLXdpZHRoPSIwLjUiLz48L3N2Zz4=')]"></div>
                         <img 
-                          src="/logo_new.png" 
+                          src="/trophy_transparent.png" 
                           alt="Trophy Logo" 
-                          className="relative z-10 w-full h-full object-cover scale-[1.05]" 
+                          className="relative z-10 w-full h-full object-contain p-[10%] drop-shadow-2xl" 
                         />
                       </div>
                     </div>
