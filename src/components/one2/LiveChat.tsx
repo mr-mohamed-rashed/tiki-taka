@@ -174,7 +174,10 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
         // Check if sender is banned
         const sender = usersRef.current.get(msg.user_id);
         if (!sender?.is_banned) {
-          setMessages((prev) => [...prev, msg]);
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === msg.id)) return prev;
+            return [...prev, msg];
+          });
         }
       })
       .on('postgres_changes', {
@@ -295,18 +298,23 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     }
 
     setIsSending(true);
-    setInputMsg('');
-    setShowEmojis(false);
 
-    const { error } = await supabase.from('chat_messages').insert({
+    const { data, error } = await supabase.from('chat_messages').insert({
       user_id: userId,
       username,
       message: filteredText,
       match_id: matchId,
-    });
+    }).select().single();
     
     if (error) {
       console.error("Chat error:", error);
+    } else if (data) {
+      setInputMsg('');
+      setShowEmojis(false);
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === data.id)) return prev;
+        return [...prev, data as ChatMessage];
+      });
     }
     setIsSending(false);
   };
