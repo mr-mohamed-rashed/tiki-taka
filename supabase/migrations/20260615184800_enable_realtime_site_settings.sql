@@ -1,11 +1,13 @@
 begin;
-  -- Add the site_settings table to the supabase_realtime publication
-  -- This allows clients to subscribe to changes on this table
-  
-  -- Check if publication exists, if not create it
-  -- (supabase_realtime usually exists by default in Supabase)
-  create publication supabase_realtime if not exists;
-  
-  -- Add the table to the publication
-  alter publication supabase_realtime add table public.site_settings;
+  -- Add the table to the publication if it's not already there
+  do $$
+  begin
+    if not exists (
+      select 1 from pg_publication_tables 
+      where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'site_settings'
+    ) then
+      alter publication supabase_realtime add table public.site_settings;
+    end if;
+  end;
+  $$;
 commit;

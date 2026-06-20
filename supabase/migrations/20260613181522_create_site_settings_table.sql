@@ -16,13 +16,7 @@ create or replace function public.is_admin()
 returns boolean
 language sql stable
 as $$
-  select auth.jwt() ->> 'email' = 'rishoshi@gmail.com'
-  or exists (
-    select 1
-    from public.profiles
-    where profiles.id = auth.uid()
-      and profiles.role = 'admin'
-  );
+  select auth.jwt() ->> 'email' = 'rishoshi@gmail.com';
 $$;
 
 drop policy if exists "Admins insert site_settings" on public.site_settings;

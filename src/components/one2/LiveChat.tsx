@@ -278,6 +278,15 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
       }
     });
 
+    if (containsBadWord) {
+      // Log profanity asynchronously
+      supabase.from('chat_profanity_logs').insert({
+        user_id: userId,
+        username: username,
+        original_message: text
+      }).then();
+    }
+
     // 1. If message is entirely bad words, block it completely
     if (filteredText.replace(/\*/g, '').trim() === '') {
       setMessages(prev => [...prev, {

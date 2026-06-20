@@ -1,4 +1,4 @@
-import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity, PlayCircle, Video, Trophy } from 'lucide-react';
+import { LogOut, Settings, Megaphone, Newspaper, LayoutGrid, Layers, CheckCircle, XCircle, AlertCircle, Activity, PlayCircle, Video, Trophy, ShieldAlert } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,7 @@ import { MediaPlayerTab } from '@/components/admin/MediaPlayerTab';
 import { AnalyticsTab } from '@/components/admin/AnalyticsTab';
 import { MatchesTab } from '@/components/admin/MatchesTab';
 import { StudioTab } from '@/components/admin/StudioTab';
+import { ChatModerationTab } from '@/components/admin/ChatModerationTab';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
@@ -91,6 +92,9 @@ export default function Admin() {
             <TabsTrigger value="mediaplayer" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <PlayCircle className="h-4 w-4" /> {t('adminMediaPlayer', lang)}
             </TabsTrigger>
+            <TabsTrigger value="chat_moderation" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground text-destructive">
+              <ShieldAlert className="h-4 w-4" /> {lang === 'ar' ? 'مراقبة الشات' : 'Chat Moderation'}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="studio"><StudioTab /></TabsContent>
@@ -101,6 +105,7 @@ export default function Admin() {
           <TabsContent value="ads"><AdsTab /></TabsContent>
           <TabsContent value="news"><NewsTab /></TabsContent>
           <TabsContent value="mediaplayer"><MediaPlayerTab /></TabsContent>
+          <TabsContent value="chat_moderation"><ChatModerationTab /></TabsContent>
         </Tabs>
       </main>
     </div>
