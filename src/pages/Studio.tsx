@@ -137,7 +137,7 @@ export default function Studio() {
   // MOBILE LAYOUT (YouTube Style)
   if (!isDesktop) {
     return (
-      <div className="h-[100dvh] w-full bg-background flex flex-col overflow-hidden select-none" dir={dir}>
+      <div className="h-[100dvh] w-full bg-background flex flex-col overflow-hidden select-none fixed inset-0 md:relative md:inset-auto" dir={dir}>
         <header className="flex items-center justify-between p-3 border-b border-border bg-card shrink-0 z-10 shadow-sm">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
