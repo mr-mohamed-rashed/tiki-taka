@@ -101,11 +101,15 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
   const userId = user?.id || getOrCreateUserId();
   
   const getNickname = () => {
+    let name = user?.email?.split('@')[0] || 'Guest';
     if (user?.user_metadata?.full_name) {
       const parts = user.user_metadata.full_name.trim().split(' ');
-      return parts.length > 1 ? parts[parts.length - 1] : parts[0];
+      name = parts.length > 1 ? parts[parts.length - 1] : parts[0];
     }
-    return user?.email?.split('@')[0] || 'Guest';
+    if (name.toLowerCase() === 'fisho') {
+      return 'سوبر أدمن';
+    }
+    return name;
   };
   
   const username = getNickname();
@@ -145,14 +149,28 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Do not load historical messages (TikTok style)
+  // Fetch historical messages to prevent blank chat when mounting (e.g. going full screen)
   useEffect(() => {
     if (hasFetchedInitialRef.current) return;
     hasFetchedInitialRef.current = true;
     
-    // Start with an empty chat, just finish loading
-    setMessages([]);
-    setLoading(false);
+    const fetchHistory = async () => {
+      const { data } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('match_id', matchId)
+        .order('created_at', { ascending: false })
+        .limit(30);
+      
+      if (data) {
+        setMessages(data.reverse() as ChatMessage[]);
+      } else {
+        setMessages([]);
+      }
+      setLoading(false);
+    };
+    
+    fetchHistory();
   }, [matchId]);
 
   const usersRef = useRef(users);
