@@ -137,6 +137,14 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  const [animKey, setAnimKey] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimKey(prev => prev + 1);
+    }, 45000); // 45 seconds
+    return () => clearInterval(interval);
+  }, []);
+
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
@@ -264,12 +272,25 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     </div>
                     
                     {/* The new circular logo jumping from inside */}
-                    <div className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
-                      <img 
-                        src="/logo_new.png" 
-                        alt="Trophy Logo" 
-                        className="w-full h-full object-cover rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 bg-[#0a2351]" 
-                      />
+                    <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
+                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d4ed8] via-[#0f172a] to-[#020617]">
+                        {/* Beautiful wireframe globe background */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                          <svg viewBox="0 0 100 100" className="w-[90%] h-[90%]">
+                            <circle cx="50" cy="50" r="48" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                            <ellipse cx="50" cy="50" rx="24" ry="48" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                            <line x1="50" y1="2" x2="50" y2="98" stroke="#60a5fa" strokeWidth="1" />
+                            <line x1="2" y1="50" x2="98" y2="50" stroke="#60a5fa" strokeWidth="1" />
+                            <path d="M 8 25 Q 50 40 92 25" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                            <path d="M 8 75 Q 50 60 92 75" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                          </svg>
+                        </div>
+                        <img 
+                          src="/logo_new.png" 
+                          alt="Trophy Logo" 
+                          className="relative z-10 w-full h-full object-cover p-1" 
+                        />
+                      </div>
                     </div>
 
                     {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
@@ -413,12 +434,25 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     </div>
 
                     {/* The new circular logo jumping from inside */}
-                    <div className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
-                      <img 
-                        src="/logo_new.png" 
-                        alt="Trophy Logo" 
-                        className="w-full h-full object-cover rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 bg-[#0a2351]" 
-                      />
+                    <div key={animKey} className="absolute right-[-2%] bottom-0 w-[38%] aspect-square animate-slide-rotate-bounce pointer-events-none z-20">
+                      <div className="relative w-full h-full rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-2 border-[#eab308]/60 overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d4ed8] via-[#0f172a] to-[#020617]">
+                        {/* Beautiful wireframe globe background */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                          <svg viewBox="0 0 100 100" className="w-[90%] h-[90%]">
+                            <circle cx="50" cy="50" r="48" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                            <ellipse cx="50" cy="50" rx="24" ry="48" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                            <line x1="50" y1="2" x2="50" y2="98" stroke="#60a5fa" strokeWidth="1" />
+                            <line x1="2" y1="50" x2="98" y2="50" stroke="#60a5fa" strokeWidth="1" />
+                            <path d="M 8 25 Q 50 40 92 25" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                            <path d="M 8 75 Q 50 60 92 75" fill="none" stroke="#60a5fa" strokeWidth="1" />
+                          </svg>
+                        </div>
+                        <img 
+                          src="/logo_new.png" 
+                          alt="Trophy Logo" 
+                          className="relative z-10 w-full h-full object-cover p-1" 
+                        />
+                      </div>
                     </div>
 
                     {/* 'مباشر' box below the rectangle, shifted right slightly to cover watermark exactly */}
