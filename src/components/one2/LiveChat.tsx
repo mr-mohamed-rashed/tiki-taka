@@ -230,8 +230,15 @@ export function LiveChat({ matchId = 'general', variant = 'default', isTheaterSp
           username: randomBot,
           message: `📰 خبر عاجل: ${title} \n ${link}`,
           match_id: matchId,
-        }).then(({ error }) => {
-          if (error) console.error("Bot insert error:", error);
+        }).select().single().then(({ data, error }) => {
+          if (error) {
+            console.error("Bot insert error:", error);
+          } else if (data) {
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === data.id)) return prev;
+              return [...prev, data as ChatMessage];
+            });
+          }
         });
       }
     }, 5000);
