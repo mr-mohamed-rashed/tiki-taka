@@ -28,6 +28,17 @@
   <meta name="twitter:title" content="One2 - FIFA World Cup Live | وان تو بث مباشر" />
   <meta name="twitter:description" content="مشاهدة مباريات اليوم بث مباشر بدون تقطيع، كأس العالم لايف، مباريات اليوم بجودة عالية للموبايل. كورة لايف، يلا شوت، بي ان سبورت." />
   <meta name="twitter:image" content="https://one2.cc/icons/one2-icon-512.png" />
+
+  <!-- OneSignal Web Push SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "97f073a1-955f-4c19-bd93-d297d50cb1ba",
+      });
+    });
+  </script>
 </head>
 
 <body>

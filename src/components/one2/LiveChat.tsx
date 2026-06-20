@@ -87,6 +87,9 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
   const [showEmojis, setShowEmojis] = useState(false);
   const [botsEnabled, setBotsEnabled] = useState(true);
   const [bannedWords, setBannedWords] = useState<string[]>([]);
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+  const [typingChannel, setTypingChannel] = useState<any>(null);
+  
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasFetchedInitialRef = useRef(false);
   const mountTimeRef = useRef<number>(new Date().getTime());
@@ -159,9 +162,35 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
     usersRef.current = users;
   }, [users]);
 
-  // Real-time subscription
+  // Real-time subscription for messages and typing
   useEffect(() => {
     const channelId = `chat:${matchId}:${Math.random().toString(36).substring(7)}`;
+    
+    // Typing channel setup
+    const tChannel = supabase.channel(`typing:${matchId}`);
+    tChannel
+      .on('broadcast', { event: 'typing' }, (payload) => {
+        if (payload.payload.username && payload.payload.user_id !== userId) {
+          setTypingUsers((prev) => {
+            const next = new Set(prev);
+            next.add(payload.payload.username);
+            return next;
+          });
+          
+          // Clear typing after 3 seconds
+          setTimeout(() => {
+            setTypingUsers((prev) => {
+              const next = new Set(prev);
+              next.delete(payload.payload.username);
+              return next;
+            });
+          }, 3000);
+        }
+      })
+      .subscribe();
+      
+    setTypingChannel(tChannel);
+
     const channel = supabase
       .channel(channelId)
       .on('postgres_changes', {
@@ -178,6 +207,14 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
             if (prev.some((m) => m.id === msg.id)) return prev;
             return [...prev, msg];
           });
+          
+          // Play sound if message is not from me
+          if (msg.user_id !== userId) {
+            try {
+              const audio = new Audio('/sounds/message.ogg');
+              audio.play().catch(e => console.log('Audio play blocked:', e));
+            } catch (err) {}
+          }
         }
       })
       .on('postgres_changes', {
@@ -191,8 +228,11 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
-  }, [matchId]);
+    return () => { 
+      supabase.removeChannel(channel); 
+      supabase.removeChannel(tChannel);
+    };
+  }, [matchId, userId]);
 
   // Automated 5 Admins (Bots) sending news when chat is quiet
   useEffect(() => {
@@ -499,6 +539,13 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
         )}
       </div>
 
+      {/* Typing Indicator */}
+      {typingUsers.size > 0 && (
+        <div className="px-4 py-1.5 text-xs text-primary font-medium animate-pulse shrink-0 border-t border-border/50 bg-primary/5" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+          {Array.from(typingUsers).join(' و ')} {lang === 'ar' ? 'يكتب الآن...' : 'is typing...'}
+        </div>
+      )}
+
       {/* Input or Sign In */}
       {!joined ? (
         <div className={cn("p-4 shrink-0 border-t border-border bg-card/60")}>
@@ -542,7 +589,16 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
             <div className="flex-1 bg-[#1e2025] rounded-[24px] flex items-center px-4 h-12 border border-border/50 overflow-hidden">
               <input
                 value={inputMsg}
-                onChange={(e) => setInputMsg(e.target.value)}
+                onChange={(e) => {
+                  setInputMsg(e.target.value);
+                  if (typingChannel && e.target.value.trim().length > 0) {
+                    typingChannel.send({
+                      type: 'broadcast',
+                      event: 'typing',
+                      payload: { username, user_id: userId }
+                    }).catch(() => {}); // Ignore errors if not fully connected yet
+                  }
+                }}
                 placeholder={lang === 'ar' ? `تعليق باسم ${username}` : `Comment as ${username}`}
                 className="bg-transparent text-foreground text-sm h-full w-full outline-none focus:ring-0 px-0 placeholder:text-muted-foreground"
                 dir={lang === 'ar' ? 'rtl' : 'ltr'}
