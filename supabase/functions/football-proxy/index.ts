@@ -136,7 +136,7 @@ function isAnyMatchActive(fixturesData: any) {
 
 async function fetchApiFootball({ endpoint, league, season, fixtureId }: Required<Pick<ProxyRequest, 'endpoint' | 'league' | 'season'>> & Pick<ProxyRequest, 'fixtureId'>) {
   // @ts-ignore
-  const keysEnv = Deno.env.get('API_FOOTBALL_KEY') ?? '';
+  const keysEnv = Deno.env.get('API_FOOTBALL_KEY') || '19a3b0d1fe31969b6b6e615f1c38fccd,3f32007ee5d3ea0c95c1ff96bf81f71d';
   const apiKeys = keysEnv.split(',').map(k => k.trim()).filter(Boolean);
   if (apiKeys.length === 0) return { response: [] };
 
