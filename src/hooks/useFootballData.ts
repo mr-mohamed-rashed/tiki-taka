@@ -205,7 +205,9 @@ export function useStandings() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'standings', league: WC_LEAGUE, season: WC_SEASON });
-        if (!data?.response?.[0]?.league?.standings) return null;
+        if (data?.espn || !data?.response?.[0]?.league?.standings) {
+          throw new Error('Fallback to mock standings');
+        }
         return data.response[0].league.standings as ApiStandingGroup[];
       } catch {
         return null;
@@ -222,10 +224,12 @@ export function useTopScorers() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'topscorers', league: WC_LEAGUE, season: WC_SEASON });
-        if (!data?.response?.length) return [];
+        if (data?.espn || !data?.response?.length) {
+          throw new Error('Fallback to mock topscorers');
+        }
         return data.response.slice(0, 10).map(mapScorer);
       } catch {
-        return [];
+        return getTopScorers();
       }
     },
     refetchInterval: false,
