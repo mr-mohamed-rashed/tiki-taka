@@ -9,6 +9,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
+import { Navigation } from '@/components/one2/Navigation';
 
 interface Live2DTrackerProps {
   match: Match;
@@ -421,6 +422,21 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     </svg>
                   </Button>
                 </>
+              )}
+
+              {/* Dynamic Logo Cover to hide koora city watermark - Only visible when not in theater/fullscreen mode */}
+              {!isTheater && (
+                <div 
+                  dir="ltr"
+                  className="absolute top-1 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
+                >
+                  <div className="pointer-events-auto flex items-center justify-between w-full pr-1 pl-1">
+                    {/* Left Side: Hamburger Menu via Navigation Component */}
+                    <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
+                      <Navigation />
+                    </div>
+                  </div>
+                </div>
               )}
 
               {/* Smart Responsive Logo Cover */}
