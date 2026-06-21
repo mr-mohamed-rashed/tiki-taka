@@ -130,6 +130,10 @@ export function useResults() {
         if (data?.matches?.length) proxyResults = getFinishedOnly(data.matches as Match[]);
         else if (data?.response?.length) proxyResults = getFinishedOnly(data.response.map(mapFixture));
         
+        if (!proxyResults || proxyResults.length === 0) {
+          proxyResults = getFinishedMatches();
+        }
+        
         const teamsMap = Object.values(teams);
         
         proxyResults = proxyResults.map(m => {

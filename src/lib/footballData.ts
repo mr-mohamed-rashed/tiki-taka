@@ -176,15 +176,7 @@ const isInsideLiveWindow = (match: Match) => {
   return now >= kickoff && now <= kickoff + LIVE_MATCH_WINDOW_MS;
 };
 
-const liveFallbackMatches: Match[] = [
-  {
-    id: 'live_por_drc', competition: 'FIFA World Cup 2026', stage: 'Group K - Match Day 1',
-    date: new Date(Date.now() - 45 * 60000).toISOString(), status: 'live',
-    home: teams.POR, away: teams.DRC, homeScore: 1, awayScore: 1,
-    minute: "45'",
-    venue: 'BMO Field, Toronto',
-  }
-];
+const liveFallbackMatches: Match[] = [];
 
 export const getLiveMatches = (): Match[] => {
   const liveFromUpcoming = getUpcomingMatches()
