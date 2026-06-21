@@ -9,7 +9,6 @@ import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
-import { Navigation } from '@/components/one2/Navigation';
 
 interface Live2DTrackerProps {
   match: Match;
@@ -228,7 +227,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 src={streamUrl}
                 className="absolute inset-0 w-full h-full pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                sandbox="allow-scripts allow-same-origin allow-presentation"
               />
               {/* Invisible overlay to catch the first touch without triggering the iframe */}
               <div 
@@ -238,19 +238,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   setControlsVisible(true);
                 }}
               />
-              {/* Dynamic Logo Cover to hide koora city watermark */}
-              <div 
-                dir="ltr"
-                className="absolute top-1 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
-              >
-                <div className="pointer-events-auto flex items-center justify-between w-full pr-1 pl-1">
-                  {/* Left Side: Hamburger Menu via Navigation Component */}
-                  <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
-                    <Navigation />
-                  </div>
-                  {/* Removed right side logo from here, moved to responsive container below */}
-                </div>
-              </div>
 
               {/* Smart Responsive Logo Cover */}
               <div 
@@ -398,7 +385,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 src={streamUrl}
                 className="absolute inset-0 w-full h-full pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                sandbox="allow-scripts allow-same-origin allow-presentation"
               />
               {/* Invisible overlay to catch the first touch without triggering the iframe */}
               <div 
@@ -430,20 +418,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </Button>
                 </>
               )}
-
-              {/* Dynamic Logo Cover to hide koora city watermark */}
-              <div 
-                dir="ltr"
-                className="absolute top-1 left-2 right-2 z-40 pointer-events-none transition-opacity duration-300"
-              >
-                <div className="pointer-events-auto flex items-center justify-between w-full pr-1 pl-1">
-                  {/* Left Side: Hamburger Menu via Navigation Component */}
-                  <div className="flex items-center [&>nav]:bg-transparent [&>nav]:border-none [&>nav]:backdrop-blur-none [&>nav>div]:px-0 [&>nav]:h-auto [&>nav>div>div>a]:hidden [&>nav>div>div>div:nth-child(2)]:hidden [&>nav>div>div>div:last-child>button:not(:last-child)]:hidden [&>nav>div>div>div:last-child>button:last-child]:bg-[#0d0e12] [&>nav>div>div>div:last-child>button:last-child]:text-white [&>nav>div>div>div:last-child>button:last-child]:rounded-xl [&>nav>div>div>div:last-child>button:last-child]:w-10 [&>nav>div>div>div:last-child>button:last-child]:h-10">
-                    <Navigation />
-                  </div>
-                  {/* Removed right side logo from here, moved to responsive container below */}
-                </div>
-              </div>
 
               {/* Smart Responsive Logo Cover */}
               <div 
