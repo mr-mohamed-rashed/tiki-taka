@@ -168,8 +168,8 @@ function PaginatedMatchGrid({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => goToPage(safePage - 1)}
-              disabled={safePage === 1}
+              onClick={() => goToPage(safePage + 1)}
+              disabled={safePage === totalPages}
               className="gap-1 h-9 px-3"
             >
               {lang === 'ar' ? 'السابق' : 'Prev'}
@@ -179,8 +179,8 @@ function PaginatedMatchGrid({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => goToPage(safePage + 1)}
-              disabled={safePage === totalPages}
+              onClick={() => goToPage(safePage - 1)}
+              disabled={safePage === 1}
               className="gap-1 h-9 px-3"
             >
               {lang === 'ar' ? 'التالي' : 'Next'}

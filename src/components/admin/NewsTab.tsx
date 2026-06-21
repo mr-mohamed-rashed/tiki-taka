@@ -350,13 +350,22 @@ function NewsList({
   onToggle: (id: string, isPublished: boolean) => Promise<void>;
   onReorder: (id1: string, id2: string, createdAt1: string, createdAt2: string) => Promise<void>;
 }) {
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
+
   if (items.length === 0) {
     return <Card className="p-8 text-center text-sm text-muted-foreground">{empty}</Card>;
   }
 
+  const totalPages = Math.ceil(items.length / PAGE_SIZE);
+  const safePage = Math.min(page, Math.max(1, totalPages));
+  const visibleItems = items.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
   return (
     <div className="space-y-3">
-      {items.map((item, index) => (
+      {visibleItems.map((item, index) => {
+        const actualIndex = (safePage - 1) * PAGE_SIZE + index;
+        return (
         <Card key={item.id} className={`border-border bg-card/70 p-4 ${!item.is_published ? 'opacity-65' : ''}`}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
             <div className="flex flex-row sm:flex-col gap-1 items-center justify-center">
@@ -364,8 +373,8 @@ function NewsList({
                 size="icon"
                 variant="ghost"
                 className="h-8 w-8"
-                disabled={index === 0}
-                onClick={() => onReorder(item.id, items[index - 1].id, item.created_at, items[index - 1].created_at)}
+                disabled={actualIndex === 0}
+                onClick={() => onReorder(item.id, items[actualIndex - 1].id, item.created_at, items[actualIndex - 1].created_at)}
               >
                 <ArrowUp className="h-4 w-4" />
               </Button>
@@ -373,8 +382,8 @@ function NewsList({
                 size="icon"
                 variant="ghost"
                 className="h-8 w-8"
-                disabled={index === items.length - 1}
-                onClick={() => onReorder(item.id, items[index + 1].id, item.created_at, items[index + 1].created_at)}
+                disabled={actualIndex === items.length - 1}
+                onClick={() => onReorder(item.id, items[actualIndex + 1].id, item.created_at, items[actualIndex + 1].created_at)}
               >
                 <ArrowDown className="h-4 w-4" />
               </Button>
@@ -414,7 +423,38 @@ function NewsList({
             </div>
           </div>
         </Card>
-      ))}
+        );
+      })}
+      
+      {totalPages > 1 && (
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-lg border border-border bg-card/60 p-3">
+          <div className="text-sm text-muted-foreground font-arabic">
+            صفحة {safePage} من {totalPages}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={safePage === totalPages}
+              onClick={() => setPage(safePage + 1)}
+              className="gap-1 h-9 px-3"
+            >
+              السابق
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={safePage === 1}
+              onClick={() => setPage(safePage - 1)}
+              className="gap-1 h-9 px-3"
+            >
+              التالي
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
