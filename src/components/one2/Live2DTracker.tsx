@@ -403,18 +403,22 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={cn("absolute left-2 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/70 hover:bg-transparent hover:text-white transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute left-0 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/50 hover:bg-transparent hover:text-white/90 transition-opacity h-auto w-auto p-0", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
                   >
-                    <ChevronLeft className="h-10 w-10 drop-shadow-lg" />
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-2xl">
+                      <path d="M16 4L6 12L16 20V4Z" />
+                    </svg>
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={cn("absolute right-2 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/70 hover:bg-transparent hover:text-white transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute right-0 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/50 hover:bg-transparent hover:text-white/90 transition-opacity h-auto w-auto p-0", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
                   >
-                    <ChevronRight className="h-10 w-10 drop-shadow-lg" />
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-2xl">
+                      <path d="M8 4L18 12L8 20V4Z" />
+                    </svg>
                   </Button>
                 </>
               )}
