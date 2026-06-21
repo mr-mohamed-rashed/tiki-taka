@@ -110,19 +110,6 @@ body,
   min-height: 100%;
 }
 
-/* ── Global football background watermark ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at center, transparent 0 16%, hsl(var(--primary) / 0.05) 16.2% 16.8%, transparent 17%),
-    repeating-linear-gradient(90deg, hsl(140 55% 18% / 0.2) 0 72px, hsl(140 55% 14% / 0.2) 72px 144px);
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: 0;
-  /* Removed mix-blend-mode: luminosity to fix mobile GPU tearing/smearing */
-}
 
 #root {
   position: relative;
