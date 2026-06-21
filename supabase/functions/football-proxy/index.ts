@@ -73,17 +73,18 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // FETCH FROM API-SPORTS
-    const apiFootballData = await fetchApiFootball({
+    // FETCH FROM ESPN OR MOCK
+    const apiFootballData = await fetchEspnData({
       endpoint,
       league: body.league ?? '1',
       season: body.season ?? '2026',
       fixtureId: body.fixtureId,
     });
 
-    const isRateLimited = apiFootballData.errors && Object.keys(apiFootballData.errors).length > 0;
+    // If fetch failed or returned empty array, serve stale cache!
+    const isFetchFailed = apiFootballData.error || (apiFootballData.response && apiFootballData.response.length === 0);
 
-    if (!isRateLimited) {
+    if (!isFetchFailed) {
       if (supabase) {
         // Save to cache
         await supabase.from('api_cache').upsert({
@@ -92,26 +93,25 @@ Deno.serve(async (req: Request) => {
           updated_at: new Date().toISOString()
         }, { onConflict: 'endpoint' });
 
-        // SMART POLLING: If we just fetched LIVE and a match is FINISHED ('FT', 'PEN', 'AET')
-        // We delete the old results/standings cache so they get refreshed on the next visit!
+        // SMART POLLING: If we just fetched LIVE and a match is FINISHED ('post')
         if (endpoint === 'live' && apiFootballData.response) {
-          const hasJustFinished = apiFootballData.response.some((f: any) => ['FT', 'AET', 'PEN'].includes(f.fixture.status.short));
+          const hasJustFinished = apiFootballData.response.some((f: any) => {
+            const status = f.competitions?.[0]?.status?.type?.state;
+            return status === 'post';
+          });
           if (hasJustFinished) {
             await supabase.from('api_cache').delete().in('endpoint', [
               `fixtures_1_2026_`,
-              `results_1_2026_`,
-              `standings_1_2026_`,
-              `groups_1_2026_`,
-              `topscorers_1_2026_`
+              `results_1_2026_`
             ]);
           }
         }
       }
-      return json({ provider: 'api-football', ...apiFootballData });
+      return json({ provider: 'espn', ...apiFootballData });
     } else {
-      // Rate limit hit -> return stale cache!
+      // ESPN is down or returned empty -> return stale cache so data is never lost!
       if (cachedData) return json({ provider: 'cache-stale', ...cachedData });
-      return json({ error: 'API Rate limit reached' }, 429);
+      return json({ error: 'ESPN API failed and no cache available' }, 502);
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
@@ -134,51 +134,21 @@ function isAnyMatchActive(fixturesData: any) {
   return false; 
 }
 
-async function fetchApiFootball({ endpoint, league, season, fixtureId }: Required<Pick<ProxyRequest, 'endpoint' | 'league' | 'season'>> & Pick<ProxyRequest, 'fixtureId'>) {
-  // @ts-ignore
-  const keysEnv = Deno.env.get('API_FOOTBALL_KEY') || '19a3b0d1fe31969b6b6e615f1c38fccd,3f32007ee5d3ea0c95c1ff96bf81f71d';
-  const apiKeys = keysEnv.split(',').map(k => k.trim()).filter(Boolean);
-  if (apiKeys.length === 0) return { response: [] };
-
-  let apiUrl = '';
-  switch (endpoint) {
-    case 'live': apiUrl = `${API_FOOTBALL_BASE}/fixtures?live=all`; break;
-    case 'fixtures': apiUrl = `${API_FOOTBALL_BASE}/fixtures?league=${league}&season=${season}&status=NS-1H-HT-2H-ET-P`; break;
-    case 'results': apiUrl = `${API_FOOTBALL_BASE}/fixtures?league=${league}&season=${season}&status=FT-AET-PEN`; break;
-    case 'standings':
-    case 'groups': apiUrl = `${API_FOOTBALL_BASE}/standings?league=${league}&season=${season}`; break;
-    case 'topscorers': apiUrl = `${API_FOOTBALL_BASE}/players/topscorers?league=${league}&season=${season}`; break;
-    case 'fixture_events': apiUrl = `${API_FOOTBALL_BASE}/fixtures/events?fixture=${fixtureId}`; break;
-    default: throw new Error('Unknown endpoint');
-  }
-
-  let lastErrorData = null;
-
-  for (const apiKey of apiKeys) {
-    const headers: Record<string, string> = {
-      'x-rapidapi-key': apiKey,
-      'x-rapidapi-host': 'v3.football.api-sports.io',
-    };
-
+async function fetchEspnData({ endpoint, league, season }: Required<Pick<ProxyRequest, 'endpoint' | 'league' | 'season'>> & Pick<ProxyRequest, 'fixtureId'>) {
+  if (endpoint === 'live' || endpoint === 'fixtures' || endpoint === 'results') {
     try {
-      const data = await fetchJson(apiUrl, { headers });
-      
-      // Check if this specific key hit a limit or is invalid
-      const hasRateLimitError = data.errors && Object.keys(data.errors).length > 0;
-
-      if (!hasRateLimitError) {
-        return data; // Success with this key!
-      } else {
-        lastErrorData = data;
-        console.log(`Key ending in ...${apiKey.slice(-4)} failed/limited. Trying next.`);
-      }
-    } catch (err) {
-       console.error(`Network error with key ending in ...${apiKey.slice(-4)}`);
+      const datesParam = season === '2026' ? '?dates=20260611-20260719' : '';
+      const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard${datesParam}`;
+      const data = await fetchJson(url);
+      return { response: data.events || [], espn: true };
+    } catch (e: any) {
+      console.error('ESPN fetch failed', e);
+      return { response: [], espn: true, error: e.message };
     }
   }
 
-  // If all keys failed, return the last error so it can be handled by cache fallback
-  return lastErrorData || { response: [] };
+  // Standings, topscorers, groups are not supported by the ESPN scoreboard endpoint yet.
+  return { response: [], espn: true };
 }
 
 async function fetchJson(url: string, init?: RequestInit) {
