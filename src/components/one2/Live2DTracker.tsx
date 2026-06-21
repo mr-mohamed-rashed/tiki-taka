@@ -230,12 +230,12 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 sandbox="allow-scripts allow-same-origin allow-presentation"
               />
-              {/* Invisible overlay to catch the first touch without triggering the iframe */}
+              {/* Invisible overlay to permanently catch touches and prevent iframe interaction */}
               <div 
-                className={cn("absolute inset-0 z-30", controlsVisible ? "pointer-events-none" : "pointer-events-auto")}
+                className="absolute inset-0 z-30 pointer-events-auto"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setControlsVisible(true);
+                  setControlsVisible(prev => !prev);
                 }}
               />
 
@@ -388,12 +388,12 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 sandbox="allow-scripts allow-same-origin allow-presentation"
               />
-              {/* Invisible overlay to catch the first touch without triggering the iframe */}
+              {/* Invisible overlay to permanently catch touches and prevent iframe interaction */}
               <div 
-                className={cn("absolute inset-0 z-30", controlsVisible ? "pointer-events-none" : "pointer-events-auto")}
+                className="absolute inset-0 z-30 pointer-events-auto"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setControlsVisible(true);
+                  setControlsVisible(prev => !prev);
                 }}
               />
               
