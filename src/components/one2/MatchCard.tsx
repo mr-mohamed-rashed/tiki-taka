@@ -112,7 +112,24 @@ export function MatchCard({ match, showCountdown, onClick }: MatchCardProps) {
         isLive && 'border-live/40 shadow-[0_0_30px_-10px_hsl(var(--live)/0.5)]',
       )}
     >
-      <div className="flex items-center justify-between px-4 pt-3 pb-2 text-xs">
+      {showCountdown && (
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
+          <div 
+            className="absolute left-0 top-0 bottom-0 w-1/2 bg-no-repeat bg-left bg-cover" 
+            style={{ backgroundImage: `url(${match.home.flag})`, WebkitMaskImage: 'linear-gradient(to right, black 0%, transparent 80%)', filter: 'grayscale(50%)' }} 
+          />
+          <div 
+            className="absolute right-0 top-0 bottom-0 w-1/2 bg-no-repeat bg-right bg-cover" 
+            style={{ backgroundImage: `url(${match.away.flag})`, WebkitMaskImage: 'linear-gradient(to left, black 0%, transparent 80%)', filter: 'grayscale(50%)' }} 
+          />
+          <div className="absolute inset-0 flex items-center justify-center opacity-40">
+             <div className="text-[12rem] font-black italic tracking-tighter" style={{ WebkitTextStroke: '2px hsl(var(--primary))', color: 'transparent' }}>VS</div>
+          </div>
+          <div className="absolute inset-0 bg-background/50" />
+        </div>
+      )}
+
+      <div className="relative z-10 flex items-center justify-between px-4 pt-3 pb-2 text-xs">
         <div className="flex items-center gap-2 text-muted-foreground">
           <span className="font-semibold text-primary">{match.competition}</span>
           <span className="text-border">|</span>
@@ -137,7 +154,7 @@ export function MatchCard({ match, showCountdown, onClick }: MatchCardProps) {
         )}
       </div>
 
-      <div className="px-2 py-3 sm:px-4 sm:py-4 flex items-center gap-1 sm:gap-4 cursor-pointer" onClick={onClick}>
+      <div className="relative z-10 px-2 py-3 sm:px-4 sm:py-4 flex items-center gap-1 sm:gap-4 cursor-pointer" onClick={onClick}>
         <TeamRow team={match.home} isWinner={homeWin} align="left" />
 
         <div className="shrink-0 px-1 sm:px-4 text-center">
@@ -201,7 +218,7 @@ export function MatchCard({ match, showCountdown, onClick }: MatchCardProps) {
         </div>
       )}
 
-      <div className="border-t border-border/50 px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
+      <div className="relative z-10 border-t border-border/50 px-4 py-2 flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <MapPin className="h-3 w-3" />
           <span className="truncate">{match.venue}</span>
