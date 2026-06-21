@@ -354,21 +354,28 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
             style={{ containerType: 'size' }}
           >
           {streamUrl && (
-            <div className={cn("absolute bottom-4 right-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100" : "opacity-0")}>
-              {isTheater && (
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  onClick={() => setChatMode(prev => prev === 'hidden' ? 'overlay' : (prev === 'overlay' ? 'split' : 'hidden'))} 
-                  className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg"
-                >
-                  {chatMode === 'hidden' ? <MessageSquare className="h-4 w-4" /> : chatMode === 'overlay' ? <MessageSquare className="h-4 w-4 text-primary" /> : <PanelRightOpen className="h-4 w-4 text-primary" />}
+            <>
+              {/* Left Side Controls: Chat Button */}
+              <div className={cn("absolute bottom-4 left-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                {isTheater && (
+                  <Button 
+                    variant="secondary" 
+                    size="icon" 
+                    onClick={(e) => { e.stopPropagation(); setChatMode(prev => prev === 'hidden' ? 'split' : 'hidden'); }} 
+                    className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg h-10 w-10 sm:h-12 sm:w-12"
+                  >
+                    {chatMode === 'hidden' ? <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6" /> : <PanelRightOpen className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />}
+                  </Button>
+                )}
+              </div>
+
+              {/* Right Side Controls: Fullscreen Button */}
+              <div className={cn("absolute bottom-4 right-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <Button variant="secondary" size="icon" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg h-10 w-10 sm:h-12 sm:w-12">
+                  {isTheater ? <Minimize className="h-5 w-5 sm:h-6 sm:w-6" /> : <Maximize className="h-5 w-5 sm:h-6 sm:w-6" />}
                 </Button>
-              )}
-              <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg">
-                {isTheater ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
-              </Button>
-            </div>
+              </div>
+            </>
           )}
 
 
@@ -404,20 +411,20 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={cn("absolute left-0 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/50 hover:bg-transparent hover:text-white/90 transition-opacity h-auto w-auto p-0", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/70 transition-opacity h-12 w-12 sm:h-16 sm:w-16 rounded-full border border-white/10 shadow-xl flex items-center justify-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
                   >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-2xl">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 sm:w-10 sm:h-10 -ml-1">
                       <path d="M16 4L6 12L16 20V4Z" />
                     </svg>
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={cn("absolute right-0 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/50 hover:bg-transparent hover:text-white/90 transition-opacity h-auto w-auto p-0", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/70 transition-opacity h-12 w-12 sm:h-16 sm:w-16 rounded-full border border-white/10 shadow-xl flex items-center justify-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
                   >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-2xl">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 sm:w-10 sm:h-10 -mr-1">
                       <path d="M8 4L18 12L8 20V4Z" />
                     </svg>
                   </Button>
