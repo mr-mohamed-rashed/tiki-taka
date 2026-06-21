@@ -33,9 +33,9 @@ function getSmartPollingInterval(): number | false {
   return Math.min(timeToKickoff, 3600_000);
 }
 
-// Switching to Euro 2024 to fetch real data since World Cup 2026 hasn't started
-const WC_LEAGUE = '4'; // Euro 2024
-const WC_SEASON = '2024';
+// World Cup 2026 league ID on API-Football is 1
+const WC_LEAGUE = '1';
+const WC_SEASON = '2026';
 
 async function callProxy(body: object) {
   try {
