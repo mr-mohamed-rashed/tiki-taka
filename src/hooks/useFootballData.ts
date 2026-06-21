@@ -115,12 +115,12 @@ export function useUpcomingFixtures() {
         const now = Date.now();
         return results
           .filter(m => new Date(m.date).getTime() >= now)
-          .sort((a, b) => new Date(m.date).getTime() - new Date(b.date).getTime());
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       } catch {
         const now = Date.now();
         return getUpcomingMatches()
           .filter(m => new Date(m.date).getTime() >= now)
-          .sort((a, b) => new Date(m.date).getTime() - new Date(b.date).getTime());
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       }
     },
     refetchInterval: false,
@@ -128,7 +128,7 @@ export function useUpcomingFixtures() {
       const now = Date.now();
       return getUpcomingMatches()
         .filter(m => new Date(m.date).getTime() >= now)
-        .sort((a, b) => new Date(m.date).getTime() - new Date(b.date).getTime());
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     },
   });
 }
