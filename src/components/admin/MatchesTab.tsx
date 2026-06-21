@@ -19,6 +19,9 @@ export function MatchesTab() {
 
   const [customTitle, setCustomTitle] = useState('🔥 قمة كروية تبدأ قريباً!');
   const [customMsg, setCustomMsg] = useState('');
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Auto-fill message for the next match
   useEffect(() => {
@@ -186,7 +189,7 @@ export function MatchesTab() {
           <p className="text-center py-8 text-muted-foreground">لا توجد مباريات منتهية حتى الآن.</p>
         ) : (
           <div className="space-y-4">
-            {finished.map(match => (
+            {finished.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(match => (
               <div key={match.id} className="flex flex-col xl:flex-row items-center justify-between p-4 border border-border/60 rounded-lg bg-background gap-4">
                 <div className="flex items-center gap-4 min-w-[300px]">
                   <div className="text-center w-16">
@@ -221,6 +224,28 @@ export function MatchesTab() {
                 </div>
               </div>
             ))}
+            
+            {finished.length > itemsPerPage && (
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border/50">
+                <Button 
+                  variant="outline" 
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                >
+                  السابق
+                </Button>
+                <span className="text-sm text-muted-foreground font-semibold">
+                  صفحة {currentPage} من {Math.ceil(finished.length / itemsPerPage)}
+                </span>
+                <Button 
+                  variant="outline" 
+                  disabled={currentPage >= Math.ceil(finished.length / itemsPerPage)}
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                >
+                  التالي
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Card>
