@@ -84,7 +84,7 @@ export function useLiveFixtures() {
       }
     },
     refetchInterval: getSmartPollingInterval,
-    initialData: [],
+    initialData: getLiveMatches,
   });
 }
 
@@ -115,7 +115,12 @@ export function useUpcomingFixtures() {
       }
     },
     refetchInterval: false,
-    initialData: [],
+    initialData: () => {
+      const now = Date.now();
+      return getUpcomingMatches()
+        .filter(m => new Date(m.date).getTime() >= now)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    },
   });
 }
 
@@ -175,6 +180,7 @@ export function useResults() {
       }
     },
     refetchInterval: false,
+    initialData: getFinishedMatches,
   });
 }
 
