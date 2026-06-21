@@ -59,7 +59,11 @@ export function useLiveFixtures() {
         
         let results: Match[] = [];
         if (data?.matches) results = data.matches as Match[];
-        else if (data?.response) results = data.response.map(mapFixture);
+        if (data?.espn) {
+          results = data.response.map(mapEspnFixture).filter(m => m.status === 'live');
+        } else if (data?.response?.length) {
+          results = data.response.map(mapFixture);
+        }
         
         if (!results || results.length === 0) {
           results = getLiveMatches();
@@ -96,8 +100,13 @@ export function useUpcomingFixtures() {
       try {
         const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
         let results: Match[] = [];
-        if (data?.matches?.length) results = getUpcomingOnly(data.matches as Match[]);
-        else if (data?.response?.length) results = getUpcomingOnly(data.response.map(mapFixture));
+        if (data?.espn) {
+          results = getUpcomingOnly(data.response.map(mapEspnFixture));
+        } else if (data?.matches?.length) {
+          results = getUpcomingOnly(data.matches as Match[]);
+        } else if (data?.response?.length) {
+          results = getUpcomingOnly(data.response.map(mapFixture));
+        }
         
         if (!results || results.length === 0) {
           results = getUpcomingMatches();
@@ -106,12 +115,12 @@ export function useUpcomingFixtures() {
         const now = Date.now();
         return results
           .filter(m => new Date(m.date).getTime() >= now)
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          .sort((a, b) => new Date(m.date).getTime() - new Date(b.date).getTime());
       } catch {
         const now = Date.now();
         return getUpcomingMatches()
           .filter(m => new Date(m.date).getTime() >= now)
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          .sort((a, b) => new Date(m.date).getTime() - new Date(b.date).getTime());
       }
     },
     refetchInterval: false,
@@ -119,7 +128,7 @@ export function useUpcomingFixtures() {
       const now = Date.now();
       return getUpcomingMatches()
         .filter(m => new Date(m.date).getTime() >= now)
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        .sort((a, b) => new Date(m.date).getTime() - new Date(b.date).getTime());
     },
   });
 }
@@ -132,8 +141,13 @@ export function useResults() {
       try {
         const data = await callProxy({ endpoint: 'results', league: WC_LEAGUE, season: WC_SEASON });
         let proxyResults: Match[] = [];
-        if (data?.matches?.length) proxyResults = getFinishedOnly(data.matches as Match[]);
-        else if (data?.response?.length) proxyResults = getFinishedOnly(data.response.map(mapFixture));
+        if (data?.espn) {
+          proxyResults = getFinishedOnly(data.response.map(mapEspnFixture));
+        } else if (data?.matches?.length) {
+          proxyResults = getFinishedOnly(data.matches as Match[]);
+        } else if (data?.response?.length) {
+          proxyResults = getFinishedOnly(data.response.map(mapFixture));
+        }
         
         if (!proxyResults || proxyResults.length === 0) {
           proxyResults = getFinishedMatches();
@@ -267,6 +281,44 @@ function mapFixture(f: ApiFixture) {
     homeScore: f.goals.home ?? 0,
     awayScore: f.goals.away ?? 0,
     venue: f.fixture.venue?.name ?? '',
+  };
+}
+
+function mapEspnFixture(e: any): Match {
+  const comp = e.competitions[0];
+  const home = comp.competitors.find((c: any) => c.homeAway === 'home');
+  const away = comp.competitors.find((c: any) => c.homeAway === 'away');
+  
+  const statusState = comp.status.type.state; // 'pre', 'in', 'post'
+  const isLive = statusState === 'in';
+  const isFinished = statusState === 'post';
+
+  return {
+    id: String(e.id),
+    competition: e.season?.year === 2026 ? 'FIFA World Cup 2026' : e.name,
+    stage: 'Group Stage', // ESPN doesn't always provide clean stage strings
+    date: e.date,
+    status: isLive ? 'live' : isFinished ? 'finished' : 'upcoming',
+    minute: isLive ? comp.status.displayClock : undefined,
+    home: {
+      id: home.id,
+      name: home.team.name,
+      shortName: home.team.abbreviation || home.team.name.slice(0, 3).toUpperCase(),
+      flag: home.team.logo,
+      code: home.team.abbreviation || home.team.name.slice(0, 2).toUpperCase(),
+      color: '#888888',
+    },
+    away: {
+      id: away.id,
+      name: away.team.name,
+      shortName: away.team.abbreviation || away.team.name.slice(0, 3).toUpperCase(),
+      flag: away.team.logo,
+      code: away.team.abbreviation || away.team.name.slice(0, 2).toUpperCase(),
+      color: '#AAAAAA',
+    },
+    homeScore: parseInt(home.score, 10) || 0,
+    awayScore: parseInt(away.score, 10) || 0,
+    venue: comp.venue?.fullName || '',
   };
 }
 
