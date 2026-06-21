@@ -136,13 +136,9 @@ function isAnyMatchActive(fixturesData: any) {
 
 async function fetchApiFootball({ endpoint, league, season, fixtureId }: Required<Pick<ProxyRequest, 'endpoint' | 'league' | 'season'>> & Pick<ProxyRequest, 'fixtureId'>) {
   // @ts-ignore
-  const apiKey = Deno.env.get('API_FOOTBALL_KEY') ?? '';
-  if (!apiKey) return { response: [] };
-
-  const headers: Record<string, string> = {
-    'x-rapidapi-key': apiKey,
-    'x-rapidapi-host': 'v3.football.api-sports.io',
-  };
+  const keysEnv = Deno.env.get('API_FOOTBALL_KEY') ?? '';
+  const apiKeys = keysEnv.split(',').map(k => k.trim()).filter(Boolean);
+  if (apiKeys.length === 0) return { response: [] };
 
   let apiUrl = '';
   switch (endpoint) {
@@ -156,7 +152,33 @@ async function fetchApiFootball({ endpoint, league, season, fixtureId }: Require
     default: throw new Error('Unknown endpoint');
   }
 
-  return await fetchJson(apiUrl, { headers });
+  let lastErrorData = null;
+
+  for (const apiKey of apiKeys) {
+    const headers: Record<string, string> = {
+      'x-rapidapi-key': apiKey,
+      'x-rapidapi-host': 'v3.football.api-sports.io',
+    };
+
+    try {
+      const data = await fetchJson(apiUrl, { headers });
+      
+      // Check if this specific key hit a limit or is invalid
+      const hasRateLimitError = data.errors && Object.keys(data.errors).length > 0;
+
+      if (!hasRateLimitError) {
+        return data; // Success with this key!
+      } else {
+        lastErrorData = data;
+        console.log(`Key ending in ...${apiKey.slice(-4)} failed/limited. Trying next.`);
+      }
+    } catch (err) {
+       console.error(`Network error with key ending in ...${apiKey.slice(-4)}`);
+    }
+  }
+
+  // If all keys failed, return the last error so it can be handled by cache fallback
+  return lastErrorData || { response: [] };
 }
 
 async function fetchJson(url: string, init?: RequestInit) {
