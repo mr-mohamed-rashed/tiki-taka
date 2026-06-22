@@ -15,6 +15,7 @@ import Roadmap from './pages/Roadmap';
 import Studio from './pages/Studio';
 import { GlobalFloatingAd } from './components/one2/GlobalFloatingAd';
 import { GoogleAuthGate } from './components/one2/GoogleAuthGate';
+import { PwaInstallPrompt } from './components/one2/PwaInstallPrompt';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 
@@ -39,6 +40,7 @@ const Layout = () => {
         <ScrollRestoration />
         <Outlet />
         <GlobalFloatingAd />
+        <PwaInstallPrompt />
       </div>
     );
   }
@@ -52,6 +54,7 @@ const Layout = () => {
       <ScrollRestoration />
       <Outlet />
       <GlobalFloatingAd />
+      <PwaInstallPrompt />
     </GoogleAuthGate>
   );
 };
