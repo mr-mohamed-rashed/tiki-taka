@@ -72,37 +72,33 @@ export function PwaInstallPrompt() {
   if (!isVisible || isStandalone) return null;
 
   return (
-    <div className="fixed top-4 left-4 right-4 z-50 md:top-8 md:left-auto md:right-8 md:w-96 shadow-xl animate-in slide-in-from-top-5 fade-in duration-300">
-      <div className={cn("bg-primary text-primary-foreground rounded-2xl p-4 flex flex-col gap-3", lang === 'ar' ? 'font-arabic text-right' : 'text-left')}>
+    <div className="fixed top-0 left-0 right-0 z-[100] shadow-2xl border-b border-white/10 bg-[#18181B] animate-in slide-in-from-top fade-in duration-300">
+      <div className={cn("max-w-3xl mx-auto px-4 py-3 flex items-center gap-3", lang === 'ar' ? 'font-arabic' : '')}>
         <button 
           onClick={handleDismiss}
-          className={cn("absolute top-2 text-primary-foreground/70 hover:text-primary-foreground", lang === 'ar' ? 'left-2' : 'right-2')}
+          className="p-1 -ml-1 text-zinc-400 hover:text-white shrink-0"
+          aria-label="Close"
         >
           <X className="h-5 w-5" />
         </button>
         
-        <div className="flex items-center gap-4">
-          <div className="bg-white p-2 rounded-xl shrink-0">
-            <img src="/icons/one2-icon-192.png" alt="One2 App" className="w-10 h-10 rounded-lg object-cover" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-bold text-lg leading-tight">
-              {lang === 'ar' ? 'تطبيق وان تو (One2)' : 'One2 App'}
-            </h3>
-            <p className="text-sm text-primary-foreground/90 leading-tight mt-1">
-              {lang === 'ar' ? 'ثبت التطبيق لتجربة أسرع وأفضل!' : 'Install our app for a faster, better experience!'}
-            </p>
-          </div>
+        <img src="/icons/one2-icon-192.png" alt="One2" className="w-10 h-10 rounded shadow-sm object-cover shrink-0" />
+        
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-[15px] text-white truncate leading-tight">
+            {lang === 'ar' ? 'وان تو - كأس العالم' : 'One2 - World Cup'}
+          </h3>
+          <p className="text-[13px] text-zinc-400 truncate leading-tight mt-0.5">
+            one2.ink
+          </p>
         </div>
         
-        <Button 
-          variant="secondary" 
-          className="w-full mt-2 font-bold shadow-sm"
+        <button 
+          className="shrink-0 font-bold bg-[#00ff66] text-[#07100c] text-sm px-4 py-1.5 rounded-full hover:bg-[#00cc52] transition-colors shadow-sm"
           onClick={handleInstallClick}
         >
-          <Download className={cn("h-4 w-4", lang === 'ar' ? 'ml-2' : 'mr-2')} />
-          {lang === 'ar' ? 'تنزيل التطبيق الآن' : 'Install App Now'}
-        </Button>
+          {lang === 'ar' ? 'تثبيت' : 'Install'}
+        </button>
       </div>
     </div>
   );
