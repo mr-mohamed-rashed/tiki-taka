@@ -37,14 +37,48 @@ function getSmartPollingInterval(): number | false {
 const WC_LEAGUE = '1';
 const WC_SEASON = '2026';
 
-async function callProxy(body: object) {
+async function fetchEspnDirectly(season: string) {
+  const datesParam = season === '2026' ? '?dates=20260611-20260719' : '';
+  const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard${datesParam}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`ESPN failed: ${response.status}`);
+  const data = await response.json();
+  return { response: data.events || [], espn: true };
+}
+
+async function callProxy(body: any) {
   try {
-    const { data, error } = await supabase.functions.invoke('football-proxy', { body });
-    if (error) throw error;
-    if (data?.error) throw new Error(data.error);
-    return data;
+    if (['live', 'fixtures', 'results'].includes(body.endpoint)) {
+      const cacheKey = `${body.endpoint}_${body.league}_${body.season}_`;
+      try {
+        const espnData = await fetchEspnDirectly(body.season ?? '2026');
+        
+        // Save to cache asynchronously to survive apocalyptic scenarios
+        supabase.from('api_cache').upsert({
+          endpoint: cacheKey,
+          data: espnData,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'endpoint' }).then(({ error }) => {
+          if (error) console.error('Cache save failed', error);
+        });
+        
+        return espnData;
+      } catch (espnErr) {
+        console.warn('ESPN fetch failed, falling back to DB cache', espnErr);
+        const { data: cacheRow } = await supabase.from('api_cache')
+          .select('data')
+          .eq('endpoint', cacheKey)
+          .single();
+          
+        if (cacheRow?.data) return cacheRow.data;
+        throw espnErr;
+      }
+    }
+    
+    // Top scorers & Standings not supported by ESPN yet, trigger mock fallback
+    throw new Error('Not supported by ESPN');
   } catch (err) {
-    console.error('Proxy failed', err);
+    console.error('Data fetch failed', err);
     throw err;
   }
 }
