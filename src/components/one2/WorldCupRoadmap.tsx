@@ -89,8 +89,8 @@ export function WorldCupRoadmap() {
     <Card className="relative w-full overflow-hidden border-border bg-gradient-card p-4 sm:p-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_40%)] pointer-events-none" />
       
-      <div className="w-full overflow-x-auto overflow-y-hidden hide-scrollbar" dir="ltr">
-        <div className="min-w-[1000px] flex justify-between items-center gap-4 py-8">
+      <div className="w-full overflow-hidden" dir="ltr">
+        <div className="w-full flex justify-between items-center gap-1 sm:gap-2 py-4 sm:py-8">
           
           {/* Left Side */}
           <BracketNode match={m29} side="left" isAr={isAr}>
@@ -117,13 +117,13 @@ export function WorldCupRoadmap() {
           </BracketNode>
 
           {/* Center Final */}
-          <div className="flex flex-col items-center justify-center z-10 px-4">
-            <div className="mb-6 flex flex-col items-center">
-              <div className="rounded-full border-2 border-primary/40 bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.3)] p-4 sm:p-6 mb-4">
-                <Trophy className="h-12 w-12 sm:h-16 sm:w-16 text-primary" />
+          <div className="flex flex-col items-center justify-center z-10 px-1 sm:px-4">
+            <div className="mb-4 sm:mb-6 flex flex-col items-center">
+              <div className="rounded-full border-2 border-primary/40 bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.3)] p-3 sm:p-5 mb-2 sm:mb-4">
+                <Trophy className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
               </div>
-              <h3 className={cn("font-display font-black text-2xl tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary", isAr && "font-arabic")}>
-                {isAr ? 'النهائي' : 'GRAND FINAL'}
+              <h3 className={cn("font-display font-black text-xs sm:text-xl tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary", isAr && "font-arabic")}>
+                {isAr ? 'النهائي' : 'FINAL'}
               </h3>
             </div>
             
@@ -178,15 +178,15 @@ function BracketNode({ match, children, side, isAr }: { match: BracketMatch, chi
         {/* Vertical Connector */}
         <div 
           className={cn(
-            "w-4 sm:w-6 border-y-2 border-primary/40", 
-            side === 'left' ? 'border-r-2 rounded-r-lg' : 'border-l-2 rounded-l-lg'
+            "w-2 sm:w-4 border-y-2 border-primary/40", 
+            side === 'left' ? 'border-r-2 rounded-r-md' : 'border-l-2 rounded-l-md'
           )} 
           style={{ height: '50%' }} 
         />
         {/* Horizontal Connector to parent match */}
-        <div className="w-3 sm:w-5 border-b-2 border-primary/40" />
+        <div className="w-2 sm:w-3 border-b-2 border-primary/40" />
       </div>
-      <div className="flex items-center py-2">
+      <div className="flex items-center py-1 sm:py-2">
         <MatchBox match={match} isAr={isAr} />
       </div>
     </div>
@@ -199,7 +199,7 @@ function MatchBox({ match, isAr, isFinal = false }: { match: BracketMatch, isAr:
 
   const renderTeam = (t: Team | null, isWinner: boolean) => (
     <div className={cn(
-      "flex items-center justify-between gap-2 px-3 py-1.5 min-w-[120px] sm:min-w-[140px] bg-background/60 backdrop-blur-sm border border-border/50 transition-colors",
+      "flex items-center justify-between gap-1 sm:gap-2 px-1 sm:px-2 py-1 sm:py-1.5 w-full min-w-[60px] md:min-w-[100px] bg-background/60 backdrop-blur-sm border border-border/50 transition-colors",
       isWinner && "bg-primary/20 border-primary/50 text-foreground"
     )}>
       <div className="flex items-center gap-2 overflow-hidden">
@@ -213,15 +213,15 @@ function MatchBox({ match, isAr, isFinal = false }: { match: BracketMatch, isAr:
           )}
         </div>
         <span className={cn(
-          "text-xs sm:text-sm font-bold truncate",
+          "text-[9px] sm:text-[11px] font-bold truncate max-w-[40px] sm:max-w-[70px]",
           !t && "text-muted-foreground",
           isAr && "font-arabic"
         )}>
-          {t ? t.name : 'TBD'}
+          {t ? t.shortName || t.name : 'TBD'}
         </span>
       </div>
       {match.score1 !== null && match.score2 !== null && (
-         <span className="text-xs font-bold font-mono">
+         <span className="text-[9px] sm:text-xs font-bold font-mono">
            {t === t1 ? match.score1 : match.score2}
          </span>
       )}

@@ -172,7 +172,7 @@ function PaginatedMatchGrid({
               disabled={safePage === totalPages}
               className="gap-1 h-9 px-3"
             >
-              {lang === 'ar' ? 'السابق' : 'Prev'}
+              {lang === 'ar' ? 'التالي' : 'Next'}
             </Button>
 
             <Button
@@ -183,7 +183,7 @@ function PaginatedMatchGrid({
               disabled={safePage === 1}
               className="gap-1 h-9 px-3"
             >
-              {lang === 'ar' ? 'التالي' : 'Next'}
+              {lang === 'ar' ? 'السابق' : 'Prev'}
             </Button>
           </div>
         </div>
