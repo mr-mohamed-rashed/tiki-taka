@@ -89,7 +89,7 @@ export function WorldCupRoadmap() {
     <Card className="relative w-full overflow-hidden border-border bg-gradient-card p-4 sm:p-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_40%)] pointer-events-none" />
       
-      <div className="w-full overflow-x-auto overflow-y-hidden hide-scrollbar">
+      <div className="w-full overflow-x-auto overflow-y-hidden hide-scrollbar" dir="ltr">
         <div className="min-w-[1000px] flex justify-between items-center gap-4 py-8">
           
           {/* Left Side */}

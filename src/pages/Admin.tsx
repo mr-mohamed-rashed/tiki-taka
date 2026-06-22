@@ -12,7 +12,6 @@ import { RoadmapTab } from '@/components/admin/RoadmapTab';
 import { MediaPlayerTab } from '@/components/admin/MediaPlayerTab';
 import { AnalyticsTab } from '@/components/admin/AnalyticsTab';
 import { MatchesTab } from '@/components/admin/MatchesTab';
-import { StudioTab } from '@/components/admin/StudioTab';
 import { ChatModerationTab } from '@/components/admin/ChatModerationTab';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
@@ -66,11 +65,8 @@ export default function Admin() {
           <p className="text-muted-foreground text-sm">{t('adminControlSub', lang)}</p>
         </div>
 
-        <Tabs defaultValue="studio">
+        <Tabs defaultValue="matches">
           <TabsList className="flex flex-wrap h-auto w-full mb-8 bg-muted border border-border justify-start gap-2 p-1">
-            <TabsTrigger value="studio" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground text-live">
-              <Video className="h-4 w-4" /> {lang === 'ar' ? 'استوديو البث' : 'Live Studio'}
-            </TabsTrigger>
             <TabsTrigger value="matches" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <CheckCircle className="h-4 w-4" /> المباريات
             </TabsTrigger>
@@ -97,7 +93,7 @@ export default function Admin() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="studio"><StudioTab /></TabsContent>
+
           <TabsContent value="matches"><MatchesTab /></TabsContent>
           <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
           <TabsContent value="widgets"><WidgetLabelsTab /></TabsContent>

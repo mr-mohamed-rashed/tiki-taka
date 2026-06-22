@@ -12,7 +12,6 @@ import Results from './pages/Results';
 import Groups from './pages/Groups';
 import Admin from './pages/Admin';
 import Roadmap from './pages/Roadmap';
-import Studio from './pages/Studio';
 import { GlobalFloatingAd } from './components/one2/GlobalFloatingAd';
 import { GoogleAuthGate } from './components/one2/GoogleAuthGate';
 import { PwaInstallPrompt } from './components/one2/PwaInstallPrompt';
@@ -72,7 +71,6 @@ export const routers = [
       { path: '/live', name: 'live', element: <LiveMatches /> },
       { path: '/results', name: 'results', element: <Results /> },
       { path: '/admin', name: 'admin', element: <Admin /> },
-      { path: '/studio', name: 'studio', element: <Studio /> },
       { path: '/terms-of-service', name: 'terms', element: <TermsOfService /> },
       { path: '/privacy-policy', name: 'privacy', element: <PrivacyPolicy /> },
       { path: '*', name: '404', element: <NotFound /> },

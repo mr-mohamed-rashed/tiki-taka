@@ -74,9 +74,16 @@ async function callProxy(body: any) {
         throw espnErr;
       }
     }
+    // For standings, call the Supabase Edge Function
+    if (['standings', 'topscorers'].includes(body.endpoint)) {
+       const { data, error } = await supabase.functions.invoke('football-proxy', {
+         body: body
+       });
+       if (error) throw error;
+       return data;
+    }
     
-    // Top scorers & Standings not supported by ESPN yet, trigger mock fallback
-    throw new Error('Not supported by ESPN');
+    throw new Error('Unsupported endpoint');
   } catch (err) {
     console.error('Data fetch failed', err);
     throw err;
@@ -214,43 +221,74 @@ export function useStandings() {
   return useQuery({
     queryKey: ['standings'],
     queryFn: async () => {
-      try {
         const data = await callProxy({ endpoint: 'standings', league: WC_LEAGUE, season: WC_SEASON });
-        if (!data || !data.response || !Array.isArray(data.response)) {
+        if (!data || !data.response) {
           return [];
         }
 
-        // Parse ESPN standings format
-        const espnGroups = data.response;
-        return espnGroups.map((group: any) => {
-          const groupName = group.name || group.abbreviation;
-          const teams = group.standings.entries.map((entry: any) => {
-            const stats = entry.stats || [];
-            const getStat = (name: string) => stats.find((s: any) => s.name === name)?.value || 0;
-            
-            return {
-              rank: getStat('rank') || entry.note?.rank || 0,
-              name: entry.team.displayName || entry.team.name,
-              nameAr: entry.team.displayName || entry.team.name, // Will translate in component if needed
-              flag: entry.team.logos?.[0]?.href || `https://flagcdn.com/w160/${entry.team.abbreviation?.toLowerCase().slice(0, 2)}.png`,
-              played: getStat('gamesPlayed'),
-              won: getStat('wins'),
-              drawn: getStat('ties'),
-              lost: getStat('losses'),
-              gf: getStat('pointsFor'),
-              ga: getStat('pointsAgainst'),
-              gd: getStat('pointDifferential'),
-              points: getStat('points'),
+        // Is it API-Football format?
+        if (data.response?.[0]?.league?.standings) {
+          const standingsLists = data.response[0].league.standings;
+          return standingsLists.map((group: any[]) => {
+            const groupName = group[0].group;
+            const teams = group.map((teamData: any) => ({
+              rank: teamData.rank,
+              name: teamData.team.name,
+              nameAr: teamData.team.name,
+              flag: teamData.team.logo,
+              played: teamData.all.played,
+              won: teamData.all.win,
+              drawn: teamData.all.draw,
+              lost: teamData.all.lose,
+              gf: teamData.all.goals.for,
+              ga: teamData.all.goals.against,
+              gd: teamData.goalsDiff,
+              points: teamData.points,
               confirmed: true,
+            }));
+            return {
+              name: groupName,
+              nameAr: groupName.replace('Group', 'المجموعة'),
+              teams: teams.sort((a: any, b: any) => a.rank - b.rank)
             };
           });
+        }
 
-          return {
-            name: groupName,
-            nameAr: groupName.replace('Group', 'المجموعة'),
-            teams: teams.sort((a: any, b: any) => a.rank - b.rank)
-          };
-        });
+        // Parse ESPN standings format (if it falls back to ESPN)
+        if (Array.isArray(data.response)) {
+          const espnGroups = data.response;
+          return espnGroups.map((group: any) => {
+            const groupName = group.name || group.abbreviation;
+            const teams = group.standings.entries.map((entry: any) => {
+              const stats = entry.stats || [];
+              const getStat = (name: string) => stats.find((s: any) => s.name === name)?.value || 0;
+              
+              return {
+                rank: getStat('rank') || entry.note?.rank || 0,
+                name: entry.team.displayName || entry.team.name,
+                nameAr: entry.team.displayName || entry.team.name,
+                flag: entry.team.logos?.[0]?.href || `https://flagcdn.com/w160/${entry.team.abbreviation?.toLowerCase().slice(0, 2)}.png`,
+                played: getStat('gamesPlayed'),
+                won: getStat('wins'),
+                drawn: getStat('ties'),
+                lost: getStat('losses'),
+                gf: getStat('pointsFor'),
+                ga: getStat('pointsAgainst'),
+                gd: getStat('pointDifferential'),
+                points: getStat('points'),
+                confirmed: true,
+              };
+            });
+
+            return {
+              name: groupName,
+              nameAr: groupName.replace('Group', 'المجموعة'),
+              teams: teams.sort((a: any, b: any) => a.rank - b.rank)
+            };
+          });
+        }
+        
+        return [];
       } catch (e) {
         console.error('Failed to fetch standings', e);
         return [];
