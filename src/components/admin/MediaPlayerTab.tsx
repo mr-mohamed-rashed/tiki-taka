@@ -152,6 +152,82 @@ export function MediaPlayerTab() {
           ))}
         </div>
       </Card>
+
+      <Card className="border-border bg-gradient-card p-4">
+        <div className="mb-4">
+          <h3 className="text-sm font-bold">Logo & Ticker Settings (إعدادات اللوجو والشريط الإخباري)</h3>
+          <p className="text-xs text-muted-foreground">Customize the news ticker and logo overlay on the live player.</p>
+        </div>
+        <div className="space-y-4">
+          {/* Ticker Text */}
+          <div className="grid gap-2 rounded-lg border border-border bg-background/35 p-3">
+            <KeyLabel itemKey="live_ticker_text" label="News Ticker (الشريط الإخباري)" />
+            <div className="flex gap-2">
+              <Input
+                value={getVal('live_ticker_text', 'ar')}
+                onChange={(event) => setVal('live_ticker_text', 'ar', event.target.value)}
+                placeholder="News text..."
+                className="h-8"
+              />
+              <SaveButton itemKey="live_ticker_text" saving={saving} saved={saved} onClick={() => saveLabelKey('live_ticker_text')} />
+            </div>
+          </div>
+
+          {/* Logo Position */}
+          <div className="grid gap-2 rounded-lg border border-border bg-background/35 p-3">
+            <KeyLabel itemKey="live_logo_position" label="Logo Position (مكان اللوجو)" />
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              {['top-right', 'top-left', 'bottom-right', 'bottom-left', 'none'].map(pos => {
+                const currentPos = getVal('live_logo_position', 'en') || 'top-right';
+                return (
+                  <Button 
+                    key={pos}
+                    variant={currentPos === pos ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-8"
+                    onClick={() => {
+                      setVal('live_logo_position', 'en', pos);
+                      setVal('live_logo_position', 'ar', pos);
+                    }}
+                  >
+                    {pos}
+                  </Button>
+                )
+              })}
+            </div>
+            <div className="flex justify-end pt-2">
+              <SaveButton itemKey="live_logo_position" saving={saving} saved={saved} onClick={() => saveLabelKey('live_logo_position')} />
+            </div>
+          </div>
+
+          {/* Logo Size */}
+          <div className="grid gap-2 rounded-lg border border-border bg-background/35 p-3">
+            <KeyLabel itemKey="live_logo_size" label="Logo Size (حجم اللوجو)" />
+            <div className="grid grid-cols-3 gap-2">
+              {['SM', 'MD', 'LG'].map(size => {
+                const currentSize = getVal('live_logo_size', 'en') || 'SM';
+                return (
+                  <Button 
+                    key={size}
+                    variant={currentSize === size ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-8"
+                    onClick={() => {
+                      setVal('live_logo_size', 'en', size);
+                      setVal('live_logo_size', 'ar', size);
+                    }}
+                  >
+                    {size}
+                  </Button>
+                )
+              })}
+            </div>
+            <div className="flex justify-end pt-2">
+              <SaveButton itemKey="live_logo_size" saving={saving} saved={saved} onClick={() => saveLabelKey('live_logo_size')} />
+            </div>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }

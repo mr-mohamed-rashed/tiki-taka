@@ -221,6 +221,7 @@ export function useStandings() {
   return useQuery({
     queryKey: ['standings'],
     queryFn: async () => {
+      try {
         const data = await callProxy({ endpoint: 'standings', league: WC_LEAGUE, season: WC_SEASON });
         if (!data || !data.response) {
           return [];

@@ -27,6 +27,27 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   const { get } = useSiteSettingsContext();
   const { lang } = useLanguage();
 
+  const tickerText = get('live_ticker_text', 'ar') || '';
+  const logoPosition = get('live_logo_position', 'en') || 'top-right';
+  const logoSize = get('live_logo_size', 'en') || 'SM';
+
+  const getLogoStyles = () => {
+    let styles: any = { display: logoPosition === 'none' ? 'none' : 'flex' };
+    
+    // Position
+    if (logoPosition.includes('top')) { styles.top = '4%'; }
+    if (logoPosition.includes('bottom')) { styles.bottom = tickerText ? '40px' : '4%'; }
+    if (logoPosition.includes('right')) { styles.right = '2%'; }
+    if (logoPosition.includes('left')) { styles.left = '2%'; }
+
+    // Size
+    if (logoSize === 'SM') { styles.width = '24%'; styles.minWidth = '90px'; }
+    if (logoSize === 'MD') { styles.width = '32%'; styles.minWidth = '120px'; }
+    if (logoSize === 'LG') { styles.width = '40%'; styles.minWidth = '150px'; }
+
+    return styles;
+  };
+
   const formatHref = (input: string) => {
     if (!input) return '#';
     // If the user pastes a full message "Hey watch this https://vt.tiktok.com/...", extract the link
@@ -243,13 +264,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Smart Responsive Logo Cover */}
               <div 
                 dir="ltr"
-                className="absolute z-40 flex items-center pointer-events-none"
-                style={{ 
-                  top: '4%', 
-                  right: '2%', 
-                  width: '24%', 
-                  minWidth: '90px'
-                }}
+                className="absolute z-40 items-center pointer-events-none transition-all duration-300"
+                style={getLogoStyles()}
               >
                 {/* Logo Box with Map Pattern (no overflow hidden so trophy can overlap) */}
                 <div className="relative flex items-center justify-between w-full aspect-[3.5/1] bg-gradient-to-br from-[#0a2351] via-[#1d4ed8] to-[#1e3a8a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] rounded-full border border-blue-400/30 px-[4%]">
@@ -286,6 +302,17 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </div>
                 </div>
               </div>
+
+              {/* Ticker */}
+              {tickerText && (
+                <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
+                  {/* @ts-ignore */}
+                  <marquee scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
+                    {tickerText}
+                  {/* @ts-ignore */}
+                  </marquee>
+                </div>
+              )}
 
               {/* Fullscreen Button for TikTok Mode */}
               <div className="absolute top-4 right-4 z-50 pointer-events-auto">
@@ -449,13 +476,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Smart Responsive Logo Cover */}
               <div 
                 dir="ltr"
-                className="absolute z-40 flex items-center pointer-events-none"
-                style={{ 
-                  top: '4%', 
-                  right: '2%', 
-                  width: '24%', 
-                  minWidth: '90px'
-                }}
+                className="absolute z-40 items-center pointer-events-none transition-all duration-300"
+                style={getLogoStyles()}
               >
                 {/* Logo Box with Map Pattern (no overflow hidden so trophy can overlap) */}
                 <div className="relative flex items-center justify-between w-full aspect-[3.5/1] bg-gradient-to-br from-[#0a2351] via-[#1d4ed8] to-[#1e3a8a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_4px_15px_rgba(0,0,0,0.5)] rounded-full border border-blue-400/30 px-[4%]">
@@ -492,6 +514,17 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </div>
                 </div>
               </div>
+
+              {/* Ticker */}
+              {tickerText && (
+                <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
+                  {/* @ts-ignore */}
+                  <marquee scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
+                    {tickerText}
+                  {/* @ts-ignore */}
+                  </marquee>
+                </div>
+              )}
             </div>
           ) : (
             <svg viewBox="0 0 600 380" className="block w-full max-h-[300px] bg-gradient-pitch">
