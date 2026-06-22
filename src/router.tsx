@@ -22,7 +22,8 @@ const Layout = () => {
   const location = useLocation();
   useAnalytics();
   const { user, loading, signInWithGoogle } = useAuth();
-  const isPublicRoute = !location.pathname.startsWith('/admin');
+  const publicRoutes = ['/', '/terms-of-service', '/privacy-policy'];
+  const isPublicRoute = publicRoutes.includes(location.pathname);
 
   const handleInterceptClick = (e: React.MouseEvent) => {
     if (!loading && !user) {
@@ -31,8 +32,6 @@ const Layout = () => {
       signInWithGoogle();
     }
   };
-
-  const shouldIntercept = false; // Disable intercept click globally for better UX
 
   if (isPublicRoute) {
     return (
@@ -46,9 +45,9 @@ const Layout = () => {
 
   return (
     <GoogleAuthGate
-      autoStart
+      autoStart={false}
       title="سجل دخولك لمتابعة وان تو"
-      description="أي تنقل داخل الموقع يحتاج تسجيل دخول مجاني بحساب Google لتسجيل الزيارة وحفظ تجربة كأس العالم."
+      description="أي تنقل داخل الموقع (أخبار، مباريات، إحصائيات) يحتاج تسجيل دخول مجاني بحساب Google لحفظ تجربتك."
     >
       <ScrollRestoration />
       <Outlet />

@@ -72,7 +72,7 @@ export function PwaInstallPrompt() {
   if (!isVisible || isStandalone) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50 md:bottom-8 md:left-auto md:right-8 md:w-96 shadow-xl animate-in slide-in-from-bottom-5 fade-in duration-300">
+    <div className="fixed top-4 left-4 right-4 z-50 md:top-8 md:left-auto md:right-8 md:w-96 shadow-xl animate-in slide-in-from-top-5 fade-in duration-300">
       <div className={cn("bg-primary text-primary-foreground rounded-2xl p-4 flex flex-col gap-3", lang === 'ar' ? 'font-arabic text-right' : 'text-left')}>
         <button 
           onClick={handleDismiss}
