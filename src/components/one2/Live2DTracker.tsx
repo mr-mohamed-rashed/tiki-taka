@@ -275,10 +275,20 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   <div className="relative z-10 flex items-center w-full h-full">
                     {/* Centered One2 Text */}
                     <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
-                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
-                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold select-none" style={{ fontSize: '32px', letterSpacing: '0.02em', userSelect: 'none' }}>
-                          <tspan fill="#4ade80">One</tspan>
-                          <tspan fill="#ffffff">2</tspan>
+                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%] drop-shadow-md">
+                        <defs>
+                          <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="1.5" result="blur" />
+                            <feMerge>
+                              <feMergeNode in="blur"/>
+                              <feMergeNode in="blur"/>
+                              <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                          </filter>
+                        </defs>
+                        <text x="8" y="26" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '28px', userSelect: 'none' }}>
+                          <tspan fill="#ffffff">One</tspan>
+                          <tspan fill="#22c55e" dx="-2.5" filter="url(#neon-glow)">2</tspan>
                         </text>
                       </svg>
                     </div>
@@ -487,10 +497,20 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   <div className="relative z-10 flex items-center w-full h-full">
                     {/* Centered One2 Text */}
                     <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
-                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%]">
-                        <text x="0" y="24" alignmentBaseline="middle" className="font-display font-extrabold select-none" style={{ fontSize: '32px', letterSpacing: '0.02em', userSelect: 'none' }}>
-                          <tspan fill="#4ade80">One</tspan>
-                          <tspan fill="#ffffff">2</tspan>
+                      <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%] drop-shadow-md">
+                        <defs>
+                          <filter id="neon-glow-2" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="1.5" result="blur" />
+                            <feMerge>
+                              <feMergeNode in="blur"/>
+                              <feMergeNode in="blur"/>
+                              <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                          </filter>
+                        </defs>
+                        <text x="8" y="26" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '28px', userSelect: 'none' }}>
+                          <tspan fill="#ffffff">One</tspan>
+                          <tspan fill="#22c55e" dx="-2.5" filter="url(#neon-glow-2)">2</tspan>
                         </text>
                       </svg>
                     </div>
