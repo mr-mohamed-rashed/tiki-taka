@@ -32,20 +32,7 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Brand */}
           <NavLink to="/" className="flex items-center gap-2 group shrink-0">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary rounded-full blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
-              <div className="relative flex items-center justify-center w-7 h-7 rounded-full border-[2.5px] border-primary bg-background shadow-inner">
-                <div className="absolute inset-0 bg-primary/10 rounded-full" />
-                <div className="flex items-center font-display font-extrabold text-[13px] tracking-tighter mt-0.5 ml-0.5">
-                  <span className="text-foreground z-10 drop-shadow-sm">1</span>
-                  <span className="text-primary z-10 drop-shadow-sm">2</span>
-                </div>
-              </div>
-            </div>
-            <div className="font-display font-extrabold text-2xl tracking-wide">
-              <span className="text-foreground">One</span>
-              <span className="text-primary font-bold">2</span>
-            </div>
+            <img src="/one2_logo.png" alt="One2 Logo" className="h-10 w-auto object-contain" />
           </NavLink>
 
           {/* Desktop nav */}
