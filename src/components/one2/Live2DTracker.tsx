@@ -273,8 +273,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   <div className="absolute inset-0 opacity-20 rounded-full overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmZmZmYiLz48L3N2Zz4=')]"></div>
                   
                   <div className="relative z-10 flex items-center w-full h-full">
-                    {/* Centered One2 Text */}
-                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
+                    <div className="relative flex flex-col justify-center items-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
                       <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%] drop-shadow-md">
                         <defs>
                           <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -286,9 +285,11 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                             </feMerge>
                           </filter>
                         </defs>
-                        <text x="8" y="26" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '28px', userSelect: 'none' }}>
+                        <text x="50" y="26" textAnchor="middle" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '28px' }}>
                           <tspan fill="#ffffff">One</tspan>
-                          <tspan fill="#22c55e" dx="-2.5" filter="url(#neon-glow)">2</tspan>
+                        </text>
+                        <text x="50" y="26" textAnchor="middle" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '34px' }}>
+                          <tspan fill="#22c55e" filter="url(#neon-glow)" fillOpacity="0.8">2</tspan>
                         </text>
                       </svg>
                     </div>

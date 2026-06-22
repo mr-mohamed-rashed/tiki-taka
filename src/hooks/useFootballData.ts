@@ -96,30 +96,8 @@ export function useLiveFixtures() {
     queryKey: ['live-fixtures'],
     queryFn: async () => {
       try {
-        const data = await callProxy({ endpoint: 'live' });
-        
-        let results: Match[] = [];
-        if (data?.matches) results = data.matches as Match[];
-        if (data?.espn) {
-          results = data.response.map(mapEspnFixture).filter(m => m.status === 'live');
-        } else if (data?.response?.length) {
-          results = data.response.map(mapFixture);
-        }
-        
-        if (!results) return [];
-        
-        const previousLive = queryClient.getQueryData<Match[]>(['live-fixtures']);
-        const hadLive = previousLive?.some(m => m.status === 'live');
-        const hasLiveNow = results.some(m => m.status === 'live');
-        
-        if (hadLive && !hasLiveNow) {
-           queryClient.invalidateQueries({ queryKey: ['results'] });
-           queryClient.invalidateQueries({ queryKey: ['upcoming-fixtures'] });
-           queryClient.invalidateQueries({ queryKey: ['standings'] });
-           queryClient.invalidateQueries({ queryKey: ['topscorers'] });
-        }
-        
-        return results;
+        const { getLiveMatches } = await import('@/lib/footballData');
+        return getLiveMatches();
       } catch {
         return [];
       }
@@ -134,20 +112,8 @@ export function useUpcomingFixtures() {
     queryKey: ['upcoming-fixtures'],
     queryFn: async () => {
       try {
-        const data = await callProxy({ endpoint: 'fixtures', league: WC_LEAGUE, season: WC_SEASON });
-        let results: Match[] = [];
-        if (data?.espn) {
-          results = getUpcomingOnly(data.response.map(mapEspnFixture));
-        } else if (data?.matches?.length) {
-          results = getUpcomingOnly(data.matches as Match[]);
-        } else if (data?.response?.length) {
-          results = getUpcomingOnly(data.response.map(mapFixture));
-        }
-        
-        const now = Date.now();
-        return results
-          .filter(m => new Date(m.date).getTime() >= now)
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        const { getUpcomingMatches } = await import('@/lib/footballData');
+        return getUpcomingMatches();
       } catch {
         return [];
       }
@@ -162,39 +128,10 @@ export function useResults() {
     queryKey: ['results'],
     queryFn: async () => {
       try {
-        const data = await callProxy({ endpoint: 'results', league: WC_LEAGUE, season: WC_SEASON });
-        let proxyResults: Match[] = [];
-        if (data?.espn) {
-          proxyResults = getFinishedOnly(data.response.map(mapEspnFixture));
-        } else if (data?.matches?.length) {
-          proxyResults = getFinishedOnly(data.matches as Match[]);
-        } else if (data?.response?.length) {
-          proxyResults = getFinishedOnly(data.response.map(mapFixture));
-        }
-        
-        const teamsMap = Object.values(teams);
-        
-        proxyResults = proxyResults.map(m => {
-          const homeTeam = teamsMap.find(t => t.name.toLowerCase() === m.home.name.toLowerCase() || t.id === m.home.id);
-          const awayTeam = teamsMap.find(t => t.name.toLowerCase() === m.away.name.toLowerCase() || t.id === m.away.id);
-          return {
-            ...m,
-            home: { ...m.home, flag: homeTeam?.flag || m.home.flag },
-            away: { ...m.away, flag: awayTeam?.flag || m.away.flag }
-          };
-        });
-
-        const uniqueResults: Match[] = [];
-        const seen = new Set();
-        for (const m of proxyResults) {
-          const key = `${m.home.name}-${m.away.name}`;
-          if (!seen.has(key)) {
-            seen.add(key);
-            uniqueResults.push(m);
-          }
-        }
-        
-        const sortedResults = uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const { getUpcomingMatches } = await import('@/lib/footballData');
+        const allMatches = getUpcomingMatches();
+        const results = allMatches.filter(m => m.status === 'finished');
+        const sortedResults = results.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         // Fetch highlights from Supabase
         const { data: settings, error } = await supabase.from('site_settings').select('*').like('key', 'match_highlight_%');
@@ -222,74 +159,53 @@ export function useStandings() {
     queryKey: ['standings'],
     queryFn: async () => {
       try {
-        const data = await callProxy({ endpoint: 'standings', league: WC_LEAGUE, season: WC_SEASON });
-        if (!data || !data.response) {
-          return [];
-        }
-
-        // Is it API-Football format?
-        if (data.response?.[0]?.league?.standings) {
-          const standingsLists = data.response[0].league.standings;
-          return standingsLists.map((group: any[]) => {
-            const groupName = group[0].group;
-            const teams = group.map((teamData: any) => ({
-              rank: teamData.rank,
-              name: teamData.team.name,
-              nameAr: teamData.team.name,
-              flag: teamData.team.logo,
-              played: teamData.all.played,
-              won: teamData.all.win,
-              drawn: teamData.all.draw,
-              lost: teamData.all.lose,
-              gf: teamData.all.goals.for,
-              ga: teamData.all.goals.against,
-              gd: teamData.goalsDiff,
-              points: teamData.points,
-              confirmed: true,
-            }));
-            return {
-              name: groupName,
-              nameAr: groupName.replace('Group', 'المجموعة'),
-              teams: teams.sort((a: any, b: any) => a.rank - b.rank)
-            };
-          });
-        }
-
-        // Parse ESPN standings format (if it falls back to ESPN)
-        if (Array.isArray(data.response)) {
-          const espnGroups = data.response;
-          return espnGroups.map((group: any) => {
-            const groupName = group.name || group.abbreviation;
-            const teams = group.standings.entries.map((entry: any) => {
-              const stats = entry.stats || [];
-              const getStat = (name: string) => stats.find((s: any) => s.name === name)?.value || 0;
-              
-              return {
-                rank: getStat('rank') || entry.note?.rank || 0,
-                name: entry.team.displayName || entry.team.name,
-                nameAr: entry.team.displayName || entry.team.name,
-                flag: entry.team.logos?.[0]?.href || `https://flagcdn.com/w160/${entry.team.abbreviation?.toLowerCase().slice(0, 2)}.png`,
-                played: getStat('gamesPlayed'),
-                won: getStat('wins'),
-                drawn: getStat('ties'),
-                lost: getStat('losses'),
-                gf: getStat('pointsFor'),
-                ga: getStat('pointsAgainst'),
-                gd: getStat('pointDifferential'),
-                points: getStat('points'),
-                confirmed: true,
-              };
-            });
-
-            return {
-              name: groupName,
-              nameAr: groupName.replace('Group', 'المجموعة'),
-              teams: teams.sort((a: any, b: any) => a.rank - b.rank)
-            };
-          });
-        }
+        const { getTeams } = await import('@/lib/footballData');
+        const allTeams = Object.values(getTeams());
+        const groups: any[] = [];
         
-        return [];
+        const teamsInOrder = [
+          ['MEX', 'RSA', 'KOR', 'CZE'], // A
+          ['CAN', 'QAT', 'SUI', 'BIH'], // B
+          ['BRA', 'MAR', 'HAI', 'SCO'], // C
+          ['USA', 'PAR', 'AUS', 'TUR'], // D
+          ['GER', 'CUR', 'CIV', 'ECU'], // E
+          ['NED', 'JPN', 'SWE', 'TUN'], // F
+          ['BEL', 'EGY', 'IRN', 'NZL'], // G
+          ['ESP', 'KSA', 'URU', 'CPV'], // H
+          ['FRA', 'SEN', 'IRQ', 'NOR'], // I
+          ['ARG', 'ALG', 'AUT', 'JOR'], // J
+          ['POR', 'DRC', 'COL', 'UZB'], // K
+          ['ENG', 'CRO', 'GHA', 'PAN']  // L
+        ];
+
+        teamsInOrder.forEach((groupCodes, index) => {
+          const groupLetter = String.fromCharCode(65 + index); // A, B, C...
+          const groupTeams = groupCodes.map((code, tIndex) => {
+            const t = allTeams.find(x => x.id === code || x.shortName === code)!;
+            return {
+              rank: tIndex + 1,
+              name: t.name,
+              nameAr: t.name, // Translation handled in component
+              flag: t.flag,
+              played: 0,
+              won: 0,
+              drawn: 0,
+              lost: 0,
+              gf: 0,
+              ga: 0,
+              gd: 0,
+              points: 0,
+              confirmed: true,
+            };
+          });
+          groups.push({
+            name: `Group ${groupLetter}`,
+            nameAr: `المجموعة ${groupLetter}`,
+            teams: groupTeams
+          });
+        });
+        
+        return groups;
       } catch (e) {
         console.error('Failed to fetch standings', e);
         return [];
