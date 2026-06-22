@@ -35,7 +35,7 @@ function getSmartPollingInterval(): number | false {
 
 // World Cup 2026 league ID on API-Football is 1
 const WC_LEAGUE = 'fifa.world';
-const WC_SEASON = '2022';
+const WC_SEASON = '2026';
 
 async function fetchEspnDirectly(season: string) {
   const datesParam = season === '2026' ? '?dates=20260611-20260719' : '';
