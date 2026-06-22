@@ -4,7 +4,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { t, T } from '@/lib/i18n';
 import { EditableSiteText } from '@/components/one2/EditableSiteText';
 import { ShareMenu } from '@/components/one2/ShareMenu';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Globe } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const FacebookIcon = () => (
   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -29,6 +30,7 @@ const ArrowIcon = () => (
 
 export function One2Footer() {
   const { lang } = useLanguage();
+  const { get } = useSiteSettings();
   const [email, setEmail] = useState('');
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -69,11 +71,16 @@ export function One2Footer() {
     },
   ];
 
-  const socialLinks = [
-    { icon: <TikTokIcon />, href: 'https://tiktok.com' },
-    { icon: <FacebookIcon />, href: 'https://facebook.com' },
-    { icon: <YouTubeIcon />, href: 'https://youtube.com' },
+  const rawSocials = [
+    { id: 'tiktok', icon: <TikTokIcon />, key: 'social_tiktok_url' },
+    { id: 'facebook', icon: <FacebookIcon />, key: 'social_facebook_url' },
+    { id: 'youtube', icon: <YouTubeIcon />, key: 'social_youtube_url' },
+    { id: 'website', icon: <Globe className="w-5 h-5" />, key: 'social_website_url' },
   ];
+
+  const socialLinks = rawSocials
+    .map(s => ({ ...s, href: get(s.key) }))
+    .filter(s => s.href && s.href.trim() !== '');
 
   const policyLinks = [
     { label: <EditableSiteText settingKey="footer_policy_1" fallbackEn="Privacy Policy" fallbackAr="سياسة الخصوصية" />, href: '/privacy-policy' },
