@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { getPlayerRankings, teams, getLiveMatches, getUpcomingMatches, getFinishedMatches } from '@/lib/footballData';
+import { teams } from '@/lib/footballData';
 import type { Match, Scorer } from '@/lib/footballData';
 import { queryClient } from '@/App';
 
@@ -99,10 +99,6 @@ export function useLiveFixtures() {
           results = data.response.map(mapFixture);
         }
         
-        if (!results || results.length === 0) {
-          results = getLiveMatches();
-        }
-        
         if (!results) return [];
         
         const previousLive = queryClient.getQueryData<Match[]>(['live-fixtures']);
@@ -118,11 +114,10 @@ export function useLiveFixtures() {
         
         return results;
       } catch {
-        return getLiveMatches();
+        return [];
       }
     },
     refetchInterval: getSmartPollingInterval,
-    initialData: getLiveMatches,
   });
 }
 
@@ -142,28 +137,15 @@ export function useUpcomingFixtures() {
           results = getUpcomingOnly(data.response.map(mapFixture));
         }
         
-        if (!results || results.length === 0) {
-          results = getUpcomingMatches();
-        }
-        
         const now = Date.now();
         return results
           .filter(m => new Date(m.date).getTime() >= now)
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       } catch {
-        const now = Date.now();
-        return getUpcomingMatches()
-          .filter(m => new Date(m.date).getTime() >= now)
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        return [];
       }
     },
     refetchInterval: false,
-    initialData: () => {
-      const now = Date.now();
-      return getUpcomingMatches()
-        .filter(m => new Date(m.date).getTime() >= now)
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    },
   });
 }
 
@@ -181,10 +163,6 @@ export function useResults() {
           proxyResults = getFinishedOnly(data.matches as Match[]);
         } else if (data?.response?.length) {
           proxyResults = getFinishedOnly(data.response.map(mapFixture));
-        }
-        
-        if (!proxyResults || proxyResults.length === 0) {
-          proxyResults = getFinishedMatches();
         }
         
         const teamsMap = Object.values(teams);
@@ -224,11 +202,10 @@ export function useResults() {
         }
         return sortedResults;
       } catch {
-        return getFinishedMatches();
+        return [];
       }
     },
     refetchInterval: false,
-    initialData: getFinishedMatches,
   });
 }
 
@@ -240,11 +217,11 @@ export function useStandings() {
       try {
         const data = await callProxy({ endpoint: 'standings', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.espn || !data?.response?.[0]?.league?.standings) {
-          throw new Error('Fallback to mock standings');
+          return [];
         }
         return data.response[0].league.standings as ApiStandingGroup[];
       } catch {
-        return null;
+        return [];
       }
     },
     refetchInterval: false,
@@ -259,22 +236,21 @@ export function useTopScorers() {
       try {
         const data = await callProxy({ endpoint: 'topscorers', league: WC_LEAGUE, season: WC_SEASON });
         if (data?.espn || !data?.response?.length) {
-          throw new Error('Fallback to mock topscorers');
+          return [];
         }
         return data.response.slice(0, 10).map(mapScorer);
       } catch {
-        return getTopScorers();
+        return [];
       }
     },
     refetchInterval: false,
   });
 }
 
-// ---------- Best Players (reuse mock - API doesn't expose ratings) ----------
 export function useBestPlayers() {
   return useQuery({
     queryKey: ['bestplayers'],
-    queryFn: () => getPlayerRankings(),
+    queryFn: () => [],
   });
 }
 
