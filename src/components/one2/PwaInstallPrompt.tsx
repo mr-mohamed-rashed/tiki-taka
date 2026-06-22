@@ -21,6 +21,11 @@ export function PwaInstallPrompt() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
+    // Check if user already dismissed it
+    if (localStorage.getItem('pwa_prompt_dismissed') === 'true') {
+      return;
+    }
+
     // Check if already installed
     const isAppMode = window.matchMedia('(display-mode: standalone)').matches 
                       || (window.navigator as any).standalone 
@@ -35,7 +40,6 @@ export function PwaInstallPrompt() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIos(isIosDevice);
 
-    // ALWAYS show the prompt if not installed
     setIsVisible(true);
 
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -55,6 +59,7 @@ export function PwaInstallPrompt() {
       await deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
+        localStorage.setItem('pwa_prompt_dismissed', 'true');
         setIsVisible(false);
       }
       setDeferredPrompt(null);
@@ -66,6 +71,7 @@ export function PwaInstallPrompt() {
   };
 
   const handleDismiss = () => {
+    localStorage.setItem('pwa_prompt_dismissed', 'true');
     setIsVisible(false);
   };
 

@@ -10,10 +10,9 @@ import { useLiveFixtures, useUpcomingFixtures, useResults } from '@/hooks/useFoo
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
 import type { Match } from '@/lib/footballData';
-import Bracket from './Bracket';
 
 interface MatchCenterProps {
-  defaultTab?: 'live' | 'fixtures' | 'results' | 'bracket';
+  defaultTab?: 'live' | 'fixtures' | 'results';
   liveTabRedirectTo?: string;
 }
 
@@ -37,7 +36,7 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full" ref={topRef}>
-      <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-4 w-full max-w-3xl overflow-x-auto">
+      <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-3 w-full max-w-md overflow-x-auto">
         <TabsTrigger
           value="live"
           onClick={(event) => {
@@ -58,10 +57,6 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
         <TabsTrigger value="results" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
           <CheckCircle2 className="h-4 w-4" />
           <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('tabResults', lang)}</span>
-        </TabsTrigger>
-        <TabsTrigger value="bracket" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
-          <Trophy className="h-4 w-4 text-yellow-400" />
-          <span className={lang === 'ar' ? 'font-arabic whitespace-nowrap' : 'whitespace-nowrap'}>{lang === 'ar' ? 'مسار البطولة' : 'Bracket'}</span>
         </TabsTrigger>
       </TabsList>
 
@@ -95,10 +90,6 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
           <PaginatedMatchGrid matches={finished} page={pages.results} onPageChange={(page) => setTabPage('results', page)} onJumpToTop={() => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} lang={lang} />
         )}
         {!finishedLoading && finished.length === 0 && <EmptyMatchesMessage type="fixtures" lang={lang} />}
-      </TabsContent>
-
-      <TabsContent value="bracket" className="mt-6 border border-border rounded-lg overflow-hidden shadow-lg">
-        <Bracket />
       </TabsContent>
     </Tabs>
   );
