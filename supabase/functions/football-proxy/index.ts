@@ -147,7 +147,18 @@ async function fetchEspnData({ endpoint, league, season }: Required<Pick<ProxyRe
     }
   }
 
-  // Standings, topscorers, groups are not supported by the ESPN scoreboard endpoint yet.
+  if (endpoint === 'standings') {
+    try {
+      const url = `https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings?season=${season}`;
+      const data = await fetchJson(url);
+      return { response: data.children || [], espn: true };
+    } catch (e: any) {
+      console.error('ESPN standings fetch failed', e);
+      return { response: [], espn: true, error: e.message };
+    }
+  }
+
+  // topscorers, groups are not supported by the ESPN scoreboard endpoint yet.
   return { response: [], espn: true };
 }
 

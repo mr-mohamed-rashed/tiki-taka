@@ -216,11 +216,43 @@ export function useStandings() {
     queryFn: async () => {
       try {
         const data = await callProxy({ endpoint: 'standings', league: WC_LEAGUE, season: WC_SEASON });
-        if (data?.espn || !data?.response?.[0]?.league?.standings) {
+        if (!data || !data.response || !Array.isArray(data.response)) {
           return [];
         }
-        return data.response[0].league.standings as ApiStandingGroup[];
-      } catch {
+
+        // Parse ESPN standings format
+        const espnGroups = data.response;
+        return espnGroups.map((group: any) => {
+          const groupName = group.name || group.abbreviation;
+          const teams = group.standings.entries.map((entry: any) => {
+            const stats = entry.stats || [];
+            const getStat = (name: string) => stats.find((s: any) => s.name === name)?.value || 0;
+            
+            return {
+              rank: getStat('rank') || entry.note?.rank || 0,
+              name: entry.team.displayName || entry.team.name,
+              nameAr: entry.team.displayName || entry.team.name, // Will translate in component if needed
+              flag: entry.team.logos?.[0]?.href || `https://flagcdn.com/w160/${entry.team.abbreviation?.toLowerCase().slice(0, 2)}.png`,
+              played: getStat('gamesPlayed'),
+              won: getStat('wins'),
+              drawn: getStat('ties'),
+              lost: getStat('losses'),
+              gf: getStat('pointsFor'),
+              ga: getStat('pointsAgainst'),
+              gd: getStat('pointDifferential'),
+              points: getStat('points'),
+              confirmed: true,
+            };
+          });
+
+          return {
+            name: groupName,
+            nameAr: groupName.replace('Group', 'المجموعة'),
+            teams: teams.sort((a: any, b: any) => a.rank - b.rank)
+          };
+        });
+      } catch (e) {
+        console.error('Failed to fetch standings', e);
         return [];
       }
     },
@@ -234,11 +266,32 @@ export function useTopScorers() {
     queryKey: ['topscorers'],
     queryFn: async () => {
       try {
-        const data = await callProxy({ endpoint: 'topscorers', league: WC_LEAGUE, season: WC_SEASON });
-        if (data?.espn || !data?.response?.length) {
-          return [];
-        }
-        return data.response.slice(0, 10).map(mapScorer);
+        const { data, error } = await supabase
+          .from('player_stats')
+          .select('*')
+          .order('goals', { ascending: false })
+          .order('assists', { ascending: false })
+          .limit(10);
+          
+        if (error || !data) return [];
+        
+        return data.map((p, i) => ({
+          rank: i + 1,
+          name: p.player_name,
+          club: p.team_name,
+          country: {
+            id: p.team_name,
+            name: p.team_name,
+            shortName: p.team_name.slice(0, 3).toUpperCase(),
+            flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`, // Fallback
+            code: p.team_name.slice(0, 2).toUpperCase(),
+            color: '#888888',
+          },
+          goals: p.goals,
+          assists: p.assists,
+          matches: 0,
+          isLeader: i === 0,
+        }));
       } catch {
         return [];
       }
@@ -250,7 +303,39 @@ export function useTopScorers() {
 export function useBestPlayers() {
   return useQuery({
     queryKey: ['bestplayers'],
-    queryFn: () => [],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('player_stats')
+          .select('*')
+          .order('motm_awards', { ascending: false })
+          .order('goals', { ascending: false })
+          .limit(10);
+          
+        if (error || !data) return [];
+        
+        return data.map((p, i) => ({
+          rank: i + 1,
+          name: p.player_name,
+          club: p.team_name,
+          country: {
+            id: p.team_name,
+            name: p.team_name,
+            shortName: p.team_name.slice(0, 3).toUpperCase(),
+            flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`,
+            code: p.team_name.slice(0, 2).toUpperCase(),
+            color: '#888888',
+          },
+          goals: p.goals,
+          assists: p.assists,
+          matches: p.motm_awards, // Show MOTM awards here instead of matches
+          isLeader: i === 0,
+        }));
+      } catch {
+        return [];
+      }
+    },
+    refetchInterval: false,
   });
 }
 
