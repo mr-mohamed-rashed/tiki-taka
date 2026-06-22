@@ -4,23 +4,13 @@ import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
-import { teams, Team } from '@/lib/footballData';
-
-type SlotData = {
-  id: number;
-  label: string;
-  team?: Team;
-};
-
-const defaultSlots: SlotData[] = Array.from({ length: 32 }, (_, index) => ({
-  id: index + 1,
-  label: `R32-${index + 1}`,
-}));
+import { teams as teamsData, Team } from '@/lib/footballData';
+import { BracketState, getDefaultBracket, BracketMatch } from '@/lib/bracket';
 
 export function WorldCupRoadmap() {
   const { lang } = useLanguage();
   const isAr = lang === 'ar';
-  const [slots, setSlots] = useState<SlotData[]>(defaultSlots);
+  const [bracket, setBracket] = useState<BracketState>(getDefaultBracket());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -29,27 +19,17 @@ export function WorldCupRoadmap() {
         const { data, error } = await supabase
           .from('site_settings')
           .select('value_en')
-          .eq('key', 'roadmap_qualified_teams')
+          .eq('key', 'tournament_bracket')
           .single();
 
         if (!error && data?.value_en) {
           const parsed = JSON.parse(data.value_en);
-          if (Array.isArray(parsed) && parsed.length === 32) {
-            const newSlots = defaultSlots.map((slot, i) => {
-              const teamId = parsed[i];
-              let team: Team | undefined;
-              if (teamId) {
-                // Find team by ID
-                team = Object.values(teams).find(t => t.id === teamId);
-              }
-              return { ...slot, team };
-            });
-            setSlots(newSlots);
-            return;
+          if (parsed && parsed.matches) {
+            setBracket(parsed);
           }
         }
       } catch (e) {
-        console.error('Failed to load roadmap teams', e);
+        console.error('Failed to load bracket', e);
       } finally {
         setIsLoading(false);
       }
@@ -57,100 +37,205 @@ export function WorldCupRoadmap() {
     loadRoadmap();
   }, []);
 
+  if (isLoading) {
+    return (
+      <Card className="flex h-64 sm:h-[600px] items-center justify-center border-border bg-gradient-card">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </Card>
+    );
+  }
+
+  // Left Tree Nodes
+  const m1 = bracket.matches['m1'];
+  const m2 = bracket.matches['m2'];
+  const m3 = bracket.matches['m3'];
+  const m4 = bracket.matches['m4'];
+  const m5 = bracket.matches['m5'];
+  const m6 = bracket.matches['m6'];
+  const m7 = bracket.matches['m7'];
+  const m8 = bracket.matches['m8'];
+
+  const m17 = bracket.matches['m17'];
+  const m18 = bracket.matches['m18'];
+  const m19 = bracket.matches['m19'];
+  const m20 = bracket.matches['m20'];
+
+  const m25 = bracket.matches['m25'];
+  const m26 = bracket.matches['m26'];
+  const m29 = bracket.matches['m29'];
+
+  // Right Tree Nodes
+  const m9 = bracket.matches['m9'];
+  const m10 = bracket.matches['m10'];
+  const m11 = bracket.matches['m11'];
+  const m12 = bracket.matches['m12'];
+  const m13 = bracket.matches['m13'];
+  const m14 = bracket.matches['m14'];
+  const m15 = bracket.matches['m15'];
+  const m16 = bracket.matches['m16'];
+
+  const m21 = bracket.matches['m21'];
+  const m22 = bracket.matches['m22'];
+  const m23 = bracket.matches['m23'];
+  const m24 = bracket.matches['m24'];
+
+  const m27 = bracket.matches['m27'];
+  const m28 = bracket.matches['m28'];
+  const m30 = bracket.matches['m30'];
+
+  const final = bracket.matches['m31'];
+
   return (
-    <Card className="relative w-full overflow-hidden border-border bg-gradient-card">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.18),transparent_34%)] pointer-events-none" />
+    <Card className="relative w-full overflow-hidden border-border bg-gradient-card p-4 sm:p-8">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_40%)] pointer-events-none" />
       
-      {isLoading ? (
-        <div className="flex h-64 sm:h-[600px] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : (
-        <div className="w-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory hide-scrollbar">
-          <div className="min-w-[800px] sm:min-w-0 p-4 sm:p-6 w-full h-full flex flex-col justify-center">
-            <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-5">
-              <RoadSide slots={slots.slice(0, 16)} side="left" isAr={isAr} />
-              <CenterCup isAr={isAr} />
-              <RoadSide slots={slots.slice(16)} side="right" isAr={isAr} />
+      <div className="w-full overflow-x-auto overflow-y-hidden hide-scrollbar">
+        <div className="min-w-[1000px] flex justify-between items-center gap-4 py-8">
+          
+          {/* Left Side */}
+          <BracketNode match={m29} side="left" isAr={isAr}>
+            <BracketNode match={m25} side="left" isAr={isAr}>
+              <BracketNode match={m17} side="left" isAr={isAr}>
+                <BracketNode match={m1} side="left" isAr={isAr} />
+                <BracketNode match={m2} side="left" isAr={isAr} />
+              </BracketNode>
+              <BracketNode match={m18} side="left" isAr={isAr}>
+                <BracketNode match={m3} side="left" isAr={isAr} />
+                <BracketNode match={m4} side="left" isAr={isAr} />
+              </BracketNode>
+            </BracketNode>
+            <BracketNode match={m26} side="left" isAr={isAr}>
+              <BracketNode match={m19} side="left" isAr={isAr}>
+                <BracketNode match={m5} side="left" isAr={isAr} />
+                <BracketNode match={m6} side="left" isAr={isAr} />
+              </BracketNode>
+              <BracketNode match={m20} side="left" isAr={isAr}>
+                <BracketNode match={m7} side="left" isAr={isAr} />
+                <BracketNode match={m8} side="left" isAr={isAr} />
+              </BracketNode>
+            </BracketNode>
+          </BracketNode>
+
+          {/* Center Final */}
+          <div className="flex flex-col items-center justify-center z-10 px-4">
+            <div className="mb-6 flex flex-col items-center">
+              <div className="rounded-full border-2 border-primary/40 bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.3)] p-4 sm:p-6 mb-4">
+                <Trophy className="h-12 w-12 sm:h-16 sm:w-16 text-primary" />
+              </div>
+              <h3 className={cn("font-display font-black text-2xl tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary", isAr && "font-arabic")}>
+                {isAr ? 'النهائي' : 'GRAND FINAL'}
+              </h3>
             </div>
+            
+            <MatchBox match={final} isAr={isAr} isFinal />
           </div>
+
+          {/* Right Side */}
+          <BracketNode match={m30} side="right" isAr={isAr}>
+            <BracketNode match={m27} side="right" isAr={isAr}>
+              <BracketNode match={m21} side="right" isAr={isAr}>
+                <BracketNode match={m9} side="right" isAr={isAr} />
+                <BracketNode match={m10} side="right" isAr={isAr} />
+              </BracketNode>
+              <BracketNode match={m22} side="right" isAr={isAr}>
+                <BracketNode match={m11} side="right" isAr={isAr} />
+                <BracketNode match={m12} side="right" isAr={isAr} />
+              </BracketNode>
+            </BracketNode>
+            <BracketNode match={m28} side="right" isAr={isAr}>
+              <BracketNode match={m23} side="right" isAr={isAr}>
+                <BracketNode match={m13} side="right" isAr={isAr} />
+                <BracketNode match={m14} side="right" isAr={isAr} />
+              </BracketNode>
+              <BracketNode match={m24} side="right" isAr={isAr}>
+                <BracketNode match={m15} side="right" isAr={isAr} />
+                <BracketNode match={m16} side="right" isAr={isAr} />
+              </BracketNode>
+            </BracketNode>
+          </BracketNode>
+
         </div>
-      )}
+      </div>
     </Card>
   );
 }
 
-function CenterCup({ isAr }: { isAr: boolean }) {
+function BracketNode({ match, children, side, isAr }: { match: BracketMatch, children?: React.ReactNode, side: 'left' | 'right', isAr: boolean }) {
+  if (!children) {
+    return (
+      <div className="py-1">
+        <MatchBox match={match} isAr={isAr} />
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("flex items-stretch", side === 'right' && "flex-row-reverse")}>
+      <div className="flex flex-col justify-around">
+        {children}
+      </div>
+      <div className="flex items-center">
+        {/* Vertical Connector */}
+        <div 
+          className={cn(
+            "w-4 sm:w-6 border-y-2 border-primary/40", 
+            side === 'left' ? 'border-r-2 rounded-r-lg' : 'border-l-2 rounded-l-lg'
+          )} 
+          style={{ height: '50%' }} 
+        />
+        {/* Horizontal Connector to parent match */}
+        <div className="w-3 sm:w-5 border-b-2 border-primary/40" />
+      </div>
+      <div className="flex items-center py-2">
+        <MatchBox match={match} isAr={isAr} />
+      </div>
+    </div>
+  );
+}
+
+function MatchBox({ match, isAr, isFinal = false }: { match: BracketMatch, isAr: boolean, isFinal?: boolean }) {
+  const t1 = match.team1Id ? teamsData[match.team1Id as keyof typeof teamsData] : null;
+  const t2 = match.team2Id ? teamsData[match.team2Id as keyof typeof teamsData] : null;
+
+  const renderTeam = (t: Team | null, isWinner: boolean) => (
+    <div className={cn(
+      "flex items-center justify-between gap-2 px-3 py-1.5 min-w-[120px] sm:min-w-[140px] bg-background/60 backdrop-blur-sm border border-border/50 transition-colors",
+      isWinner && "bg-primary/20 border-primary/50 text-foreground"
+    )}>
+      <div className="flex items-center gap-2 overflow-hidden">
+        <div className={cn("w-5 h-5 rounded-full overflow-hidden shrink-0 ring-1 ring-border", isWinner && "ring-primary")}>
+          {t ? (
+            <img src={t.flag} alt={t.name} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-muted flex items-center justify-center">
+              <Flag className="w-3 h-3 text-muted-foreground" />
+            </div>
+          )}
+        </div>
+        <span className={cn(
+          "text-xs sm:text-sm font-bold truncate",
+          !t && "text-muted-foreground",
+          isAr && "font-arabic"
+        )}>
+          {t ? t.name : 'TBD'}
+        </span>
+      </div>
+      {match.score1 !== null && match.score2 !== null && (
+         <span className="text-xs font-bold font-mono">
+           {t === t1 ? match.score1 : match.score2}
+         </span>
+      )}
+    </div>
+  );
+
   return (
     <div className={cn(
-      "relative mx-auto flex flex-col items-center justify-center rounded-lg border border-primary/25 bg-background/55 text-center shadow-neon backdrop-blur z-10 w-full min-w-[140px] max-w-sm sm:min-h-64 p-4 sm:p-6 snap-center"
+      "flex flex-col rounded-md overflow-hidden shadow-lg border-2",
+      isFinal ? "border-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] scale-110" : "border-transparent ring-1 ring-border"
     )}>
-      <div className="absolute inset-x-2 sm:inset-x-8 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-primary/50 to-transparent z-[-1]" />
-      <div className={cn(
-        "relative z-10 flex items-center justify-center rounded-full border border-primary/40 bg-primary/10 shadow-neon mb-3 sm:mb-4 h-16 w-16 sm:h-24 sm:w-24"
-      )}>
-        <Trophy className="text-primary h-8 w-8 sm:h-12 sm:w-12" />
-      </div>
-      <h3 className={cn('font-display font-extrabold text-lg sm:text-2xl', isAr && 'font-arabic')}>
-        {isAr ? 'كأس العالم' : 'World Cup'}
-      </h3>
-      <p className={cn('hidden sm:block mt-2 text-sm text-muted-foreground', isAr && 'font-arabic')}>
-        {isAr
-          ? 'الخانات تمتلئ تلقائيا بعد تحديد المتأهلين من المجموعات.'
-          : 'Slots fill automatically once group qualifiers are known.'}
-      </p>
-      <div className="grid gap-2 font-bold text-primary mt-4 sm:mt-5 grid-cols-2 text-[10px] sm:text-xs">
-        <span className="rounded-md bg-primary/10 px-2 py-1.5 sm:px-3 sm:py-2">{isAr ? '32 فريق' : '32 teams'}</span>
-        <span className="rounded-md bg-primary/10 px-2 py-1.5 sm:px-3 sm:py-2">{isAr ? 'طريق واحد' : 'One road'}</span>
-      </div>
+      {renderTeam(t1, match.winnerId === match.team1Id && match.winnerId !== null)}
+      <div className="h-px bg-border/50 w-full" />
+      {renderTeam(t2, match.winnerId === match.team2Id && match.winnerId !== null)}
     </div>
   );
-}
-
-function RoadSide({
-  slots: sideSlots,
-  side,
-  isAr,
-}: {
-  slots: SlotData[];
-  side: 'left' | 'right';
-  isAr: boolean;
-}) {
-  return (
-    <div className="grid min-h-0 grid-cols-2 gap-2 sm:gap-2 snap-start sm:snap-none">
-      {sideSlots.map((slot, index) => (
-        <div
-          key={slot.id}
-          className={cn(
-            'relative flex min-h-0 items-center rounded-md border border-border bg-background/70 backdrop-blur transition-colors hover:border-primary/45 gap-2 px-2 py-2 sm:min-h-14 sm:px-3 sm:py-2',
-            side === 'right' && 'justify-end text-right flex-row-reverse'
-          )}
-        >
-          <div className={cn(
-            "flex shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground ring-1 ring-border h-6 w-6 sm:h-8 sm:w-8 overflow-hidden",
-            slot.team && "ring-primary/40 bg-background"
-          )}>
-            {slot.team ? (
-              <img src={slot.team.flag} alt={slot.team.name} className="h-full w-full object-cover" />
-            ) : (
-              <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
-            )}
-          </div>
-          <div className="min-w-0">
-            <p className={cn("truncate font-extrabold text-foreground text-[10px] sm:text-xs", isAr && 'font-arabic')}>
-              {slot.team ? slot.team.name : (isAr ? `متأهل ${slot.id}` : slot.label)}
-            </p>
-            <p className={cn('truncate text-muted-foreground text-[8px] sm:text-[10px]', isAr && 'font-arabic')}>
-              {isAr ? qualificationLabel(index) : 'Qualifier'}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function qualificationLabel(index: number) {
-  const group = String.fromCharCode(65 + Math.floor(index / 2));
-  return index % 2 === 0 ? `أول ${group}` : `ثاني ${group}`;
 }
