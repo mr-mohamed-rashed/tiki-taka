@@ -8,7 +8,10 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4 group shrink-0">
-              <img src="/one2_logo.png" alt="One2 Logo" className="h-10 w-auto object-contain" />
+              <div className="flex items-baseline font-display font-black tracking-tighter select-none">
+                <span className="text-white text-3xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.6)]">One</span>
+                <span className="text-primary text-[2.2rem] drop-shadow-[0_0_12px_rgba(34,197,94,0.8)] ml-[1px]" style={{ textShadow: '0 2px 5px rgba(0,0,0,0.5), 0 0 20px rgba(34,197,94,0.6)' }}>2</span>
+              </div>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Live World Cup scores, fixtures, standings, and 2D match tracking - all in one place.
