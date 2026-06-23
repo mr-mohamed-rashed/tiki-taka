@@ -79,33 +79,48 @@ export function PwaInstallPrompt() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] shadow-2xl border-b border-white/10 bg-[#18181B] animate-in slide-in-from-top fade-in duration-300">
-      <div className={cn("max-w-3xl mx-auto px-4 py-3 flex items-center gap-3", lang === 'ar' ? 'font-arabic' : '')}>
-        <button 
-          onClick={handleDismiss}
-          className="p-1 -ml-1 text-zinc-400 hover:text-white shrink-0"
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
+    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-[100] animate-in slide-in-from-bottom-5 fade-in duration-500">
+      <div className={cn("relative overflow-hidden rounded-2xl border border-white/10 bg-black/60 backdrop-blur-xl shadow-2xl p-4", lang === 'ar' ? 'font-arabic' : '')}>
+        {/* Background glow */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-[50px] pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-primary/10 rounded-full blur-[50px] pointer-events-none" />
         
-        <img src="/icons/one2-icon-192.png" alt="One2" className="w-10 h-10 rounded shadow-sm object-cover shrink-0" />
-        
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-[15px] text-white truncate leading-tight">
-            {lang === 'ar' ? 'وان تو - كأس العالم' : 'One2 - World Cup'}
-          </h3>
-          <p className="text-[13px] text-zinc-400 truncate leading-tight mt-0.5">
-            one2.ink
-          </p>
+        <div className="relative flex items-center gap-4">
+          <div className="shrink-0 flex items-center justify-center w-14 h-14 rounded-xl bg-black/50 border border-white/5 shadow-inner overflow-hidden">
+             <div dir="ltr" className="flex items-baseline font-display font-black tracking-tighter select-none scale-[0.55]">
+               <span className="text-white text-3xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.6)]">ONE</span>
+               <span className="text-primary text-4xl drop-shadow-[0_2px_10px_rgba(34,197,94,0.5)] leading-none italic relative ml-1">2</span>
+             </div>
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-[16px] text-white truncate leading-tight flex items-center gap-2">
+              {lang === 'ar' ? 'تطبيق وان تو' : 'One2 App'}
+              <span className="px-1.5 py-0.5 rounded text-[10px] bg-primary/20 text-primary font-bold uppercase tracking-wider">
+                {lang === 'ar' ? 'مجاني' : 'Free'}
+              </span>
+            </h3>
+            <p className="text-[13px] text-zinc-400 leading-snug mt-1">
+              {lang === 'ar' ? 'تجربة أسرع لمتابعة المباريات' : 'Faster match tracking experience'}
+            </p>
+          </div>
         </div>
         
-        <button 
-          className="shrink-0 font-bold bg-[#00ff66] text-[#07100c] text-sm px-4 py-1.5 rounded-full hover:bg-[#00cc52] transition-colors shadow-sm"
-          onClick={handleInstallClick}
-        >
-          {lang === 'ar' ? 'تثبيت' : 'Install'}
-        </button>
+        <div className="relative mt-4 flex items-center gap-2">
+          <button 
+            className="flex-1 font-bold bg-primary text-primary-foreground text-sm py-2.5 rounded-xl hover:bg-primary/90 transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)] active:scale-[0.98]"
+            onClick={handleInstallClick}
+          >
+            {lang === 'ar' ? 'تثبيت التطبيق الآن' : 'Install App Now'}
+          </button>
+          <button 
+            onClick={handleDismiss}
+            className="p-2.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors shrink-0 bg-black/30"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
       </div>
     </div>
   );
