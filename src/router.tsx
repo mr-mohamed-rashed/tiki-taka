@@ -22,8 +22,8 @@ const Layout = () => {
   const location = useLocation();
   useAnalytics();
   const { user, loading, signInWithGoogle } = useAuth();
-  const publicRoutes = ['/', '/terms-of-service', '/privacy-policy'];
-  const isPublicRoute = publicRoutes.includes(location.pathname);
+  const protectedRoutes = ['/live', '/admin'];
+  const isProtectedRoute = protectedRoutes.some(route => location.pathname.startsWith(route));
 
   const handleInterceptClick = (e: React.MouseEvent) => {
     if (!loading && !user) {
@@ -33,7 +33,7 @@ const Layout = () => {
     }
   };
 
-  if (isPublicRoute) {
+  if (!isProtectedRoute) {
     return (
       <div>
         <ScrollRestoration />
