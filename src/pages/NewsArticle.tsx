@@ -13,11 +13,13 @@ import { cn } from '@/lib/utils';
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&q=80';
 
 export default function NewsArticle() {
-  const { id } = useParams();
+  const { id, postId } = useParams();
   const navigate = useNavigate();
   const { lang, dir } = useLanguage();
   const { news, loading } = useManualNews(false);
-  const article = news.find((item) => item.id === id);
+  const article = news.find((item) => 
+    postId ? item.post_id === Number(postId) : item.id === id
+  );
   const isArabic = lang === 'ar';
 
   if (loading) {

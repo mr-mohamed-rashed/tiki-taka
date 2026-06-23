@@ -4,6 +4,7 @@ import { toast } from '@/hooks/use-toast';
 
 export interface ManualNewsRow {
   id: string;
+  post_id?: number;
   title_en: string;
   title_ar: string;
   excerpt_en: string;
