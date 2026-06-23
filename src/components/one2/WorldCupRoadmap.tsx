@@ -35,6 +35,35 @@ export function WorldCupRoadmap() {
       }
     }
     loadRoadmap();
+
+    const channel = supabase
+      .channel('bracket_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'site_settings',
+          filter: 'key=eq.tournament_bracket',
+        },
+        (payload) => {
+          if (payload.new && (payload.new as any).value_en) {
+            try {
+              const parsed = JSON.parse((payload.new as any).value_en);
+              if (parsed && parsed.matches) {
+                setBracket(parsed);
+              }
+            } catch (e) {
+              console.error('Failed to parse realtime bracket update', e);
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (isLoading) {
