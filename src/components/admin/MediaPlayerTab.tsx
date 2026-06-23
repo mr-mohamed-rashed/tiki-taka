@@ -12,7 +12,7 @@ const SOCIAL_KEYS = [
   { key: 'social_facebook_url', label: 'Facebook', placeholder: 'https://facebook.com/...' },
   { key: 'social_tiktok_url', label: 'TikTok', placeholder: 'https://tiktok.com/@...' },
   { key: 'social_youtube_url', label: 'YouTube', placeholder: 'https://youtube.com/@...' },
-  { key: 'social_website_url', label: 'Website', placeholder: 'https://...' },
+  { key: 'social_instagram_url', label: 'Instagram', placeholder: 'https://instagram.com/...' },
 ];
 
 export function MediaPlayerTab() {

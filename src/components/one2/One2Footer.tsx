@@ -4,7 +4,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { t, T } from '@/lib/i18n';
 import { EditableSiteText } from '@/components/one2/EditableSiteText';
 import { ShareMenu } from '@/components/one2/ShareMenu';
-import { LayoutGrid, Globe } from 'lucide-react';
+import { LayoutGrid, Instagram } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 const FacebookIcon = () => (
@@ -72,10 +72,10 @@ export function One2Footer() {
   ];
 
   const rawSocials = [
-    { id: 'tiktok', icon: <TikTokIcon />, key: 'social_tiktok_url' },
-    { id: 'facebook', icon: <FacebookIcon />, key: 'social_facebook_url' },
-    { id: 'youtube', icon: <YouTubeIcon />, key: 'social_youtube_url' },
-    { id: 'website', icon: <Globe className="w-5 h-5" />, key: 'social_website_url' },
+    { id: 'tiktok', icon: <TikTokIcon />, key: 'social_tiktok_url', hoverClass: 'hover:bg-[#000000] hover:text-white hover:border-[#000000] hover:shadow-[0_5px_20px_rgba(255,0,80,0.4)]' },
+    { id: 'facebook', icon: <FacebookIcon />, key: 'social_facebook_url', hoverClass: 'hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] hover:shadow-[0_5px_20px_rgba(24,119,242,0.4)]' },
+    { id: 'youtube', icon: <YouTubeIcon />, key: 'social_youtube_url', hoverClass: 'hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000] hover:shadow-[0_5px_20px_rgba(255,0,0,0.4)]' },
+    { id: 'instagram', icon: <Instagram className="w-5 h-5" />, key: 'social_instagram_url', hoverClass: 'hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white hover:border-transparent hover:shadow-[0_5px_20px_rgba(220,39,67,0.4)]' },
   ];
 
   const socialLinks = rawSocials
@@ -107,7 +107,7 @@ export function One2Footer() {
                 <div className="flex items-center gap-2 shrink-0">
                   {socialLinks.map((s, i) => (
                     <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                      className="w-11 h-11 rounded-full bg-[#18181B] text-white flex items-center justify-center hover:scale-110 hover:-translate-y-1 hover:shadow-neon hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                      className={`w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-white/80 flex items-center justify-center hover:scale-110 hover:-translate-y-1.5 transition-all duration-300 backdrop-blur-md ${s.hoverClass || ''}`}>
                       {s.icon}
                     </a>
                   ))}

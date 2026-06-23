@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen, ChevronLeft, ChevronRight, Instagram } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -66,7 +66,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     { key: 'social_facebook_url', label: get('social_facebook_url', 'ar') || 'Facebook', href: formatHref(get('social_facebook_url', 'en') || 'https://facebook.com'), icon: <FacebookIcon /> },
     { key: 'social_tiktok_url', label: get('social_tiktok_url', 'ar') || 'TikTok', href: formatHref(get('social_tiktok_url', 'en') || 'https://tiktok.com'), icon: <TikTokIcon /> },
     { key: 'social_youtube_url', label: get('social_youtube_url', 'ar') || 'YouTube', href: formatHref(get('social_youtube_url', 'en') || 'https://youtube.com'), icon: <YouTubeIcon /> },
-    { key: 'social_website_url', label: get('social_website_url', 'ar') || 'Website', href: formatHref(get('social_website_url', 'en') || '/'), icon: <WebIcon /> },
+    { key: 'social_instagram_url', label: get('social_instagram_url', 'ar') || 'Instagram', href: formatHref(get('social_instagram_url', 'en') || 'https://instagram.com'), icon: <Instagram className="h-5 w-5" /> },
   ];
 
   // Player positions (4-3-3) on a 600x380 viewBox pitch
@@ -653,10 +653,10 @@ export function LiveSocials() {
   };
 
   const socialLinks = [
-    { key: 'social_facebook_url', label: get('social_facebook_url', 'ar') || 'Facebook', href: formatHref(get('social_facebook_url', 'en') || 'https://facebook.com'), icon: <FacebookIcon /> },
-    { key: 'social_tiktok_url', label: get('social_tiktok_url', 'ar') || 'TikTok', href: formatHref(get('social_tiktok_url', 'en') || 'https://tiktok.com'), icon: <TikTokIcon /> },
-    { key: 'social_youtube_url', label: get('social_youtube_url', 'ar') || 'YouTube', href: formatHref(get('social_youtube_url', 'en') || 'https://youtube.com'), icon: <YouTubeIcon /> },
-    { key: 'social_website_url', label: get('social_website_url', 'ar') || 'Website', href: formatHref(get('social_website_url', 'en') || '/'), icon: <WebIcon /> },
+    { key: 'social_facebook_url', label: get('social_facebook_url', 'ar') || 'Facebook', href: formatHref(get('social_facebook_url', 'en') || 'https://facebook.com'), icon: <FacebookIcon />, hoverClass: 'hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] hover:shadow-[0_5px_20px_rgba(24,119,242,0.4)]' },
+    { key: 'social_tiktok_url', label: get('social_tiktok_url', 'ar') || 'TikTok', href: formatHref(get('social_tiktok_url', 'en') || 'https://tiktok.com'), icon: <TikTokIcon />, hoverClass: 'hover:bg-[#000000] hover:text-white hover:border-[#000000] hover:shadow-[0_5px_20px_rgba(255,0,80,0.4)]' },
+    { key: 'social_youtube_url', label: get('social_youtube_url', 'ar') || 'YouTube', href: formatHref(get('social_youtube_url', 'en') || 'https://youtube.com'), icon: <YouTubeIcon />, hoverClass: 'hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000] hover:shadow-[0_5px_20px_rgba(255,0,0,0.4)]' },
+    { key: 'social_instagram_url', label: get('social_instagram_url', 'ar') || 'Instagram', href: formatHref(get('social_instagram_url', 'en') || 'https://instagram.com'), icon: <Instagram className="h-5 w-5" />, hoverClass: 'hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white hover:border-transparent hover:shadow-[0_5px_20px_rgba(220,39,67,0.4)]' },
   ];
 
   return (
@@ -668,7 +668,7 @@ export function LiveSocials() {
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex h-10 items-center justify-center gap-2 rounded-full border border-primary/25 bg-background/75 px-3 text-xs font-bold text-foreground shadow-card transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-neon"
+          className={`group flex h-10 items-center justify-center gap-2 rounded-xl border border-primary/25 bg-background/75 px-4 text-xs font-bold text-foreground shadow-card transition-all duration-300 hover:-translate-y-1 ${link.hoverClass || 'hover:border-primary hover:bg-primary hover:text-primary-foreground hover:shadow-neon'}`}
           title={link.label}
         >
           {link.icon}
