@@ -8,7 +8,7 @@ import { teams as teamsData } from '@/lib/footballData';
 import { BracketState, getDefaultBracket, advanceTeam, BracketMatch } from '@/lib/bracket';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { useMatches } from '@/hooks/useFootballData';
+import { useResults } from '@/hooks/useFootballData';
 
 export function RoadmapTab() {
   const [bracket, setBracket] = useState<BracketState>(getDefaultBracket());
@@ -17,7 +17,7 @@ export function RoadmapTab() {
   const [saved, setSaved] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   
-  const { finished } = useMatches();
+  const { data: finished = [] } = useResults();
 
   // Load existing settings
   useEffect(() => {

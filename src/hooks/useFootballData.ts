@@ -218,8 +218,10 @@ export function useResults() {
 
 // ---------- Standings / Groups ----------
 export function useStandings() {
+  const { data: matches } = useResults();
+
   return useQuery({
-    queryKey: ['standings'],
+    queryKey: ['standings', matches],
     queryFn: async () => {
       try {
         const { getTeams } = await import('@/lib/footballData');
@@ -243,10 +245,11 @@ export function useStandings() {
 
         teamsInOrder.forEach((groupCodes, index) => {
           const groupLetter = String.fromCharCode(65 + index); // A, B, C...
-          const groupTeams = groupCodes.map((code, tIndex) => {
+          const groupTeams = groupCodes.map((code) => {
             const t = allTeams.find(x => x.id === code || x.shortName === code)!;
             return {
-              rank: tIndex + 1,
+              id: t.id,
+              rank: 0, // Will calculate later
               name: t.name,
               nameAr: t.name, // Translation handled in component
               flag: t.flag,
@@ -267,6 +270,54 @@ export function useStandings() {
             teams: groupTeams
           });
         });
+
+        if (matches && matches.length > 0) {
+          matches.forEach(match => {
+            for (const group of groups) {
+              const homeTeam = group.teams.find((t: any) => t.name === match.home.name || t.id === match.home.id);
+              const awayTeam = group.teams.find((t: any) => t.name === match.away.name || t.id === match.away.id);
+              
+              if (homeTeam || awayTeam) {
+                const processTeam = (team: any, isHome: boolean) => {
+                  if (!team) return;
+                  team.played += 1;
+                  const scored = isHome ? match.homeScore : match.awayScore;
+                  const conceded = isHome ? match.awayScore : match.homeScore;
+                  
+                  team.gf += scored;
+                  team.ga += conceded;
+                  team.gd = team.gf - team.ga;
+                  
+                  if (scored > conceded) {
+                    team.won += 1;
+                    team.points += 3;
+                  } else if (scored === conceded) {
+                    team.drawn += 1;
+                    team.points += 1;
+                  } else {
+                    team.lost += 1;
+                  }
+                };
+                
+                processTeam(homeTeam, true);
+                processTeam(awayTeam, false);
+              }
+            }
+          });
+
+          groups.forEach(group => {
+            group.teams.sort((a: any, b: any) => {
+              if (b.points !== a.points) return b.points - a.points;
+              if (b.gd !== a.gd) return b.gd - a.gd;
+              return b.gf - a.gf;
+            });
+            group.teams.forEach((t: any, i: number) => { t.rank = i + 1; });
+          });
+        } else {
+          groups.forEach(group => {
+            group.teams.forEach((t: any, i: number) => { t.rank = i + 1; });
+          });
+        }
         
         return groups;
       } catch (e) {
