@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Loader2, Newspaper, Sparkles, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AdBanner } from '@/components/one2/AdBanner';
@@ -28,7 +29,14 @@ const ITEMS_PER_PAGE = 6;
 function NewsContent() {
   const { lang, dir } = useLanguage();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageParam = searchParams.get('page');
+  const page = pageParam ? parseInt(pageParam, 10) : 1;
+  
+  const setPage = (newPage: number | ((p: number) => number)) => {
+    const nextVal = typeof newPage === 'function' ? newPage(page) : newPage;
+    setSearchParams({ page: nextVal.toString() });
+  };
   
   const manualArticles = useMemo(() => {
     return manualNews.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
@@ -68,7 +76,7 @@ function NewsContent() {
               timestamp={article.published_at}
               author={lang === 'ar' ? 'وان تو' : 'One2'}
               sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
-              detailUrl={`/news/${article.id}`}
+              detailUrl={`/news/${article.id}?page=${safePage}`}
             />
           ))}
         </div>

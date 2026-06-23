@@ -1,4 +1,4 @@
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams, useNavigate } from 'react-router-dom';
 import { ArrowRight, Calendar, ExternalLink, Loader2, Newspaper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,7 @@ const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1575361204480-aadea25e
 
 export default function NewsArticle() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { lang, dir } = useLanguage();
   const { news, loading } = useManualNews(false);
   const article = news.find((item) => item.id === id);
@@ -43,11 +44,9 @@ export default function NewsArticle() {
       <NewsTicker />
       <Navigation />
       <main className="container mx-auto max-w-4xl px-4 py-10 lg:px-8">
-        <Button asChild variant="ghost" className="mb-6 gap-2">
-          <a href="/news">
-            <ArrowRight className={cn('h-4 w-4', isArabic ? '' : 'rotate-180')} />
-            {isArabic ? 'العودة للأخبار' : 'Back to news'}
-          </a>
+        <Button onClick={() => navigate(-1)} variant="ghost" className="mb-6 gap-2">
+          <ArrowRight className={cn('h-4 w-4', isArabic ? '' : 'rotate-180')} />
+          {isArabic ? 'العودة للأخبار' : 'Back to news'}
         </Button>
 
         <article className="overflow-hidden rounded-2xl border border-border bg-gradient-card shadow-card">
