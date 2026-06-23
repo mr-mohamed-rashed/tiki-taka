@@ -44,6 +44,8 @@ const T = {
   club: { en: 'Club', ar: 'النادي' },
   goals: { en: 'Goals', ar: 'أهداف' },
   assists: { en: 'Assists', ar: 'تمريرات' },
+  red_cards: { en: 'Red', ar: 'حمراء' },
+  yellow_cards: { en: 'Yellow', ar: 'صفراء' },
   matches: { en: 'MP', ar: 'مباريات' },
   rating: { en: 'Rating', ar: 'التقييم' },
   votes: { en: 'Votes', ar: 'أصوات' },

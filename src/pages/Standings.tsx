@@ -3,8 +3,9 @@ import { NewsTicker } from '@/components/one2/NewsTicker';
 import { One2Footer } from '@/components/one2/One2Footer';
 import { TopScorersTable } from '@/components/one2/TopScorersTable';
 import { BestPlayersTable } from '@/components/one2/BestPlayersTable';
+import { CardsTable } from '@/components/one2/CardsTable';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Trophy, Star, Award } from 'lucide-react';
+import { Trophy, Star, Award, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -32,7 +33,7 @@ const Standings = () => {
         </div>
 
         <Tabs defaultValue="scorers" className="w-full">
-          <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-2 w-full max-w-md mb-6">
+          <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-3 w-full max-w-xl mb-6">
             <TabsTrigger value="scorers" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
               <Trophy className="h-4 w-4" />
               <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('topScorers', lang)}</span>
@@ -41,10 +42,15 @@ const Standings = () => {
               <Star className="h-4 w-4" />
               <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('bestPlayers', lang)}</span>
             </TabsTrigger>
+            <TabsTrigger value="cards" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
+              <AlertTriangle className="h-4 w-4" />
+              <span className={lang === 'ar' ? 'font-arabic' : ''}>{lang === 'ar' ? 'البطاقات' : 'Cards'}</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="scorers"><TopScorersTable /></TabsContent>
           <TabsContent value="players"><BestPlayersTable /></TabsContent>
+          <TabsContent value="cards"><CardsTable /></TabsContent>
         </Tabs>
       </main>
 

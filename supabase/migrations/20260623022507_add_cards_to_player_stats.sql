@@ -1,0 +1,2 @@
+ALTER TABLE player_stats ADD COLUMN yellow_cards INTEGER DEFAULT 0;
+ALTER TABLE player_stats ADD COLUMN red_cards INTEGER DEFAULT 0;

@@ -3,11 +3,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Save, Loader2, Video, RefreshCw, Bell, Send } from 'lucide-react';
+import { CheckCircle, Save, Loader2, Video, RefreshCw, Bell, Send, Wand2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useResults, useUpcomingFixtures } from '@/hooks/useFootballData';
 
+import { useToast } from '@/hooks/use-toast';
+
 export function MatchesTab() {
+  const { toast } = useToast();
   const { data: finished = [], isLoading, refetch } = useResults();
   const { data: upcoming = [], isLoading: isUpcomingLoading } = useUpcomingFixtures();
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -16,6 +19,7 @@ export function MatchesTab() {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isPushing, setIsPushing] = useState<string | null>(null);
+  const [extractingId, setExtractingId] = useState<string | null>(null);
 
   const [customTitle, setCustomTitle] = useState('🔥 قمة كروية تبدأ قريباً!');
   const [customMsg, setCustomMsg] = useState('');
@@ -49,6 +53,27 @@ export function MatchesTab() {
       alert('خطأ أثناء إرسال الإشعار. تأكد من رفع الـ Edge Function.');
     } finally {
       setIsPushing(null);
+    }
+  };
+
+  const handleExtractStats = async (match: any) => {
+    setExtractingId(match.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/extract-match-stats`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ matchQuery: `${match.home.name} vs ${match.away.name} World Cup 2026 match stats goalscorers cards` })
+      });
+      if (!res.ok) throw new Error('Failed to extract stats');
+      toast({ title: 'نجاح', description: 'تم استخراج وتحديث إحصائيات المباراة عبر الذكاء الاصطناعي' });
+    } catch (error: any) {
+      toast({ title: 'خطأ', description: error.message, variant: 'destructive' });
+    } finally {
+      setExtractingId(null);
     }
   };
 
@@ -220,6 +245,16 @@ export function MatchesTab() {
                   >
                     {savingId === match.id ? <Loader2 className="h-4 w-4 animate-spin" /> : savedId === match.id ? <CheckCircle className="h-4 w-4" /> : <Save className="h-4 w-4" />}
                     {savedId === match.id ? 'تم الحفظ' : 'حفظ'}
+                  </Button>
+                  <Button 
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => handleExtractStats(match)}
+                    disabled={extractingId === match.id}
+                    className="shrink-0 gap-2"
+                  >
+                    {extractingId === match.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+                    تحليل بالذكاء
                   </Button>
                 </div>
               </div>

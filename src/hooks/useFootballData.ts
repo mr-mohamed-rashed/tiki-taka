@@ -423,8 +423,43 @@ export function useBestPlayers() {
           },
           goals: p.goals,
           assists: p.assists,
-          matches: p.motm_awards, // Show MOTM awards here instead of matches
+          matches: p.motm_awards,
           isLeader: i === 0,
+        }));
+      } catch {
+        return [];
+      }
+    },
+    refetchInterval: false,
+  });
+}
+
+export function usePlayerCards() {
+  return useQuery({
+    queryKey: ['playercards'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('player_stats')
+          .select('*')
+          .or('yellow_cards.gt.0,red_cards.gt.0')
+          .order('red_cards', { ascending: false })
+          .order('yellow_cards', { ascending: false })
+          .limit(20);
+          
+        if (error || !data) return [];
+        
+        return data.map((p, i) => ({
+          rank: i + 1,
+          name: p.player_name,
+          club: p.team_name,
+          country: {
+            id: p.team_name,
+            name: p.team_name,
+            flag: `https://flagsapi.com/${p.team_name.slice(0, 2).toUpperCase()}/flat/64.png` // Simplified flag logic for now
+          },
+          yellow_cards: p.yellow_cards || 0,
+          red_cards: p.red_cards || 0,
         }));
       } catch {
         return [];
