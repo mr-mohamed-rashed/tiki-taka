@@ -136,6 +136,7 @@ function PaginatedMatchGrid({
   onJumpToTop: () => void;
   lang: string;
 }) {
+  const { dir } = useLanguage();
   const totalPages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const visibleMatches = useMemo(
