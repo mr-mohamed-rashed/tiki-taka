@@ -64,7 +64,7 @@ export const routers = [
     children: [
       { path: '/', name: 'home', element: <Index /> },
       { path: '/news', name: 'news', element: <WorldCupNews /> },
-      { path: '/news/:postId', name: 'newsArticle', element: <NewsArticle /> },
+      { path: '/news/sports/:postId', name: 'newsArticle', element: <NewsArticle /> },
       { path: '/groups', name: 'groups', element: <Groups /> },
       { path: '/roadmap', name: 'roadmap', element: <Roadmap /> },
       { path: '/standings', name: 'standings', element: <Standings /> },
