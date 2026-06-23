@@ -156,6 +156,20 @@ export function useUpcomingFixtures() {
   });
 }
 
+const normalizeTeam = (apiName: string, apiId?: string) => {
+  const name = apiName.toLowerCase().trim();
+  const teamsMap = Object.values(teams);
+  const exact = teamsMap.find(t => t.name.toLowerCase() === name || t.id === apiId);
+  if (exact) return exact;
+  
+  if (name.includes('korea') && name.includes('south')) return teams.KOR;
+  if (name.includes('bosnia')) return teams.BIH;
+  if (name === 'usa' || name === 'united states' || name.includes('usa')) return teams.USA;
+  if (name.includes('turkey') || name.includes('turkiye')) return teams.TUR;
+  if (name.includes('czech')) return teams.CZE;
+  return null;
+};
+
 // ---------- Results ----------
 export function useResults() {
   return useQuery({
@@ -172,15 +186,23 @@ export function useResults() {
           proxyResults = getFinishedOnly(data.response.map(mapFixture));
         }
         
-        const teamsMap = Object.values(teams);
-        
         proxyResults = proxyResults.map(m => {
-          const homeTeam = teamsMap.find(t => t.name.toLowerCase() === m.home.name.toLowerCase() || t.id === m.home.id);
-          const awayTeam = teamsMap.find(t => t.name.toLowerCase() === m.away.name.toLowerCase() || t.id === m.away.id);
+          const homeTeam = normalizeTeam(m.home.name, m.home.id);
+          const awayTeam = normalizeTeam(m.away.name, m.away.id);
           return {
             ...m,
-            home: { ...m.home, flag: homeTeam?.flag || m.home.flag },
-            away: { ...m.away, flag: awayTeam?.flag || m.away.flag }
+            home: { 
+              ...m.home, 
+              name: homeTeam?.name || m.home.name,
+              id: homeTeam?.id || m.home.id,
+              flag: homeTeam?.flag || m.home.flag 
+            },
+            away: { 
+              ...m.away, 
+              name: awayTeam?.name || m.away.name,
+              id: awayTeam?.id || m.away.id,
+              flag: awayTeam?.flag || m.away.flag 
+            }
           };
         });
 
