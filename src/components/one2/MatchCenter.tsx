@@ -144,6 +144,8 @@ function PaginatedMatchGrid({
     [matches, safePage],
   );
 
+  const navigate = useNavigate();
+
   const goToPage = (nextPage: number) => {
     const targetPage = Math.min(Math.max(nextPage, 1), totalPages);
     onPageChange(targetPage);
@@ -153,7 +155,13 @@ function PaginatedMatchGrid({
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-        {visibleMatches.map((match) => <MatchCard key={match.id} match={match} />)}
+        {visibleMatches.map((match) => (
+          <MatchCard 
+            key={match.id} 
+            match={match} 
+            onClick={() => navigate('/live')} 
+          />
+        ))}
       </div>
 
       {totalPages > 1 && (
