@@ -76,7 +76,7 @@ function NewsContent() {
               timestamp={article.published_at}
               author={lang === 'ar' ? 'وان تو' : 'One2'}
               sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
-              detailUrl={article.post_id ? `/one2sportsnews/posts/${article.post_id}?page=${safePage}` : `/news/${article.id}?page=${safePage}`}
+              detailUrl={`/news/${article.post_id || article.id}?page=${safePage}`}
             />
           ))}
         </div>
