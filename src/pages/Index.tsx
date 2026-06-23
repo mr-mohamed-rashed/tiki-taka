@@ -221,7 +221,7 @@ const Index = () => {
                       disabled={safePulsePage === 1}
                       className="h-8 px-2"
                     >
-                      {lang === 'ar' ? 'السابق' : 'Prev'}
+                      {lang === 'ar' ? 'التالي' : 'Next'}
                     </Button>
 
                     <Button
@@ -232,7 +232,7 @@ const Index = () => {
                       disabled={safePulsePage === pulseTotalPages}
                       className="h-8 px-2"
                     >
-                      {lang === 'ar' ? 'التالي' : 'Next'}
+                      {lang === 'ar' ? 'السابق' : 'Prev'}
                     </Button>
                   </div>
                 </div>

@@ -92,7 +92,7 @@ function NewsContent() {
                 className={cn(lang === 'ar' && "font-arabic")}
               >
                 {dir === 'rtl' ? <ChevronRight className="h-4 w-4 ml-1" /> : <ChevronLeft className="h-4 w-4 mr-1" />}
-                {lang === 'ar' ? 'السابق' : 'Prev'}
+                {lang === 'ar' ? 'التالي' : 'Next'}
               </Button>
               <Button
                 variant="outline"
@@ -104,7 +104,7 @@ function NewsContent() {
                 disabled={safePage === totalPages}
                 className={cn(lang === 'ar' && "font-arabic")}
               >
-                {lang === 'ar' ? 'التالي' : 'Next'}
+                {lang === 'ar' ? 'السابق' : 'Prev'}
                 {dir === 'rtl' ? <ChevronLeft className="h-4 w-4 mr-1" /> : <ChevronRight className="h-4 w-4 ml-1" />}
               </Button>
             </div>

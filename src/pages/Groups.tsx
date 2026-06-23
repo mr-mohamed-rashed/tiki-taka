@@ -33,13 +33,6 @@ const Groups = () => {
 
         <GroupTables />
 
-        {/* Group stage matches */}
-        <section>
-          <h2 className={cn('font-display font-extrabold text-2xl mb-5', lang === 'ar' && 'font-arabic')}>
-            {lang === 'ar' ? 'مباريات المجموعات' : 'Group Stage Matches'}
-          </h2>
-          <MatchCenter defaultTab="results" />
-        </section>
       </main>
 
       <One2Footer />
