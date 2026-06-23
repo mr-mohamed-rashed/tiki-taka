@@ -520,8 +520,9 @@ function getUpcomingOnly(matches: Match[]) {
 }
 
 function getFinishedOnly(matches: Match[]) {
+  const now = Date.now();
   return matches
-    .filter((match) => match.status === 'finished')
+    .filter((match) => match.status === 'finished' && new Date(match.date).getTime() <= now)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
