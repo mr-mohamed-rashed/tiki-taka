@@ -165,8 +165,12 @@ const normalizeTeam = (apiName: string, apiId?: string) => {
   if (name.includes('korea') && name.includes('south')) return teams.KOR;
   if (name.includes('bosnia')) return teams.BIH;
   if (name === 'usa' || name === 'united states' || name.includes('usa')) return teams.USA;
-  if (name.includes('turkey') || name.includes('turkiye')) return teams.TUR;
+  if (name.includes('turkey') || name.includes('turkiye') || name.includes('türkiye')) return teams.TUR;
   if (name.includes('czech')) return teams.CZE;
+  if (name.includes('curacao') || name.includes('curaçao')) return teams.CUR;
+  if (name.includes('cape') && name.includes('verde')) return teams.CPV;
+  if (name === 'iran') return teams.IRN;
+  if (name.includes('congo dr') || name === 'congo republic') return teams.DRC;
   return null;
 };
 
@@ -520,9 +524,8 @@ function getUpcomingOnly(matches: Match[]) {
 }
 
 function getFinishedOnly(matches: Match[]) {
-  const now = Date.now();
   return matches
-    .filter((match) => match.status === 'finished' && new Date(match.date).getTime() <= now)
+    .filter((match) => match.status === 'finished')
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
