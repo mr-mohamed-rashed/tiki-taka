@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Loader2, Newspaper, Sparkles, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Loader2, Newspaper, Sparkles, ChevronRight, ChevronLeft, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AdBanner } from '@/components/one2/AdBanner';
 import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
@@ -15,6 +15,8 @@ import { useManualNews } from '@/hooks/useManualNews';
 import { useTrackVisit } from '@/hooks/useVisitTracking';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
+import { EditNewsDialog } from '@/components/admin/EditNewsDialog';
+import { type ManualNewsRow } from '@/hooks/useManualNews';
 
 const NEWS_IMAGES = [
   'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80',
@@ -30,6 +32,9 @@ function NewsContent() {
   const { lang, dir } = useLanguage();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [editingArticle, setEditingArticle] = useState<ManualNewsRow | null>(null);
+  
+  const isEditMode = searchParams.get('edit') === 'true';
   const pageParam = searchParams.get('page');
   const page = pageParam ? parseInt(pageParam, 10) : 1;
   
@@ -67,17 +72,33 @@ function NewsContent() {
       <div className="space-y-8">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {visibleArticles.map((article, index) => (
-            <ArticleCard
-              key={article.id}
-              title={lang === 'ar' ? article.title_ar || article.title_en : article.title_en || article.title_ar}
-              excerpt={lang === 'ar' ? article.excerpt_ar || article.excerpt_en : article.excerpt_en || article.excerpt_ar}
-              category={article.category}
-              image={article.image_url || NEWS_IMAGES[index % NEWS_IMAGES.length]}
-              timestamp={article.published_at}
-              author={lang === 'ar' ? 'وان تو' : 'One2'}
-              sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
-              detailUrl={`/news/sports/${article.post_id || article.id}`}
-            />
+            <div key={article.id} className="relative group">
+              <ArticleCard
+                title={lang === 'ar' ? article.title_ar || article.title_en : article.title_en || article.title_ar}
+                excerpt={lang === 'ar' ? article.excerpt_ar || article.excerpt_en : article.excerpt_en || article.excerpt_ar}
+                category={article.category}
+                image={article.image_url || NEWS_IMAGES[index % NEWS_IMAGES.length]}
+                timestamp={article.published_at}
+                author={lang === 'ar' ? 'وان تو' : 'One2'}
+                sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
+                detailUrl={`/news/sports/${article.post_id || article.id}`}
+              />
+              {isEditMode && (
+                <div className="absolute top-2 right-2 z-40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    size="icon"
+                    variant="default"
+                    className="h-9 w-9 shadow-lg bg-primary hover:bg-primary/90 rounded-full"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setEditingArticle(article);
+                    }}
+                  >
+                    <Edit className="h-4 w-4 text-primary-foreground" />
+                  </Button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
         
@@ -118,6 +139,12 @@ function NewsContent() {
             </div>
           </div>
         )}
+        
+        <EditNewsDialog 
+          article={editingArticle} 
+          open={!!editingArticle} 
+          onOpenChange={(open) => !open && setEditingArticle(null)} 
+        />
       </div>
     );
   }
