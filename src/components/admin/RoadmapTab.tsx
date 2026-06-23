@@ -2,18 +2,22 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle, Save, Loader2, Trophy, Lock, Unlock } from 'lucide-react';
+import { CheckCircle, Save, Loader2, Trophy, Lock, Unlock, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { teams } from '@/lib/footballData';
+import { teams as teamsData } from '@/lib/footballData';
 import { BracketState, getDefaultBracket, advanceTeam, BracketMatch } from '@/lib/bracket';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useMatches } from '@/hooks/useFootballData';
 
 export function RoadmapTab() {
   const [bracket, setBracket] = useState<BracketState>(getDefaultBracket());
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  
+  const { finished } = useMatches();
 
   // Load existing settings
   useEffect(() => {
@@ -98,7 +102,51 @@ export function RoadmapTab() {
     setSaved(false);
   };
 
-  const teamsArray = Object.values(teams).sort((a, b) => a.name.localeCompare(b.name));
+  const handleSyncResults = () => {
+    setIsSyncing(true);
+    let newState = { ...bracket };
+    let changed = false;
+
+    for (const [id, match] of Object.entries(newState.matches)) {
+      if (match.team1Id && match.team2Id && !match.winnerId) {
+        const t1 = teamsData[match.team1Id as keyof typeof teamsData];
+        const t2 = teamsData[match.team2Id as keyof typeof teamsData];
+        
+        if (t1 && t2) {
+          const finishedMatch = finished.find(m => 
+            (m.home.name === t1.name && m.away.name === t2.name) ||
+            (m.home.name === t2.name && m.away.name === t1.name)
+          );
+
+          if (finishedMatch) {
+            const isT1Home = finishedMatch.home.name === t1.name;
+            const score1 = isT1Home ? finishedMatch.homeScore : finishedMatch.awayScore;
+            const score2 = isT1Home ? finishedMatch.awayScore : finishedMatch.homeScore;
+            
+            newState.matches[id].score1 = score1;
+            newState.matches[id].score2 = score2;
+            
+            let winnerId = null;
+            if (score1 > score2) winnerId = match.team1Id;
+            else if (score2 > score1) winnerId = match.team2Id;
+
+            if (winnerId) {
+              newState = advanceTeam(newState, id, winnerId);
+              changed = true;
+            }
+          }
+        }
+      }
+    }
+
+    if (changed) {
+      setBracket(newState);
+      setSaved(false);
+    }
+    setIsSyncing(false);
+  };
+
+  const teamsArray = Object.values(teamsData).sort((a, b) => a.name.localeCompare(b.name));
 
   const renderMatchRow = (match: BracketMatch) => {
     const t1 = match.team1Id ? teams[match.team1Id as keyof typeof teams] : null;
@@ -238,23 +286,37 @@ export function RoadmapTab() {
         </div>
       )}
 
-      <Card className="p-4 sm:p-6 bg-card border-border flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className={`p-2 rounded-full ${bracket.isLocked ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
-            {bracket.isLocked ? <Lock className="w-5 h-5" /> : <Unlock className="w-5 h-5" />}
+      <Card className="p-4 sm:p-6 bg-card border-border flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className={`p-2 rounded-full ${bracket.isLocked ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
+              {bracket.isLocked ? <Lock className="w-5 h-5" /> : <Unlock className="w-5 h-5" />}
+            </div>
+            <div>
+              <Label className="font-arabic text-base font-bold">قفل دور الـ 32</Label>
+              <p className="text-xs text-muted-foreground font-arabic mt-1">
+                عند التفعيل، لا يمكن تغيير الفرق الأساسية ويمكن فقط تحديد الفائزين للصعود.
+              </p>
+            </div>
           </div>
-          <div>
-            <Label className="font-arabic text-base font-bold">قفل دور الـ 32</Label>
-            <p className="text-xs text-muted-foreground font-arabic mt-1">
-              عند التفعيل، لا يمكن تغيير الفرق الأساسية ويمكن فقط تحديد الفائزين للصعود.
-            </p>
-          </div>
+          <Switch 
+            checked={bracket.isLocked} 
+            onCheckedChange={(c) => { setBracket(p => ({...p, isLocked: c})); setSaved(false); }} 
+            dir="ltr"
+          />
         </div>
-        <Switch 
-          checked={bracket.isLocked} 
-          onCheckedChange={(c) => { setBracket(p => ({...p, isLocked: c})); setSaved(false); }} 
-          dir="ltr"
-        />
+        
+        {bracket.isLocked && (
+          <div className="pt-4 border-t border-border flex justify-between items-center">
+            <p className="text-sm text-muted-foreground font-arabic">
+              يمكنك مزامنة النتائج تلقائياً من صفحة المباريات لتصعيد الفائزين مباشرة.
+            </p>
+            <Button variant="outline" onClick={handleSyncResults} disabled={isSyncing || finished.length === 0} className="gap-2">
+               <RefreshCw className={isSyncing ? "h-4 w-4 animate-spin" : "h-4 w-4"} />
+               مزامنة النتائج والصعود
+            </Button>
+          </div>
+        )}
       </Card>
 
       <div className="space-y-8">

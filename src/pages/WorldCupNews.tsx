@@ -1,4 +1,6 @@
-import { Loader2, Newspaper, Sparkles } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Loader2, Newspaper, Sparkles, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { AdBanner } from '@/components/one2/AdBanner';
 import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
 import { EditModeToggle } from '@/components/one2/EditModeToggle';
@@ -21,11 +23,23 @@ const NEWS_IMAGES = [
 ];
 
 const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
+const ITEMS_PER_PAGE = 6;
 
 function NewsContent() {
-  const { lang } = useLanguage();
+  const { lang, dir } = useLanguage();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
-  const manualArticles = manualNews.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
+  const [page, setPage] = useState(1);
+  
+  const manualArticles = useMemo(() => {
+    return manualNews.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
+  }, [manualNews]);
+
+  const totalPages = Math.max(1, Math.ceil(manualArticles.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  
+  const visibleArticles = useMemo(() => {
+    return manualArticles.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
+  }, [manualArticles, safePage]);
 
   useTrackVisit({ eventType: 'news_view', page: '/news' });
 
@@ -42,20 +56,60 @@ function NewsContent() {
 
   if (manualArticles.length > 0) {
     return (
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {manualArticles.map((article, index) => (
-          <ArticleCard
-            key={article.id}
-            title={lang === 'ar' ? article.title_ar || article.title_en : article.title_en || article.title_ar}
-            excerpt={lang === 'ar' ? article.excerpt_ar || article.excerpt_en : article.excerpt_en || article.excerpt_ar}
-            category={article.category}
-            image={article.image_url || NEWS_IMAGES[index % NEWS_IMAGES.length]}
-            timestamp={article.published_at}
-            author={lang === 'ar' ? 'وان تو' : 'One2'}
-            sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
-            detailUrl={`/news/${article.id}`}
-          />
-        ))}
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {visibleArticles.map((article, index) => (
+            <ArticleCard
+              key={article.id}
+              title={lang === 'ar' ? article.title_ar || article.title_en : article.title_en || article.title_ar}
+              excerpt={lang === 'ar' ? article.excerpt_ar || article.excerpt_en : article.excerpt_en || article.excerpt_ar}
+              category={article.category}
+              image={article.image_url || NEWS_IMAGES[index % NEWS_IMAGES.length]}
+              timestamp={article.published_at}
+              author={lang === 'ar' ? 'وان تو' : 'One2'}
+              sourceUrl={article.excerpt_en?.startsWith('http') ? article.excerpt_en : undefined}
+              detailUrl={`/news/${article.id}`}
+            />
+          ))}
+        </div>
+        
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-6 border-t border-border">
+            <div className={cn("text-sm text-muted-foreground", lang === 'ar' && "font-arabic")}>
+              {lang === 'ar' 
+                ? `صفحة ${safePage} من ${totalPages}`
+                : `Page ${safePage} of ${totalPages}`}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setPage(p => Math.max(1, p - 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={safePage === 1}
+                className={cn(lang === 'ar' && "font-arabic")}
+              >
+                {dir === 'rtl' ? <ChevronRight className="h-4 w-4 ml-1" /> : <ChevronLeft className="h-4 w-4 mr-1" />}
+                {lang === 'ar' ? 'السابق' : 'Prev'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setPage(p => Math.min(totalPages, p + 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                disabled={safePage === totalPages}
+                className={cn(lang === 'ar' && "font-arabic")}
+              >
+                {lang === 'ar' ? 'التالي' : 'Next'}
+                {dir === 'rtl' ? <ChevronLeft className="h-4 w-4 mr-1" /> : <ChevronRight className="h-4 w-4 ml-1" />}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
