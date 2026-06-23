@@ -19,7 +19,7 @@ interface MatchCenterProps {
 const PAGE_SIZE = 3;
 
 export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCenterProps) {
-  const { lang } = useLanguage();
+  const { lang, dir } = useLanguage();
   const navigate = useNavigate();
   const topRef = useRef<HTMLDivElement | null>(null);
   const { data: live = [], isLoading: liveLoading } = useLiveFixtures();

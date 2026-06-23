@@ -285,11 +285,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                             </feMerge>
                           </filter>
                         </defs>
-                        <text x="50" y="26" textAnchor="middle" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '28px' }}>
-                          <tspan fill="#ffffff">One</tspan>
-                        </text>
-                        <text x="50" y="26" textAnchor="middle" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '34px' }}>
-                          <tspan fill="#22c55e" filter="url(#neon-glow)" fillOpacity="0.8">2</tspan>
+                        <text x="12" y="28" alignmentBaseline="middle" className="font-display font-black select-none" style={{ userSelect: 'none' }}>
+                          <tspan fill="#ffffff" fontSize="24px">ONE</tspan>
+                          <tspan fill="#22c55e" dx="4" fontStyle="italic" fontSize="32px" filter="url(#neon-glow)">2</tspan>
                         </text>
                       </svg>
                     </div>
@@ -509,9 +507,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                             </feMerge>
                           </filter>
                         </defs>
-                        <text x="8" y="26" alignmentBaseline="middle" className="font-display font-black select-none" style={{ fontSize: '28px', userSelect: 'none' }}>
-                          <tspan fill="#ffffff">One</tspan>
-                          <tspan fill="#22c55e" dx="-2.5" filter="url(#neon-glow-2)">2</tspan>
+                        <text x="12" y="28" alignmentBaseline="middle" className="font-display font-black select-none" style={{ userSelect: 'none' }}>
+                          <tspan fill="#ffffff" fontSize="24px">ONE</tspan>
+                          <tspan fill="#22c55e" dx="4" fontStyle="italic" fontSize="32px" filter="url(#neon-glow-2)">2</tspan>
                         </text>
                       </svg>
                     </div>
