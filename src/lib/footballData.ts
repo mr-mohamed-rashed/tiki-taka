@@ -88,26 +88,26 @@ export const teams: Record<string, Team> = {
   // Group A
   MEX: { id: 'MEX', name: 'Mexico',        shortName: 'MEX', code: 'MX', flag: flag('mx'), color: '#006847' },
   RSA: { id: 'RSA', name: 'South Africa',  shortName: 'RSA', code: 'ZA', flag: flag('za'), color: '#007749' },
-  KOR: { id: 'KOR', name: 'Korea Republic', shortName: 'KOR', code: 'KR', flag: flag('kr'), color: '#C60C30' },
+  KOR: { id: 'KOR', name: 'South Korea', shortName: 'KOR', code: 'KR', flag: flag('kr'), color: '#C60C30' },
   CZE: { id: 'CZE', name: 'Czechia',       shortName: 'CZE', code: 'CZ', flag: flag('cz'), color: '#D7141A' },
   // Group B
   CAN: { id: 'CAN', name: 'Canada',        shortName: 'CAN', code: 'CA', flag: flag('ca'), color: '#FF0000' },
   QAT: { id: 'QAT', name: 'Qatar',         shortName: 'QAT', code: 'QA', flag: flag('qa'), color: '#8D1B3D' },
   SUI: { id: 'SUI', name: 'Switzerland',   shortName: 'SUI', code: 'CH', flag: flag('ch'), color: '#FF0000' },
-  BIH: { id: 'BIH', name: 'Bosnia & Herz.', shortName: 'BIH', code: 'BA', flag: flag('ba'), color: '#003DA5' },
+  BIH: { id: 'BIH', name: 'Bosnia-Herzegovina', shortName: 'BIH', code: 'BA', flag: flag('ba'), color: '#003DA5' },
   // Group C
   BRA: { id: 'BRA', name: 'Brazil',        shortName: 'BRA', code: 'BR', flag: flag('br'), color: '#FFDF00' },
   MAR: { id: 'MAR', name: 'Morocco',       shortName: 'MAR', code: 'MA', flag: flag('ma'), color: '#C1272D' },
   HAI: { id: 'HAI', name: 'Haiti',         shortName: 'HAI', code: 'HT', flag: flag('ht'), color: '#00209F' },
   SCO: { id: 'SCO', name: 'Scotland',      shortName: 'SCO', code: 'GB-SCT', flag: 'https://flagcdn.com/w160/gb-sct.png', color: '#003DA5' },
   // Group D
-  USA: { id: 'USA', name: 'USA',           shortName: 'USA', code: 'US', flag: flag('us'), color: '#B22234' },
+  USA: { id: 'USA', name: 'United States',           shortName: 'USA', code: 'US', flag: flag('us'), color: '#B22234' },
   PAR: { id: 'PAR', name: 'Paraguay',      shortName: 'PAR', code: 'PY', flag: flag('py'), color: '#D52B1E' },
   AUS: { id: 'AUS', name: 'Australia',     shortName: 'AUS', code: 'AU', flag: flag('au'), color: '#00008B' },
-  TUR: { id: 'TUR', name: 'Turkiye',       shortName: 'TUR', code: 'TR', flag: flag('tr'), color: '#E30A17' },
+  TUR: { id: 'TUR', name: 'Türkiye',       shortName: 'TUR', code: 'TR', flag: flag('tr'), color: '#E30A17' },
   // Group E
   GER: { id: 'GER', name: 'Germany',       shortName: 'GER', code: 'DE', flag: flag('de'), color: '#000000' },
-  CUR: { id: 'CUR', name: 'Curacao',       shortName: 'CUR', code: 'CW', flag: flag('cw'), color: '#003DA5' },
+  CUR: { id: 'CUR', name: 'Curaçao',       shortName: 'CUR', code: 'CW', flag: flag('cw'), color: '#003DA5' },
   CIV: { id: 'CIV', name: 'Ivory Coast',   shortName: 'CIV', code: 'CI', flag: flag('ci'), color: '#F77F00' },
   ECU: { id: 'ECU', name: 'Ecuador',       shortName: 'ECU', code: 'EC', flag: flag('ec'), color: '#FFD100' },
   // Group F
@@ -118,13 +118,13 @@ export const teams: Record<string, Team> = {
   // Group G
   BEL: { id: 'BEL', name: 'Belgium',       shortName: 'BEL', code: 'BE', flag: flag('be'), color: '#FAE042' },
   EGY: { id: 'EGY', name: 'Egypt',         shortName: 'EGY', code: 'EG', flag: flag('eg'), color: '#CE1126' },
-  IRN: { id: 'IRN', name: 'IR Iran',       shortName: 'IRN', code: 'IR', flag: flag('ir'), color: '#239F40' },
+  IRN: { id: 'IRN', name: 'Iran',       shortName: 'IRN', code: 'IR', flag: flag('ir'), color: '#239F40' },
   NZL: { id: 'NZL', name: 'New Zealand',   shortName: 'NZL', code: 'NZ', flag: flag('nz'), color: '#00247D' },
   // Group H
   ESP: { id: 'ESP', name: 'Spain',         shortName: 'ESP', code: 'ES', flag: flag('es'), color: '#C60B1E' },
   KSA: { id: 'KSA', name: 'Saudi Arabia',  shortName: 'KSA', code: 'SA', flag: flag('sa'), color: '#006B3F' },
   URU: { id: 'URU', name: 'Uruguay',       shortName: 'URU', code: 'UY', flag: flag('uy'), color: '#75AADB' },
-  CPV: { id: 'CPV', name: 'Cabo Verde',    shortName: 'CPV', code: 'CV', flag: flag('cv'), color: '#003893' },
+  CPV: { id: 'CPV', name: 'Cape Verde',    shortName: 'CPV', code: 'CV', flag: flag('cv'), color: '#003893' },
   // Group I
   FRA: { id: 'FRA', name: 'France',        shortName: 'FRA', code: 'FR', flag: flag('fr'), color: '#0055A4' },
   SEN: { id: 'SEN', name: 'Senegal',       shortName: 'SEN', code: 'SN', flag: flag('sn'), color: '#00853F' },
@@ -137,7 +137,7 @@ export const teams: Record<string, Team> = {
   JOR: { id: 'JOR', name: 'Jordan',        shortName: 'JOR', code: 'JO', flag: flag('jo'), color: '#007A3D' },
   // Group K
   POR: { id: 'POR', name: 'Portugal',      shortName: 'POR', code: 'PT', flag: flag('pt'), color: '#006600' },
-  DRC: { id: 'DRC', name: 'DR Congo',      shortName: 'COD', code: 'CD', flag: flag('cd'), color: '#007FFF' },
+  DRC: { id: 'DRC', name: 'Congo DR',      shortName: 'COD', code: 'CD', flag: flag('cd'), color: '#007FFF' },
   COL: { id: 'COL', name: 'Colombia',      shortName: 'COL', code: 'CO', flag: flag('co'), color: '#FCD116' },
   UZB: { id: 'UZB', name: 'Uzbekistan',    shortName: 'UZB', code: 'UZ', flag: flag('uz'), color: '#1EB53A' },
   // Group L
