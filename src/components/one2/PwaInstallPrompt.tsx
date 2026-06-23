@@ -18,7 +18,6 @@ export function PwaInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isIos, setIsIos] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     // Check if user already dismissed it
@@ -31,8 +30,6 @@ export function PwaInstallPrompt() {
                       || (window.navigator as any).standalone 
                       || document.referrer.includes('android-app://');
     
-    setIsStandalone(!!isAppMode);
-
     if (isAppMode) return;
 
     // Detect iOS
@@ -40,11 +37,17 @@ export function PwaInstallPrompt() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIos(isIosDevice);
 
-    setIsVisible(true);
+    if (isIosDevice) {
+      // iOS doesn't support beforeinstallprompt, so we show it manually
+      setIsVisible(true);
+    }
 
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault(); // Prevent the mini-infobar from appearing on mobile
       setDeferredPrompt(e as BeforeInstallPromptEvent);
+      // Only show the banner on Android/PC if the browser fires the event
+      // This means the app is NOT installed yet and is installable
+      setIsVisible(true); 
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -65,8 +68,6 @@ export function PwaInstallPrompt() {
       setDeferredPrompt(null);
     } else if (isIos) {
       alert(lang === 'ar' ? 'لتثبيت التطبيق على آيفون: اضغط على زر المشاركة (Share) بالأسفل ثم اختر (Add to Home Screen)' : 'To install on iOS: Tap the Share button below and select "Add to Home Screen"');
-    } else {
-      alert(lang === 'ar' ? 'لتثبيت التطبيق: اضغط على أيقونة التحميل في شريط المتصفح أعلى الشاشة (Install App)' : 'To install: Click the install icon in the browser address bar');
     }
   };
 
@@ -75,7 +76,7 @@ export function PwaInstallPrompt() {
     setIsVisible(false);
   };
 
-  if (!isVisible || isStandalone) return null;
+  if (!isVisible) return null;
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] shadow-2xl border-b border-white/10 bg-[#18181B] animate-in slide-in-from-top fade-in duration-300">
