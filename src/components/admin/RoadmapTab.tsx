@@ -149,8 +149,8 @@ export function RoadmapTab() {
   const teamsArray = Object.values(teamsData).sort((a, b) => a.name.localeCompare(b.name));
 
   const renderMatchRow = (match: BracketMatch) => {
-    const t1 = match.team1Id ? teams[match.team1Id as keyof typeof teams] : null;
-    const t2 = match.team2Id ? teams[match.team2Id as keyof typeof teams] : null;
+    const t1 = match.team1Id ? teamsData[match.team1Id as keyof typeof teamsData] : null;
+    const t2 = match.team2Id ? teamsData[match.team2Id as keyof typeof teamsData] : null;
     
     // For R32 and unlocked, allow selecting teams
     if (match.round === 'r32' && !bracket.isLocked) {
