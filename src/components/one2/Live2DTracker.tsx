@@ -10,6 +10,55 @@ import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
 import { Navigation } from '@/components/one2/Navigation';
+import { useManualNews } from '@/hooks/useManualNews';
+
+function TickerBot({ defaultText, lang }: { defaultText: string, lang: 'ar'|'en' }) {
+  const { items } = useManualNews();
+  const [showNews, setShowNews] = useState(true);
+
+  useEffect(() => {
+    // Show news for 2 minutes, then pause for 5 minutes
+    const cycle = () => {
+      setShowNews(true);
+      setTimeout(() => {
+        setShowNews(false);
+      }, 2 * 60 * 1000); // 2 mins
+    };
+    
+    // Initial start
+    const timer1 = setTimeout(() => {
+      setShowNews(false);
+    }, 2 * 60 * 1000);
+
+    const interval = setInterval(() => {
+      cycle();
+    }, 7 * 60 * 1000); // 7 mins total
+
+    return () => {
+      clearTimeout(timer1);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const latestNews = items.filter(i => i.is_published).slice(0, 10).map(n => lang === 'ar' ? n.title_ar : n.title_en);
+  const prefix = lang === 'ar' ? 'اهلا وسهلا متابعى منصة ون تو : ' : 'Welcome to ONE 2 LIVE : ';
+  
+  const textToShow = (showNews && latestNews.length > 0) 
+    ? `${prefix} ${latestNews.join(' • ')}`
+    : defaultText;
+
+  if (!textToShow) return null;
+
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
+      {/* @ts-ignore */}
+      <marquee direction="right" scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-yellow-400 flex items-center">
+        {textToShow}
+      {/* @ts-ignore */}
+      </marquee>
+    </div>
+  );
+}
 
 interface Live2DTrackerProps {
   match: Match;
@@ -378,7 +427,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {servers.length > 1 && (
                 <>
                   <div
-                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -392,7 +441,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     }}
                   />
                   <div
-                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -420,19 +469,11 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 )}
               </div>
 
-              {/* Ticker */}
-              {tickerText && (
-                <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
-                  {/* @ts-ignore */}
-                  <marquee direction="right" scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
-                    {tickerText}
-                  {/* @ts-ignore */}
-                  </marquee>
-                </div>
-              )}
+              {/* Ticker Bot */}
+              <TickerBot defaultText={tickerText} lang={lang as 'ar'|'en'} />
 
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
+              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
                   className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
@@ -547,7 +588,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {servers.length > 1 && (
                 <>
                   <div
-                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -561,7 +602,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     }}
                   />
                   <div
-                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -605,7 +646,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   
                   <div className="relative z-10 flex items-center w-full h-full">
                     {/* Centered One2 Text */}
-                    <div className="relative flex flex-col justify-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
+                    <div className="relative flex flex-col justify-center items-center w-full h-full pl-[5%] pr-[20%] select-none pointer-events-none">
                       <svg viewBox="0 0 100 40" className="w-full h-[80%] pt-[2%] drop-shadow-md">
                         <defs>
                           <filter id="neon-glow-2" x="-50%" y="-50%" width="200%" height="200%">
@@ -656,7 +697,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               )}
 
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
+              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
                   className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
