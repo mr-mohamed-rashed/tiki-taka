@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen, ChevronLeft, ChevronRight, Instagram, Play, Volume1, Volume2 } from 'lucide-react';
+import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen, ChevronLeft, ChevronRight, Instagram, Play, Volume1, Volume2, VolumeX } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -91,6 +91,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [volume, setVolume] = useState(100);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.targetTouches[0].clientX);
@@ -229,18 +230,15 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     return activeServerUrl;
   })();
 
-  const handleExternalAction = (action: 'play' | 'volUp' | 'volDown') => {
+  const handleExternalAction = (action: 'play' | 'setVolume', val?: number) => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       const cw = iframeRef.current.contentWindow;
       if (action === 'play') {
         cw.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
         cw.postMessage({ method: 'play' }, '*');
-      } else if (action === 'volUp') {
-        cw.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
-        cw.postMessage({ method: 'setVolume', value: 1 }, '*');
-      } else if (action === 'volDown') {
-        cw.postMessage('{"event":"command","func":"setVolume","args":[10]}', '*');
-        cw.postMessage({ method: 'setVolume', value: 0.1 }, '*');
+      } else if (action === 'setVolume' && val !== undefined) {
+        cw.postMessage(`{"event":"command","func":"setVolume","args":[${val}]}`, '*');
+        cw.postMessage({ method: 'setVolume', value: val / 100 }, '*');
       }
     }
   };
@@ -341,9 +339,23 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               )}
 
-              {/* Fullscreen Button for TikTok Mode */}
-              <div className="absolute top-4 right-4 z-50 pointer-events-auto">
-                <Button variant="secondary" size="icon" onClick={toggleFullscreen} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg rounded-full">
+              {/* Fullscreen & Volume Controls for TikTok Mode */}
+              <div className={cn("absolute top-4 right-4 z-50 flex items-center gap-2 transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded-full backdrop-blur-md shadow-lg" onClick={(e) => e.stopPropagation()}>
+                  {volume === 0 ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
+                  <input 
+                    type="range" 
+                    min="0" max="100" 
+                    value={volume} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setVolume(val);
+                      handleExternalAction('setVolume', val);
+                    }}
+                    className="w-20 accent-primary"
+                  />
+                </div>
+                <Button variant="secondary" size="icon" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg rounded-full">
                   {isTheater ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
                 </Button>
               </div>
@@ -382,16 +394,18 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 )}
               </div>
 
-              {/* External Controls Bar (Video-Only Mode) */}
-              <div className="absolute bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-4 bg-black/80 py-2 border-t border-white/10 backdrop-blur-sm">
-                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volDown'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
-                  <Volume1 className="w-5 h-5" />
-                </Button>
-                <Button variant="outline" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('play'); }} className="bg-primary/20 border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-full h-10 w-10">
-                  <Play className="w-5 h-5 ml-1" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volUp'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
-                  <Volume2 className="w-5 h-5" />
+              {/* Center Play Button (Transparent) */}
+              <div className={cn("absolute inset-0 m-auto w-24 h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    handleExternalAction('play'); 
+                  }} 
+                  className="bg-black/20 border-2 border-white/30 text-white/80 hover:bg-black/40 hover:text-white rounded-full w-20 h-20 backdrop-blur-sm"
+                >
+                  <Play className="w-10 h-10 ml-2" />
                 </Button>
               </div>
 
@@ -437,9 +451,23 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 )}
               </div>
 
-              {/* Right Side Controls: Fullscreen Button */}
+              {/* Right Side Controls: Fullscreen & Volume */}
               <div className={cn("absolute bottom-4 right-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
-                <Button variant="secondary" size="icon" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg h-10 w-10 sm:h-12 sm:w-12">
+                <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded-full backdrop-blur-md shadow-lg" onClick={(e) => e.stopPropagation()}>
+                  {volume === 0 ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
+                  <input 
+                    type="range" 
+                    min="0" max="100" 
+                    value={volume} 
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      setVolume(val);
+                      handleExternalAction('setVolume', val);
+                    }}
+                    className="w-20 sm:w-24 accent-primary"
+                  />
+                </div>
+                <Button variant="secondary" size="icon" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg h-10 w-10 sm:h-12 sm:w-12 rounded-full">
                   {isTheater ? <Minimize className="h-5 w-5 sm:h-6 sm:w-6" /> : <Maximize className="h-5 w-5 sm:h-6 sm:w-6" />}
                 </Button>
               </div>
@@ -578,16 +606,18 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               )}
 
-              {/* External Controls Bar (Normal Mode) */}
-              <div className={cn("absolute bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-4 bg-black/80 py-2 border-t border-white/10 backdrop-blur-sm transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
-                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volDown'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
-                  <Volume1 className="w-5 h-5" />
-                </Button>
-                <Button variant="outline" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('play'); }} className="bg-primary/20 border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-full h-10 w-10 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
-                  <Play className="w-5 h-5 ml-1" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volUp'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
-                  <Volume2 className="w-5 h-5" />
+              {/* Center Play Button (Transparent) */}
+              <div className={cn("absolute inset-0 m-auto w-24 h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    handleExternalAction('play'); 
+                  }} 
+                  className="bg-black/20 border-2 border-white/30 text-white/80 hover:bg-black/40 hover:text-white rounded-full w-20 h-20 sm:w-24 sm:h-24 backdrop-blur-sm"
+                >
+                  <Play className="w-10 h-10 sm:w-12 sm:h-12 ml-2" />
                 </Button>
               </div>
 
