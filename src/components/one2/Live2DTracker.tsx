@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen, ChevronLeft, ChevronRight, Instagram } from 'lucide-react';
+import { Video, Maximize, Minimize, MessageSquare, PanelRightOpen, ChevronLeft, ChevronRight, Instagram, Play, Volume1, Volume2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -88,6 +88,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   const [chatMode, setChatMode] = useState<'hidden' | 'overlay' | 'split'>('hidden');
   const [controlsVisible, setControlsVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
 
@@ -228,6 +229,22 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     return activeServerUrl;
   })();
 
+  const handleExternalAction = (action: 'play' | 'volUp' | 'volDown') => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      const cw = iframeRef.current.contentWindow;
+      if (action === 'play') {
+        cw.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        cw.postMessage({ method: 'play' }, '*');
+      } else if (action === 'volUp') {
+        cw.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
+        cw.postMessage({ method: 'setVolume', value: 1 }, '*');
+      } else if (action === 'volDown') {
+        cw.postMessage('{"event":"command","func":"setVolume","args":[10]}', '*');
+        cw.postMessage({ method: 'setVolume', value: 0.1 }, '*');
+      }
+    }
+  };
+
   if (forceMode === 'video-only') {
     return (
       <div 
@@ -246,6 +263,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               }}
             >
               <iframe
+                ref={iframeRef}
                 src={streamUrl}
                 className="absolute inset-0 w-full h-full pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
@@ -363,6 +381,20 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </div>
                 )}
               </div>
+
+              {/* External Controls Bar (Video-Only Mode) */}
+              <div className="absolute bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-4 bg-black/80 py-2 border-t border-white/10 backdrop-blur-sm">
+                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volDown'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
+                  <Volume1 className="w-5 h-5" />
+                </Button>
+                <Button variant="outline" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('play'); }} className="bg-primary/20 border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-full h-10 w-10">
+                  <Play className="w-5 h-5 ml-1" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volUp'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
+                  <Volume2 className="w-5 h-5" />
+                </Button>
+              </div>
+
             </div>
           ) : (
             <div className="text-white text-sm">البث غير متاح حاليا</div>
@@ -426,6 +458,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               }}
             >
               <iframe
+                ref={iframeRef}
                 src={streamUrl}
                 className="absolute inset-0 w-full h-full pointer-events-auto"
                 style={{ top: '-55px', height: 'calc(100% + 55px)' }}
@@ -544,6 +577,20 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                   </marquee>
                 </div>
               )}
+
+              {/* External Controls Bar (Normal Mode) */}
+              <div className={cn("absolute bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-4 bg-black/80 py-2 border-t border-white/10 backdrop-blur-sm transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volDown'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
+                  <Volume1 className="w-5 h-5" />
+                </Button>
+                <Button variant="outline" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('play'); }} className="bg-primary/20 border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-full h-10 w-10 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+                  <Play className="w-5 h-5 ml-1" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleExternalAction('volUp'); }} className="text-white hover:bg-primary/20 hover:text-primary rounded-full">
+                  <Volume2 className="w-5 h-5" />
+                </Button>
+              </div>
+
             </div>
           ) : (
             <svg viewBox="0 0 600 380" className="block w-full max-h-[300px] bg-gradient-pitch">
