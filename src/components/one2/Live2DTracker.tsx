@@ -394,6 +394,17 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 )}
               </div>
 
+              {/* Ticker */}
+              {tickerText && (
+                <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
+                  {/* @ts-ignore */}
+                  <marquee direction="right" scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
+                    {tickerText}
+                  {/* @ts-ignore */}
+                  </marquee>
+                </div>
+              )}
+
               {/* Center Play Button (Transparent) */}
               <div className={cn("absolute inset-0 m-auto w-24 h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
                 <Button 
@@ -599,7 +610,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {tickerText && (
                 <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
                   {/* @ts-ignore */}
-                  <marquee scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
+                  <marquee direction="right" scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
                     {tickerText}
                   {/* @ts-ignore */}
                   </marquee>
