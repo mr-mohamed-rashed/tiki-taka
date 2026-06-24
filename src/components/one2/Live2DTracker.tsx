@@ -280,14 +280,16 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 sandbox="allow-scripts allow-same-origin allow-presentation"
               />
-              {/* Invisible overlay to permanently catch touches and prevent iframe interaction */}
-              <div 
-                className="absolute inset-0 z-30 pointer-events-auto"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setControlsVisible(prev => !prev);
-                }}
-              />
+              {/* Invisible overlay with a center hole to allow native clicks on the video */}
+              <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
+                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+                <div className="w-full h-20 sm:h-24 flex">
+                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+                  <div className="w-20 sm:w-24 h-full pointer-events-none" />
+                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+                </div>
+                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+              </div>
 
               {/* Smart Responsive Logo Cover */}
               <div 
@@ -417,14 +419,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               )}
 
-              {/* Center Play Button (Blurred Rounded Triangle) */}
-              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+              {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
+              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    handleExternalAction('play'); 
-                  }} 
-                  className="w-full h-full bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-colors drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                  className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
                     WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
                     WebkitMaskSize: 'contain',
@@ -522,14 +520,16 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 sandbox="allow-scripts allow-same-origin allow-presentation"
               />
-              {/* Invisible overlay to permanently catch touches and prevent iframe interaction */}
-              <div 
-                className="absolute inset-0 z-30 pointer-events-auto"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setControlsVisible(prev => !prev);
-                }}
-              />
+              {/* Invisible overlay with a center hole to allow native clicks on the video */}
+              <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
+                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+                <div className="w-full h-20 sm:h-24 flex">
+                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+                  <div className="w-20 sm:w-24 h-full pointer-events-none" />
+                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+                </div>
+                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
+              </div>
               
               {/* Server Navigation Chevrons */}
               {servers.length > 1 && (
@@ -635,14 +635,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               )}
 
-              {/* Center Play Button (Blurred Rounded Triangle) */}
-              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+              {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
+              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
-                    handleExternalAction('play'); 
-                  }} 
-                  className="w-full h-full bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-colors drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                  className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
                     WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
                     WebkitMaskSize: 'contain',
