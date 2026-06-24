@@ -405,19 +405,25 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               )}
 
-              {/* Center Play Button (Transparent) */}
-              <div className={cn("absolute inset-0 m-auto w-24 h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
+              {/* Center Play Button (Blurred Rounded Triangle) */}
+              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <div 
                   onClick={(e) => { 
                     e.stopPropagation(); 
                     handleExternalAction('play'); 
                   }} 
-                  className="bg-black/20 border-2 border-white/30 text-white/80 hover:bg-black/40 hover:text-white rounded-full w-20 h-20 backdrop-blur-sm"
-                >
-                  <Play className="w-10 h-10 ml-2" />
-                </Button>
+                  className="w-full h-full bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-colors drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                  style={{
+                    WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
+                    WebkitMaskSize: 'contain',
+                    WebkitMaskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'center',
+                    maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
+                    maskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    maskPosition: 'center',
+                  }}
+                />
               </div>
 
             </div>
@@ -617,19 +623,25 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               )}
 
-              {/* Center Play Button (Transparent) */}
-              <div className={cn("absolute inset-0 m-auto w-24 h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
+              {/* Center Play Button (Blurred Rounded Triangle) */}
+              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 z-50 flex items-center justify-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <div 
                   onClick={(e) => { 
                     e.stopPropagation(); 
                     handleExternalAction('play'); 
                   }} 
-                  className="bg-black/20 border-2 border-white/30 text-white/80 hover:bg-black/40 hover:text-white rounded-full w-20 h-20 sm:w-24 sm:h-24 backdrop-blur-sm"
-                >
-                  <Play className="w-10 h-10 sm:w-12 sm:h-12 ml-2" />
-                </Button>
+                  className="w-full h-full bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-colors drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                  style={{
+                    WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
+                    WebkitMaskSize: 'contain',
+                    WebkitMaskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'center',
+                    maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
+                    maskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    maskPosition: 'center',
+                  }}
+                />
               </div>
 
             </div>
