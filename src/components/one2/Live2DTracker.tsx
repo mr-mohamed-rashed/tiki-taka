@@ -40,7 +40,7 @@ function TickerBot({ defaultText, lang }: { defaultText: string, lang: 'ar'|'en'
   return (
     <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
       {/* @ts-ignore */}
-      <marquee scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-yellow-400 flex items-center">
+      <marquee direction="right" scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-yellow-400 flex items-center">
         {textToShow}
       {/* @ts-ignore */}
       </marquee>
