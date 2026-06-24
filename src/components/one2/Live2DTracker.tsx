@@ -377,22 +377,34 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Server Navigation Chevrons */}
               {servers.length > 1 && (
                 <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn("absolute left-2 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/70 hover:bg-transparent hover:text-white transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                  <div
+                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
-                  >
-                    <ChevronLeft className="h-10 w-10 drop-shadow-lg" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn("absolute right-2 top-1/2 -translate-y-1/2 z-50 bg-transparent text-white/70 hover:bg-transparent hover:text-white transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    style={{
+                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'center',
+                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      maskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                    }}
+                  />
+                  <div
+                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
-                  >
-                    <ChevronRight className="h-10 w-10 drop-shadow-lg" />
-                  </Button>
+                    style={{
+                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'center',
+                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      maskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                    }}
+                  />
                 </>
               )}
 
@@ -534,26 +546,34 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Server Navigation Chevrons */}
               {servers.length > 1 && (
                 <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn("absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/70 transition-opacity h-12 w-12 sm:h-16 sm:w-16 rounded-full border border-white/10 shadow-xl flex items-center justify-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                  <div
+                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 sm:w-10 sm:h-10 -ml-1">
-                      <path d="M16 4L6 12L16 20V4Z" />
-                    </svg>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn("absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 text-white hover:bg-black/70 transition-opacity h-12 w-12 sm:h-16 sm:w-16 rounded-full border border-white/10 shadow-xl flex items-center justify-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    style={{
+                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'center',
+                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      maskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                    }}
+                  />
+                  <div
+                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 sm:w-10 sm:h-10 -mr-1">
-                      <path d="M8 4L18 12L8 20V4Z" />
-                    </svg>
-                  </Button>
+                    style={{
+                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'center',
+                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                      maskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                    }}
+                  />
                 </>
               )}
 
