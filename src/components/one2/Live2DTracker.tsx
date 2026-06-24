@@ -40,7 +40,7 @@ function TickerBot({ defaultText, lang }: { defaultText: string, lang: 'ar'|'en'
   return (
     <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
       {/* @ts-ignore */}
-      <marquee direction="right" scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-yellow-400 flex items-center">
+      <marquee scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold text-yellow-400 flex items-center">
         {textToShow}
       {/* @ts-ignore */}
       </marquee>
@@ -680,8 +680,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               </div>
 
-              {/* Ticker removed here, handled by TickerBot at the end of the file */}
-
+              {/* Ticker Bot */}
+              <TickerBot defaultText={tickerText} lang={lang as 'ar'|'en'} />
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
               <div className={cn("absolute inset-0 m-auto w-[25cqmin] h-[25cqmin] max-w-[120px] max-h-[120px] min-w-[50px] min-h-[50px] z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
