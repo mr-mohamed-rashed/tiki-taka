@@ -53,7 +53,7 @@ export function NewsTicker({ variant = 'default', className }: { variant?: 'defa
             <Radio className="h-3 w-3 animate-pulse-live" />
           )}
           <span className={lang === 'ar' ? 'font-arabic whitespace-nowrap' : 'whitespace-nowrap'}>
-            {t('tickerLabel', lang)}
+            {variant === 'video' ? 'ONE 2' : t('tickerLabel', lang)}
           </span>
         </div>
         <div className="flex-1 overflow-hidden relative bg-gradient-ticker" dir="ltr">
