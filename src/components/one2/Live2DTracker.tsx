@@ -11,13 +11,26 @@ import type { Match } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
 import { Navigation } from '@/components/one2/Navigation';
 import { useManualNews } from '@/hooks/useManualNews';
+import { useRealNews, formatForTicker } from '@/hooks/useRealNews';
 
 function TickerBot({ defaultText, lang }: { defaultText: string, lang: 'ar'|'en' }) {
-  const { items } = useManualNews();
-  const latestNews = items.filter(i => i.is_published).slice(0, 10).map(n => lang === 'ar' ? n.title_ar : n.title_en);
+  const { news: manualNews } = useManualNews();
+  const { data: realNews } = useRealNews(lang);
+
+  const manualItems = manualNews
+    .filter((item) => item.category === 'Ticker')
+    .map((item) => lang === 'ar' ? item.title_ar || item.title_en : item.title_en || item.title_ar)
+    .filter(Boolean);
+
+  const realItems = formatForTicker(realNews, lang).map((i: any) => i.text);
+  
+  const latestNews = [...manualItems, ...realItems].slice(0, 10) as string[];
+
   const prefix = lang === 'ar' ? 'اهلا وسهلا متابعى منصة ون تو : ' : 'Welcome to ONE 2 LIVE : ';
   
-  const botText = latestNews.length > 0 ? `${prefix} ${latestNews.join(' • ')}` : '';
+  const botText = latestNews.length > 0 
+    ? `${prefix} ${latestNews.join('                 •                 ')}` 
+    : '';
   const textToShow = defaultText || botText;
 
   if (!textToShow) return null;
