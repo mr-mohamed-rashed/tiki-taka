@@ -332,9 +332,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Invisible overlay with a center hole to allow native clicks on the video */}
               <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                <div className="w-full h-16 sm:h-20 md:h-32 lg:h-40 xl:h-48 flex">
+                <div className="w-full h-[25cqmin] max-h-[120px] min-h-[50px] flex">
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                  <div className="w-16 sm:w-20 md:w-32 lg:w-40 xl:w-48 h-full pointer-events-none" />
+                  <div className="w-[25cqmin] max-w-[120px] min-w-[50px] h-full pointer-events-none" />
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
                 </div>
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
@@ -427,7 +427,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {servers.length > 1 && (
                 <>
                   <div
-                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -441,7 +441,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     }}
                   />
                   <div
-                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -473,7 +473,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               <TickerBot defaultText={tickerText} lang={lang as 'ar'|'en'} />
 
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
+              <div className={cn("absolute inset-0 m-auto w-[25cqmin] h-[25cqmin] max-w-[120px] max-h-[120px] min-w-[50px] min-h-[50px] z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
                   className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
@@ -576,9 +576,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Invisible overlay with a center hole to allow native clicks on the video */}
               <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                <div className="w-full h-16 sm:h-20 md:h-32 lg:h-40 xl:h-48 flex">
+                <div className="w-full h-[25cqmin] max-h-[120px] min-h-[50px] flex">
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                  <div className="w-16 sm:w-20 md:w-32 lg:w-40 xl:w-48 h-full pointer-events-none" />
+                  <div className="w-[25cqmin] max-w-[120px] min-w-[50px] h-full pointer-events-none" />
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
                 </div>
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
@@ -588,7 +588,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {servers.length > 1 && (
                 <>
                   <div
-                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -602,7 +602,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     }}
                   />
                   <div
-                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
+                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
                     onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
                     style={{
                       WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -697,7 +697,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               )}
 
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
+              <div className={cn("absolute inset-0 m-auto w-[25cqmin] h-[25cqmin] max-w-[120px] max-h-[120px] min-w-[50px] min-h-[50px] z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
                   className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
