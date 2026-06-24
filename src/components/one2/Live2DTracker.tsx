@@ -235,10 +235,22 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
       const cw = iframeRef.current.contentWindow;
       if (action === 'play') {
         cw.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-        cw.postMessage({ method: 'play' }, '*');
+        cw.postMessage(JSON.stringify({ method: 'play' }), '*');
+        cw.postMessage('play', '*');
       } else if (action === 'setVolume' && val !== undefined) {
+        // YouTube / generic
         cw.postMessage(`{"event":"command","func":"setVolume","args":[${val}]}`, '*');
-        cw.postMessage({ method: 'setVolume', value: val / 100 }, '*');
+        // Vimeo / Video.js (0 to 1)
+        cw.postMessage(JSON.stringify({ method: 'setVolume', value: val / 100 }), '*');
+        // JW Player (0 to 100)
+        cw.postMessage(JSON.stringify({ type: 'setVolume', volume: val }), '*');
+        // Twitch (0 to 1)
+        cw.postMessage(JSON.stringify({ method: 'setVolume', volume: val / 100 }), '*');
+        // DailyMotion
+        cw.postMessage(`volume=${val / 100}`, '*');
+        // Custom events
+        cw.postMessage({ event: 'setVolume', volume: val / 100 }, '*');
+        cw.postMessage({ type: 'volume', value: val }, '*');
       }
     }
   };
