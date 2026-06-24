@@ -31,7 +31,9 @@ function TickerBot({ defaultText, lang }: { defaultText: string, lang: 'ar'|'en'
   const botText = latestNews.length > 0 
     ? `${prefix} ${latestNews.join('                 •                 ')}` 
     : '';
-  const textToShow = defaultText || botText;
+
+  const fallbackText = lang === 'ar' ? 'جاري تحميل أحدث الأخبار...' : 'Loading latest news...';
+  const textToShow = (defaultText && defaultText.trim().length > 0) ? defaultText : (botText || fallbackText);
 
   if (!textToShow) return null;
 
