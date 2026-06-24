@@ -403,20 +403,24 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               )}
 
               {/* Volume Controls for TikTok Mode */}
-              <div className={cn("absolute top-4 right-4 z-50 flex items-center gap-2 transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
-                <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded-full backdrop-blur-md shadow-lg" onClick={(e) => e.stopPropagation()}>
-                  {volume === 0 ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
-                  <input 
-                    type="range" 
-                    min="0" max="100" 
-                    value={volume} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setVolume(val);
-                      handleExternalAction('setVolume', val);
-                    }}
-                    className="w-20 accent-primary"
-                  />
+              <div className={cn("absolute top-4 right-4 z-50 flex items-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <div className="group flex items-center bg-black/50 rounded-full backdrop-blur-md shadow-lg overflow-hidden transition-all duration-300" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-2 sm:p-3 cursor-pointer">
+                    {volume === 0 ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
+                  </div>
+                  <div className="w-0 overflow-hidden transition-all duration-300 group-hover:w-20 sm:group-hover:w-24 flex items-center opacity-0 group-hover:opacity-100">
+                    <input 
+                      type="range" 
+                      min="0" max="100" 
+                      value={volume} 
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        setVolume(val);
+                        handleExternalAction('setVolume', val);
+                      }}
+                      className="w-16 sm:w-20 accent-primary mr-3"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -536,20 +540,24 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               </div>
 
               {/* Right Side Controls: Volume */}
-              <div className={cn("absolute bottom-4 right-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
-                <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded-full backdrop-blur-md shadow-lg" onClick={(e) => e.stopPropagation()}>
-                  {volume === 0 ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
-                  <input 
-                    type="range" 
-                    min="0" max="100" 
-                    value={volume} 
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value);
-                      setVolume(val);
-                      handleExternalAction('setVolume', val);
-                    }}
-                    className="w-20 sm:w-24 accent-primary"
-                  />
+              <div className={cn("absolute bottom-[45px] right-[65px] sm:right-[70px] z-50 flex items-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
+                <div className="group flex items-center bg-black/50 rounded-full backdrop-blur-md shadow-lg overflow-hidden transition-all duration-300" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-2 sm:p-3 cursor-pointer">
+                    {volume === 0 ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-white" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />}
+                  </div>
+                  <div className="w-0 overflow-hidden transition-all duration-300 group-hover:w-20 sm:group-hover:w-28 flex items-center opacity-0 group-hover:opacity-100">
+                    <input 
+                      type="range" 
+                      min="0" max="100" 
+                      value={volume} 
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        setVolume(val);
+                        handleExternalAction('setVolume', val);
+                      }}
+                      className="w-16 sm:w-24 accent-primary mr-3"
+                    />
+                  </div>
                 </div>
               </div>
 
