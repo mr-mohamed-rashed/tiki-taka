@@ -332,9 +332,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Invisible overlay with a center hole to allow native clicks on the video */}
               <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                <div className="w-full h-20 sm:h-24 flex">
+                <div className="w-full h-16 sm:h-20 md:h-32 lg:h-40 xl:h-48 flex">
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                  <div className="w-20 sm:w-24 h-full pointer-events-none" />
+                  <div className="w-16 sm:w-20 md:w-32 lg:w-40 xl:w-48 h-full pointer-events-none" />
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
                 </div>
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
@@ -473,7 +473,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               <TickerBot defaultText={tickerText} lang={lang as 'ar'|'en'} />
 
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
+              <div className={cn("absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
                   className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
@@ -576,9 +576,9 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               {/* Invisible overlay with a center hole to allow native clicks on the video */}
               <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                <div className="w-full h-20 sm:h-24 flex">
+                <div className="w-full h-16 sm:h-20 md:h-32 lg:h-40 xl:h-48 flex">
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                  <div className="w-20 sm:w-24 h-full pointer-events-none" />
+                  <div className="w-16 sm:w-20 md:w-32 lg:w-40 xl:w-48 h-full pointer-events-none" />
                   <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
                 </div>
                 <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
@@ -697,7 +697,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
               )}
 
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
+              <div className={cn("absolute inset-0 m-auto w-16 h-16 sm:w-20 sm:h-20 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
                 <div 
                   className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
                   style={{
