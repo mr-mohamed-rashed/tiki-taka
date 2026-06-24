@@ -4,8 +4,9 @@ import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useManualNews } from '@/hooks/useManualNews';
 import { useRealNews, formatForTicker } from '@/hooks/useRealNews';
 import { t } from '@/lib/i18n';
+import { cn } from '@/lib/utils';
 
-export function NewsTicker() {
+export function NewsTicker({ variant = 'default', className }: { variant?: 'default' | 'video', className?: string } = {}) {
   const { lang } = useLanguage();
   const { get } = useSiteSettingsContext();
   const { news: manualNews, loading: manualLoading } = useManualNews(true);
@@ -36,7 +37,14 @@ export function NewsTicker() {
   const loading = isLoading || manualLoading;
 
   return (
-    <div className="bg-card border-b border-primary/30 overflow-hidden relative" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <div 
+      className={cn(
+        "overflow-hidden relative",
+        variant === 'video' ? "bg-black/80 border-t border-white/10" : "bg-card border-b border-primary/30",
+        className
+      )}
+      dir={lang === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="flex items-stretch">
         <div className="shrink-0 bg-primary text-primary-foreground font-bold text-[10px] sm:text-[11px] flex items-center gap-1 px-2 sm:px-2.5 py-2.5 uppercase tracking-wide z-10 shadow-neon">
           {loading ? (
@@ -65,7 +73,7 @@ export function NewsTicker() {
                 <span className="font-display font-bold text-primary mx-2 uppercase tracking-wider text-xs">
                   {item.tag}
                 </span>
-                <span className="text-foreground/90">{item.text}</span>
+                <span className={cn(variant === 'video' ? "text-white/90" : "text-foreground/90")}>{item.text}</span>
                 <span className="mx-5 text-primary/40">|</span>
               </span>
             ))}
