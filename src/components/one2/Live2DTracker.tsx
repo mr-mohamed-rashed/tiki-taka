@@ -402,7 +402,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               )}
 
-              {/* Fullscreen & Volume Controls for TikTok Mode */}
+              {/* Volume Controls for TikTok Mode */}
               <div className={cn("absolute top-4 right-4 z-50 flex items-center gap-2 transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
                 <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded-full backdrop-blur-md shadow-lg" onClick={(e) => e.stopPropagation()}>
                   {volume === 0 ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
@@ -418,6 +418,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     className="w-20 accent-primary"
                   />
                 </div>
+              </div>
+
+              {/* Fullscreen Button positioned over native video player fullscreen mark */}
+              <div className={cn("absolute bottom-[45px] right-[15px] z-50 transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
                 <Button variant="secondary" size="icon" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg rounded-full">
                   {isTheater ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
                 </Button>
@@ -531,7 +535,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 )}
               </div>
 
-              {/* Right Side Controls: Fullscreen & Volume */}
+              {/* Right Side Controls: Volume */}
               <div className={cn("absolute bottom-4 right-4 z-50 flex gap-2 transition-opacity items-center", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
                 <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded-full backdrop-blur-md shadow-lg" onClick={(e) => e.stopPropagation()}>
                   {volume === 0 ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
@@ -547,6 +551,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                     className="w-20 sm:w-24 accent-primary"
                   />
                 </div>
+              </div>
+
+              {/* Fullscreen Button positioned over native video player fullscreen mark */}
+              <div className={cn("absolute bottom-[45px] right-[15px] z-50 transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
                 <Button variant="secondary" size="icon" onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="bg-black/50 text-white hover:bg-black/80 border-none shadow-lg h-10 w-10 sm:h-12 sm:w-12 rounded-full">
                   {isTheater ? <Minimize className="h-5 w-5 sm:h-6 sm:w-6" /> : <Maximize className="h-5 w-5 sm:h-6 sm:w-6" />}
                 </Button>
