@@ -219,10 +219,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     try {
       const url = new URL(activeServerUrl);
       if (url.hostname.includes('youtube.com') && url.searchParams.has('v')) {
-        return `https://www.youtube.com/embed/${url.searchParams.get('v')}`;
+        return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1`;
       }
       if (url.hostname.includes('youtu.be')) {
-        return `https://www.youtube.com/embed${url.pathname}`;
+        return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1`;
       }
     } catch (e) {
       // Ignore invalid URLs
