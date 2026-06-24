@@ -14,38 +14,11 @@ import { useManualNews } from '@/hooks/useManualNews';
 
 function TickerBot({ defaultText, lang }: { defaultText: string, lang: 'ar'|'en' }) {
   const { items } = useManualNews();
-  const [showNews, setShowNews] = useState(true);
-
-  useEffect(() => {
-    // Show news for 2 minutes, then pause for 5 minutes
-    const cycle = () => {
-      setShowNews(true);
-      setTimeout(() => {
-        setShowNews(false);
-      }, 2 * 60 * 1000); // 2 mins
-    };
-    
-    // Initial start
-    const timer1 = setTimeout(() => {
-      setShowNews(false);
-    }, 2 * 60 * 1000);
-
-    const interval = setInterval(() => {
-      cycle();
-    }, 7 * 60 * 1000); // 7 mins total
-
-    return () => {
-      clearTimeout(timer1);
-      clearInterval(interval);
-    };
-  }, []);
-
   const latestNews = items.filter(i => i.is_published).slice(0, 10).map(n => lang === 'ar' ? n.title_ar : n.title_en);
   const prefix = lang === 'ar' ? 'اهلا وسهلا متابعى منصة ون تو : ' : 'Welcome to ONE 2 LIVE : ';
   
-  const textToShow = (showNews && latestNews.length > 0) 
-    ? `${prefix} ${latestNews.join(' • ')}`
-    : defaultText;
+  const botText = latestNews.length > 0 ? `${prefix} ${latestNews.join(' • ')}` : '';
+  const textToShow = defaultText || botText;
 
   if (!textToShow) return null;
 
@@ -391,16 +364,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               </div>
 
-              {/* Ticker */}
-              {tickerText && (
-                <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
-                  {/* @ts-ignore */}
-                  <marquee scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
-                    {tickerText}
-                  {/* @ts-ignore */}
-                  </marquee>
-                </div>
-              )}
+              {/* Ticker removed here, handled by TickerBot at the end of the file */}
 
               {/* Volume Controls for TikTok Mode */}
               <div className={cn("absolute top-4 right-4 z-50 flex items-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
@@ -701,16 +665,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               </div>
 
-              {/* Ticker */}
-              {tickerText && (
-                <div className="absolute bottom-0 left-0 right-0 z-40 bg-black/80 text-white overflow-hidden pointer-events-none border-t border-white/10" dir="rtl">
-                  {/* @ts-ignore */}
-                  <marquee direction="right" scrollamount="5" className="py-1.5 px-4 font-arabic text-sm sm:text-base font-bold text-yellow-400 flex items-center">
-                    {tickerText}
-                  {/* @ts-ignore */}
-                  </marquee>
-                </div>
-              )}
+              {/* Ticker removed here, handled by TickerBot at the end of the file */}
 
               {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
               <div className={cn("absolute inset-0 m-auto w-[25cqmin] h-[25cqmin] max-w-[120px] max-h-[120px] min-w-[50px] min-h-[50px] z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
