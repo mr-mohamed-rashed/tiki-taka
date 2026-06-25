@@ -89,7 +89,7 @@ export function TopScorersTable() {
   );
 
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 8;
 
   const totalPages = Math.max(1, Math.ceil(scorers.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -171,7 +171,6 @@ export function TopScorersTable() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <img src={scorer.country.flag} alt={scorer.country.name} className="w-6 h-6 rounded object-cover ring-1 ring-border" />
                     <div>
                       <div className={cn('font-bold text-sm flex items-center gap-2', isTop3 && colors.text)}>
                         {scorer.name}
@@ -223,17 +222,23 @@ export function TopScorersTable() {
               {lang === 'ar' ? 'السابق' : 'Prev'}
             </Button>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-              <Button
-                key={pageNumber}
-                type="button"
-                variant={pageNumber === safePage ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => goToPage(pageNumber)}
-                className="h-8 w-8 p-0"
-              >
-                {pageNumber}
-              </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(pageNumber => pageNumber === 1 || pageNumber === totalPages || Math.abs(pageNumber - safePage) <= 1)
+              .map((pageNumber, index, array) => (
+                <div key={pageNumber} className="flex items-center gap-1">
+                  {index > 0 && pageNumber - array[index - 1] > 1 && (
+                    <span className="text-muted-foreground px-1">...</span>
+                  )}
+                  <Button
+                    type="button"
+                    variant={pageNumber === safePage ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => goToPage(pageNumber)}
+                    className="h-8 w-8 p-0"
+                  >
+                    {pageNumber}
+                  </Button>
+                </div>
             ))}
 
             <Button
