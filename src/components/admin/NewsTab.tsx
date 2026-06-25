@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useManualNews, type ManualNewsRow, isSystemCategory, getNewsType, getNewsCategoryName, makeCategoryString } from '@/hooks/useManualNews';
+import { useNewsCategories } from '@/hooks/useNewsCategories';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 type NewsDraft = Omit<ManualNewsRow, 'id' | 'created_at'>;
@@ -66,20 +67,7 @@ export function NewsTab() {
   const pulseItems = news.filter((item) => getNewsType(item.category) === 'Pulse');
   const articleItems = news.filter((item) => getNewsType(item.category) === 'Article');
 
-  const allCategories = useMemo(() => {
-    const cats = new Set(['World Cup 2026']);
-    news.forEach(item => {
-      const name = getNewsCategoryName(item.category);
-      if (name) cats.add(name);
-    });
-    const tickerCat = getNewsCategoryName(ticker.category);
-    if (tickerCat) cats.add(tickerCat);
-    const pulseCat = getNewsCategoryName(pulse.category);
-    if (pulseCat) cats.add(pulseCat);
-    const articleCat = getNewsCategoryName(article.category);
-    if (articleCat) cats.add(articleCat);
-    return Array.from(cats);
-  }, [news, ticker.category, pulse.category, article.category]);
+  const { categories: allCategories, addCategory, deleteCategory } = useNewsCategories();
 
   useEffect(() => {
     setTickerSpeed(settings.find((setting) => setting.key === 'ticker_speed_seconds')?.value_en || '70');
@@ -114,24 +102,13 @@ export function NewsTab() {
     setEditingId(item.id);
   };
 
-  const handleDeleteCategory = async (categoryName: string) => {
-    if (categoryName === 'World Cup 2026') return;
-    const itemsToUpdate = news.filter((item) => getNewsCategoryName(item.category) === categoryName);
-    
-    for (const item of itemsToUpdate) {
-      const type = getNewsType(item.category);
-      await update(item.id, { category: makeCategoryString(type as any, 'World Cup 2026') });
-    }
-    
-    if (getNewsCategoryName(ticker.category) === categoryName) {
-      setTicker(prev => ({ ...prev, category: makeCategoryString('Ticker', 'World Cup 2026') }));
-    }
-    if (getNewsCategoryName(pulse.category) === categoryName) {
-      setPulse(prev => ({ ...prev, category: makeCategoryString('Pulse', 'World Cup 2026') }));
-    }
-    if (getNewsCategoryName(article.category) === categoryName) {
-      setArticle(prev => ({ ...prev, category: makeCategoryString('Article', 'World Cup 2026') }));
-    }
+  const handleDeleteCategory = async (cat: string) => {
+    if (cat === 'World Cup 2026') return;
+    await deleteCategory(cat);
+  };
+
+  const handleAddCategory = async (cat: string) => {
+    await addCategory(cat);
   };
 
   const saveTickerSpeed = async () => {
@@ -276,6 +253,7 @@ export function NewsTab() {
                 <CategorySelector 
                   value={getNewsCategoryName(article.category)}
                   onChange={(val) => setArticle((current) => ({ ...current, category: makeCategoryString('Article', val) }))}
+                  onAdd={handleAddCategory}
                   onDelete={handleDeleteCategory}
                   categories={allCategories}
                   showAdd={true}
@@ -417,12 +395,14 @@ function SectionTitle({ title, description }: { title: string; description: stri
 function CategorySelector({
   value,
   onChange,
+  onAdd,
   onDelete,
   categories,
   showAdd = false
 }: {
   value: string;
   onChange: (val: string) => void;
+  onAdd?: (val: string) => void;
   onDelete?: (val: string) => void;
   categories: string[];
   showAdd?: boolean;
@@ -482,9 +462,10 @@ function CategorySelector({
           <Button 
             type="button"
             variant="secondary"
-            className="h-10 shrink-0"
+            className="h-10 shrink-0 font-semibold"
             onClick={() => {
               if (customVal.trim()) {
+                if (onAdd) onAdd(customVal.trim());
                 onChange(customVal.trim());
                 setCustomVal('');
               }
