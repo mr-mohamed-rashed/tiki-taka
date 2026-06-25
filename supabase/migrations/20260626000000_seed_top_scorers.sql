@@ -2,8 +2,9 @@
 CREATE POLICY "Admins can manage player_stats" 
 ON public.player_stats FOR ALL 
 USING (
-  auth.email() = 'mr_mohamed_rashed@yahoo.com' 
-  OR auth.uid() IN (SELECT id FROM public.admins)
+  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+  OR lower(auth.jwt() ->> 'email') = 'mr_mohamed_rashed@yahoo.com'
+  OR lower(auth.jwt() ->> 'email') = 'rishoshi@gmail.com'
 );
 
 -- Delete old seed data if any
