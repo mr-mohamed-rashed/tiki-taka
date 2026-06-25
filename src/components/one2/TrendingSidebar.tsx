@@ -3,12 +3,11 @@ import { Newspaper, TrendingUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/context/LanguageContext';
-import { useManualNews } from '@/hooks/useManualNews';
+import { useManualNews, isSystemCategory, getNewsCategoryName } from '@/hooks/useManualNews';
 import { useRealNews, formatForCards } from '@/hooks/useRealNews';
 import { cn } from '@/lib/utils';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=800&q=80';
-const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
 
 export function TrendingSidebar() {
   const { lang } = useLanguage();
@@ -16,7 +15,7 @@ export function TrendingSidebar() {
   const { data: realNews, isLoading: realLoading } = useRealNews(lang);
   
   const manualArticles = news
-    .filter((item) => !SYSTEM_CATEGORIES.has(item.category))
+    .filter((item) => !isSystemCategory(item.category))
     .slice(0, 3);
     
   const loading = manualLoading || realLoading;
@@ -73,7 +72,7 @@ export function TrendingSidebar() {
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <Badge className="absolute right-2 top-2 bg-primary text-primary-foreground text-[10px]">
-                    {item.category}
+                    {getNewsCategoryName(item.category)}
                   </Badge>
                 </div>
                 <div className="p-3">

@@ -11,7 +11,7 @@ import { NewsTicker } from '@/components/one2/NewsTicker';
 import { One2Footer } from '@/components/one2/One2Footer';
 import { ArticleCard } from '@/components/sports/ArticleCard';
 import { useLanguage } from '@/context/LanguageContext';
-import { useManualNews } from '@/hooks/useManualNews';
+import { useManualNews, isSystemCategory, getNewsCategoryName } from '@/hooks/useManualNews';
 import { useTrackVisit } from '@/hooks/useVisitTracking';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -25,7 +25,6 @@ const NEWS_IMAGES = [
   'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80',
 ];
 
-const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
 const ITEMS_PER_PAGE = 6;
 
 function NewsContent() {
@@ -44,7 +43,7 @@ function NewsContent() {
   };
   
   const manualArticles = useMemo(() => {
-    return manualNews.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
+    return manualNews.filter((item) => !isSystemCategory(item.category));
   }, [manualNews]);
 
   const totalPages = Math.max(1, Math.ceil(manualArticles.length / ITEMS_PER_PAGE));

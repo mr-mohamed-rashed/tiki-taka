@@ -10,11 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { useManualNews, type ManualNewsRow } from '@/hooks/useManualNews';
+import { useManualNews, type ManualNewsRow, isSystemCategory, getNewsType, getNewsCategoryName, makeCategoryString } from '@/hooks/useManualNews';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
-
-const ARTICLE_CATEGORIES = ['World Cup 2026', 'Groups', 'Squads', 'Preview', 'Results', 'Highlights', 'Stats'];
-const SYSTEM_CATEGORIES = new Set(['Ticker', 'Pulse']);
 
 type NewsDraft = Omit<ManualNewsRow, 'id' | 'created_at'>;
 
@@ -65,9 +62,24 @@ export function NewsTab() {
   const [pulse, setPulse] = useState(blankPulse());
   const [article, setArticle] = useState(blankArticle());
 
-  const tickerItems = news.filter((item) => item.category === 'Ticker');
-  const pulseItems = news.filter((item) => item.category === 'Pulse');
-  const articleItems = news.filter((item) => !SYSTEM_CATEGORIES.has(item.category));
+  const tickerItems = news.filter((item) => getNewsType(item.category) === 'Ticker');
+  const pulseItems = news.filter((item) => getNewsType(item.category) === 'Pulse');
+  const articleItems = news.filter((item) => getNewsType(item.category) === 'Article');
+
+  const allCategories = React.useMemo(() => {
+    const cats = new Set(['World Cup 2026']);
+    news.forEach(item => {
+      const name = getNewsCategoryName(item.category);
+      if (name) cats.add(name);
+    });
+    const tickerCat = getNewsCategoryName(ticker.category);
+    if (tickerCat) cats.add(tickerCat);
+    const pulseCat = getNewsCategoryName(pulse.category);
+    if (pulseCat) cats.add(pulseCat);
+    const articleCat = getNewsCategoryName(article.category);
+    if (articleCat) cats.add(articleCat);
+    return Array.from(cats);
+  }, [news, ticker.category, pulse.category, article.category]);
 
   useEffect(() => {
     setTickerSpeed(settings.find((setting) => setting.key === 'ticker_speed_seconds')?.value_en || '70');
@@ -161,13 +173,20 @@ export function NewsTab() {
               description="سطر قصير يظهر في شريط الأخبار المتحرك. اكتب السطر واضغط حفظ."
             />
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-              <Input
-                value={ticker.title_ar}
-                onChange={(event) => setTicker((current) => ({ ...current, title_ar: event.target.value }))}
-                className="h-11 flex-1 font-arabic text-right"
-                dir="rtl"
-                placeholder="مثال: قرعة نارية في دور المجموعات..."
-              />
+              <div className="flex-1 space-y-3">
+                <Input
+                  value={ticker.title_ar}
+                  onChange={(event) => setTicker((current) => ({ ...current, title_ar: event.target.value }))}
+                  className="h-11 font-arabic text-right"
+                  dir="rtl"
+                  placeholder="مثال: قرعة نارية في دور المجموعات..."
+                />
+                <CategorySelector 
+                  value={getNewsCategoryName(ticker.category)}
+                  onChange={(val) => setTicker((current) => ({ ...current, category: makeCategoryString('Ticker', val) }))}
+                  categories={allCategories}
+                />
+              </div>
               <Button
                 onClick={() => addItem(ticker, () => setTicker(blankTicker()))}
                 disabled={saving || !ticker.title_ar.trim()}
@@ -237,17 +256,12 @@ export function NewsTab() {
                   placeholder="عنوان الخبر..."
                 />
               </Field>
-              <Field label="التصنيف">
-                <Select value={article.category} onValueChange={(value) => setArticle((current) => ({ ...current, category: value }))}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ARTICLE_CATEGORIES.map((category) => (
-                      <SelectItem key={category} value={category}>{category}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <Field label="التصنيف" className="sm:col-span-2">
+                <CategorySelector 
+                  value={getNewsCategoryName(article.category)}
+                  onChange={(val) => setArticle((current) => ({ ...current, category: makeCategoryString('Article', val) }))}
+                  categories={allCategories}
+                />
               </Field>
               <Field label="تفاصيل الخبر" className="sm:col-span-2">
                 <Textarea
@@ -313,7 +327,7 @@ export function NewsTab() {
               title="نبض كأس العالم"
               description="كارت خفيف في الرئيسية: عنوان قصير وتايتل/تصنيف فقط."
             />
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_220px_auto]">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Input
                 value={pulse.title_ar}
                 onChange={(event) => setPulse((current) => ({ ...current, title_ar: event.target.value }))}
@@ -328,7 +342,14 @@ export function NewsTab() {
                 dir="ltr"
                 placeholder="Title / tag"
               />
-              <div className="flex gap-2">
+              <div className="sm:col-span-2">
+                <CategorySelector 
+                  value={getNewsCategoryName(pulse.category)}
+                  onChange={(val) => setPulse((current) => ({ ...current, category: makeCategoryString('Pulse', val) }))}
+                  categories={allCategories}
+                />
+              </div>
+              <div className="flex gap-2 sm:col-span-2">
                 <Button
                   onClick={() => addItem(pulse, () => setPulse(blankPulse()))}
                   disabled={saving || !pulse.title_ar.trim()}
@@ -361,7 +382,54 @@ function SectionTitle({ title, description }: { title: string; description: stri
   );
 }
 
-function Field({ label, className, children }: { label: string; className?: string; children: ReactNode }) {
+function CategorySelector({
+  value,
+  onChange,
+  categories
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  categories: string[];
+}) {
+  const [customVal, setCustomVal] = useState('');
+  
+  return (
+    <div className="flex gap-2 w-full">
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="h-10 flex-1 min-w-[200px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {categories.map((c) => (
+            <SelectItem key={c} value={c}>{c}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Input
+        value={customVal}
+        onChange={e => setCustomVal(e.target.value)}
+        placeholder="مثال: الدوري الإنجليزي"
+        className="h-10 flex-1 font-arabic"
+        dir="rtl"
+      />
+      <Button 
+        type="button"
+        variant="secondary"
+        className="h-10"
+        onClick={() => {
+          if (customVal.trim()) {
+            onChange(customVal.trim());
+            setCustomVal('');
+          }
+        }}
+      >
+        إضافة تصنيف
+      </Button>
+    </div>
+  );
+}
+
+function Field({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   return (
     <div className={className}>
       <Label className="mb-1.5 block text-xs text-muted-foreground">{label}</Label>

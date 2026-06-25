@@ -16,6 +16,28 @@ export interface ManualNewsRow {
   created_at: string;
 }
 
+export function isSystemCategory(cat: string) {
+  return cat === 'Ticker' || cat.startsWith('Ticker:') || cat === 'Pulse' || cat.startsWith('Pulse:');
+}
+
+export function getNewsType(cat: string) {
+  if (cat === 'Ticker' || cat.startsWith('Ticker:')) return 'Ticker';
+  if (cat === 'Pulse' || cat.startsWith('Pulse:')) return 'Pulse';
+  return 'Article';
+}
+
+export function getNewsCategoryName(cat: string) {
+  if (cat === 'Ticker' || cat === 'Pulse') return 'World Cup 2026';
+  if (cat.startsWith('Ticker:')) return cat.substring(7);
+  if (cat.startsWith('Pulse:')) return cat.substring(6);
+  return cat;
+}
+
+export function makeCategoryString(type: 'Ticker' | 'Pulse' | 'Article', name: string) {
+  if (type === 'Article') return name;
+  return `${type}:${name}`;
+}
+
 const LOCAL_KEY = 'tiki_taka_manual_news';
 
 function readLocalNews() {
