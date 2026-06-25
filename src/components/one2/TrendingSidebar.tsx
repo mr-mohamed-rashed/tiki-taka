@@ -86,7 +86,7 @@ export function TrendingSidebar() {
                   </h4>
                   <p className="mt-2 text-[11px] text-muted-foreground" dir="ltr">{item.published_at}</p>
                 </div>
-              </NavLink>
+              </a>
             );
           })
         ) : (
