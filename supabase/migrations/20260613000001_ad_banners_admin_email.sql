@@ -31,46 +31,26 @@ drop policy if exists "Admins insert ad_banners" on public.ad_banners;
 create policy "Admins insert ad_banners"
 on public.ad_banners for insert
 with check (
-  auth.jwt() ->> 'email' = 'rishoshi@gmail.com'
-  or exists (
-    select 1
-    from public.profiles
-    where profiles.id = auth.uid()
-      and profiles.role = 'admin'
-  )
+  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+  or lower(auth.jwt() ->> 'email') = 'rishoshi@gmail.com'
 );
 
 drop policy if exists "Admins update ad_banners" on public.ad_banners;
 create policy "Admins update ad_banners"
 on public.ad_banners for update
 using (
-  auth.jwt() ->> 'email' = 'rishoshi@gmail.com'
-  or exists (
-    select 1
-    from public.profiles
-    where profiles.id = auth.uid()
-      and profiles.role = 'admin'
-  )
+  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+  or lower(auth.jwt() ->> 'email') = 'rishoshi@gmail.com'
 )
 with check (
-  auth.jwt() ->> 'email' = 'rishoshi@gmail.com'
-  or exists (
-    select 1
-    from public.profiles
-    where profiles.id = auth.uid()
-      and profiles.role = 'admin'
-  )
+  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+  or lower(auth.jwt() ->> 'email') = 'rishoshi@gmail.com'
 );
 
 drop policy if exists "Admins delete ad_banners" on public.ad_banners;
 create policy "Admins delete ad_banners"
 on public.ad_banners for delete
 using (
-  auth.jwt() ->> 'email' = 'rishoshi@gmail.com'
-  or exists (
-    select 1
-    from public.profiles
-    where profiles.id = auth.uid()
-      and profiles.role = 'admin'
-  )
+  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
+  or lower(auth.jwt() ->> 'email') = 'rishoshi@gmail.com'
 );

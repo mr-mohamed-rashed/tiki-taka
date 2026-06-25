@@ -193,8 +193,8 @@ export function NewsTab() {
               description="سطر قصير يظهر في شريط الأخبار المتحرك. اكتب السطر واضغط حفظ."
             />
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-              <div className="flex-1 space-y-3">
-                <Field label="نص الشريط الإخباري">
+              <div className="flex-1 flex gap-3">
+                <Field label="نص الشريط الإخباري" className="flex-1">
                   <Input
                     value={ticker.title_ar}
                     onChange={(event) => setTicker((current) => ({ ...current, title_ar: event.target.value }))}
@@ -203,7 +203,7 @@ export function NewsTab() {
                     placeholder="مثال: قرعة نارية في دور المجموعات..."
                   />
                 </Field>
-                <div className="pt-2 border-t border-border/50">
+                <div className="w-[180px] shrink-0">
                   <CategorySelector 
                     value={getNewsCategoryName(ticker.category)}
                     onChange={(val) => setTicker((current) => ({ ...current, category: makeCategoryString('Ticker', val) }))}
@@ -278,6 +278,7 @@ export function NewsTab() {
                   onChange={(val) => setArticle((current) => ({ ...current, category: makeCategoryString('Article', val) }))}
                   onDelete={handleDeleteCategory}
                   categories={allCategories}
+                  showAdd={true}
                 />
               </div>
               <Field label="عنوان الخبر" className="sm:col-span-2">
@@ -353,8 +354,8 @@ export function NewsTab() {
               title="نبض كأس العالم"
               description="كارت خفيف في الرئيسية: عنوان قصير وتايتل/تصنيف فقط."
             />
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label="عنوان النبض">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <Field label="عنوان النبض" className="sm:col-span-1">
                 <Input
                   value={pulse.title_ar}
                   onChange={(event) => setPulse((current) => ({ ...current, title_ar: event.target.value }))}
@@ -363,7 +364,7 @@ export function NewsTab() {
                   placeholder="مثال: صلاح ومرموش يقودان مصر..."
                 />
               </Field>
-              <Field label="التاج الإنجليزي (اختياري)">
+              <Field label="التاج الإنجليزي (اختياري)" className="sm:col-span-1">
                 <Input
                   value={pulse.title_en}
                   onChange={(event) => setPulse((current) => ({ ...current, title_en: event.target.value }))}
@@ -372,7 +373,7 @@ export function NewsTab() {
                   placeholder="Title / tag"
                 />
               </Field>
-              <div className="sm:col-span-2 py-2 border-y border-border/50">
+              <div className="sm:col-span-1">
                 <CategorySelector 
                   value={getNewsCategoryName(pulse.category)}
                   onChange={(val) => setPulse((current) => ({ ...current, category: makeCategoryString('Pulse', val) }))}
@@ -417,37 +418,58 @@ function CategorySelector({
   value,
   onChange,
   onDelete,
-  categories
+  categories,
+  showAdd = false
 }: {
   value: string;
   onChange: (val: string) => void;
   onDelete?: (val: string) => void;
   categories: string[];
+  showAdd?: boolean;
 }) {
   const [customVal, setCustomVal] = useState('');
   
+  const selectNode = (
+    <Field label="التصنيف">
+      <div className="flex gap-2">
+        <Select value={value} onValueChange={onChange}>
+          <SelectTrigger className="h-10 flex-1">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((c) => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {onDelete && value !== 'World Cup 2026' && (
+          <Button 
+            type="button"
+            variant="destructive"
+            size="icon"
+            className="h-10 w-10 shrink-0"
+            onClick={() => {
+              if (window.confirm('هل أنت متأكد من حذف هذا التصنيف ونقل كل أخباره للأساسي؟')) {
+                onDelete(value);
+              }
+            }}
+            title="حذف التصنيف"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </Field>
+  );
+
+  if (!showAdd) {
+    return selectNode;
+  }
+
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 w-full">
-      <Field label="التصنيف">
-        <div className="flex gap-2">
-          <Select value={value} onValueChange={onChange}>
-            <SelectTrigger className="h-10 flex-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((c) => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {onDelete && value !== 'World Cup 2026' && (
-            <Button 
-              type="button"
-              variant="destructive"
-              size="icon"
-              className="h-10 w-10 shrink-0"
-              onClick={() => {
-                if (window.confirm('هل أنت متأكد من حذف هذا التصنيف ونقل كل أخباره للأساسي؟')) {
+      {selectNode}
+      <Field label="إضافة تصنيف جديد">
                   onDelete(value);
                 }
               }}
