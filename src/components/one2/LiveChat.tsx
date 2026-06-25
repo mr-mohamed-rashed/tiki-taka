@@ -239,7 +239,10 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
     // Only run this logic on the Moderator's client to prevent multiple clients from spamming the DB
     if (!isModerator || news.length === 0 || !botsEnabled) return;
 
-    const BOT_NAMES = ['الكابتن (One2)', 'أدمن الأخبار', 'محلل وان تو', 'فار (VAR)', 'رادار الملاعب'];
+    const BOT_NAMES = ['أحمد محمد', 'محمود سعد', 'كريم حسن', 'طارق السيد', 'علي عادل', 'عمر فاروق', 'يوسف مصطفى', 'حسن كمال', 'مصطفى فهمي', 'خالد عبد الله'];
+
+    const botMessagesOnly = news.filter(n => n.category === 'BotMessage');
+    if (botMessagesOnly.length === 0) return;
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -260,15 +263,15 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
       const requiredWaitTime = 45000 * multiplier;
       
       if (now - lastMsgTime > requiredWaitTime) {
-        const randomNews = news[Math.floor(Math.random() * news.length)];
+        const randomNews = botMessagesOnly[Math.floor(Math.random() * botMessagesOnly.length)];
         const randomBot = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
-        const title = lang === 'ar' ? (randomNews.title_ar || randomNews.title_en) : (randomNews.title_en || randomNews.title_ar);
-        const link = `${window.location.origin}/news/${randomNews.id}`;
+        const text = randomNews.title_ar || randomNews.title_en;
+        const link = randomNews.excerpt_en || randomNews.excerpt_ar; // We will use excerpt_en for the external link
         
         supabase.from('chat_messages').insert({
           user_id: userId,
           username: randomBot,
-          message: `📰 خبر عاجل: ${title} \n ${link}`,
+          message: `${text} \n ${link}`,
           match_id: matchId,
         }).select().single().then(({ data, error }) => {
           if (error) {

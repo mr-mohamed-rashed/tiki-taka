@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap, ArrowUp, ArrowDown, Edit } from 'lucide-react';
+import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap, ArrowUp, ArrowDown, Edit, Bot } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -38,6 +38,19 @@ const blankPulse = (): NewsDraft => ({
   image_url: '',
   published_at: today(),
   is_published: true,
+});
+
+const blankBotMessage = (): NewsDraft => ({
+  title_ar: '',
+  title_en: '',
+  excerpt_ar: '',
+  excerpt_en: '',
+  category: 'BotMessage',
+  image_url: '',
+  published_at: today(),
+  is_published: true,
+});
+
 const blankArticle = (): NewsDraft => ({
   title_ar: '',
   title_en: '',
@@ -60,10 +73,12 @@ export function NewsTab() {
   const [ticker, setTicker] = useState(blankTicker());
   const [pulse, setPulse] = useState(blankPulse());
   const [article, setArticle] = useState(blankArticle());
+  const [botMessage, setBotMessage] = useState(blankBotMessage());
 
   const tickerItems = news.filter((item) => getNewsType(item.category) === 'Ticker');
   const pulseItems = news.filter((item) => getNewsType(item.category) === 'Pulse');
   const articleItems = news.filter((item) => getNewsType(item.category) === 'Article');
+  const botMessageItems = news.filter((item) => item.category === 'BotMessage');
 
   const { categories: allCategories, addCategory, deleteCategory } = useNewsCategories();
 
@@ -145,8 +160,9 @@ export function NewsTab() {
         setTicker(blankTicker());
         setPulse(blankPulse());
         setArticle(blankArticle());
+        setBotMessage(blankBotMessage());
       }}>
-        <TabsList className="grid h-auto grid-cols-1 gap-2 bg-card p-1 sm:grid-cols-3">
+        <TabsList className="grid h-auto grid-cols-1 gap-2 bg-card p-1 sm:grid-cols-4">
           <TabsTrigger value="ticker" className="gap-2 py-3">
             <Zap className="h-4 w-4" />
             الشريط
@@ -158,6 +174,10 @@ export function NewsTab() {
           <TabsTrigger value="pulse" className="gap-2 py-3">
             <Newspaper className="h-4 w-4" />
             نبض 2026
+          </TabsTrigger>
+          <TabsTrigger value="bots" className="gap-2 py-3">
+            <Bot className="h-4 w-4" />
+            رسائل البوت
           </TabsTrigger>
         </TabsList>
 
@@ -375,6 +395,51 @@ export function NewsTab() {
             </div>
           </Card>
           <NewsList items={pulseItems} empty="لا توجد عناصر في نبض 2026 حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} onEdit={(item) => handleEdit(item, setPulse)} />
+        </TabsContent>
+
+        <TabsContent value="bots" className="space-y-4">
+          <Card className="border-primary/25 bg-gradient-card p-5">
+            <SectionTitle
+              title="رسائل الروبوتات"
+              description="هنا تضع الروابط والرسائل التي تريد أن ترددها الروبوتات في الشات."
+            />
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="نص الرسالة (مثال: ماتش الأهلي شغال هنا)" className="sm:col-span-2">
+                <Input
+                  value={botMessage.title_ar}
+                  onChange={(event) => setBotMessage((current) => ({ ...current, title_ar: event.target.value }))}
+                  className="h-11 font-arabic text-right"
+                  dir="rtl"
+                  placeholder="ماتش الأهلي والزمالك شغال هنا بدون تقطيع..."
+                />
+              </Field>
+              <Field label="الرابط الخارجي أو الداخلي للمباراة" className="sm:col-span-2">
+                <Input
+                  value={botMessage.excerpt_en}
+                  onChange={(event) => setBotMessage((current) => ({ ...current, excerpt_en: event.target.value }))}
+                  className="h-11"
+                  dir="ltr"
+                  placeholder="https://tiki-taka.cc/..."
+                />
+              </Field>
+              <div className="flex gap-2 sm:col-span-2">
+                <Button
+                  onClick={() => addItem(botMessage, () => setBotMessage(blankBotMessage()))}
+                  disabled={saving || !botMessage.title_ar.trim() || !botMessage.excerpt_en.trim()}
+                  className="h-11 flex-1 gap-2 font-semibold"
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  {editingId ? 'تعديل' : 'حفظ'}
+                </Button>
+                {editingId && (
+                  <Button variant="outline" className="h-11 font-semibold" onClick={() => { setEditingId(null); setBotMessage(blankBotMessage()); }}>
+                    إلغاء
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Card>
+          <NewsList items={botMessageItems} empty="لا توجد رسائل للروبوتات حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} onEdit={(item) => handleEdit(item, setBotMessage)} />
         </TabsContent>
       </Tabs>
     </div>

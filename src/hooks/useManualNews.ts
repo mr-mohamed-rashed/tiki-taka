@@ -23,6 +23,7 @@ export function isSystemCategory(cat: string) {
 export function getNewsType(cat: string) {
   if (cat === 'Ticker' || cat.startsWith('Ticker:')) return 'Ticker';
   if (cat === 'Pulse' || cat.startsWith('Pulse:')) return 'Pulse';
+  if (cat === 'BotMessage') return 'BotMessage';
   return 'Article';
 }
 
