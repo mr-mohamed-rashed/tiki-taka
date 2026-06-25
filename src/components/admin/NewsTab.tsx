@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap, ArrowUp, ArrowDown, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -66,7 +66,7 @@ export function NewsTab() {
   const pulseItems = news.filter((item) => getNewsType(item.category) === 'Pulse');
   const articleItems = news.filter((item) => getNewsType(item.category) === 'Article');
 
-  const allCategories = React.useMemo(() => {
+  const allCategories = useMemo(() => {
     const cats = new Set(['World Cup 2026']);
     news.forEach(item => {
       const name = getNewsCategoryName(item.category);
