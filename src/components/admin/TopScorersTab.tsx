@@ -12,6 +12,9 @@ interface PlayerStat {
   player_name: string;
   team_name: string;
   goals: number;
+  assists?: number;
+  yellow_cards?: number;
+  red_cards?: number;
 }
 
 export function TopScorersTab() {
@@ -23,14 +26,17 @@ export function TopScorersTab() {
   const [form, setForm] = useState({
     player_name: '',
     team_name: '',
-    goals: 0
+    goals: 0,
+    assists: 0,
+    yellow_cards: 0,
+    red_cards: 0
   });
 
   const fetchScorers = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('player_stats')
-      .select('id, player_name, team_name, goals')
+      .select('id, player_name, team_name, goals, assists, yellow_cards, red_cards')
       .order('goals', { ascending: false });
       
     if (error) {
@@ -60,7 +66,7 @@ export function TopScorersTab() {
       } else {
         toast({ title: 'تم التعديل بنجاح' });
         setEditingId(null);
-        setForm({ player_name: '', team_name: '', goals: 0 });
+        setForm({ player_name: '', team_name: '', goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 });
         fetchScorers();
       }
     } else {
@@ -72,7 +78,7 @@ export function TopScorersTab() {
         toast({ title: 'فشل الإضافة', description: error.message, variant: 'destructive' });
       } else {
         toast({ title: 'تمت الإضافة بنجاح' });
-        setForm({ player_name: '', team_name: '', goals: 0 });
+        setForm({ player_name: '', team_name: '', goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 });
         fetchScorers();
       }
     }
@@ -95,7 +101,10 @@ export function TopScorersTab() {
     setForm({
       player_name: scorer.player_name,
       team_name: scorer.team_name,
-      goals: scorer.goals
+      goals: scorer.goals,
+      assists: scorer.assists || 0,
+      yellow_cards: scorer.yellow_cards || 0,
+      red_cards: scorer.red_cards || 0
     });
   };
 
@@ -134,8 +143,35 @@ export function TopScorersTab() {
               className="h-11"
             />
           </div>
+          <div className="space-y-1">
+            <Label className="font-arabic font-bold text-primary">الأسيست</Label>
+            <Input
+              type="number"
+              value={form.assists}
+              onChange={(e) => setForm({ ...form, assists: parseInt(e.target.value) || 0 })}
+              className="h-11"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="font-arabic font-bold text-yellow-500">بطاقات صفراء</Label>
+            <Input
+              type="number"
+              value={form.yellow_cards}
+              onChange={(e) => setForm({ ...form, yellow_cards: parseInt(e.target.value) || 0 })}
+              className="h-11"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="font-arabic font-bold text-red-500">بطاقات حمراء</Label>
+            <Input
+              type="number"
+              value={form.red_cards}
+              onChange={(e) => setForm({ ...form, red_cards: parseInt(e.target.value) || 0 })}
+              className="h-11"
+            />
+          </div>
           
-          <div className="flex gap-2 sm:col-span-3">
+          <div className="flex gap-2 sm:col-span-3 lg:col-span-1 lg:col-start-1 lg:col-end-4">
             <Button
               onClick={handleSubmit}
               disabled={saving || !form.player_name || !form.team_name}
@@ -145,7 +181,7 @@ export function TopScorersTab() {
               {editingId ? 'حفظ التعديلات' : 'إضافة لاعب'}
             </Button>
             {editingId && (
-              <Button variant="outline" className="h-11 font-semibold" onClick={() => { setEditingId(null); setForm({ player_name: '', team_name: '', goals: 0 }); }}>
+              <Button variant="outline" className="h-11 font-semibold" onClick={() => { setEditingId(null); setForm({ player_name: '', team_name: '', goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 }); }}>
                 إلغاء
               </Button>
             )}
@@ -165,7 +201,11 @@ export function TopScorersTab() {
               <div key={scorer.id} className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors">
                 <div>
                   <div className="font-bold text-foreground">{scorer.player_name}</div>
-                  <div className="text-sm text-muted-foreground">{scorer.team_name} • {scorer.goals} أهداف</div>
+                  <div className="text-sm text-muted-foreground">
+                    {scorer.team_name} • {scorer.goals} أهداف • {scorer.assists || 0} أسيست 
+                    • <span className="text-yellow-500 ml-1">{scorer.yellow_cards || 0} أصفر</span> 
+                    • <span className="text-red-500">{scorer.red_cards || 0} أحمر</span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => startEdit(scorer)}>
