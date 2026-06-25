@@ -38,14 +38,12 @@ const blankPulse = (): NewsDraft => ({
   image_url: '',
   published_at: today(),
   is_published: true,
-});
-
 const blankArticle = (): NewsDraft => ({
   title_ar: '',
   title_en: '',
   excerpt_ar: '',
   excerpt_en: '',
-  category: 'World Cup 2026',
+  category: 'News 2026',
   image_url: '',
   published_at: today(),
   is_published: true,
@@ -95,7 +93,7 @@ export function NewsTab() {
       excerpt_ar: draft.excerpt_ar || '',
       excerpt_en: draft.excerpt_en || '',
       image_url: draft.image_url || '',
-      category: draft.category || 'World Cup 2026',
+      category: draft.category || 'News 2026',
       is_published: draft.is_published ?? true,
       published_at: draft.published_at || today(),
     });
@@ -103,7 +101,7 @@ export function NewsTab() {
   };
 
   const handleDeleteCategory = async (cat: string) => {
-    if (cat === 'World Cup 2026') return;
+    if (cat === 'News 2026') return;
     await deleteCategory(cat);
   };
 
@@ -159,7 +157,7 @@ export function NewsTab() {
           </TabsTrigger>
           <TabsTrigger value="pulse" className="gap-2 py-3">
             <Newspaper className="h-4 w-4" />
-            نبض كأس العالم
+            نبض 2026
           </TabsTrigger>
         </TabsList>
 
@@ -329,7 +327,7 @@ export function NewsTab() {
         <TabsContent value="pulse" className="space-y-4">
           <Card className="border-primary/25 bg-gradient-card p-5">
             <SectionTitle
-              title="نبض كأس العالم"
+              title="نبض 2026"
               description="كارت خفيف في الرئيسية: عنوان قصير وتايتل/تصنيف فقط."
             />
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -376,7 +374,7 @@ export function NewsTab() {
               </div>
             </div>
           </Card>
-          <NewsList items={pulseItems} empty="لا توجد عناصر في نبض كأس العالم حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} onEdit={(item) => handleEdit(item, setPulse)} />
+          <NewsList items={pulseItems} empty="لا توجد عناصر في نبض 2026 حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} onEdit={(item) => handleEdit(item, setPulse)} />
         </TabsContent>
       </Tabs>
     </div>
@@ -422,7 +420,7 @@ function CategorySelector({
             ))}
           </SelectContent>
         </Select>
-        {onDelete && value !== 'World Cup 2026' && (
+        {onDelete && value !== 'News 2026' && (
           <Button 
             type="button"
             variant="destructive"

@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
 export function useNewsCategories() {
-  const [categories, setCategories] = useState<string[]>(['World Cup 2026']);
+  const [categories, setCategories] = useState<string[]>(['News 2026']);
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = useCallback(async () => {
@@ -16,11 +16,11 @@ export function useNewsCategories() {
     if (error) {
       console.error('[news_categories] fetch error:', error);
       // Fallback to minimal array if table is missing or errors
-      setCategories(['World Cup 2026']);
+      setCategories(['News 2026']);
     } else if (data) {
       const names = data.map((d) => d.name);
-      if (!names.includes('World Cup 2026')) {
-        names.unshift('World Cup 2026');
+      if (!names.includes('News 2026')) {
+        names.unshift('News 2026');
       }
       setCategories(names);
     }
@@ -55,7 +55,7 @@ export function useNewsCategories() {
   };
 
   const deleteCategory = async (name: string) => {
-    if (name === 'World Cup 2026') return; // Cannot delete primary
+    if (name === 'News 2026') return; // Cannot delete primary
     
     // Optimistic
     setCategories((prev) => prev.filter((c) => c !== name));
@@ -63,7 +63,7 @@ export function useNewsCategories() {
     // Move all news to primary category before deleting the category string
     const { error: updateError } = await supabase
       .from('manual_news')
-      .update({ category: 'World Cup 2026' })
+      .update({ category: 'News 2026' })
       .eq('category', name);
 
     // Also update Pulse and Ticker tags if any are using this exact category
