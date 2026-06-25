@@ -217,29 +217,10 @@ export function TopScorersTable() {
               size="sm"
               onClick={() => goToPage(safePage - 1)}
               disabled={safePage === 1}
-              className="h-8 px-2"
+              className="h-8 px-4"
             >
               {lang === 'ar' ? 'السابق' : 'Prev'}
             </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(pageNumber => pageNumber === 1 || pageNumber === totalPages || Math.abs(pageNumber - safePage) <= 1)
-              .map((pageNumber, index, array) => (
-                <div key={pageNumber} className="flex items-center gap-1">
-                  {index > 0 && pageNumber - array[index - 1] > 1 && (
-                    <span className="text-muted-foreground px-1">...</span>
-                  )}
-                  <Button
-                    type="button"
-                    variant={pageNumber === safePage ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => goToPage(pageNumber)}
-                    className="h-8 w-8 p-0"
-                  >
-                    {pageNumber}
-                  </Button>
-                </div>
-            ))}
 
             <Button
               type="button"
@@ -247,7 +228,7 @@ export function TopScorersTable() {
               size="sm"
               onClick={() => goToPage(safePage + 1)}
               disabled={safePage === totalPages}
-              className="h-8 px-2"
+              className="h-8 px-4"
             >
               {lang === 'ar' ? 'التالي' : 'Next'}
             </Button>
