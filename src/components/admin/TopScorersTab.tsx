@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { SectionTitle } from './SectionTitle';
 
 interface PlayerStat {
   id: string;
@@ -103,10 +102,10 @@ export function TopScorersTab() {
   return (
     <div className="space-y-4">
       <Card className="border-primary/25 bg-gradient-card p-5">
-        <SectionTitle
-          title="إدارة الهدافين"
-          description="أضف أو عدل بيانات هدافي البطولة."
-        />
+        <div className="mb-4">
+          <h3 className="text-lg font-bold">إدارة الهدافين</h3>
+          <p className="text-sm text-muted-foreground">أضف أو عدل بيانات هدافي البطولة.</p>
+        </div>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="space-y-1">
             <Label className="font-arabic font-bold text-primary">اسم اللاعب</Label>
