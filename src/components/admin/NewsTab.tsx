@@ -88,8 +88,17 @@ export function NewsTab() {
   };
 
   const handleEdit = (item: ManualNewsRow, setDraft: (draft: NewsDraft) => void) => {
-    const { id, created_at, ...draft } = item;
-    setDraft(draft);
+    const { id, created_at, post_id, ...draft } = item as any;
+    setDraft({
+      title_ar: draft.title_ar || '',
+      title_en: draft.title_en || '',
+      excerpt_ar: draft.excerpt_ar || '',
+      excerpt_en: draft.excerpt_en || '',
+      image_url: draft.image_url || '',
+      category: draft.category || 'World Cup 2026',
+      is_published: draft.is_published ?? true,
+      published_at: draft.published_at || today(),
+    });
     setEditingId(item.id);
   };
 
