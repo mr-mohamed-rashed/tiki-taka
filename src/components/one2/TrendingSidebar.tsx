@@ -49,9 +49,9 @@ export function TrendingSidebar() {
             </p>
           </div>
         </div>
-        <NavLink to="/news" className="text-sm font-bold text-primary hover:text-primary-glow">
+        <a href="#" className="text-sm font-bold text-primary hover:text-primary-glow">
           {lang === 'ar' ? 'كل الأخبار' : 'All news'}
-        </NavLink>
+        </a>
       </div>
 
       <div className="grid gap-3 p-4 md:grid-cols-3">
@@ -63,10 +63,12 @@ export function TrendingSidebar() {
           articles.map((item) => {
             const title = lang === 'ar' ? item.title_ar || item.title_en : item.title_en || item.title_ar;
             return (
-              <NavLink
+              <a
                 key={item.id}
-                to={`/news/${item.id}`}
-                className="group overflow-hidden rounded-lg border border-border bg-background/55 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-card"
+                href={(item as any).link || ((item as any).excerpt_en?.startsWith('http') ? (item as any).excerpt_en : '#')}
+                target={(item as any).link || (item as any).excerpt_en?.startsWith('http') ? "_blank" : undefined}
+                rel={(item as any).link || (item as any).excerpt_en?.startsWith('http') ? "noopener noreferrer" : undefined}
+                className="group overflow-hidden rounded-lg border border-border bg-background/55 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-card block"
               >
                 <div className="relative aspect-[16/9] overflow-hidden">
                   <img
