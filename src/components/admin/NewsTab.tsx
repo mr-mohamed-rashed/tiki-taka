@@ -114,6 +114,26 @@ export function NewsTab() {
     setEditingId(item.id);
   };
 
+  const handleDeleteCategory = async (categoryName: string) => {
+    if (categoryName === 'World Cup 2026') return;
+    const itemsToUpdate = news.filter((item) => getNewsCategoryName(item.category) === categoryName);
+    
+    for (const item of itemsToUpdate) {
+      const type = getNewsType(item.category);
+      await update(item.id, { category: makeCategoryString(type as any, 'World Cup 2026') });
+    }
+    
+    if (getNewsCategoryName(ticker.category) === categoryName) {
+      setTicker(prev => ({ ...prev, category: makeCategoryString('Ticker', 'World Cup 2026') }));
+    }
+    if (getNewsCategoryName(pulse.category) === categoryName) {
+      setPulse(prev => ({ ...prev, category: makeCategoryString('Pulse', 'World Cup 2026') }));
+    }
+    if (getNewsCategoryName(article.category) === categoryName) {
+      setArticle(prev => ({ ...prev, category: makeCategoryString('Article', 'World Cup 2026') }));
+    }
+  };
+
   const saveTickerSpeed = async () => {
     const seconds = Math.max(25, Math.min(500, Number(tickerSpeed) || 70)).toString();
     const mobileSeconds = Math.max(25, Math.min(500, Number(tickerSpeedMobile) || 120)).toString();
@@ -174,18 +194,23 @@ export function NewsTab() {
             />
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
               <div className="flex-1 space-y-3">
-                <Input
-                  value={ticker.title_ar}
-                  onChange={(event) => setTicker((current) => ({ ...current, title_ar: event.target.value }))}
-                  className="h-11 font-arabic text-right"
-                  dir="rtl"
-                  placeholder="مثال: قرعة نارية في دور المجموعات..."
-                />
-                <CategorySelector 
-                  value={getNewsCategoryName(ticker.category)}
-                  onChange={(val) => setTicker((current) => ({ ...current, category: makeCategoryString('Ticker', val) }))}
-                  categories={allCategories}
-                />
+                <Field label="نص الشريط الإخباري">
+                  <Input
+                    value={ticker.title_ar}
+                    onChange={(event) => setTicker((current) => ({ ...current, title_ar: event.target.value }))}
+                    className="h-11 font-arabic text-right"
+                    dir="rtl"
+                    placeholder="مثال: قرعة نارية في دور المجموعات..."
+                  />
+                </Field>
+                <div className="pt-2 border-t border-border/50">
+                  <CategorySelector 
+                    value={getNewsCategoryName(ticker.category)}
+                    onChange={(val) => setTicker((current) => ({ ...current, category: makeCategoryString('Ticker', val) }))}
+                    onDelete={handleDeleteCategory}
+                    categories={allCategories}
+                  />
+                </div>
               </div>
               <Button
                 onClick={() => addItem(ticker, () => setTicker(blankTicker()))}
@@ -247,20 +272,21 @@ export function NewsTab() {
               description="خبر كامل له عنوان وتفاصيل وصورة. لو عندك مصدر خارجي أو صفحة تفاصيل طويلة حط الرابط في خانة اللينك."
             />
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label="عنوان الخبر">
+              <div className="sm:col-span-2 pb-2 border-b border-border/50">
+                <CategorySelector 
+                  value={getNewsCategoryName(article.category)}
+                  onChange={(val) => setArticle((current) => ({ ...current, category: makeCategoryString('Article', val) }))}
+                  onDelete={handleDeleteCategory}
+                  categories={allCategories}
+                />
+              </div>
+              <Field label="عنوان الخبر" className="sm:col-span-2">
                 <Input
                   value={article.title_ar}
                   onChange={(event) => setArticle((current) => ({ ...current, title_ar: event.target.value }))}
                   className="h-10 font-arabic text-right"
                   dir="rtl"
                   placeholder="عنوان الخبر..."
-                />
-              </Field>
-              <Field label="التصنيف" className="sm:col-span-2">
-                <CategorySelector 
-                  value={getNewsCategoryName(article.category)}
-                  onChange={(val) => setArticle((current) => ({ ...current, category: makeCategoryString('Article', val) }))}
-                  categories={allCategories}
                 />
               </Field>
               <Field label="تفاصيل الخبر" className="sm:col-span-2">
@@ -328,24 +354,29 @@ export function NewsTab() {
               description="كارت خفيف في الرئيسية: عنوان قصير وتايتل/تصنيف فقط."
             />
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Input
-                value={pulse.title_ar}
-                onChange={(event) => setPulse((current) => ({ ...current, title_ar: event.target.value }))}
-                className="h-11 font-arabic text-right"
-                dir="rtl"
-                placeholder="مثال: صلاح ومرموش يقودان مصر..."
-              />
-              <Input
-                value={pulse.title_en}
-                onChange={(event) => setPulse((current) => ({ ...current, title_en: event.target.value }))}
-                className="h-11"
-                dir="ltr"
-                placeholder="Title / tag"
-              />
-              <div className="sm:col-span-2">
+              <Field label="عنوان النبض">
+                <Input
+                  value={pulse.title_ar}
+                  onChange={(event) => setPulse((current) => ({ ...current, title_ar: event.target.value }))}
+                  className="h-11 font-arabic text-right"
+                  dir="rtl"
+                  placeholder="مثال: صلاح ومرموش يقودان مصر..."
+                />
+              </Field>
+              <Field label="التاج الإنجليزي (اختياري)">
+                <Input
+                  value={pulse.title_en}
+                  onChange={(event) => setPulse((current) => ({ ...current, title_en: event.target.value }))}
+                  className="h-11"
+                  dir="ltr"
+                  placeholder="Title / tag"
+                />
+              </Field>
+              <div className="sm:col-span-2 py-2 border-y border-border/50">
                 <CategorySelector 
                   value={getNewsCategoryName(pulse.category)}
                   onChange={(val) => setPulse((current) => ({ ...current, category: makeCategoryString('Pulse', val) }))}
+                  onDelete={handleDeleteCategory}
                   categories={allCategories}
                 />
               </div>
@@ -385,46 +416,72 @@ function SectionTitle({ title, description }: { title: string; description: stri
 function CategorySelector({
   value,
   onChange,
+  onDelete,
   categories
 }: {
   value: string;
   onChange: (val: string) => void;
+  onDelete?: (val: string) => void;
   categories: string[];
 }) {
   const [customVal, setCustomVal] = useState('');
   
   return (
-    <div className="flex gap-2 w-full">
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="h-10 flex-1 min-w-[200px]">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {categories.map((c) => (
-            <SelectItem key={c} value={c}>{c}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Input
-        value={customVal}
-        onChange={e => setCustomVal(e.target.value)}
-        placeholder="مثال: الدوري الإنجليزي"
-        className="h-10 flex-1 font-arabic"
-        dir="rtl"
-      />
-      <Button 
-        type="button"
-        variant="secondary"
-        className="h-10"
-        onClick={() => {
-          if (customVal.trim()) {
-            onChange(customVal.trim());
-            setCustomVal('');
-          }
-        }}
-      >
-        إضافة تصنيف
-      </Button>
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 w-full">
+      <Field label="التصنيف">
+        <div className="flex gap-2">
+          <Select value={value} onValueChange={onChange}>
+            <SelectTrigger className="h-10 flex-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {onDelete && value !== 'World Cup 2026' && (
+            <Button 
+              type="button"
+              variant="destructive"
+              size="icon"
+              className="h-10 w-10 shrink-0"
+              onClick={() => {
+                if (window.confirm('هل أنت متأكد من حذف هذا التصنيف ونقل كل أخباره للأساسي؟')) {
+                  onDelete(value);
+                }
+              }}
+              title="حذف التصنيف"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </Field>
+      <Field label="إضافة تصنيف جديد">
+        <div className="flex gap-2">
+          <Input
+            value={customVal}
+            onChange={e => setCustomVal(e.target.value)}
+            placeholder="مثال: الدوري الإنجليزي"
+            className="h-10 flex-1 font-arabic"
+            dir="rtl"
+          />
+          <Button 
+            type="button"
+            variant="secondary"
+            className="h-10 shrink-0"
+            onClick={() => {
+              if (customVal.trim()) {
+                onChange(customVal.trim());
+                setCustomVal('');
+              }
+            }}
+          >
+            إضافة
+          </Button>
+        </div>
+      </Field>
     </div>
   );
 }
