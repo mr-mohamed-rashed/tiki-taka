@@ -13,6 +13,7 @@ import { MediaPlayerTab } from '@/components/admin/MediaPlayerTab';
 import { AnalyticsTab } from '@/components/admin/AnalyticsTab';
 import { MatchesTab } from '@/components/admin/MatchesTab';
 import { ChatModerationTab } from '@/components/admin/ChatModerationTab';
+import { TopScorersTab } from '@/components/admin/TopScorersTab';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
@@ -82,6 +83,9 @@ export default function Admin() {
             <TabsTrigger value="ads" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <Megaphone className="h-4 w-4" /> {t('adminAds', lang)}
             </TabsTrigger>
+            <TabsTrigger value="topscorers" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
+              <Trophy className="h-4 w-4" /> الهدافون
+            </TabsTrigger>
             <TabsTrigger value="news" className="gap-2 font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground">
               <Newspaper className="h-4 w-4" /> {t('adminNews', lang)}
             </TabsTrigger>
@@ -99,6 +103,7 @@ export default function Admin() {
           <TabsContent value="widgets"><WidgetLabelsTab /></TabsContent>
           <TabsContent value="roadmap"><RoadmapTab /></TabsContent>
           <TabsContent value="ads"><AdsTab /></TabsContent>
+          <TabsContent value="topscorers"><TopScorersTab /></TabsContent>
           <TabsContent value="news"><NewsTab /></TabsContent>
           <TabsContent value="mediaplayer"><MediaPlayerTab /></TabsContent>
           <TabsContent value="chat_moderation"><ChatModerationTab /></TabsContent>
