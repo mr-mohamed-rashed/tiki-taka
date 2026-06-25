@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap, ArrowUp, ArrowDown } from 'lucide-react';
+import { Check, Eye, EyeOff, FileText, Loader2, Newspaper, Plus, Save, Trash2, Zap, ArrowUp, ArrowDown, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -54,9 +54,10 @@ const blankArticle = (): NewsDraft => ({
 });
 
 export function NewsTab() {
-  const { news, loading, save, remove, togglePublish, reorder } = useManualNews();
+  const { news, loading, save, update, remove, togglePublish, reorder } = useManualNews();
   const { settings, save: saveSetting } = useSiteSettings();
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [savingSpeed, setSavingSpeed] = useState(false);
   const [tickerSpeed, setTickerSpeed] = useState('70');
   const [tickerSpeedMobile, setTickerSpeedMobile] = useState('120');
@@ -76,9 +77,20 @@ export function NewsTab() {
   const addItem = async (draft: NewsDraft, reset: () => void) => {
     if (!draft.title_ar.trim() && !draft.title_en.trim()) return;
     setSaving(true);
-    await save(draft);
+    if (editingId) {
+      await update(editingId, draft);
+      setEditingId(null);
+    } else {
+      await save(draft);
+    }
     reset();
     setSaving(false);
+  };
+
+  const handleEdit = (item: ManualNewsRow, setDraft: (draft: NewsDraft) => void) => {
+    const { id, created_at, ...draft } = item;
+    setDraft(draft);
+    setEditingId(item.id);
   };
 
   const saveTickerSpeed = async () => {
@@ -112,7 +124,12 @@ export function NewsTab() {
         </div>
       </div>
 
-      <Tabs defaultValue="ticker" className="space-y-5">
+      <Tabs defaultValue="ticker" className="space-y-5" onValueChange={() => {
+        setEditingId(null);
+        setTicker(blankTicker());
+        setPulse(blankPulse());
+        setArticle(blankArticle());
+      }}>
         <TabsList className="grid h-auto grid-cols-1 gap-2 bg-card p-1 sm:grid-cols-3">
           <TabsTrigger value="ticker" className="gap-2 py-3">
             <Zap className="h-4 w-4" />
@@ -148,8 +165,13 @@ export function NewsTab() {
                 className="h-11 gap-2 font-semibold"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                حفظ السطر
+                {editingId ? 'تعديل السطر' : 'حفظ السطر'}
               </Button>
+              {editingId && (
+                <Button variant="outline" className="h-11 font-semibold" onClick={() => { setEditingId(null); setTicker(blankTicker()); }}>
+                  إلغاء
+                </Button>
+              )}
             </div>
             <div className="mt-3 flex flex-col gap-2 rounded-lg border border-border bg-background/40 p-3 sm:flex-row sm:items-end">
               <Field label="سرعة الكمبيوتر (ثواني)" className="sm:w-48">
@@ -187,7 +209,7 @@ export function NewsTab() {
               <p className="pb-2 text-xs text-muted-foreground">رقم أقل = حركة أسرع. أقصى رقم 500.</p>
             </div>
           </Card>
-          <NewsList items={tickerItems} empty="لا توجد سطور في الشريط حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} />
+          <NewsList items={tickerItems} empty="لا توجد سطور في الشريط حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} onEdit={(item) => handleEdit(item, setTicker)} />
         </TabsContent>
 
         <TabsContent value="articles" className="space-y-4">
@@ -257,16 +279,23 @@ export function NewsTab() {
               </Field>
               <PublishSwitch value={article.is_published} onChange={(value) => setArticle((current) => ({ ...current, is_published: value }))} />
             </div>
-            <Button
-              onClick={() => addItem(article, () => setArticle(blankArticle()))}
-              disabled={saving || !article.title_ar.trim()}
-              className="mt-4 gap-2 font-semibold"
-            >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-              حفظ الخبر
-            </Button>
+            <div className="mt-4 flex gap-2">
+              <Button
+                onClick={() => addItem(article, () => setArticle(blankArticle()))}
+                disabled={saving || !article.title_ar.trim()}
+                className="gap-2 font-semibold"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : (editingId ? <Edit className="h-4 w-4" /> : <Plus className="h-4 w-4" />)}
+                {editingId ? 'تعديل الخبر' : 'حفظ الخبر'}
+              </Button>
+              {editingId && (
+                <Button variant="outline" className="font-semibold" onClick={() => { setEditingId(null); setArticle(blankArticle()); }}>
+                  إلغاء
+                </Button>
+              )}
+            </div>
           </Card>
-          <NewsList items={articleItems} empty="لا توجد أخبار كاملة حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} />
+          <NewsList items={articleItems} empty="لا توجد أخبار كاملة حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} onEdit={(item) => handleEdit(item, setArticle)} />
         </TabsContent>
 
         <TabsContent value="pulse" className="space-y-4">
@@ -290,17 +319,24 @@ export function NewsTab() {
                 dir="ltr"
                 placeholder="Title / tag"
               />
-              <Button
-                onClick={() => addItem(pulse, () => setPulse(blankPulse()))}
-                disabled={saving || !pulse.title_ar.trim()}
-                className="h-11 gap-2 font-semibold"
-              >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                حفظ
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => addItem(pulse, () => setPulse(blankPulse()))}
+                  disabled={saving || !pulse.title_ar.trim()}
+                  className="h-11 flex-1 gap-2 font-semibold"
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  {editingId ? 'تعديل' : 'حفظ'}
+                </Button>
+                {editingId && (
+                  <Button variant="outline" className="h-11 font-semibold" onClick={() => { setEditingId(null); setPulse(blankPulse()); }}>
+                    إلغاء
+                  </Button>
+                )}
+              </div>
             </div>
           </Card>
-          <NewsList items={pulseItems} empty="لا توجد عناصر في نبض كأس العالم حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} />
+          <NewsList items={pulseItems} empty="لا توجد عناصر في نبض كأس العالم حتى الآن." onRemove={remove} onToggle={togglePublish} onReorder={reorder} onEdit={(item) => handleEdit(item, setPulse)} />
         </TabsContent>
       </Tabs>
     </div>
@@ -349,6 +385,7 @@ function NewsList({
   onRemove: (id: string) => Promise<void>;
   onToggle: (id: string, isPublished: boolean) => Promise<void>;
   onReorder: (id1: string, id2: string, createdAt1: string, createdAt2: string) => Promise<void>;
+  onEdit?: (item: ManualNewsRow) => void;
 }) {
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
@@ -412,6 +449,19 @@ function NewsList({
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={item.is_published} onCheckedChange={(value) => onToggle(item.id, value)} />
+              {onEdit && (
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-9 w-9 text-primary hover:text-primary"
+                  onClick={() => {
+                    onEdit(item);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              )}
               <Button
                 size="icon"
                 variant="outline"
