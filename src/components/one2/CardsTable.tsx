@@ -11,6 +11,22 @@ import type { player } from '@/lib/footballData';
 
 type SortKey = 'rank' | 'red_cards' | 'yellow_cards';
 
+const CardIcon = ({ color, count }: { color: 'red' | 'yellow', count: number }) => {
+  const bgColor = color === 'red' ? 'bg-red-500' : 'bg-yellow-400';
+  if (count === 0) return null;
+  
+  if (count === 1) {
+    return <div className={`w-3 h-4 rounded-sm shadow-[0_2px_4px_rgba(0,0,0,0.2)] border border-white/20 ${bgColor}`} />;
+  }
+  
+  return (
+    <div className="relative w-4 h-4 mr-1">
+      <div className={`absolute left-0 top-0 w-3 h-4 rounded-sm shadow-[0_2px_4px_rgba(0,0,0,0.2)] border border-white/20 ${bgColor} -rotate-12`} />
+      <div className={`absolute left-1.5 top-0.5 w-3 h-4 rounded-sm shadow-[0_2px_4px_rgba(0,0,0,0.2)] border border-white/20 ${bgColor} rotate-6`} />
+    </div>
+  );
+};
+
 const getRankColors = (rank: number) => {
   if (rank === 1) return { 
     text: 'text-red-500', 
@@ -58,7 +74,7 @@ export function CardsTable() {
   );
 
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 7;
 
   const totalPages = Math.max(1, Math.ceil(players.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -124,7 +140,6 @@ export function CardsTable() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <img src={player.country.flag} alt={player.country.name} className="w-6 h-6 rounded object-cover ring-1 ring-border" />
                     <div>
                       <div className={cn('font-bold text-sm flex items-center gap-2', colors.text)}>
                         {player.name}
@@ -136,18 +151,20 @@ export function CardsTable() {
                 <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{player.club}</TableCell>
                 <TableCell className="text-center">
                   <span className={cn(
-                    'inline-flex items-center justify-center min-w-8 h-7 px-2 rounded-md font-display font-extrabold tabular-nums',
-                    player.red_cards > 0 ? 'bg-red-500/20 text-red-500 border border-red-500/50' : 'bg-muted text-muted-foreground',
+                    'inline-flex items-center justify-center gap-2 min-w-8 h-7 px-2 rounded-md font-display font-extrabold tabular-nums',
+                    player.red_cards > 0 ? 'bg-red-500/10 text-red-500' : 'text-muted-foreground',
                   )}>
                     {player.red_cards}
+                    <CardIcon color="red" count={player.red_cards} />
                   </span>
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell font-semibold tabular-nums text-muted-foreground">
                   <span className={cn(
-                    'inline-flex items-center justify-center min-w-8 h-7 px-2 rounded-md font-display font-extrabold tabular-nums',
-                    player.yellow_cards > 0 ? 'bg-yellow-500/20 text-yellow-600 border border-yellow-500/50' : 'bg-muted text-muted-foreground',
+                    'inline-flex items-center justify-center gap-2 min-w-8 h-7 px-2 rounded-md font-display font-extrabold tabular-nums',
+                    player.yellow_cards > 0 ? 'bg-yellow-500/10 text-yellow-500' : 'text-muted-foreground',
                   )}>
                     {player.yellow_cards}
+                    <CardIcon color="yellow" count={player.yellow_cards} />
                   </span>
                 </TableCell>
               </TableRow>
@@ -172,23 +189,10 @@ export function CardsTable() {
               size="sm"
               onClick={() => goToPage(safePage - 1)}
               disabled={safePage === 1}
-              className="h-8 px-2"
+              className="h-8 px-4"
             >
               {lang === 'ar' ? 'السابق' : 'Prev'}
             </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-              <Button
-                key={pageNumber}
-                type="button"
-                variant={pageNumber === safePage ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => goToPage(pageNumber)}
-                className="h-8 w-8 p-0"
-              >
-                {pageNumber}
-              </Button>
-            ))}
 
             <Button
               type="button"
@@ -196,7 +200,7 @@ export function CardsTable() {
               size="sm"
               onClick={() => goToPage(safePage + 1)}
               disabled={safePage === totalPages}
-              className="h-8 px-2"
+              className="h-8 px-4"
             >
               {lang === 'ar' ? 'التالي' : 'Next'}
             </Button>
