@@ -181,7 +181,7 @@ const Index = () => {
               linkLabel={<EditableSiteText settingKey="link_fullStandings" fallbackEn={T.fullStandings.en} fallbackAr={T.fullStandings.ar} />}
               lang={lang}
             />
-            <TopScorersTable />
+            <TopScorersTable compact={true} />
           </div>
 
           <aside className="space-y-6">

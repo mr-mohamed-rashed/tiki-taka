@@ -65,7 +65,7 @@ export function BestPlayersTable() {
   });
 
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 7;
   const totalPages = Math.max(1, Math.ceil(sortedRows.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const visibleRows = sortedRows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
@@ -149,7 +149,6 @@ export function BestPlayersTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <img src={player.country.flag} alt={player.country.name} className="w-6 h-6 rounded object-cover ring-1 ring-border" />
                       <div>
                         <div className={cn('font-bold text-sm flex items-center gap-2', isTop3 && colors.text)}>
                         {player.name}
@@ -190,23 +189,10 @@ export function BestPlayersTable() {
               size="sm"
               onClick={() => goToPage(safePage - 1)}
               disabled={safePage === 1}
-              className="h-8 px-2"
+              className="h-8 px-4"
             >
               {lang === 'ar' ? 'السابق' : 'Prev'}
             </Button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-              <Button
-                key={pageNumber}
-                type="button"
-                variant={pageNumber === safePage ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => goToPage(pageNumber)}
-                className="h-8 w-8 p-0"
-              >
-                {pageNumber}
-              </Button>
-            ))}
 
             <Button
               type="button"
@@ -214,7 +200,7 @@ export function BestPlayersTable() {
               size="sm"
               onClick={() => goToPage(safePage + 1)}
               disabled={safePage === totalPages}
-              className="h-8 px-2"
+              className="h-8 px-4"
             >
               {lang === 'ar' ? 'التالي' : 'Next'}
             </Button>

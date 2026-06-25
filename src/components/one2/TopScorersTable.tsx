@@ -55,7 +55,7 @@ const getRankColors = (rank: number) => {
   };
 };
 
-export function TopScorersTable() {
+export function TopScorersTable({ compact = false }: { compact?: boolean }) {
   const { lang } = useLanguage();
   const { data: scorersData, isLoading } = useTopScorers();
   const [sortKey, setSortKey] = useState<SortKey>('rank');
@@ -89,7 +89,7 @@ export function TopScorersTable() {
   );
 
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 7;
 
   const totalPages = Math.max(1, Math.ceil(scorers.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -202,7 +202,7 @@ export function TopScorersTable() {
         </Table>
       </div>
 
-      {totalPages > 1 && (
+      {!compact && totalPages > 1 && (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-border bg-card/40 p-4">
           <div className={lang === 'ar' ? 'font-arabic text-sm text-muted-foreground' : 'text-sm text-muted-foreground'}>
             {lang === 'ar'
