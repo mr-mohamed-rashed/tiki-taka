@@ -388,6 +388,7 @@ function NewsList({
   onRemove,
   onToggle,
   onReorder,
+  onEdit,
 }: {
   items: ManualNewsRow[];
   empty: string;
