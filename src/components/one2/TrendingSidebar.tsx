@@ -49,9 +49,9 @@ export function TrendingSidebar() {
             </p>
           </div>
         </div>
-        <a href="#" className="text-sm font-bold text-primary hover:text-primary-glow">
+        <NavLink to="/news" className="text-sm font-bold text-primary hover:text-primary-glow">
           {lang === 'ar' ? 'كل الأخبار' : 'All news'}
-        </a>
+        </NavLink>
       </div>
 
       <div className="grid gap-3 p-4 md:grid-cols-3">
@@ -62,14 +62,10 @@ export function TrendingSidebar() {
         ) : articles.length > 0 ? (
           articles.map((item) => {
             const title = lang === 'ar' ? item.title_ar || item.title_en : item.title_en || item.title_ar;
-            return (
-              <a
-                key={item.id}
-                href={(item as any).link || ((item as any).excerpt_en?.startsWith('http') ? (item as any).excerpt_en : '#')}
-                target={(item as any).link || (item as any).excerpt_en?.startsWith('http') ? "_blank" : undefined}
-                rel={(item as any).link || (item as any).excerpt_en?.startsWith('http') ? "noopener noreferrer" : undefined}
-                className="group overflow-hidden rounded-lg border border-border bg-background/55 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-card block"
-              >
+            const isManual = !('link' in item) || !(item as any).link;
+            
+            const cardContent = (
+              <>
                 <div className="relative aspect-[16/9] overflow-hidden">
                   <img
                     src={item.image_url || FALLBACK_IMAGE}
@@ -86,6 +82,29 @@ export function TrendingSidebar() {
                   </h4>
                   <p className="mt-2 text-[11px] text-muted-foreground" dir="ltr">{item.published_at}</p>
                 </div>
+              </>
+            );
+
+            const className = "group overflow-hidden rounded-lg border border-border bg-background/55 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-card block";
+
+            if (isManual) {
+              const urlId = (item as any).post_id || item.id;
+              return (
+                <NavLink key={item.id} to={`/news/sports/${urlId}`} className={className}>
+                  {cardContent}
+                </NavLink>
+              );
+            }
+
+            return (
+              <a
+                key={item.id}
+                href={(item as any).link || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={className}
+              >
+                {cardContent}
               </a>
             );
           })
