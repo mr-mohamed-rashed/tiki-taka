@@ -470,17 +470,7 @@ function CategorySelector({
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 w-full">
       {selectNode}
       <Field label="إضافة تصنيف جديد">
-                  onDelete(value);
-                }
-              }}
-              title="حذف التصنيف"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      </Field>
-      <Field label="إضافة تصنيف جديد">
+
         <div className="flex gap-2">
           <Input
             value={customVal}
