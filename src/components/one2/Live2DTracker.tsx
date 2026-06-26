@@ -9,6 +9,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import type { Match } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
+import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
+import { AdBanner } from '@/components/one2/AdBanner';
 import { Navigation } from '@/components/one2/Navigation';
 import { NewsTicker } from '@/components/one2/NewsTicker';
 
@@ -737,8 +739,12 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
           {/* Split Chat Mode in Theater */}
           {isTheater && chatMode === 'split' && (
             <div className="w-1/3 h-full bg-black border-l border-border flex flex-col animate-in fade-in slide-in-from-right-4 duration-300">
+               <div className="shrink-0 w-full z-50">
+                 <AdSlotSelector location="live-chat" onAdd={() => {}} />
+                 <AdBanner slotId="live-chat-top" />
+               </div>
                <div className="flex-1 min-h-0 relative h-full">
-                 <div className="absolute inset-0 overflow-y-auto">
+                 <div className="absolute inset-0 flex flex-col overflow-y-auto">
                    <LiveChat matchId={match.id} variant="default" isTheaterSplit={true} />
                  </div>
                </div>
