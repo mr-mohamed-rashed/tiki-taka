@@ -10,7 +10,7 @@ export interface AdSlot {
   description: string;
 }
 
-export const LOCATIONS = ['global', 'hero', 'news-page', 'live-page', 'marquee'];
+export const LOCATIONS = ['global', 'hero', 'news-page', 'live-page', 'marquee', 'live-chat'];
 
 export const AD_SLOTS: AdSlot[] = [
   // Global Floating Ad
@@ -83,6 +83,14 @@ export const AD_SLOTS: AdSlot[] = [
     width: '280px',
     height: '250px',
     description: 'Secondary sidebar ad on live page'
+  },
+  {
+    id: 'live-chat-top',
+    name: 'Live Chat Top Ad',
+    location: 'live-chat',
+    width: '100%',
+    height: 'auto',
+    description: 'Banner displayed directly above the live chat'
   },
 
   // Marquee Row
