@@ -70,7 +70,7 @@ const LiveMatches = () => {
             </div>
             <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto relative flex flex-col">
               <div className="shrink-0 w-full z-50">
-                <AdSlotSelector location="live-chat" onAdd={() => {}} />
+                <AdSlotSelector location="live-page" onAdd={() => {}} />
                 <AdBanner slotId="live-chat-top" />
               </div>
               <div className="flex-1 min-h-0 flex flex-col lg:relative lg:inset-0">

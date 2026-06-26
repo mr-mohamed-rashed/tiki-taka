@@ -740,7 +740,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
           {isTheater && chatMode === 'split' && (
             <div className="w-1/3 h-full bg-black border-l border-border flex flex-col animate-in fade-in slide-in-from-right-4 duration-300">
                <div className="shrink-0 w-full z-50">
-                 <AdSlotSelector location="live-chat" onAdd={() => {}} />
+                 <AdSlotSelector location="live-page" onAdd={() => {}} />
                  <AdBanner slotId="live-chat-top" />
                </div>
                <div className="flex-1 min-h-0 relative h-full">
