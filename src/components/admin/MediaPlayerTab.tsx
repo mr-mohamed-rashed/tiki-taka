@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Loader2, Save } from 'lucide-react';
+import { Check, Loader2, Save, Copy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -61,8 +61,8 @@ export function MediaPlayerTab() {
           <Button variant="outline" size="sm" onClick={() => {
             const currentServersStr = getVal('live_stream_url', 'en');
             let parsed = [];
-            try { parsed = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) parsed = [{name: 'Server 1', url: currentServersStr}] }
-            parsed.push({ name: `Server ${parsed.length + 1}`, url: '' });
+            try { parsed = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) parsed = [{id: 'serv' + Math.random().toString(36).substring(2, 9), name: 'Server 1', url: currentServersStr}] }
+            parsed.push({ id: 'serv' + Math.random().toString(36).substring(2, 9), name: `Server ${parsed.length + 1}`, url: '' });
             setVal('live_stream_url', 'en', JSON.stringify(parsed));
           }}>
             Add Server
@@ -78,41 +78,63 @@ export function MediaPlayerTab() {
               return <div className="text-sm text-muted-foreground italic p-2 border border-dashed rounded-lg text-center">No servers added. The 2D Tracker will be shown.</div>;
             }
 
-            return servers.map((server: any, idx: number) => (
-              <div key={idx} className="grid gap-2 rounded-lg border border-border bg-background/35 p-2.5 xl:grid-cols-[100px_1fr_auto] xl:items-end relative group">
-                <Field label="Server Name">
-                  <Input
-                    value={server.name}
-                    onChange={(e) => {
-                      const newServers = [...servers];
-                      newServers[idx].name = e.target.value;
-                      setVal('live_stream_url', 'en', JSON.stringify(newServers));
+            // Ensure all servers have IDs
+            servers.forEach((s: any) => { if (!s.id) s.id = 'serv' + Math.random().toString(36).substring(2, 9); });
+
+            return servers.map((server: any, idx: number) => {
+              const shortLink = `https://tiki-taka.cc/match/${server.id}`;
+              return (
+              <div key={idx} className="grid gap-2 rounded-lg border border-border bg-background/35 p-3 relative group">
+                <div className="flex items-center gap-2 mb-1 border-b border-border/50 pb-2">
+                  <Badge variant="outline" className="font-mono text-[10px] text-primary">{server.id}</Badge>
+                  <code className="text-xs text-muted-foreground truncate flex-1 flex" dir="ltr">{shortLink}</code>
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="h-6 text-[10px] px-2 py-0 gap-1"
+                    onClick={() => {
+                      navigator.clipboard.writeText(shortLink);
+                      toast({ title: 'Copied!', description: 'Short link copied to clipboard.' });
                     }}
-                    placeholder="e.g. Server 1"
-                    className="h-8"
-                  />
-                </Field>
-                <Field label="Embed URL">
-                  <Input
-                    value={server.url}
-                    onChange={(e) => {
-                      const newServers = [...servers];
-                      newServers[idx].url = e.target.value;
-                      setVal('live_stream_url', 'en', JSON.stringify(newServers));
-                    }}
-                    placeholder="https://youtube.com/embed/..."
-                    className="h-8"
-                    dir="ltr"
-                  />
-                </Field>
-                <Button variant="destructive" size="sm" className="h-8" onClick={() => {
-                  const newServers = servers.filter((_: any, i: number) => i !== idx);
-                  setVal('live_stream_url', 'en', JSON.stringify(newServers));
-                }}>
-                  Remove
-                </Button>
+                  >
+                    <Copy className="h-3 w-3" /> Copy Link
+                  </Button>
+                </div>
+                <div className="grid xl:grid-cols-[100px_1fr_auto] gap-2 items-end">
+                  <Field label="Server Name">
+                    <Input
+                      value={server.name}
+                      onChange={(e) => {
+                        const newServers = [...servers];
+                        newServers[idx].name = e.target.value;
+                        setVal('live_stream_url', 'en', JSON.stringify(newServers));
+                      }}
+                      placeholder="e.g. Server 1"
+                      className="h-8"
+                    />
+                  </Field>
+                  <Field label="Embed URL">
+                    <Input
+                      value={server.url}
+                      onChange={(e) => {
+                        const newServers = [...servers];
+                        newServers[idx].url = e.target.value;
+                        setVal('live_stream_url', 'en', JSON.stringify(newServers));
+                      }}
+                      placeholder="https://youtube.com/embed/..."
+                      className="h-8"
+                      dir="ltr"
+                    />
+                  </Field>
+                  <Button variant="destructive" size="sm" className="h-8" onClick={() => {
+                    const newServers = servers.filter((_: any, i: number) => i !== idx);
+                    setVal('live_stream_url', 'en', JSON.stringify(newServers));
+                  }}>
+                    Remove
+                  </Button>
+                </div>
               </div>
-            ));
+            )});
           })()}
           
           <div className="flex justify-end pt-2 border-t border-border">
