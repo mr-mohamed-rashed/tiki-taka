@@ -47,23 +47,45 @@ const MODERATOR_IDS = new Set(['mod_tiki_taka_admin']);
 // Removed static BAD_WORDS and filterProfanity. It's handled dynamically inside the component now.
 
 function renderMessageText(text: string) {
-  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-  const parts = text.split(urlRegex);
+  // 1. Parse markdown-style links: [Link Text](https://...)
+  const parts = text.split(/(\[[^\]]+\]\(https?:\/\/[^\s)]+\))/g);
+  
   return parts.map((part, i) => {
-    if (part.match(urlRegex)) {
-      const href = part.startsWith('www.') ? `https://${part}` : part;
-      let displayText = part;
-      // Shorten long news links
-      if (part.includes('/news/') && part.length > 40) {
-        displayText = "🔗 التفاصيل من هنا";
-      }
+    const mdMatch = part.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
+    if (mdMatch) {
+      const linkText = mdMatch[1];
+      const linkUrl = mdMatch[2];
       return (
-        <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold" onClick={(e) => e.stopPropagation()}>
-          {displayText}
+        <a key={i} href={linkUrl} target="_blank" rel="noopener noreferrer" 
+           className="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-1.5 px-4 rounded-full mt-2 mb-1 text-sm shadow-md transition-all gap-2"
+           onClick={(e) => e.stopPropagation()}>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          {linkText}
         </a>
       );
     }
-    return <span key={i}>{part}</span>;
+    
+    // 2. Fallback to normal raw URL parsing
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+    const subParts = part.split(urlRegex);
+    
+    return subParts.map((subPart, j) => {
+      if (subPart.match(urlRegex)) {
+        const href = subPart.startsWith('www.') ? `https://${subPart}` : subPart;
+        let displayText = subPart;
+        if (subPart.includes('/news/') && subPart.length > 40) {
+          displayText = "🔗 التفاصيل من هنا";
+        }
+        return (
+          <a key={`${i}-${j}`} href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-bold break-all" onClick={(e) => e.stopPropagation()}>
+            {displayText}
+          </a>
+        );
+      }
+      return <span key={`${i}-${j}`}>{subPart}</span>;
+    });
   });
 }
 
