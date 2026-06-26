@@ -82,24 +82,8 @@ export function MediaPlayerTab() {
             servers.forEach((s: any) => { if (!s.id) s.id = 'serv' + Math.random().toString(36).substring(2, 9); });
 
             return servers.map((server: any, idx: number) => {
-              const shortLink = `https://tiki-taka.cc/match/${server.id}`;
               return (
               <div key={idx} className="grid gap-2 rounded-lg border border-border bg-background/35 p-3 relative group">
-                <div className="flex items-center gap-2 mb-1 border-b border-border/50 pb-2">
-                  <Badge variant="outline" className="font-mono text-[10px] text-primary">{server.id}</Badge>
-                  <code className="text-xs text-muted-foreground truncate flex-1 flex" dir="ltr">{shortLink}</code>
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
-                    className="h-6 text-[10px] px-2 py-0 gap-1"
-                    onClick={() => {
-                      navigator.clipboard.writeText(shortLink);
-                      toast({ title: 'Copied!', description: 'Short link copied to clipboard.' });
-                    }}
-                  >
-                    <Copy className="h-3 w-3" /> Copy Link
-                  </Button>
-                </div>
                 <div className="grid xl:grid-cols-[100px_1fr_auto] gap-2 items-end">
                   <Field label="Server Name">
                     <Input
