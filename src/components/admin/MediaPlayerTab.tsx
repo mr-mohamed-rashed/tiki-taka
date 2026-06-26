@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Loader2, Save, Copy, ExternalLink, PowerOff, Power } from 'lucide-react';
+import { Check, Loader2, Save, Copy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -7,8 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { toast } from '@/hooks/use-toast';
-import { useManualNews } from '@/hooks/useManualNews';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const SOCIAL_KEYS = [
   { key: 'social_facebook_url', label: 'Facebook', placeholder: 'https://facebook.com/...' },
@@ -22,8 +20,6 @@ export function MediaPlayerTab() {
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, { en: string; ar: string }>>({});
-  const { data: news = [] } = useManualNews('all');
-  const [selectedNews, setSelectedNews] = useState<string>('');
 
   const getVal = (key: string, lang: 'en' | 'ar') => {
     if (edits[key]) return edits[key][lang];
@@ -62,35 +58,15 @@ export function MediaPlayerTab() {
             <h3 className="text-sm font-bold">Live Stream Settings</h3>
             <p className="text-xs text-muted-foreground">Add multiple streaming servers for the live match player.</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Select value={selectedNews} onValueChange={setSelectedNews}>
-              <SelectTrigger className="h-8 w-[200px] text-xs">
-                <SelectValue placeholder="اختر عنوان من الأخبار" />
-              </SelectTrigger>
-              <SelectContent>
-                {news.slice(0, 15).map(n => (
-                  <SelectItem key={n.id} value={n.title_ar || n.title_en}>{n.title_ar || n.title_en}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="sm" onClick={() => {
-              const currentServersStr = getVal('live_stream_url', 'en');
-              let parsed = [];
-              try { parsed = JSON.parse(currentServersStr) } catch(e) { 
-                if(currentServersStr) parsed = [{id: Math.floor(1111111 + Math.random() * 8888888).toString(), name: 'Server 1', url: currentServersStr, is_active: true}] 
-              }
-              parsed.push({ 
-                id: Math.floor(1111111 + Math.random() * 8888888).toString(), 
-                name: selectedNews || `Server ${parsed.length + 1}`, 
-                url: '',
-                is_active: true
-              });
-              setVal('live_stream_url', 'en', JSON.stringify(parsed));
-              setSelectedNews(''); // reset after adding
-            }}>
-              Add Server
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" onClick={() => {
+            const currentServersStr = getVal('live_stream_url', 'en');
+            let parsed = [];
+            try { parsed = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) parsed = [{id: 'serv' + Math.random().toString(36).substring(2, 9), name: 'Server 1', url: currentServersStr}] }
+            parsed.push({ id: 'serv' + Math.random().toString(36).substring(2, 9), name: `Server ${parsed.length + 1}`, url: '' });
+            setVal('live_stream_url', 'en', JSON.stringify(parsed));
+          }}>
+            Add Server
+          </Button>
         </div>
         <div className="space-y-3">
           {(() => {
@@ -102,56 +78,27 @@ export function MediaPlayerTab() {
               return <div className="text-sm text-muted-foreground italic p-2 border border-dashed rounded-lg text-center">No servers added. The 2D Tracker will be shown.</div>;
             }
 
-            // Ensure all servers have IDs and active state
-            servers.forEach((s: any) => { 
-              if (!s.id || String(s.id).startsWith('serv')) s.id = Math.floor(1111111 + Math.random() * 8888888).toString(); 
-              if (s.is_active === undefined) s.is_active = true;
-            });
+            // Ensure all servers have IDs
+            servers.forEach((s: any) => { if (!s.id) s.id = 'serv' + Math.random().toString(36).substring(2, 9); });
 
             return servers.map((server: any, idx: number) => {
               const shortLink = `https://tiki-taka.cc/match/${server.id}`;
               return (
-              <div key={idx} className={`grid gap-2 rounded-lg border bg-background/35 p-3 relative group ${!server.is_active ? 'border-destructive/50 opacity-75' : 'border-border'}`}>
-                <div className="flex flex-wrap items-center gap-2 mb-1 border-b border-border/50 pb-2">
+              <div key={idx} className="grid gap-2 rounded-lg border border-border bg-background/35 p-3 relative group">
+                <div className="flex items-center gap-2 mb-1 border-b border-border/50 pb-2">
                   <Badge variant="outline" className="font-mono text-[10px] text-primary">{server.id}</Badge>
-                  <code className="text-xs text-muted-foreground truncate flex-1 flex min-w-[200px]" dir="ltr">{shortLink}</code>
-                  
-                  <div className="flex items-center gap-1">
-                    <Button 
-                      variant="secondary" 
-                      size="sm" 
-                      className="h-6 text-[10px] px-2 py-0 gap-1"
-                      onClick={() => {
-                        navigator.clipboard.writeText(shortLink);
-                        toast({ title: 'Copied!', description: 'Short link copied to clipboard.' });
-                      }}
-                    >
-                      <Copy className="h-3 w-3" /> <span className="hidden sm:inline">Copy Link</span>
-                    </Button>
-
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-6 text-[10px] px-2 py-0 gap-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border-blue-500/20"
-                      onClick={() => window.open(shortLink, '_blank')}
-                    >
-                      <ExternalLink className="h-3 w-3" /> <span className="hidden sm:inline">معاينة المشغل</span>
-                    </Button>
-
-                    <Button 
-                      variant={server.is_active ? 'destructive' : 'default'}
-                      size="sm" 
-                      className="h-6 text-[10px] px-2 py-0 gap-1"
-                      onClick={() => {
-                        const newServers = [...servers];
-                        newServers[idx].is_active = !server.is_active;
-                        setVal('live_stream_url', 'en', JSON.stringify(newServers));
-                      }}
-                    >
-                      {server.is_active ? <PowerOff className="h-3 w-3" /> : <Power className="h-3 w-3" />}
-                      <span className="hidden sm:inline">{server.is_active ? 'إيقاف البث' : 'تفعيل البث'}</span>
-                    </Button>
-                  </div>
+                  <code className="text-xs text-muted-foreground truncate flex-1 flex" dir="ltr">{shortLink}</code>
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="h-6 text-[10px] px-2 py-0 gap-1"
+                    onClick={() => {
+                      navigator.clipboard.writeText(shortLink);
+                      toast({ title: 'Copied!', description: 'Short link copied to clipboard.' });
+                    }}
+                  >
+                    <Copy className="h-3 w-3" /> Copy Link
+                  </Button>
                 </div>
                 <div className="grid xl:grid-cols-[100px_1fr_auto] gap-2 items-end">
                   <Field label="Server Name">
