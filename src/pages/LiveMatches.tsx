@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MessageCircle, Radio, Tv, Loader2, CircleDot } from 'lucide-react';
 import { AdBanner } from '@/components/one2/AdBanner';
+import { PopupAdBanner } from '@/components/one2/PopupAdBanner';
 import { Button } from '@/components/ui/button';
 import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
 import { EditModeToggle } from '@/components/one2/EditModeToggle';
@@ -33,6 +34,7 @@ const LiveMatches = () => {
 
   return (
     <div className="h-[100dvh] md:h-auto flex flex-col overflow-hidden md:overflow-visible bg-black text-white select-none fixed inset-0 md:relative md:inset-auto" dir={dir}>
+      <PopupAdBanner location="live-popup" />
       <EditModeToggle />
       
       {/* App Bar (Navigation & Ticker) at the top - Hidden on mobile */}
@@ -69,10 +71,6 @@ const LiveMatches = () => {
               <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
             <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto relative flex flex-col">
-              <div className="shrink-0 w-full z-50">
-                <AdSlotSelector location="live-page" onAdd={() => {}} />
-                <AdBanner slotId="live-chat-top" />
-              </div>
               <div className="flex-1 min-h-0 flex flex-col lg:relative lg:inset-0">
                 <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} isTheaterSplit={true} />
               </div>

@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/one2/Navigation';
 import { NewsTicker } from '@/components/one2/NewsTicker';
 import { One2Footer } from '@/components/one2/One2Footer';
+import { PopupAdBanner } from '@/components/one2/PopupAdBanner';
 import { TopScorersTable } from '@/components/one2/TopScorersTable';
 import { BestPlayersTable } from '@/components/one2/BestPlayersTable';
 import { CardsTable } from '@/components/one2/CardsTable';
@@ -14,6 +15,7 @@ const Standings = () => {
   const { lang, dir } = useLanguage();
   return (
     <div className="min-h-screen bg-background" dir={dir}>
+      <PopupAdBanner location="boot-popup" />
       <NewsTicker />
       <Navigation />
 

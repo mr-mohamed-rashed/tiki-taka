@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/one2/Navigation';
 import { NewsTicker } from '@/components/one2/NewsTicker';
 import { One2Footer } from '@/components/one2/One2Footer';
+import { PopupAdBanner } from '@/components/one2/PopupAdBanner';
 import { GroupTables } from '@/components/one2/GroupTables';
 import { MatchCenter } from '@/components/one2/MatchCenter';
 import { Users } from 'lucide-react';
@@ -13,6 +14,7 @@ const Groups = () => {
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
+      <PopupAdBanner location="groups-popup" />
       <NewsTicker />
       <Navigation />
 

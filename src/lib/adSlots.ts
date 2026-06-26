@@ -10,7 +10,7 @@ export interface AdSlot {
   description: string;
 }
 
-export const LOCATIONS = ['global', 'hero', 'news-page', 'live-page', 'marquee'];
+export const LOCATIONS = ['global', 'hero', 'news-page', 'marquee', 'live-popup', 'groups-popup', 'road-popup', 'boot-popup'];
 
 export const AD_SLOTS: AdSlot[] = [
   // Global Floating Ad
@@ -67,30 +67,38 @@ export const AD_SLOTS: AdSlot[] = [
     description: 'Secondary sidebar ad on news page'
   },
 
-  // Live Page Slots
+  // Popup Slots
   {
-    id: 'live-sidebar-1',
-    name: 'Live Sidebar 1',
-    location: 'live-page',
-    width: '280px',
-    height: 'auto',
-    description: 'Sidebar ad on live matches page'
-  },
-  {
-    id: 'live-sidebar-2',
-    name: 'Live Sidebar 2',
-    location: 'live-page',
-    width: '280px',
-    height: '250px',
-    description: 'Secondary sidebar ad on live page'
-  },
-  {
-    id: 'live-chat-top',
-    name: 'Live Chat Top Ad',
-    location: 'live-page',
+    id: 'live-popup-ad',
+    name: 'Live Page Popup Ad',
+    location: 'live-popup',
     width: '100%',
     height: 'auto',
-    description: 'Banner displayed directly above the live chat'
+    description: 'Popup ad overlay on live matches page'
+  },
+  {
+    id: 'groups-popup-ad',
+    name: 'Groups Page Popup Ad',
+    location: 'groups-popup',
+    width: '100%',
+    height: 'auto',
+    description: 'Popup ad overlay on groups page'
+  },
+  {
+    id: 'road-popup-ad',
+    name: 'Road to Final Popup Ad',
+    location: 'road-popup',
+    width: '100%',
+    height: 'auto',
+    description: 'Popup ad overlay on roadmap page'
+  },
+  {
+    id: 'boot-popup-ad',
+    name: 'Golden Boot Popup Ad',
+    location: 'boot-popup',
+    width: '100%',
+    height: 'auto',
+    description: 'Popup ad overlay on golden boot page'
   },
 
   // Marquee Row

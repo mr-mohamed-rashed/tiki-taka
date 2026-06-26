@@ -2,6 +2,7 @@ import { Trophy } from 'lucide-react';
 import { Navigation } from '@/components/one2/Navigation';
 import { NewsTicker } from '@/components/one2/NewsTicker';
 import { One2Footer } from '@/components/one2/One2Footer';
+import { PopupAdBanner } from '@/components/one2/PopupAdBanner';
 import { WorldCupRoadmap } from '@/components/one2/WorldCupRoadmap';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -12,6 +13,7 @@ export default function Roadmap() {
 
   return (
     <div className="min-h-screen bg-background" dir={dir}>
+      <PopupAdBanner location="road-popup" />
       <NewsTicker />
       <Navigation />
 
