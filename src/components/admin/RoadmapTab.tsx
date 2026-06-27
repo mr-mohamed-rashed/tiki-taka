@@ -157,7 +157,7 @@ export function RoadmapTab() {
     if (match.round === 'r32' && !bracket.isLocked) {
       return (
         <div className={cn(
-          "flex flex-col gap-1 p-1 rounded-md bg-background shadow-sm w-[130px] sm:w-[150px]",
+          "flex flex-col gap-1 p-1 rounded-md bg-background shadow-sm w-[110px] sm:w-[130px] lg:w-[140px]",
           "border-2 border-border"
         )}>
           <Select value={match.team1Id || 'empty'} onValueChange={(val) => handleTeam1Change(match.id, val)} dir="rtl">
@@ -235,7 +235,7 @@ export function RoadmapTab() {
 
     return (
       <div className={cn(
-        "flex flex-col rounded-md shadow-sm border-2 w-[130px] sm:w-[150px] overflow-visible bg-background",
+        "flex flex-col rounded-md shadow-sm border-2 w-[110px] sm:w-[130px] lg:w-[140px] overflow-visible bg-background",
         isFinal ? "border-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] scale-110" : "border-border/50"
       )}>
         <div className="flex flex-col rounded-t-sm overflow-hidden">
@@ -309,6 +309,7 @@ export function RoadmapTab() {
   const m30 = bracket.matches['m30'];
 
   const final = bracket.matches['m31'];
+  const thirdPlace = bracket.matches['m32'];
 
   return (
     <div className="space-y-6">
@@ -368,8 +369,8 @@ export function RoadmapTab() {
         )}
       </Card>
 
-      <div className="w-full overflow-x-auto pb-8">
-        <div className="min-w-[1200px] flex justify-between items-center gap-2 py-4" dir="ltr">
+      <div className="w-full pb-8 overflow-x-auto">
+        <div className="w-full min-w-[700px] flex justify-between items-stretch gap-1 sm:gap-2 py-4" dir="ltr">
           {/* Left Side */}
           <BracketNode match={m29} side="left" renderBox={renderMatchBox}>
             <BracketNode match={m25} side="left" renderBox={renderMatchBox}>
@@ -394,17 +395,26 @@ export function RoadmapTab() {
             </BracketNode>
           </BracketNode>
 
-          {/* Center Final */}
-          <div className="flex flex-col items-center justify-center z-10 px-2">
-            <div className="mb-4 flex flex-col items-center">
-              <div className="rounded-full border-2 border-primary/40 bg-primary/10 p-3 mb-2">
-                <Trophy className="h-8 w-8 text-primary" />
+          {/* Center Final & 3rd Place */}
+          <div className="flex flex-col items-center justify-center z-10 px-1 sm:px-2 gap-4 sm:gap-8">
+            <div className="flex flex-col items-center">
+              <div className="rounded-full border-2 border-primary/40 bg-primary/10 p-2 sm:p-3 mb-1 sm:mb-2">
+                <Trophy className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
               </div>
-              <h3 className="font-arabic font-black text-xs sm:text-lg text-primary">
+              <h3 className="font-arabic font-black text-[10px] sm:text-sm lg:text-lg text-primary mb-1 sm:mb-2">
                 النهائي
               </h3>
+              {renderMatchBox(final, true)}
             </div>
-            {renderMatchBox(final, true)}
+
+            {thirdPlace && (
+              <div className="flex flex-col items-center mt-2 sm:mt-6">
+                <h3 className="font-arabic font-bold text-[9px] sm:text-[11px] text-muted-foreground mb-1 sm:mb-2">
+                  المركز الثالث
+                </h3>
+                {renderMatchBox(thirdPlace)}
+              </div>
+            )}
           </div>
 
           {/* Right Side */}

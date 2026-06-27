@@ -113,13 +113,14 @@ export function WorldCupRoadmap() {
   const m30 = bracket.matches['m30'];
 
   const final = bracket.matches['m31'];
+  const thirdPlace = bracket.matches['m32'];
 
   return (
     <Card className="relative w-full overflow-hidden border-border bg-gradient-card p-4 sm:p-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.15),transparent_40%)] pointer-events-none" />
       
       <div className="w-full overflow-hidden" dir="ltr">
-        <div className="w-full flex justify-between items-center gap-1 sm:gap-2 py-4 sm:py-8">
+        <div className="w-full flex justify-between items-stretch gap-1 sm:gap-2 py-4 sm:py-8">
           
           {/* Left Side */}
           <BracketNode match={m29} side="left" isAr={isAr}>
@@ -145,18 +146,26 @@ export function WorldCupRoadmap() {
             </BracketNode>
           </BracketNode>
 
-          {/* Center Final */}
-          <div className="flex flex-col items-center justify-center z-10 px-1 sm:px-4">
-            <div className="mb-4 sm:mb-6 flex flex-col items-center">
-              <div className="rounded-full border-2 border-primary/40 bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.3)] p-3 sm:p-5 mb-2 sm:mb-4">
-                <Trophy className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
+          {/* Center Final & 3rd Place */}
+          <div className="flex flex-col items-center justify-center z-10 px-1 sm:px-4 gap-4 sm:gap-8">
+            <div className="flex flex-col items-center">
+              <div className="rounded-full border-2 border-primary/40 bg-primary/10 shadow-[0_0_30px_hsl(var(--primary)/0.3)] p-2 sm:p-5 mb-1 sm:mb-4">
+                <Trophy className="h-5 w-5 sm:h-12 sm:w-12 text-primary" />
               </div>
-              <h3 className={cn("font-display font-black text-xs sm:text-xl tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary", isAr && "font-arabic")}>
+              <h3 className={cn("font-display font-black text-[10px] sm:text-xl tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary mb-1 sm:mb-4", isAr && "font-arabic")}>
                 {isAr ? 'النهائي' : 'FINAL'}
               </h3>
+              <MatchBox match={final} isAr={isAr} isFinal />
             </div>
             
-            <MatchBox match={final} isAr={isAr} isFinal />
+            {thirdPlace && (
+              <div className="flex flex-col items-center mt-2 sm:mt-8">
+                <h3 className={cn("font-display font-bold text-[9px] sm:text-sm text-muted-foreground mb-1 sm:mb-2", isAr && "font-arabic")}>
+                  {isAr ? 'المركز الثالث' : 'THIRD PLACE'}
+                </h3>
+                <MatchBox match={thirdPlace} isAr={isAr} />
+              </div>
+            )}
           </div>
 
           {/* Right Side */}

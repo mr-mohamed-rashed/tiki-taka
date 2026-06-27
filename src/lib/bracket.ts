@@ -1,6 +1,6 @@
 export type BracketMatch = {
   id: string;
-  round: 'r32' | 'r16' | 'qf' | 'sf' | 'final';
+  round: 'r32' | 'r16' | 'qf' | 'sf' | 'final' | '3rd';
   team1Id: string | null;
   team2Id: string | null;
   score1: number | null;
@@ -23,8 +23,9 @@ export function getDefaultBracket(): BracketState {
     matches[id] = { id, round, team1Id: null, team2Id: null, score1: null, score2: null, winnerId: null, nextMatchId };
   };
 
-  // Final
+  // Final & 3rd Place
   addMatch('m31', 'final', null);
+  addMatch('m32', '3rd', null);
 
   // Semifinals (Left: m29, Right: m30)
   addMatch('m29', 'sf', 'm31');
@@ -107,6 +108,33 @@ export function advanceTeam(state: BracketState, matchId: string, winnerId: stri
     // If we removed a winner, we need to recursively remove them from further matches
     if (!winnerId && oldWinnerId) {
        clearTeamFromFutureMatches(newState, match.nextMatchId, oldWinnerId);
+    }
+  }
+
+  // Handle losers of Semi-finals (m29, m30) moving to 3rd place match (m32)
+  if (matchId === 'm29' || matchId === 'm30') {
+    const thirdPlaceMatch = newState.matches['m32'];
+    if (thirdPlaceMatch) {
+      // Find the loser
+      let loserId = null;
+      if (winnerId) {
+        loserId = winnerId === match.team1Id ? match.team2Id : match.team1Id;
+      }
+      
+      const isTeam1 = matchId === 'm29';
+      
+      if (isTeam1) {
+        thirdPlaceMatch.team1Id = loserId;
+      } else {
+        thirdPlaceMatch.team2Id = loserId;
+      }
+      
+      if (!loserId) {
+        // If match was reset, clear the loser from the 3rd place match
+        if (thirdPlaceMatch.winnerId && thirdPlaceMatch.winnerId === (isTeam1 ? thirdPlaceMatch.team1Id : thirdPlaceMatch.team2Id)) {
+           thirdPlaceMatch.winnerId = null;
+        }
+      }
     }
   }
 
