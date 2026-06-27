@@ -157,19 +157,19 @@ export function RoadmapTab() {
     if (match.round === 'r32' && !bracket.isLocked) {
       return (
         <div className={cn(
-          "flex flex-col gap-1 p-1 rounded-md bg-background shadow-sm w-[110px] sm:w-[130px] lg:w-[140px]",
-          "border-2 border-border"
+          "flex flex-col rounded shadow-sm w-[90px] sm:w-[110px] bg-background",
+          "border border-border/50 overflow-hidden"
         )}>
           <Select value={match.team1Id || 'empty'} onValueChange={(val) => handleTeam1Change(match.id, val)} dir="rtl">
-            <SelectTrigger className="w-full text-[10px] sm:text-xs h-7 px-2">
-              <SelectValue placeholder="الفريق 1" />
+            <SelectTrigger className="w-full text-[9px] sm:text-[10px] h-6 px-1 border-0 rounded-none bg-transparent">
+              <SelectValue placeholder="فريق 1" />
             </SelectTrigger>
             <SelectContent dir="rtl">
-              <SelectItem value="empty" className="text-muted-foreground text-xs">غير محدد</SelectItem>
+              <SelectItem value="empty" className="text-[10px] sm:text-xs">غير محدد</SelectItem>
               {teamsArray.map((team) => (
-                <SelectItem key={team.id} value={team.id} className="text-xs font-semibold">
+                <SelectItem key={team.id} value={team.id} className="text-[10px] sm:text-xs font-semibold">
                   <div className="flex items-center gap-1">
-                    <img src={team.flag} className="h-2.5 w-3.5 rounded-[1px] object-cover" />
+                    <img src={team.flag} className="h-2 w-3 sm:h-2.5 sm:w-3.5 rounded-[1px] object-cover" />
                     <span>{team.name}</span>
                   </div>
                 </SelectItem>
@@ -177,20 +177,18 @@ export function RoadmapTab() {
             </SelectContent>
           </Select>
           
-          <div className="flex items-center gap-2 justify-center">
-             <span className="text-[9px] font-bold text-muted-foreground">VS</span>
-          </div>
+          <div className="h-px bg-border/50 w-full" />
 
           <Select value={match.team2Id || 'empty'} onValueChange={(val) => handleTeam2Change(match.id, val)} dir="rtl">
-            <SelectTrigger className="w-full text-[10px] sm:text-xs h-7 px-2">
-              <SelectValue placeholder="الفريق 2" />
+            <SelectTrigger className="w-full text-[9px] sm:text-[10px] h-6 px-1 border-0 rounded-none bg-transparent">
+              <SelectValue placeholder="فريق 2" />
             </SelectTrigger>
             <SelectContent dir="rtl">
-              <SelectItem value="empty" className="text-muted-foreground text-xs">غير محدد</SelectItem>
+              <SelectItem value="empty" className="text-[10px] sm:text-xs">غير محدد</SelectItem>
               {teamsArray.map((team) => (
-                <SelectItem key={team.id} value={team.id} className="text-xs font-semibold">
+                <SelectItem key={team.id} value={team.id} className="text-[10px] sm:text-xs font-semibold">
                   <div className="flex items-center gap-1">
-                    <img src={team.flag} className="h-2.5 w-3.5 rounded-[1px] object-cover" />
+                    <img src={team.flag} className="h-2 w-3 sm:h-2.5 sm:w-3.5 rounded-[1px] object-cover" />
                     <span>{team.name}</span>
                   </div>
                 </SelectItem>
@@ -204,21 +202,21 @@ export function RoadmapTab() {
     // Locked or advanced round: show the teams (if known) and allow picking the winner
     const renderTeam = (t: Team | null, isWinner: boolean) => (
       <div className={cn(
-        "flex items-center justify-between gap-1 px-1.5 py-1 w-full transition-colors",
+        "flex items-center justify-between gap-1 px-1 py-0.5 w-full transition-colors h-5 sm:h-6",
         isWinner ? "bg-primary/20 text-foreground" : "bg-muted/30"
       )}>
-        <div className="flex items-center gap-1.5 overflow-hidden">
-          <div className={cn("w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-border", isWinner && "ring-primary")}>
+        <div className="flex items-center gap-1 overflow-hidden">
+          <div className={cn("w-3 h-3 rounded-full overflow-hidden shrink-0 ring-1 ring-border", isWinner && "ring-primary")}>
             {t ? (
               <img src={t.flag} alt={t.name} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center">
-                <Flag className="w-2.5 h-2.5 text-muted-foreground" />
+                <Flag className="w-2 h-2 text-muted-foreground" />
               </div>
             )}
           </div>
           <span className={cn(
-            "text-[10px] sm:text-[11px] font-bold truncate max-w-[60px] sm:max-w-[70px]",
+            "text-[8px] sm:text-[10px] font-bold truncate max-w-[50px] sm:max-w-[65px]",
             !t && "text-muted-foreground",
             "font-arabic"
           )}>
@@ -226,7 +224,7 @@ export function RoadmapTab() {
           </span>
         </div>
         {match.score1 !== undefined && match.score2 !== undefined && match.score1 !== null && match.score2 !== null && (
-         <span className="text-[9px] sm:text-[10px] font-bold font-mono">
+         <span className="text-[8px] sm:text-[10px] font-bold font-mono">
            {t === t1 ? match.score1 : match.score2}
          </span>
         )}
@@ -235,8 +233,8 @@ export function RoadmapTab() {
 
     return (
       <div className={cn(
-        "flex flex-col rounded-md shadow-sm border-2 w-[110px] sm:w-[130px] lg:w-[140px] overflow-visible bg-background",
-        isFinal ? "border-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] scale-110" : "border-border/50"
+        "flex flex-col shadow-sm w-[90px] sm:w-[110px] overflow-visible bg-background",
+        isFinal ? "border-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] scale-110 rounded-md border-2" : "border-border/50 border rounded"
       )}>
         <div className="flex flex-col rounded-t-sm overflow-hidden">
           {renderTeam(t1, match.winnerId === match.team1Id && match.winnerId !== null)}
@@ -245,15 +243,15 @@ export function RoadmapTab() {
         </div>
         
         {bracket.isLocked && (t1 || t2) && (
-          <div className="p-1 border-t border-border/50 bg-background rounded-b-sm">
+          <div className="border-t border-border/50 bg-background rounded-b-sm">
             <Select value={match.winnerId || 'empty'} onValueChange={(val) => handleSetWinner(match.id, val === 'empty' ? null : val)} dir="rtl">
-              <SelectTrigger className="w-full text-[9px] sm:text-[10px] h-6 px-1.5 bg-background border-primary/20 hover:border-primary/50">
-                <SelectValue placeholder="اختر الفائز..." />
+              <SelectTrigger className="w-full text-[8px] sm:text-[9px] h-5 px-1 border-0 rounded-none bg-transparent hover:bg-muted/50">
+                <SelectValue placeholder="فائز..." />
               </SelectTrigger>
               <SelectContent dir="rtl">
-                <SelectItem value="empty" className="text-xs">إلغاء الفائز</SelectItem>
-                {t1 && <SelectItem value={t1.id} className="text-xs font-semibold">{t1.name}</SelectItem>}
-                {t2 && <SelectItem value={t2.id} className="text-xs font-semibold">{t2.name}</SelectItem>}
+                <SelectItem value="empty" className="text-[10px] sm:text-xs">إلغاء</SelectItem>
+                {t1 && <SelectItem value={t1.id} className="text-[10px] sm:text-xs font-semibold">{t1.shortName || t1.name}</SelectItem>}
+                {t2 && <SelectItem value={t2.id} className="text-[10px] sm:text-xs font-semibold">{t2.shortName || t2.name}</SelectItem>}
               </SelectContent>
             </Select>
           </div>
