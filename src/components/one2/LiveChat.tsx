@@ -103,6 +103,8 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
   
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [users, setUsers] = useState<Map<string, ChatUser>>(new Map());
+  const botIndexRef = useRef(0);
+  const msgIndexRef = useRef(0);
   const [loading, setLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [inputMsg, setInputMsg] = useState('');
@@ -256,12 +258,17 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
     };
   }, [matchId, userId]);
 
-  // Automated 5 Admins (Bots) sending news when chat is quiet
+  // Automated 20 Admins (Bots) sending news
   useEffect(() => {
     // Only run this logic on the Moderator's client to prevent multiple clients from spamming the DB
     if (!isModerator || news.length === 0 || !botsEnabled) return;
 
-    const BOT_NAMES = ['أحمد محمد', 'محمود سعد', 'كريم حسن', 'طارق السيد', 'علي عادل', 'عمر فاروق', 'يوسف مصطفى', 'حسن كمال', 'مصطفى فهمي', 'خالد عبد الله'];
+    const BOT_NAMES = [
+      'أحمد محمد', 'محمود سعد', 'كريم حسن', 'طارق السيد', 'علي عادل', 
+      'عمر فاروق', 'يوسف مصطفى', 'حسن كمال', 'مصطفى فهمي', 'خالد عبد الله',
+      'محمد صلاح', 'إبراهيم سعيد', 'حسام غالي', 'وليد سليمان', 'عبد الله السعيد',
+      'عمرو جمال', 'محمد هاني', 'رامي ربيعة', 'محمود علاء', 'فرجاني ساسي'
+    ];
 
     const botMessagesOnly = news.filter(n => n.category === 'BotMessage');
     if (botMessagesOnly.length === 0) return;
@@ -281,18 +288,22 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
         }
       }
       
-      const multiplier = Math.pow(2, Math.min(consecutiveBotMessages, 5));
-      const requiredWaitTime = 45000 * multiplier;
+      const multiplier = Math.pow(1.5, Math.min(consecutiveBotMessages, 5));
+      const requiredWaitTime = 20000 * multiplier;
       
       if (now - lastMsgTime > requiredWaitTime) {
-        const randomNews = botMessagesOnly[Math.floor(Math.random() * botMessagesOnly.length)];
-        const randomBot = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
-        const text = randomNews.title_ar || randomNews.title_en;
-        const link = randomNews.excerpt_en || randomNews.excerpt_ar; // We will use excerpt_en for the external link
+        const nextNews = botMessagesOnly[msgIndexRef.current % botMessagesOnly.length];
+        const nextBot = BOT_NAMES[botIndexRef.current % BOT_NAMES.length];
+        
+        msgIndexRef.current += 1;
+        botIndexRef.current += 1;
+
+        const text = nextNews.title_ar || nextNews.title_en;
+        const link = nextNews.excerpt_en || nextNews.excerpt_ar;
         
         supabase.from('chat_messages').insert({
           user_id: userId,
-          username: randomBot,
+          username: nextBot,
           message: `${text} \n ${link}`,
           match_id: matchId,
         }).select().single().then(({ data, error }) => {
@@ -521,8 +532,8 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
       {/* Messages */}
       <div 
         ref={scrollRef} 
-        className="commentary-scroll flex-1 overflow-y-auto p-3 flex flex-col gap-1"
-        style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 16px)', maskImage: 'linear-gradient(to bottom, transparent, black 16px)' }}
+        className="commentary-scroll flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-1"
+        style={variant === 'overlay' ? { WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 16px)', maskImage: 'linear-gradient(to bottom, transparent, black 16px)' } : undefined}
       >
         <div className="flex-1 min-h-0" />
         {visibleMessages.map((msg) => {
