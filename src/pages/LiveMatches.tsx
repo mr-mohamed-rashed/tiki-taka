@@ -70,8 +70,8 @@ const LiveMatches = () => {
             <div className="relative shrink-0 w-full lg:max-w-3xl lg:flex-1 md:h-auto z-40">
               <Live2DTracker match={featured || { id: 'main', home: { name: 'A', color: '#888' }, away: { name: 'B', color: '#aaa' } } as any} hideSocials={true} />
             </div>
-            <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full lg:h-auto relative flex flex-col">
-              <div className="flex-1 min-h-0 flex flex-col lg:relative lg:inset-0">
+            <div className="flex-1 min-h-0 w-full lg:w-[400px] xl:w-[450px] shrink-0 h-[400px] lg:h-auto relative flex flex-col">
+              <div className="flex-1 min-h-0 flex flex-col lg:absolute lg:inset-0">
                 <LiveChat matchId={featured?.id?.toString() || 'main_live_stream'} isTheaterSplit={true} />
               </div>
             </div>

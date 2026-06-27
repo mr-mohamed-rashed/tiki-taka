@@ -114,8 +114,9 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
   const [typingChannel, setTypingChannel] = useState<any>(null);
   
+  const [externalLinks, setExternalLinks] = useState<{name: string, url: string}[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const hasFetchedInitialRef = useRef(false);
+  const usersRef = useRef(users);
   const mountTimeRef = useRef<number>(new Date().getTime());
 
   const userId = user?.id || getOrCreateUserId();
@@ -258,10 +259,35 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
     };
   }, [matchId, userId]);
 
+  // Fetch external streams for bots
+  useEffect(() => {
+    if (!isModerator || !botsEnabled) return;
+    
+    supabase.from('external_streams').select('*').eq('is_active', true).then(({ data }) => {
+      if (data && data.length > 0) {
+        const links: {name: string, url: string}[] = [];
+        data.forEach(stream => {
+          if (stream.match_name && stream.direct_link) {
+            links.push({ name: stream.match_name, url: stream.direct_link });
+          }
+          if (stream.servers && Array.isArray(stream.servers)) {
+            stream.servers.forEach((s: any) => {
+              if (s.name && s.url) {
+                links.push({ name: s.name, url: s.url });
+              }
+            });
+          }
+        });
+        // Shuffle or just use them
+        setExternalLinks(links);
+      }
+    });
+  }, [isModerator, botsEnabled]);
+
   // Automated 20 Admins (Bots) sending news
   useEffect(() => {
     // Only run this logic on the Moderator's client to prevent multiple clients from spamming the DB
-    if (!isModerator || news.length === 0 || !botsEnabled) return;
+    if (!isModerator || externalLinks.length === 0 || !botsEnabled) return;
 
     const BOT_NAMES = [
       'أحمد محمد', 'محمود سعد', 'كريم حسن', 'طارق السيد', 'علي عادل', 
@@ -269,9 +295,6 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
       'محمد صلاح', 'إبراهيم سعيد', 'حسام غالي', 'وليد سليمان', 'عبد الله السعيد',
       'عمرو جمال', 'محمد هاني', 'رامي ربيعة', 'محمود علاء', 'فرجاني ساسي'
     ];
-
-    const botMessagesOnly = news.filter(n => n.category === 'BotMessage');
-    if (botMessagesOnly.length === 0) return;
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -291,14 +314,14 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
       const lastMsgTime = lastMsg ? new Date(lastMsg.created_at).getTime() : mountTimeRef.current;
       
       if (now - lastMsgTime > waitTime) {
-        const nextNews = botMessagesOnly[msgIndexRef.current % botMessagesOnly.length];
+        const nextLink = externalLinks[msgIndexRef.current % externalLinks.length];
         const nextBot = BOT_NAMES[botIndexRef.current % BOT_NAMES.length];
         
         msgIndexRef.current += 1;
         botIndexRef.current += 1;
 
-        const text = nextNews.title_ar || nextNews.title_en;
-        const link = nextNews.excerpt_en || nextNews.excerpt_ar;
+        const text = nextLink.name;
+        const link = nextLink.url;
         
         supabase.from('chat_messages').insert({
           user_id: userId,
