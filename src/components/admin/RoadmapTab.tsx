@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CheckCircle, Save, Loader2, Trophy, Lock, Unlock, RefreshCw } from 'lucide-react';
+import { CheckCircle, Save, Loader2, Trophy, Lock, Unlock, RefreshCw, Flag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { teams as teamsData } from '@/lib/footballData';
+import { teams as teamsData, Team } from '@/lib/footballData';
 import { BracketState, getDefaultBracket, advanceTeam, BracketMatch } from '@/lib/bracket';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useResults } from '@/hooks/useFootballData';
+import { cn } from '@/lib/utils';
 
 export function RoadmapTab() {
   const [bracket, setBracket] = useState<BracketState>(getDefaultBracket());
@@ -148,24 +149,27 @@ export function RoadmapTab() {
 
   const teamsArray = Object.values(teamsData).sort((a, b) => a.name.localeCompare(b.name));
 
-  const renderMatchRow = (match: BracketMatch) => {
+  const renderMatchBox = (match: BracketMatch, isFinal = false) => {
     const t1 = match.team1Id ? teamsData[match.team1Id as keyof typeof teamsData] : null;
     const t2 = match.team2Id ? teamsData[match.team2Id as keyof typeof teamsData] : null;
     
     // For R32 and unlocked, allow selecting teams
     if (match.round === 'r32' && !bracket.isLocked) {
       return (
-        <div key={match.id} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-2 p-3 rounded-lg border border-border/50 bg-background/50">
+        <div className={cn(
+          "flex flex-col gap-1 p-1 rounded-md bg-background shadow-sm w-[130px] sm:w-[150px]",
+          "border-2 border-border"
+        )}>
           <Select value={match.team1Id || 'empty'} onValueChange={(val) => handleTeam1Change(match.id, val)} dir="rtl">
-            <SelectTrigger className="w-full font-arabic text-sm h-9">
-              <SelectValue placeholder="اختر المنتخب الأول..." />
+            <SelectTrigger className="w-full text-[10px] sm:text-xs h-7 px-2">
+              <SelectValue placeholder="الفريق 1" />
             </SelectTrigger>
             <SelectContent dir="rtl">
-              <SelectItem value="empty" className="text-muted-foreground font-arabic">غير محدد</SelectItem>
+              <SelectItem value="empty" className="text-muted-foreground text-xs">غير محدد</SelectItem>
               {teamsArray.map((team) => (
-                <SelectItem key={team.id} value={team.id} className="font-arabic font-semibold flex items-center gap-2">
-                  <div className="flex items-center gap-2">
-                    <img src={team.flag} alt={team.name} className="h-3 w-4 rounded-sm object-cover" />
+                <SelectItem key={team.id} value={team.id} className="text-xs font-semibold">
+                  <div className="flex items-center gap-1">
+                    <img src={team.flag} className="h-2.5 w-3.5 rounded-[1px] object-cover" />
                     <span>{team.name}</span>
                   </div>
                 </SelectItem>
@@ -173,18 +177,20 @@ export function RoadmapTab() {
             </SelectContent>
           </Select>
           
-          <span className="text-xs font-bold text-muted-foreground text-center">VS</span>
+          <div className="flex items-center gap-2 justify-center">
+             <span className="text-[9px] font-bold text-muted-foreground">VS</span>
+          </div>
 
           <Select value={match.team2Id || 'empty'} onValueChange={(val) => handleTeam2Change(match.id, val)} dir="rtl">
-            <SelectTrigger className="w-full font-arabic text-sm h-9">
-              <SelectValue placeholder="اختر المنتخب الثاني..." />
+            <SelectTrigger className="w-full text-[10px] sm:text-xs h-7 px-2">
+              <SelectValue placeholder="الفريق 2" />
             </SelectTrigger>
             <SelectContent dir="rtl">
-              <SelectItem value="empty" className="text-muted-foreground font-arabic">غير محدد</SelectItem>
+              <SelectItem value="empty" className="text-muted-foreground text-xs">غير محدد</SelectItem>
               {teamsArray.map((team) => (
-                <SelectItem key={team.id} value={team.id} className="font-arabic font-semibold flex items-center gap-2">
-                  <div className="flex items-center gap-2">
-                    <img src={team.flag} alt={team.name} className="h-3 w-4 rounded-sm object-cover" />
+                <SelectItem key={team.id} value={team.id} className="text-xs font-semibold">
+                  <div className="flex items-center gap-1">
+                    <img src={team.flag} className="h-2.5 w-3.5 rounded-[1px] object-cover" />
                     <span>{team.name}</span>
                   </div>
                 </SelectItem>
@@ -196,47 +202,58 @@ export function RoadmapTab() {
     }
 
     // Locked or advanced round: show the teams (if known) and allow picking the winner
-    return (
-      <div key={match.id} className="flex flex-col gap-2 p-3 rounded-lg border border-border/50 bg-background/50">
-        <div className="flex justify-between items-center text-sm font-arabic">
-          <div className="flex items-center gap-2 flex-1">
-            {t1 ? (
-              <div className="flex items-center gap-2">
-                <img src={t1.flag} className="w-4 h-3 rounded-sm object-cover" />
-                <span className="font-bold text-foreground">{t1.name}</span>
+    const renderTeam = (t: Team | null, isWinner: boolean) => (
+      <div className={cn(
+        "flex items-center justify-between gap-1 px-1.5 py-1 w-full transition-colors",
+        isWinner ? "bg-primary/20 text-foreground" : "bg-muted/30"
+      )}>
+        <div className="flex items-center gap-1.5 overflow-hidden">
+          <div className={cn("w-4 h-4 rounded-full overflow-hidden shrink-0 ring-1 ring-border", isWinner && "ring-primary")}>
+            {t ? (
+              <img src={t.flag} alt={t.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-muted flex items-center justify-center">
+                <Flag className="w-2.5 h-2.5 text-muted-foreground" />
               </div>
-            ) : <span className="text-muted-foreground">غير محدد</span>}
+            )}
           </div>
-          <span className="text-xs font-bold text-muted-foreground mx-4">VS</span>
-          <div className="flex items-center justify-end gap-2 flex-1 text-left">
-            {t2 ? (
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-foreground">{t2.name}</span>
-                <img src={t2.flag} className="w-4 h-3 rounded-sm object-cover" />
-              </div>
-            ) : <span className="text-muted-foreground">غير محدد</span>}
-          </div>
+          <span className={cn(
+            "text-[10px] sm:text-[11px] font-bold truncate max-w-[60px] sm:max-w-[70px]",
+            !t && "text-muted-foreground",
+            "font-arabic"
+          )}>
+            {t ? t.shortName || t.name : 'TBD'}
+          </span>
         </div>
+        {match.score1 !== undefined && match.score2 !== undefined && match.score1 !== null && match.score2 !== null && (
+         <span className="text-[9px] sm:text-[10px] font-bold font-mono">
+           {t === t1 ? match.score1 : match.score2}
+         </span>
+        )}
+      </div>
+    );
 
+    return (
+      <div className={cn(
+        "flex flex-col rounded-md shadow-sm border-2 w-[130px] sm:w-[150px] overflow-visible bg-background",
+        isFinal ? "border-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] scale-110" : "border-border/50"
+      )}>
+        <div className="flex flex-col rounded-t-sm overflow-hidden">
+          {renderTeam(t1, match.winnerId === match.team1Id && match.winnerId !== null)}
+          <div className="h-px bg-border/50 w-full" />
+          {renderTeam(t2, match.winnerId === match.team2Id && match.winnerId !== null)}
+        </div>
+        
         {bracket.isLocked && (t1 || t2) && (
-          <div className="mt-2 flex items-center justify-center gap-2">
-            <span className="text-xs text-muted-foreground font-arabic">الفائز:</span>
+          <div className="p-1 border-t border-border/50 bg-background rounded-b-sm">
             <Select value={match.winnerId || 'empty'} onValueChange={(val) => handleSetWinner(match.id, val === 'empty' ? null : val)} dir="rtl">
-              <SelectTrigger className="w-[200px] font-arabic text-sm h-8 bg-background">
+              <SelectTrigger className="w-full text-[9px] sm:text-[10px] h-6 px-1.5 bg-background border-primary/20 hover:border-primary/50">
                 <SelectValue placeholder="اختر الفائز..." />
               </SelectTrigger>
               <SelectContent dir="rtl">
-                <SelectItem value="empty" className="text-muted-foreground font-arabic">إلغاء الفائز</SelectItem>
-                {t1 && (
-                  <SelectItem value={t1.id} className="font-arabic font-semibold">
-                    {t1.name}
-                  </SelectItem>
-                )}
-                {t2 && (
-                  <SelectItem value={t2.id} className="font-arabic font-semibold">
-                    {t2.name}
-                  </SelectItem>
-                )}
+                <SelectItem value="empty" className="text-xs">إلغاء الفائز</SelectItem>
+                {t1 && <SelectItem value={t1.id} className="text-xs font-semibold">{t1.name}</SelectItem>}
+                {t2 && <SelectItem value={t2.id} className="text-xs font-semibold">{t2.name}</SelectItem>}
               </SelectContent>
             </Select>
           </div>
@@ -253,13 +270,45 @@ export function RoadmapTab() {
     );
   }
 
-  const matchesByRound = {
-    r32: Object.values(bracket.matches).filter(m => m.round === 'r32').sort((a,b) => parseInt(a.id.substring(1)) - parseInt(b.id.substring(1))),
-    r16: Object.values(bracket.matches).filter(m => m.round === 'r16').sort((a,b) => parseInt(a.id.substring(1)) - parseInt(b.id.substring(1))),
-    qf: Object.values(bracket.matches).filter(m => m.round === 'qf').sort((a,b) => parseInt(a.id.substring(1)) - parseInt(b.id.substring(1))),
-    sf: Object.values(bracket.matches).filter(m => m.round === 'sf').sort((a,b) => parseInt(a.id.substring(1)) - parseInt(b.id.substring(1))),
-    final: Object.values(bracket.matches).filter(m => m.round === 'final'),
-  };
+  // Left Tree Nodes
+  const m1 = bracket.matches['m1'];
+  const m2 = bracket.matches['m2'];
+  const m3 = bracket.matches['m3'];
+  const m4 = bracket.matches['m4'];
+  const m5 = bracket.matches['m5'];
+  const m6 = bracket.matches['m6'];
+  const m7 = bracket.matches['m7'];
+  const m8 = bracket.matches['m8'];
+
+  const m17 = bracket.matches['m17'];
+  const m18 = bracket.matches['m18'];
+  const m19 = bracket.matches['m19'];
+  const m20 = bracket.matches['m20'];
+
+  const m25 = bracket.matches['m25'];
+  const m26 = bracket.matches['m26'];
+  const m29 = bracket.matches['m29'];
+
+  // Right Tree Nodes
+  const m9 = bracket.matches['m9'];
+  const m10 = bracket.matches['m10'];
+  const m11 = bracket.matches['m11'];
+  const m12 = bracket.matches['m12'];
+  const m13 = bracket.matches['m13'];
+  const m14 = bracket.matches['m14'];
+  const m15 = bracket.matches['m15'];
+  const m16 = bracket.matches['m16'];
+
+  const m21 = bracket.matches['m21'];
+  const m22 = bracket.matches['m22'];
+  const m23 = bracket.matches['m23'];
+  const m24 = bracket.matches['m24'];
+
+  const m27 = bracket.matches['m27'];
+  const m28 = bracket.matches['m28'];
+  const m30 = bracket.matches['m30'];
+
+  const final = bracket.matches['m31'];
 
   return (
     <div className="space-y-6">
@@ -319,47 +368,101 @@ export function RoadmapTab() {
         )}
       </Card>
 
-      <div className="space-y-8">
-        <div className="space-y-3">
-          <h4 className="font-bold text-lg font-arabic border-b border-border pb-2">دور الـ 32</h4>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {matchesByRound.r32.map(renderMatchRow)}
+      <div className="w-full overflow-x-auto pb-8">
+        <div className="min-w-[1200px] flex justify-between items-center gap-2 py-4" dir="ltr">
+          {/* Left Side */}
+          <BracketNode match={m29} side="left" renderBox={renderMatchBox}>
+            <BracketNode match={m25} side="left" renderBox={renderMatchBox}>
+              <BracketNode match={m17} side="left" renderBox={renderMatchBox}>
+                <BracketNode match={m1} side="left" renderBox={renderMatchBox} />
+                <BracketNode match={m2} side="left" renderBox={renderMatchBox} />
+              </BracketNode>
+              <BracketNode match={m18} side="left" renderBox={renderMatchBox}>
+                <BracketNode match={m3} side="left" renderBox={renderMatchBox} />
+                <BracketNode match={m4} side="left" renderBox={renderMatchBox} />
+              </BracketNode>
+            </BracketNode>
+            <BracketNode match={m26} side="left" renderBox={renderMatchBox}>
+              <BracketNode match={m19} side="left" renderBox={renderMatchBox}>
+                <BracketNode match={m5} side="left" renderBox={renderMatchBox} />
+                <BracketNode match={m6} side="left" renderBox={renderMatchBox} />
+              </BracketNode>
+              <BracketNode match={m20} side="left" renderBox={renderMatchBox}>
+                <BracketNode match={m7} side="left" renderBox={renderMatchBox} />
+                <BracketNode match={m8} side="left" renderBox={renderMatchBox} />
+              </BracketNode>
+            </BracketNode>
+          </BracketNode>
+
+          {/* Center Final */}
+          <div className="flex flex-col items-center justify-center z-10 px-2">
+            <div className="mb-4 flex flex-col items-center">
+              <div className="rounded-full border-2 border-primary/40 bg-primary/10 p-3 mb-2">
+                <Trophy className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="font-arabic font-black text-xs sm:text-lg text-primary">
+                النهائي
+              </h3>
+            </div>
+            {renderMatchBox(final, true)}
           </div>
+
+          {/* Right Side */}
+          <BracketNode match={m30} side="right" renderBox={renderMatchBox}>
+            <BracketNode match={m27} side="right" renderBox={renderMatchBox}>
+              <BracketNode match={m21} side="right" renderBox={renderMatchBox}>
+                <BracketNode match={m9} side="right" renderBox={renderMatchBox} />
+                <BracketNode match={m10} side="right" renderBox={renderMatchBox} />
+              </BracketNode>
+              <BracketNode match={m22} side="right" renderBox={renderMatchBox}>
+                <BracketNode match={m11} side="right" renderBox={renderMatchBox} />
+                <BracketNode match={m12} side="right" renderBox={renderMatchBox} />
+              </BracketNode>
+            </BracketNode>
+            <BracketNode match={m28} side="right" renderBox={renderMatchBox}>
+              <BracketNode match={m23} side="right" renderBox={renderMatchBox}>
+                <BracketNode match={m13} side="right" renderBox={renderMatchBox} />
+                <BracketNode match={m14} side="right" renderBox={renderMatchBox} />
+              </BracketNode>
+              <BracketNode match={m24} side="right" renderBox={renderMatchBox}>
+                <BracketNode match={m15} side="right" renderBox={renderMatchBox} />
+                <BracketNode match={m16} side="right" renderBox={renderMatchBox} />
+              </BracketNode>
+            </BracketNode>
+          </BracketNode>
         </div>
-        
-        {bracket.isLocked && (
-          <>
-            <div className="space-y-3">
-              <h4 className="font-bold text-lg font-arabic border-b border-border pb-2">دور الـ 16</h4>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {matchesByRound.r16.map(renderMatchRow)}
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              <h4 className="font-bold text-lg font-arabic border-b border-border pb-2">ربع النهائي</h4>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {matchesByRound.qf.map(renderMatchRow)}
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-bold text-lg font-arabic border-b border-border pb-2">نصف النهائي</h4>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {matchesByRound.sf.map(renderMatchRow)}
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-bold text-lg font-arabic border-b border-border pb-2">النهائي</h4>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {matchesByRound.final.map(renderMatchRow)}
-              </div>
-            </div>
-          </>
-        )}
       </div>
+    </div>
+  );
+}
 
+function BracketNode({ match, children, side, renderBox }: { match: BracketMatch, children?: React.ReactNode, side: 'left' | 'right', renderBox: (m: BracketMatch) => React.ReactNode }) {
+  if (!children) {
+    return (
+      <div className="py-1">
+        {renderBox(match)}
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("flex items-stretch", side === 'right' && "flex-row-reverse")}>
+      <div className="flex flex-col justify-around">
+        {children}
+      </div>
+      <div className="flex items-center">
+        <div 
+          className={cn(
+            "w-2 sm:w-4 border-y-2 border-primary/40", 
+            side === 'left' ? 'border-r-2 rounded-r-md' : 'border-l-2 rounded-l-md'
+          )} 
+          style={{ height: '50%' }} 
+        />
+        <div className="w-2 sm:w-3 border-b-2 border-primary/40" />
+      </div>
+      <div className="flex items-center py-1 sm:py-2">
+        {renderBox(match)}
+      </div>
     </div>
   );
 }
