@@ -116,6 +116,7 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
   
   const [externalLinks, setExternalLinks] = useState<{name: string, url: string}[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hasFetchedInitialRef = useRef(false);
   const mountTimeRef = useRef<number>(new Date().getTime());
 
   const userId = user?.id || getOrCreateUserId();
