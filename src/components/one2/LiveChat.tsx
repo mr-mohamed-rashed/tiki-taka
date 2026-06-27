@@ -275,23 +275,22 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
-      const lastMsgTime = messages.length > 0 
-        ? new Date(messages[messages.length - 1].created_at).getTime() 
-        : mountTimeRef.current;
+      const lastMsg = messages.length > 0 ? messages[messages.length - 1] : null;
+      const isLastMsgBot = lastMsg && BOT_NAMES.includes(lastMsg.username);
       
-      let consecutiveBotMessages = 0;
-      for (let i = messages.length - 1; i >= 0; i--) {
-        if (BOT_NAMES.includes(messages[i].username)) {
-          consecutiveBotMessages++;
-        } else {
-          break;
-        }
+      let waitTime = 15000; // Default wait time for bot-to-bot (15s)
+      
+      if (lastMsg && !isLastMsgBot) {
+        // Last message was from a real user! Reply quickly!
+        waitTime = 3000; // 3 seconds
+      } else if (!lastMsg) {
+        // Chat is empty
+        waitTime = 5000; // 5 seconds
       }
       
-      const multiplier = Math.pow(1.5, Math.min(consecutiveBotMessages, 5));
-      const requiredWaitTime = 20000 * multiplier;
+      const lastMsgTime = lastMsg ? new Date(lastMsg.created_at).getTime() : mountTimeRef.current;
       
-      if (now - lastMsgTime > requiredWaitTime) {
+      if (now - lastMsgTime > waitTime) {
         const nextNews = botMessagesOnly[msgIndexRef.current % botMessagesOnly.length];
         const nextBot = BOT_NAMES[botIndexRef.current % BOT_NAMES.length];
         
@@ -533,7 +532,7 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
       <div 
         ref={scrollRef} 
         className="commentary-scroll flex-1 min-h-0 overflow-y-auto p-3 flex flex-col gap-1"
-        style={variant === 'overlay' ? { WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 16px)', maskImage: 'linear-gradient(to bottom, transparent, black 16px)' } : undefined}
+        style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 16px)', maskImage: 'linear-gradient(to bottom, transparent, black 16px)' }}
       >
         <div className="flex-1 min-h-0" />
         {visibleMessages.map((msg) => {
