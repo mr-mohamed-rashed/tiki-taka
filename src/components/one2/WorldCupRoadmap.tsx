@@ -224,7 +224,7 @@ function BracketNode({ match, children, side, isAr }: { match: BracketMatch, chi
         {/* Horizontal Connector to parent match */}
         <div className="w-2 sm:w-3 border-b-2 border-primary/40" />
       </div>
-      <div className="flex items-center py-1 sm:py-2">
+      <div className="flex items-center py-0.5">
         <MatchBox match={match} isAr={isAr} />
       </div>
     </div>
@@ -237,29 +237,29 @@ function MatchBox({ match, isAr, isFinal = false }: { match: BracketMatch, isAr:
 
   const renderTeam = (t: Team | null, isWinner: boolean) => (
     <div className={cn(
-      "flex items-center justify-between gap-1 sm:gap-2 px-1 sm:px-2 py-1 sm:py-1.5 w-full min-w-[60px] md:min-w-[100px] bg-background/60 backdrop-blur-sm border border-border/50 transition-colors",
-      isWinner && "bg-primary/20 border-primary/50 text-foreground"
+      "flex items-center justify-between gap-0.5 px-1 py-0.5 w-full min-w-[70px] sm:min-w-[90px] md:min-w-[100px] h-5 sm:h-6 bg-background/60 backdrop-blur-sm transition-colors",
+      isWinner && "bg-primary/20 text-foreground"
     )}>
-      <div className="flex items-center gap-2 overflow-hidden">
-        <div className={cn("w-5 h-5 rounded-full overflow-hidden shrink-0 ring-1 ring-border", isWinner && "ring-primary")}>
+      <div className="flex items-center gap-1 overflow-hidden">
+        <div className={cn("w-3 h-3 rounded-full overflow-hidden shrink-0 ring-1 ring-border", isWinner && "ring-primary")}>
           {t ? (
             <img src={t.flag} alt={t.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-muted flex items-center justify-center">
-              <Flag className="w-3 h-3 text-muted-foreground" />
+              <Flag className="w-2 h-2 text-muted-foreground" />
             </div>
           )}
         </div>
         <span className={cn(
-          "text-[9px] sm:text-[11px] font-bold truncate max-w-[40px] sm:max-w-[70px]",
+          "text-[8px] sm:text-[10px] font-bold truncate max-w-[40px] sm:max-w-[65px]",
           !t && "text-muted-foreground",
           isAr && "font-arabic"
         )}>
           {t ? t.shortName || t.name : 'TBD'}
         </span>
       </div>
-      {match.score1 !== null && match.score2 !== null && (
-         <span className="text-[9px] sm:text-xs font-bold font-mono">
+      {match.score1 !== null && match.score2 !== null && match.score1 !== undefined && match.score2 !== undefined && (
+         <span className="text-[8px] sm:text-[10px] font-bold font-mono">
            {t === t1 ? match.score1 : match.score2}
          </span>
       )}
@@ -268,8 +268,8 @@ function MatchBox({ match, isAr, isFinal = false }: { match: BracketMatch, isAr:
 
   return (
     <div className={cn(
-      "flex flex-col rounded-md overflow-hidden shadow-lg border-2",
-      isFinal ? "border-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] scale-110" : "border-transparent ring-1 ring-border"
+      "flex flex-col overflow-hidden shadow-sm",
+      isFinal ? "border-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] scale-110 rounded-md border-2" : "border-border/50 border rounded bg-background"
     )}>
       {renderTeam(t1, match.winnerId === match.team1Id && match.winnerId !== null)}
       <div className="h-px bg-border/50 w-full" />

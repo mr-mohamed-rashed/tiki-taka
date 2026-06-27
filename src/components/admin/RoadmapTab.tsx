@@ -470,7 +470,7 @@ function BracketNode({ match, children, side, renderBox }: { match: BracketMatch
         />
         <div className="w-2 sm:w-3 border-b-2 border-primary/40" />
       </div>
-      <div className="flex items-center py-1 sm:py-2">
+      <div className="flex items-center py-0.5">
         {renderBox(match)}
       </div>
     </div>
