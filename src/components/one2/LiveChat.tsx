@@ -259,25 +259,16 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
     };
   }, [matchId, userId]);
 
-  // Fetch external streams for bots
+  // Fetch active broadcasts for bots
   useEffect(() => {
     if (!isModerator || !botsEnabled) return;
     
-    supabase.from('external_streams').select('*').eq('is_active', true).then(({ data }) => {
+    supabase.from('active_broadcasts').select('*').eq('is_active', true).then(({ data }) => {
       if (data && data.length > 0) {
-        const links: {name: string, url: string}[] = [];
-        data.forEach(stream => {
-          if (stream.match_name && stream.direct_link) {
-            links.push({ name: stream.match_name, url: stream.direct_link });
-          }
-          if (stream.servers && Array.isArray(stream.servers)) {
-            stream.servers.forEach((s: any) => {
-              if (s.name && s.url) {
-                links.push({ name: s.name, url: s.url });
-              }
-            });
-          }
-        });
+        const links: {name: string, url: string}[] = data.map(broadcast => ({
+          name: broadcast.match_name,
+          url: broadcast.direct_link
+        }));
         // Shuffle or just use them
         setExternalLinks(links);
       }
