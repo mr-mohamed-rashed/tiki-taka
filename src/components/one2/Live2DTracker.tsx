@@ -343,8 +343,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               </div>
 
-              {/* Ticker removed here, handled by TickerBot at the end of the file */}
-
               {/* Volume Controls for TikTok Mode */}
               <div className={cn("absolute top-4 right-4 z-50 flex items-center transition-opacity", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}>
                 <div className="group flex items-center bg-black/50 rounded-full backdrop-blur-md shadow-lg overflow-hidden transition-all duration-300" onClick={(e) => e.stopPropagation()}>
@@ -374,40 +372,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </Button>
               </div>
 
-              {/* Server Navigation Chevrons */}
-              {servers.length > 1 && (
-                <>
-                  <div
-                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
-                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
-                    style={{
-                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      WebkitMaskSize: 'contain',
-                      WebkitMaskRepeat: 'no-repeat',
-                      WebkitMaskPosition: 'center',
-                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      maskSize: 'contain',
-                      maskRepeat: 'no-repeat',
-                      maskPosition: 'center',
-                    }}
-                  />
-                  <div
-                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
-                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
-                    style={{
-                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      WebkitMaskSize: 'contain',
-                      WebkitMaskRepeat: 'no-repeat',
-                      WebkitMaskPosition: 'center',
-                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      maskSize: 'contain',
-                      maskRepeat: 'no-repeat',
-                      maskPosition: 'center',
-                    }}
-                  />
-                </>
-              )}
-
               {/* Server Swipe Area Overlay (Left Side) */}
               <div className="absolute left-0 top-0 bottom-0 w-1/4 z-50 flex flex-col items-center justify-center pointer-events-auto touch-pan-y touch-pan-x" 
                    onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
@@ -422,23 +386,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
               {/* News Ticker (Replaces TickerBot) */}
               <NewsTicker variant="video" className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none text-xs sm:text-sm" />
-
-              {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-[25cqmin] h-[25cqmin] max-w-[120px] max-h-[120px] min-w-[50px] min-h-[50px] z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
-                <div 
-                  className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
-                  style={{
-                    WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
-                    WebkitMaskSize: 'contain',
-                    WebkitMaskRepeat: 'no-repeat',
-                    WebkitMaskPosition: 'center',
-                    maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
-                    maskSize: 'contain',
-                    maskRepeat: 'no-repeat',
-                    maskPosition: 'center',
-                  }}
-                />
-              </div>
 
             </div>
           ) : (
