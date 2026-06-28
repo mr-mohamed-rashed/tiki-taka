@@ -52,6 +52,13 @@ async function fetchEspnDirectly(season: string) {
   return { response: data.events || [], espn: true };
 }
 
+async function fetchEspnStatsDirectly() {
+  const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/statistics`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`ESPN stats failed: ${response.status}`);
+  return response.json();
+}
+
 async function callProxy(body: any) {
   try {
     if (['live', 'fixtures', 'results'].includes(body.endpoint)) {
@@ -372,17 +379,84 @@ export function useTopScorers() {
     queryKey: ['topscorers'],
     queryFn: async () => {
       try {
-        const data = await callProxy({ endpoint: 'topscorers', league: WC_LEAGUE, season: WC_SEASON });
+        const data = await fetchEspnStatsDirectly();
+        const goalsGroup = data?.stats?.find((g: any) => g.name === 'goalsLeaders');
+        const assistsGroup = data?.stats?.find((g: any) => g.name === 'assistsLeaders');
         
-        let results: any[] = [];
-        if (data?.response?.length) {
-          results = data.response.map(mapScorer);
-        } else if (data?.scorers?.length) {
-          results = data.scorers;
-        }
-        
-        if (results && results.length > 0) {
-          return results;
+        if (goalsGroup && goalsGroup.leaders && goalsGroup.leaders.length > 0) {
+          const leadersMap: Record<string, any> = {};
+          
+          // Process goals leaders
+          goalsGroup.leaders.forEach((l: any, i: number) => {
+            const athleteId = l.athlete.id;
+            const appStat = l.statistics?.find((s: any) => s.name === 'appearances');
+            const goalsStat = l.statistics?.find((s: any) => s.name === 'totalGoals');
+            const assistsStat = l.statistics?.find((s: any) => s.name === 'goalAssists');
+            
+            leadersMap[athleteId] = {
+              rank: i + 1,
+              name: l.athlete.displayName,
+              club: l.athlete.team?.displayName || 'Unknown',
+              photoUrl: l.athlete.headshot?.href || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(l.athlete.displayName)}`,
+              country: {
+                id: l.athlete.team?.displayName || 'Unknown',
+                name: l.athlete.team?.displayName || 'Unknown',
+                shortName: l.athlete.team?.abbreviation || 'UNK',
+                flag: l.athlete.team?.logos?.[0]?.href || `https://flagcdn.com/w160/un.png`,
+                code: l.athlete.team?.abbreviation || 'UN',
+                color: '#888888',
+              },
+              goals: goalsStat ? goalsStat.value : (l.value || 0),
+              assists: assistsStat ? assistsStat.value : 0,
+              matches: appStat ? appStat.value : 0,
+              isLeader: i === 0,
+            };
+          });
+          
+          // Supplement with assists leaders if not in goals leaders
+          if (assistsGroup && assistsGroup.leaders) {
+            assistsGroup.leaders.forEach((l: any) => {
+              const athleteId = l.athlete.id;
+              const appStat = l.statistics?.find((s: any) => s.name === 'appearances');
+              const goalsStat = l.statistics?.find((s: any) => s.name === 'totalGoals');
+              const assistsStat = l.statistics?.find((s: any) => s.name === 'goalAssists');
+              
+              if (leadersMap[athleteId]) {
+                leadersMap[athleteId].assists = assistsStat ? assistsStat.value : (l.value || 0);
+              } else {
+                leadersMap[athleteId] = {
+                  rank: Object.keys(leadersMap).length + 1,
+                  name: l.athlete.displayName,
+                  club: l.athlete.team?.displayName || 'Unknown',
+                  photoUrl: l.athlete.headshot?.href || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(l.athlete.displayName)}`,
+                  country: {
+                    id: l.athlete.team?.displayName || 'Unknown',
+                    name: l.athlete.team?.displayName || 'Unknown',
+                    shortName: l.athlete.team?.abbreviation || 'UNK',
+                    flag: l.athlete.team?.logos?.[0]?.href || `https://flagcdn.com/w160/un.png`,
+                    code: l.athlete.team?.abbreviation || 'UN',
+                    color: '#888888',
+                  },
+                  goals: goalsStat ? goalsStat.value : 0,
+                  assists: assistsStat ? assistsStat.value : (l.value || 0),
+                  matches: appStat ? appStat.value : 0,
+                  isLeader: false,
+                };
+              }
+            });
+          }
+          
+          const scorersArray = Object.values(leadersMap).sort((a: any, b: any) => {
+            if (b.goals !== a.goals) return b.goals - a.goals;
+            return b.assists - a.assists;
+          });
+          
+          scorersArray.forEach((s: any, idx: number) => {
+            s.rank = idx + 1;
+            s.isLeader = idx === 0;
+          });
+          
+          return scorersArray;
         }
 
         // Fallback to database if API returns empty
@@ -413,7 +487,38 @@ export function useTopScorers() {
           }));
         }
         return [];
-      } catch {
+      } catch (err) {
+        console.error('ESPN live stats fetch failed, falling back to DB:', err);
+        try {
+          const { data: dbData } = await supabase
+            .from('player_stats')
+            .select('*')
+            .order('goals', { ascending: false })
+            .order('assists', { ascending: false })
+            .limit(10);
+            
+          if (dbData) {
+            return dbData.map((p, i) => ({
+              rank: i + 1,
+              name: p.player_name,
+              club: p.team_name,
+              country: {
+                id: p.team_name,
+                name: p.team_name,
+                shortName: p.team_name.slice(0, 3).toUpperCase(),
+                flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`,
+                code: p.team_name.slice(0, 2).toUpperCase(),
+                color: '#888888',
+              },
+              goals: p.goals || 0,
+              assists: p.assists || 0,
+              matches: p.motm_awards || 0,
+              isLeader: i === 0,
+            }));
+          }
+        } catch {
+          // ignore
+        }
         return [];
       }
     },
