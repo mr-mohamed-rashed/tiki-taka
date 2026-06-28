@@ -27,8 +27,11 @@ const LiveMatches = () => {
   const isLoading = liveLoading || upcomingLoading;
   
   const nextMatch = upcomingMatches
-    .filter((match) => new Date(match.date).getTime() >= Date.now())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcomingMatches[0];
+    .filter((match) => match && match.date && new Date(match.date).getTime() >= Date.now())
+    .sort((a, b) => {
+      if (!a?.date || !b?.date) return 0;
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    })[0] ?? upcomingMatches.find(m => m && m.date);
   const featured = liveMatches[0] || nextMatch;
 
 
