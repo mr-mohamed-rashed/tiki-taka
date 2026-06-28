@@ -4,9 +4,10 @@ import { One2Footer } from '@/components/one2/One2Footer';
 import { PopupAdBanner } from '@/components/one2/PopupAdBanner';
 import { TopScorersTable } from '@/components/one2/TopScorersTable';
 import { BestPlayersTable } from '@/components/one2/BestPlayersTable';
+import { PlaymakersTable } from '@/components/one2/PlaymakersTable';
 import { CardsTable } from '@/components/one2/CardsTable';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Trophy, Star, Award, AlertTriangle } from 'lucide-react';
+import { Trophy, Star, Award, AlertTriangle, Users } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { t } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
@@ -35,10 +36,14 @@ const Standings = () => {
         </div>
 
         <Tabs defaultValue="scorers" className="w-full">
-          <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-3 w-full max-w-xl mb-6">
+          <TabsList className="bg-card border border-border h-auto p-1 grid grid-cols-2 sm:grid-cols-4 w-full max-w-2xl mb-6 gap-1">
             <TabsTrigger value="scorers" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
               <Trophy className="h-4 w-4" />
               <span className={lang === 'ar' ? 'font-arabic' : ''}>{t('topScorers', lang)}</span>
+            </TabsTrigger>
+            <TabsTrigger value="playmakers" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
+              <Users className="h-4 w-4" />
+              <span className={lang === 'ar' ? 'font-arabic' : ''}>{lang === 'ar' ? 'صانعو الأهداف' : 'Playmakers'}</span>
             </TabsTrigger>
             <TabsTrigger value="players" className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-neon font-semibold">
               <Star className="h-4 w-4" />
@@ -51,6 +56,7 @@ const Standings = () => {
           </TabsList>
 
           <TabsContent value="scorers"><TopScorersTable /></TabsContent>
+          <TabsContent value="playmakers"><PlaymakersTable /></TabsContent>
           <TabsContent value="players"><BestPlayersTable /></TabsContent>
           <TabsContent value="cards"><CardsTable /></TabsContent>
         </Tabs>

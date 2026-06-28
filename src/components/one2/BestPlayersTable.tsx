@@ -96,7 +96,7 @@ export function BestPlayersTable() {
         </div>
         <div>
           <h3 className={cn('font-display font-extrabold text-xl', lang === 'ar' && 'font-arabic')}>
-            {lang === 'ar' ? 'المساهمات' : 'Contributions'}
+            {lang === 'ar' ? 'صانعو الأهداف' : 'Contributions'}
           </h3>
           <p className={cn('text-xs text-muted-foreground', lang === 'ar' && 'font-arabic')}>
             {lang === 'ar' ? 'ترتيب تأثير مبني على الأهداف والأسيست والمشاركات' : 'Impact ranking based on goals, assists and appearances'}
