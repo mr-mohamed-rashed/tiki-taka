@@ -134,6 +134,18 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
   const [playMode, setPlayMode] = useState<'ad' | 'highlight'>('ad');
 
+  const servers = (() => {
+    const raw = get('live_stream_url', 'en');
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    } catch(e) {
+      return [{ name: 'Server 1', url: raw }];
+    }
+    return [];
+  })();
+
   // Fetch highlights from site_settings
   useEffect(() => {
     const fetchHighlights = async () => {
@@ -300,17 +312,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     setChatMode('hidden');
   }, [isTheater]);
 
-  const servers = (() => {
-    const raw = get('live_stream_url', 'en');
-    if (!raw) return [];
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed;
-    } catch(e) {
-      return [{ name: 'Server 1', url: raw }];
-    }
-    return [];
-  })();
+
 
   const activeServerUrl = servers[activeServerIndex]?.url || '';
 
