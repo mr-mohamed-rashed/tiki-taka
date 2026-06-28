@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
-import type { Match } from '@/lib/footballData';
+import { type Match, getHighlights } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
 import { Navigation } from '@/components/one2/Navigation';
 import { NewsTicker } from '@/components/one2/NewsTicker';
