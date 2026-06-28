@@ -88,15 +88,15 @@ export function StatsSummaryCard() {
         {/* RIGHT COLUMN (RTL) or LEFT COLUMN (LTR) */}
         <div className="space-y-4">
           {/* Card 1: Goals scored */}
-          <div className="flex items-center justify-between bg-card/30 border border-border/40 hover:border-primary/30 rounded-xl p-5 shadow-sm hover:shadow-md transition-all relative overflow-hidden group min-h-[90px]">
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/5 group-hover:scale-110 transition-transform">
-              <Footprints className="h-14 w-14" />
+          <div className="flex items-center gap-4 bg-card/30 border border-border/40 hover:border-primary/30 rounded-xl p-5 shadow-sm hover:shadow-md transition-all min-h-[90px]">
+            <div className="p-3 rounded-xl bg-red-500/10 text-red-500">
+              <Footprints className="h-6 w-6 text-red-500" />
             </div>
             <div>
               <span className={cn("text-xs font-bold text-red-500 block mb-1 uppercase tracking-wider", isAr && "font-arabic")}>
                 {isAr ? 'الأهداف المسجلة' : 'Goals Scored'}
               </span>
-              <span className="text-4xl font-black font-display text-foreground tracking-tight z-10">
+              <span className="text-3xl font-black font-display text-foreground tracking-tight">
                 {totalGoals}
               </span>
             </div>
@@ -141,15 +141,15 @@ export function StatsSummaryCard() {
         {/* LEFT COLUMN (RTL) or RIGHT COLUMN (LTR) */}
         <div className="space-y-4">
           {/* Card 3: Matches count */}
-          <div className="flex items-center justify-between bg-card/30 border border-border/40 hover:border-primary/30 rounded-xl p-5 shadow-sm hover:shadow-md transition-all relative overflow-hidden group min-h-[90px]">
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/5 group-hover:scale-110 transition-transform">
-              <Trophy className="h-14 w-14" />
+          <div className="flex items-center gap-4 bg-card/30 border border-border/40 hover:border-primary/30 rounded-xl p-5 shadow-sm hover:shadow-md transition-all min-h-[90px]">
+            <div className="p-3 rounded-xl bg-primary/10 text-primary">
+              <Trophy className="h-6 w-6 text-primary" />
             </div>
             <div>
               <span className={cn("text-xs font-bold text-red-500 block mb-1 uppercase tracking-wider", isAr && "font-arabic")}>
                 {isAr ? 'عدد المباريات' : 'Matches Played'}
               </span>
-              <span className="text-4xl font-black font-display text-foreground tracking-tight z-10">
+              <span className="text-3xl font-black font-display text-foreground tracking-tight">
                 {matchesCount}
               </span>
             </div>
