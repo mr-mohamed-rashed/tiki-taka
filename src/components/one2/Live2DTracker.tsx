@@ -343,10 +343,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     try {
       const url = new URL(targetUrl);
       if (url.hostname.includes('youtube.com') && url.searchParams.has('v')) {
-        return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1&autoplay=1&mute=1`;
+        return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1&autoplay=1&mute=0`;
       }
       if (url.hostname.includes('youtu.be')) {
-        return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1&autoplay=1&mute=1`;
+        return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1&autoplay=1&mute=0`;
       }
     } catch (e) {
       // Ignore invalid URLs
@@ -404,16 +404,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 sandbox="allow-scripts allow-same-origin allow-presentation"
               />
-              {/* Invisible overlay with a center hole to allow native clicks on the video */}
-              <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
-                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                <div className="w-full h-[25cqmin] max-h-[120px] min-h-[50px] flex">
-                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                  <div className="w-[25cqmin] max-w-[120px] min-w-[50px] h-full pointer-events-none" />
-                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                </div>
-                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-              </div>
+              {/* Click protection overlay removed to allow native controls click */}
 
               {/* Smart Responsive Logo Cover */}
               <div 
@@ -602,50 +593,7 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 sandbox="allow-scripts allow-same-origin allow-presentation"
               />
-              {/* Invisible overlay with a center hole to allow native clicks on the video */}
-              <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
-                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                <div className="w-full h-[25cqmin] max-h-[120px] min-h-[50px] flex">
-                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                  <div className="w-[25cqmin] max-w-[120px] min-w-[50px] h-full pointer-events-none" />
-                  <div className="flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-                </div>
-                <div className="w-full flex-1 pointer-events-auto" onClick={(e) => { e.stopPropagation(); setControlsVisible(prev => !prev); }} />
-              </div>
-              
-              {/* Server Navigation Chevrons */}
-              {servers.length > 1 && (
-                <>
-                  <div
-                    className={cn("absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
-                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev - 1 + servers.length) % servers.length); }}
-                    style={{
-                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      WebkitMaskSize: 'contain',
-                      WebkitMaskRepeat: 'no-repeat',
-                      WebkitMaskPosition: 'center',
-                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M18 19L8 12L18 5Z'/%3E%3Cline x1='5' y1='5' x2='5' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      maskSize: 'contain',
-                      maskRepeat: 'no-repeat',
-                      maskPosition: 'center',
-                    }}
-                  />
-                  <div
-                    className={cn("absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-50 w-[15cqmin] h-[15cqmin] max-w-[80px] max-h-[80px] min-w-[32px] min-h-[32px] bg-white/20 backdrop-blur-md cursor-pointer hover:bg-white/40 transition-all drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]", controlsVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none")}
-                    onClick={(e) => { e.stopPropagation(); setActiveServerIndex((prev) => (prev + 1) % servers.length); }}
-                    style={{
-                      WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      WebkitMaskSize: 'contain',
-                      WebkitMaskRepeat: 'no-repeat',
-                      WebkitMaskPosition: 'center',
-                      maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='3' stroke-linejoin='round' d='M6 5L16 12L6 19Z'/%3E%3Cline x1='19' y1='5' x2='19' y2='19' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")`,
-                      maskSize: 'contain',
-                      maskRepeat: 'no-repeat',
-                      maskPosition: 'center',
-                    }}
-                  />
-                </>
-              )}
+              {/* Click protection overlay and server chevrons removed to allow native interaction */}
 
               {/* Dynamic Logo Cover to hide koora city watermark - Only visible when not in theater/fullscreen mode */}
               {!isTheater && (
@@ -716,22 +664,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
               {/* News Ticker (Replaces TickerBot) */}
               <NewsTicker variant="video" className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none text-xs sm:text-sm" />
-              {/* Center Play Button (Blurred Rounded Triangle - Click Through) */}
-              <div className={cn("absolute inset-0 m-auto w-[25cqmin] h-[25cqmin] max-w-[120px] max-h-[120px] min-w-[50px] min-h-[50px] z-50 flex items-center justify-center transition-opacity pointer-events-none", controlsVisible ? "opacity-100" : "opacity-0")}>
-                <div 
-                  className="w-full h-full bg-white/20 backdrop-blur-md drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-none"
-                  style={{
-                    WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
-                    WebkitMaskSize: 'contain',
-                    WebkitMaskRepeat: 'no-repeat',
-                    WebkitMaskPosition: 'center',
-                    maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' stroke='black' stroke-width='4' stroke-linejoin='round' d='M8 5L19 12L8 19Z'/%3E%3C/svg%3E")`,
-                    maskSize: 'contain',
-                    maskRepeat: 'no-repeat',
-                    maskPosition: 'center',
-                  }}
-                />
-              </div>
 
             </div>
           ) : (
