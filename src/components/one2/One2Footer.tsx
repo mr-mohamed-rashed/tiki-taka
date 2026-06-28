@@ -94,10 +94,7 @@ export function One2Footer() {
   ];
 
   return (
-    <div className="relative w-full mt-20 group overflow-hidden border-t border-primary/20">
-      {/* Rotating background for the entire footer */}
-      <div className="absolute inset-[-100%] z-0 animate-[spin_8s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_70%,hsl(var(--primary))_100%)] opacity-30 group-hover:opacity-70 transition-opacity duration-500 pointer-events-none" />
-      <div className="absolute inset-[2px] z-0 bg-[#0A0A0A]" />
+    <div className="relative w-full mt-20 group overflow-hidden border-t border-primary/20 bg-[#0A0A0A]">
 
       <footer className="relative z-10 w-full pt-16 pb-0">
         <div className="w-full px-6 md:px-12 lg:px-16 mb-16">
@@ -168,14 +165,6 @@ export function One2Footer() {
           
           {/* Big Centered ONE2 text */}
           <div className={`w-full flex justify-center py-12 transition-all duration-1000 delay-300 relative z-10 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <style>
-              {`
-                @keyframes light-sweep {
-                  0% { background-position: 200% center; }
-                  100% { background-position: -200% center; }
-                }
-              `}
-            </style>
             <div className="relative group hover:scale-105 transition-transform duration-500">
               <span 
                 className="font-display font-black text-7xl sm:text-8xl md:text-[140px] tracking-tighter select-none leading-none relative z-10 block"
@@ -183,21 +172,8 @@ export function One2Footer() {
                   background: 'repeating-linear-gradient(45deg, #4ade80, #4ade80 20px, #22c55e 20px, #22c55e 40px)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  filter: 'drop-shadow(0px 15px 8px rgba(0,0,0,0.8)) drop-shadow(0px 0px 30px rgba(34,197,94,0.3))',
-                  WebkitTextStroke: '3px #14532d'
-                }}
-              >
-                ONE2
-              </span>
-              {/* Light Sweep Overlay */}
-              <span 
-                className="font-display font-black text-7xl sm:text-8xl md:text-[140px] tracking-tighter select-none leading-none absolute inset-0 z-20 pointer-events-none"
-                style={{
-                  background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
-                  backgroundSize: '200% 100%',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  animation: 'light-sweep 5s linear infinite'
+                  filter: 'drop-shadow(0px 15px 8px rgba(0,0,0,0.8)) drop-shadow(0px 0px 20px rgba(34,197,94,0.15))',
+                  WebkitTextStroke: '2px #14532d'
                 }}
               >
                 ONE2
@@ -236,19 +212,8 @@ export function One2Footer() {
               {`
                 .pitch-line {
                   fill: none;
-                  stroke: #22c55e;
-                  stroke-width: 3;
-                  stroke-dasharray: 4000;
-                  stroke-dashoffset: 4000;
-                  animation: draw-pitch 10s ease-in-out infinite;
-                  filter: drop-shadow(0 0 6px #22c55e);
-                }
-                @keyframes draw-pitch {
-                  0% { stroke-dashoffset: 4000; opacity: 0; }
-                  10% { opacity: 1; }
-                  50% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 15px #4ade80); }
-                  85% { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 5px #22c55e); }
-                  100% { stroke-dashoffset: 0; opacity: 0; }
+                  stroke: rgba(34, 197, 94, 0.25);
+                  stroke-width: 2;
                 }
               `}
             </style>
