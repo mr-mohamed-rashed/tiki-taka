@@ -152,8 +152,11 @@ export function useUpcomingFixtures() {
         
         const now = Date.now();
         return results
-          .filter(m => new Date(m.date).getTime() >= now)
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          .filter(m => m && m.date && new Date(m.date).getTime() >= now)
+          .sort((a, b) => {
+            if (!a?.date || !b?.date) return 0;
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          });
       } catch {
         return [];
       }
@@ -226,7 +229,9 @@ export function useResults() {
           }
         }
         
-        const sortedResults = uniqueResults.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const sortedResults = uniqueResults
+          .filter(m => m && m.date)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         // Fetch highlights from Supabase
         const { data: settings, error } = await supabase.from('site_settings').select('*').like('key', 'match_highlight_%');

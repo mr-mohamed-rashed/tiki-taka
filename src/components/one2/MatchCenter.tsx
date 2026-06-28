@@ -27,8 +27,11 @@ export function MatchCenter({ defaultTab = 'live', liveTabRedirectTo }: MatchCen
   const { data: finished = [], isLoading: finishedLoading } = useResults();
   const [pages, setPages] = useState({ live: 1, fixtures: 1, results: 1 });
   const nextMatch = upcoming
-    .filter((match) => new Date(match.date).getTime() >= Date.now())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] ?? upcoming[0];
+    .filter((match) => match && match.date && new Date(match.date).getTime() >= Date.now())
+    .sort((a, b) => {
+      if (!a?.date || !b?.date) return 0;
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    })[0] ?? upcoming.find(m => m && m.date);
 
   const setTabPage = (tab: keyof typeof pages, page: number) => {
     setPages((current) => ({ ...current, [tab]: page }));

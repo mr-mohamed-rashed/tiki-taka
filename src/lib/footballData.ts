@@ -734,27 +734,33 @@ export const getHighlights = (): Highlight[] => [
 export const getNextMatch = () => {
   const now = new Date();
   const matches = getUpcomingMatches()
-    .filter((match) => new Date(match.date).getTime() >= now.getTime())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    .filter((match) => match && match.date && new Date(match.date).getTime() >= now.getTime())
+    .sort((a, b) => {
+      if (!a?.date || !b?.date) return 0;
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    });
 
   return matches[0] ?? getUpcomingMatches()[0];
 };
 
 export const getNextMatchPreview = (lang: 'en' | 'ar' = 'ar') => {
   const nextMatch = getNextMatch();
-  const matchDate = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', {
+  if (!nextMatch) {
+    return lang === 'ar' ? 'لا توجد مباريات قادمة' : 'No upcoming matches';
+  }
+  const matchDate = nextMatch.date ? new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-US', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     hour: 'numeric',
     minute: '2-digit',
-  }).format(new Date(nextMatch.date));
+  }).format(new Date(nextMatch.date)) : '';
 
   if (lang === 'ar') {
-    return `الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في ${nextMatch.venue} - ${matchDate}.`;
+    return `الماتش اللي عليه الدور: ${nextMatch.home?.name || ''} ضد ${nextMatch.away?.name || ''} في ${nextMatch.venue || ''} - ${matchDate}.`;
   }
 
-  return `Up next: ${nextMatch.home.name} vs ${nextMatch.away.name} at ${nextMatch.venue} - ${matchDate}.`;
+  return `Up next: ${nextMatch.home?.name || ''} vs ${nextMatch.away?.name || ''} at ${nextMatch.venue || ''} - ${matchDate}.`;
 };
 
 export const getFeaturedNews = (lang: 'en' | 'ar' = 'ar') => ({
@@ -766,14 +772,14 @@ export const getFeaturedNews = (lang: 'en' | 'ar' = 'ar') => ({
 });
 
 export const getUpcomingMatches = (): Match[] => {
-  return UPCOMING_FIXTURES.filter(m => new Date(m.date).getTime() > Date.now());
+  return UPCOMING_FIXTURES.filter(m => m && m.date && new Date(m.date).getTime() > Date.now());
 };
 
 export const getFinishedMatches = (): Match[] => {
   const pastUpcoming = UPCOMING_FIXTURES
-    .filter(m => new Date(m.date).getTime() + LIVE_MATCH_WINDOW_MS < Date.now())
+    .filter(m => m && m.date && new Date(m.date).getTime() + LIVE_MATCH_WINDOW_MS < Date.now())
     .map(m => {
-      const scoreHash = m.home.name.length + m.away.name.length;
+      const scoreHash = (m.home?.name?.length || 0) + (m.away?.name?.length || 0);
       return {
         ...m,
         status: 'finished' as MatchStatus,
@@ -782,5 +788,7 @@ export const getFinishedMatches = (): Match[] => {
       };
     });
 
-  return [...FINISHED_FIXTURES, ...pastUpcoming].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return [...FINISHED_FIXTURES, ...pastUpcoming]
+    .filter(m => m && m.date)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
