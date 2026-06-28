@@ -39,7 +39,10 @@ function MiniCountdown({ targetDate }: { targetDate: string }) {
     };
 
     updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
+    const interval = setInterval(() => {
+      if (document.hidden) return;
+      updateCountdown();
+    }, 1000);
     return () => clearInterval(interval);
   }, [targetDate]);
 

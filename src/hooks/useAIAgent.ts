@@ -44,7 +44,10 @@ export function useAIAgent<T>(action: AIAction, payload?: Record<string, unknown
     // Optional: Set up polling for real-time feel (e.g., every 5 minutes for ticker/news)
     let interval: NodeJS.Timeout;
     if (action === 'ticker' || action === 'news' || action === 'trending') {
-      interval = setInterval(fetchData, 5 * 60 * 1000);
+      interval = setInterval(() => {
+        if (document.hidden) return;
+        fetchData();
+      }, 5 * 60 * 1000);
     }
 
     return () => {

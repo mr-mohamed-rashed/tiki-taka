@@ -288,6 +288,7 @@ export function LiveChat({ matchId: _ignoredMatchId = 'general', variant = 'defa
     ];
 
     const interval = setInterval(() => {
+      if (document.hidden) return;
       const now = new Date().getTime();
       const lastMsg = messages.length > 0 ? messages[messages.length - 1] : null;
       const isLastMsgBot = lastMsg && BOT_NAMES.includes(lastMsg.username);

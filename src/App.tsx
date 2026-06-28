@@ -27,6 +27,15 @@ const App = () => {
       if (document.visibilityState === 'visible') {
         // Refetch queries when returning to the app to get latest updates
         queryClient.invalidateQueries();
+      } else if (document.visibilityState === 'hidden') {
+        // Clear all caches to free device RAM/storage instantly
+        if ('caches' in window) {
+          caches.keys().then((keys) => {
+            keys.forEach((key) => {
+              caches.delete(key);
+            });
+          }).catch(() => {});
+        }
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);

@@ -31,6 +31,7 @@ export function TournamentCountdown({ match, onTimerZero }: TournamentCountdownP
 
   useEffect(() => {
     const timer = window.setInterval(() => {
+      if (document.hidden) return;
       const newTime = getTimeLeft(targetTime);
       setTimeLeft(newTime);
       

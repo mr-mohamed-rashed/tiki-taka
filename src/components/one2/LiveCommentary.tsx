@@ -70,6 +70,7 @@ export function LiveCommentary() {
     ];
     let i = 0;
     const id = window.setInterval(() => {
+      if (document.hidden) return;
       const sample = samples[i % samples.length];
       i++;
       setEvents((prev) => [{ ...sample, id: Date.now() }, ...prev]);
