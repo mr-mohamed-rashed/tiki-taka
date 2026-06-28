@@ -199,14 +199,7 @@ const WorldCupNews = () => {
           </div>
         </div>
 
-        <GoogleAuthGate
-          title={lang === 'ar' ? 'سجل دخولك لقراءة الأخبار' : 'Sign in to read news'}
-          description={lang === 'ar'
-            ? 'الدخول مجاني بحساب Google. نسجل زيارة الأخبار فقط لتحليل الجمهور وتحسين المحتوى.'
-            : 'Google sign-in is free. We only record a news visit to understand audience interest.'}
-        >
-          <NewsContent />
-        </GoogleAuthGate>
+        <NewsContent />
       </main>
       <One2Footer />
     </div>
