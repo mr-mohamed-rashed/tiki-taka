@@ -562,8 +562,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 )}
               </div>
 
-              {/* News Ticker (Replaces TickerBot) */}
-              <NewsTicker variant="video" className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none text-xs sm:text-sm" />
 
             </div>
           ) : (
@@ -726,8 +724,6 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
                 </div>
               </div>
 
-              {/* News Ticker (Replaces TickerBot) */}
-              <NewsTicker variant="video" className="absolute bottom-0 left-0 right-0 z-40 pointer-events-none text-xs sm:text-sm" />
 
             </div>
           ) : (
