@@ -70,16 +70,41 @@ export function TopScorersTab() {
         fetchScorers();
       }
     } else {
-      const { error } = await supabase
+      // Check if the player already exists (by name and team) to prevent duplicate key constraint failure
+      const { data: existing } = await supabase
         .from('player_stats')
-        .insert([form]);
+        .select('id')
+        .eq('player_name', form.player_name)
+        .eq('team_name', form.team_name)
+        .maybeSingle();
         
-      if (error) {
-        toast({ title: 'فشل الإضافة', description: error.message, variant: 'destructive' });
+      if (existing) {
+        // Player exists! Update the existing record instead of inserting a new one
+        const { error } = await supabase
+          .from('player_stats')
+          .update(form)
+          .eq('id', existing.id);
+          
+        if (error) {
+          toast({ title: 'فشل تحديث بيانات اللاعب', description: error.message, variant: 'destructive' });
+        } else {
+          toast({ title: 'تم تحديث بيانات اللاعب الحالي بنجاح' });
+          setForm({ player_name: '', team_name: '', goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 });
+          fetchScorers();
+        }
       } else {
-        toast({ title: 'تمت الإضافة بنجاح' });
-        setForm({ player_name: '', team_name: '', goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 });
-        fetchScorers();
+        // Insert new player
+        const { error } = await supabase
+          .from('player_stats')
+          .insert([form]);
+          
+        if (error) {
+          toast({ title: 'فشل الإضافة', description: error.message, variant: 'destructive' });
+        } else {
+          toast({ title: 'تمت الإضافة بنجاح' });
+          setForm({ player_name: '', team_name: '', goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 });
+          fetchScorers();
+        }
       }
     }
     setSaving(false);
