@@ -61,8 +61,8 @@ export function MediaPlayerTab() {
           <Button variant="outline" size="sm" onClick={() => {
             const currentServersStr = getVal('live_stream_url', 'en');
             let parsed = [];
-            try { parsed = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) parsed = [{id: 'serv' + Math.random().toString(36).substring(2, 9), name: 'Server 1', url: currentServersStr}] }
-            parsed.push({ id: 'serv' + Math.random().toString(36).substring(2, 9), name: `Server ${parsed.length + 1}`, url: '' });
+            try { parsed = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) parsed = [{id: 'serv' + Math.random().toString(36).substring(2, 9), name: 'Server 1', url: currentServersStr, startTime: new Date().toISOString()}] }
+            parsed.push({ id: 'serv' + Math.random().toString(36).substring(2, 9), name: `Server ${parsed.length + 1}`, url: '', startTime: new Date().toISOString() });
             setVal('live_stream_url', 'en', JSON.stringify(parsed));
           }}>
             Add Server
@@ -72,14 +72,17 @@ export function MediaPlayerTab() {
           {(() => {
             const currentServersStr = getVal('live_stream_url', 'en');
             let servers = [];
-            try { servers = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) servers = [{name: 'Server 1', url: currentServersStr}] }
+            try { servers = JSON.parse(currentServersStr) } catch(e) { if(currentServersStr) servers = [{name: 'Server 1', url: currentServersStr, startTime: new Date().toISOString()}] }
             
             if (servers.length === 0) {
               return <div className="text-sm text-muted-foreground italic p-2 border border-dashed rounded-lg text-center">No servers added. The 2D Tracker will be shown.</div>;
             }
 
-            // Ensure all servers have IDs
-            servers.forEach((s: any) => { if (!s.id) s.id = 'serv' + Math.random().toString(36).substring(2, 9); });
+            // Ensure all servers have IDs and start times
+            servers.forEach((s: any) => { 
+              if (!s.id) s.id = 'serv' + Math.random().toString(36).substring(2, 9); 
+              if (!s.startTime) s.startTime = new Date().toISOString();
+            });
 
             return servers.map((server: any, idx: number) => {
               return (
@@ -103,6 +106,7 @@ export function MediaPlayerTab() {
                       onChange={(e) => {
                         const newServers = [...servers];
                         newServers[idx].url = e.target.value;
+                        newServers[idx].startTime = new Date().toISOString(); // Reset start time when URL changes!
                         setVal('live_stream_url', 'en', JSON.stringify(newServers));
                       }}
                       placeholder="https://youtube.com/embed/..."

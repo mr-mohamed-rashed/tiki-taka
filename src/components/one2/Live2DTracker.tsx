@@ -318,18 +318,21 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
   const streamUrl = (() => {
     let targetUrl = '';
+    let activeServer: any = null;
     
     if (servers.length > 0) {
       if (highlights.length > 0) {
         // Interleaved mode: Ad -> Highlight -> Ad -> Highlight...
         if (playMode === 'ad') {
-          targetUrl = servers[currentAdIndex % servers.length]?.url || '';
+          activeServer = servers[currentAdIndex % servers.length];
+          targetUrl = activeServer?.url || '';
         } else {
           targetUrl = highlights[currentHighlightIndex % highlights.length] || '';
         }
       } else {
         // No highlights, just play the live stream/ad normally
-        targetUrl = servers[activeServerIndex % servers.length]?.url || '';
+        activeServer = servers[activeServerIndex % servers.length];
+        targetUrl = activeServer?.url || '';
       }
     } else {
       // No servers/ads, just play highlights sequentially
@@ -343,10 +346,28 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
     try {
       const url = new URL(targetUrl);
       if (url.hostname.includes('youtube.com') && url.searchParams.has('v')) {
-        return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1&autoplay=1&mute=0`;
+        let startParam = '';
+        if (activeServer && activeServer.startTime) {
+          const startTimeMs = new Date(activeServer.startTime).getTime();
+          const nowMs = Date.now();
+          const elapsedSeconds = Math.max(0, Math.floor((nowMs - startTimeMs) / 1000));
+          if (elapsedSeconds > 0) {
+            startParam = `&start=${elapsedSeconds}`;
+          }
+        }
+        return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1&autoplay=1&mute=0${startParam}`;
       }
       if (url.hostname.includes('youtu.be')) {
-        return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1&autoplay=1&mute=0`;
+        let startParam = '';
+        if (activeServer && activeServer.startTime) {
+          const startTimeMs = new Date(activeServer.startTime).getTime();
+          const nowMs = Date.now();
+          const elapsedSeconds = Math.max(0, Math.floor((nowMs - startTimeMs) / 1000));
+          if (elapsedSeconds > 0) {
+            startParam = `&start=${elapsedSeconds}`;
+          }
+        }
+        return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1&autoplay=1&mute=0${startParam}`;
       }
     } catch (e) {
       // Ignore invalid URLs
