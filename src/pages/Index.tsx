@@ -22,7 +22,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useSiteSettingsContext } from '@/context/SiteSettingsContext';
 import { useManualNews } from '@/hooks/useManualNews';
 import { useEditMode } from '@/hooks/useEditMode';
-import { useLiveFixtures } from '@/hooks/useFootballData';
+import { useLiveFixtures, useUpcomingFixtures } from '@/hooks/useFootballData';
 import { t, T } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
@@ -42,8 +42,9 @@ const Index = () => {
   };
 
   const featured = getFeaturedNews(lang);
-  const nextMatch = getNextMatch();
+  const { data: upcomingMatches = [] } = useUpcomingFixtures();
   const { data: liveMatches = [] } = useLiveFixtures();
+  const nextMatch = upcomingMatches[0] || getNextMatch();
   const liveMatch = liveMatches[0] || getLiveMatches()[0];
   const isEditMode = useEditMode();
 
