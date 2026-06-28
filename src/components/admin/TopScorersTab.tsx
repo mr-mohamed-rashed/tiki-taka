@@ -24,6 +24,7 @@ export function TopScorersTab() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [bulkText, setBulkText] = useState('');
   const [bulking, setBulking] = useState(false);
+  const [importType, setImportType] = useState<'goals' | 'assists' | 'motm' | 'cards'>('goals');
 
   const [form, setForm] = useState({
     player_name: '',
@@ -52,6 +53,15 @@ export function TopScorersTab() {
           pos += 1;
         }
       };
+
+      // Fetch all existing players to perform a smart merge and preserve other stats
+      const { data: existingList } = await supabase.from('player_stats').select('*');
+      const existingMap = new Map<string, any>();
+      if (existingList) {
+        existingList.forEach(p => {
+          existingMap.set(p.player_name.trim() + '_' + p.team_name.trim(), p);
+        });
+      }
 
       const parsedPlayers: any[] = [];
       let lastFoundIndex = 0;
@@ -117,41 +127,65 @@ export function TopScorersTab() {
           teamName = 'المغرب';
         }
 
-        parsedPlayers.push({
+        const key = playerName.trim() + '_' + teamName.trim();
+        const existing = existingMap.get(key);
+
+        const payload: any = {
           player_name: playerName,
           team_name: teamName,
-          goals: goals,
-          assists: 0,
-          yellow_cards: 0,
-          red_cards: 0,
-          motm_awards: 0
-        });
+          goals: existing ? existing.goals : 0,
+          assists: existing ? existing.assists : 0,
+          yellow_cards: existing ? existing.yellow_cards : 0,
+          red_cards: existing ? existing.red_cards : 0,
+          motm_awards: existing ? existing.motm_awards : 0
+        };
+
+        if (importType === 'goals') {
+          payload.goals = goals;
+        } else if (importType === 'assists') {
+          payload.assists = goals; // number is parsed at the end
+        } else if (importType === 'motm') {
+          payload.motm_awards = goals;
+        } else if (importType === 'cards') {
+          const numStr = goals.toString();
+          if (numStr.length === 1) {
+            payload.yellow_cards = parseInt(numStr);
+          } else if (numStr.length >= 2) {
+            payload.yellow_cards = parseInt(numStr[0]);
+            payload.red_cards = parseInt(numStr[1]);
+          }
+        }
+
+        parsedPlayers.push(payload);
       }
 
       if (parsedPlayers.length === 0) {
-        toast({ title: 'لم يتم العثور على أي هدافين لتسجيلهم', variant: 'destructive' });
+        toast({ title: 'لم يتم العثور على أي بيانات لتسجيلها', variant: 'destructive' });
         setBulking(false);
         return;
       }
 
-      // Delete existing stats to overwrite cleanly
-      await supabase.from('player_stats').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      // If we are importing goals (which is the main list), we clear existing scorers list first.
+      // Otherwise, we do a merged upsert to preserve existing data.
+      if (importType === 'goals') {
+        await supabase.from('player_stats').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      }
       
-      // Insert in chunks of 50
+      // Upsert in chunks of 50
       for (let i = 0; i < parsedPlayers.length; i += 50) {
         const chunk = parsedPlayers.slice(i, i + 50);
-        const { error } = await supabase.from('player_stats').insert(chunk);
+        const { error } = await supabase.from('player_stats').upsert(chunk, { onConflict: 'player_name,team_name' });
         if (error) {
-          console.error('Error inserting chunk:', error);
-          toast({ title: 'فشل إدخال جزء من الهدافين', description: error.message, variant: 'destructive' });
+          console.error('Error upserting chunk:', error);
+          toast({ title: 'فشل إدخال بعض البيانات', description: error.message, variant: 'destructive' });
         }
       }
       
-      toast({ title: `تم حفظ وإدخال ${parsedPlayers.length} هداف بنجاح وتحديث جداول الموقع الحية!` });
+      toast({ title: `تمت معالجة وحفظ ${parsedPlayers.length} سجل بنجاح وتحديث قاعدة البيانات!` });
       setBulkText('');
       fetchScorers();
     } catch (e: any) {
-      toast({ title: 'حدث خطأ أثناء حفظ الهدافين', description: e.message, variant: 'destructive' });
+      toast({ title: 'حدث خطأ أثناء المعالجة والحفظ', description: e.message, variant: 'destructive' });
     }
     setBulking(false);
   };
@@ -340,14 +374,27 @@ export function TopScorersTab() {
 
       <Card className="border-primary/25 bg-gradient-card p-5">
         <div className="mb-4">
-          <h3 className="text-lg font-bold">إضافة الهدافين دفعة واحدة (Bulk Import)</h3>
-          <p className="text-sm text-muted-foreground">انسخ والصق القائمة الكاملة التي نسختها هنا لتحديث كافة هدافي البطولة الحالية دفعة واحدة وبشكل حقيقي.</p>
+          <h3 className="text-lg font-bold">إدخال البيانات دفعة واحدة (Bulk Import)</h3>
+          <p className="text-sm text-muted-foreground">اختر نوع القائمة التي تريد إدخالها، ثم الصق النص الكامل وسيقوم الموقع بمعالجتها وتحديثها فوراً.</p>
         </div>
         <div className="space-y-4">
+          <div className="space-y-1">
+            <Label className="font-arabic font-bold text-primary">نوع القائمة المدخلة</Label>
+            <select
+              value={importType}
+              onChange={(e) => setImportType(e.target.value as any)}
+              className="flex h-11 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <option value="goals">قائمة الهدافين (الأهداف)</option>
+              <option value="assists">قائمة صناع اللعب (الأسيست)</option>
+              <option value="motm">قائمة رجل المباراة (أفضل لاعب)</option>
+              <option value="cards">قائمة الإنذارات والبطاقات (أصفر/أحمر)</option>
+            </select>
+          </div>
           <textarea
             value={bulkText}
             onChange={(e) => setBulkText(e.target.value)}
-            placeholder="انسخ والصق قائمة الهدافين كاملة هنا (مثال: 1ليونيل ميسيالأرجنتينالأرجنتين62عثمان ديمبيليفرنسافرنسا4...)"
+            placeholder="انسخ والصق النص الكامل هنا (مثال: 1ليونيل ميسيالأرجنتينالأرجنتين62عثمان ديمبيليفرنسافرنسا4...)"
             className="flex min-h-[120px] w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             dir="rtl"
           />
