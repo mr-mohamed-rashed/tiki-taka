@@ -372,32 +372,47 @@ export function useTopScorers() {
     queryKey: ['topscorers'],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
+        const data = await callProxy({ endpoint: 'topscorers', league: WC_LEAGUE, season: WC_SEASON });
+        
+        let results: any[] = [];
+        if (data?.response?.length) {
+          results = data.response.map(mapScorer);
+        } else if (data?.scorers?.length) {
+          results = data.scorers;
+        }
+        
+        if (results && results.length > 0) {
+          return results;
+        }
+
+        // Fallback to database if API returns empty
+        const { data: dbData } = await supabase
           .from('player_stats')
           .select('*')
           .order('goals', { ascending: false })
           .order('assists', { ascending: false })
           .limit(10);
           
-        if (error || !data) return [];
-        
-        return data.map((p, i) => ({
-          rank: i + 1,
-          name: p.player_name,
-          club: p.team_name,
-          country: {
-            id: p.team_name,
-            name: p.team_name,
-            shortName: p.team_name.slice(0, 3).toUpperCase(),
-            flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`, // Fallback
-            code: p.team_name.slice(0, 2).toUpperCase(),
-            color: '#888888',
-          },
-          goals: p.goals,
-          assists: p.assists,
-          matches: 0,
-          isLeader: i === 0,
-        }));
+        if (dbData) {
+          return dbData.map((p, i) => ({
+            rank: i + 1,
+            name: p.player_name,
+            club: p.team_name,
+            country: {
+              id: p.team_name,
+              name: p.team_name,
+              shortName: p.team_name.slice(0, 3).toUpperCase(),
+              flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`,
+              code: p.team_name.slice(0, 2).toUpperCase(),
+              color: '#888888',
+            },
+            goals: p.goals || 0,
+            assists: p.assists || 0,
+            matches: p.motm_awards || 0,
+            isLeader: i === 0,
+          }));
+        }
+        return [];
       } catch {
         return [];
       }
