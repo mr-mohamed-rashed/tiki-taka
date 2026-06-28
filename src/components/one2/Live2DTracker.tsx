@@ -11,6 +11,7 @@ import type { Match } from '@/lib/footballData';
 import { LiveChat } from '@/components/one2/LiveChat';
 import { Navigation } from '@/components/one2/Navigation';
 import { NewsTicker } from '@/components/one2/NewsTicker';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Live2DTrackerProps {
   match: Match;
@@ -93,6 +94,71 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const [volume, setVolume] = useState(100);
+
+  // Highlights and Ads playlist state
+  const [highlights, setHighlights] = useState<string[]>([]);
+  const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0);
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const [playMode, setPlayMode] = useState<'ad' | 'highlight'>('ad');
+
+  // Fetch highlights from site_settings
+  useEffect(() => {
+    const fetchHighlights = async () => {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*')
+        .like('key', 'match_highlight_%');
+      if (data && data.length > 0) {
+        const urls = data
+          .map(item => item.value_en)
+          .filter(Boolean) as string[];
+        setHighlights(urls);
+      }
+    };
+    fetchHighlights();
+  }, []);
+
+  // Listen to YouTube player state changes to detect ended videos
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.event === 'infoDelivery' && data.info && data.info.playerState === 0) {
+          // YT video ended
+          handleVideoEnded();
+        }
+      } catch (e) {
+        // Ignore non-json or non-yt messages
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [highlights, currentHighlightIndex, currentAdIndex, playMode, servers]);
+
+  const handleVideoEnded = () => {
+    if (servers.length > 0 && highlights.length > 0) {
+      if (playMode === 'ad') {
+        setPlayMode('highlight');
+      } else {
+        setPlayMode('ad');
+        setCurrentAdIndex(prev => prev + 1);
+        setCurrentHighlightIndex(prev => prev + 1);
+      }
+    } else {
+      setCurrentHighlightIndex(prev => prev + 1);
+    }
+  };
+
+  // Reset play mode to 'ad' when servers configuration changes
+  const lastServersRef = useRef<string>('');
+  useEffect(() => {
+    const serversStr = JSON.stringify(servers);
+    if (serversStr !== lastServersRef.current) {
+      lastServersRef.current = serversStr;
+      setPlayMode('ad');
+      setCurrentAdIndex(0);
+    }
+  }, [servers]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.targetTouches[0].clientX);
@@ -216,19 +282,41 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
   const activeServerUrl = servers[activeServerIndex]?.url || '';
 
   const streamUrl = (() => {
-    if (!activeServerUrl) return '';
+    let targetUrl = '';
+    
+    if (servers.length > 0) {
+      if (highlights.length > 0) {
+        // Interleaved mode: Ad -> Highlight -> Ad -> Highlight...
+        if (playMode === 'ad') {
+          targetUrl = servers[currentAdIndex % servers.length]?.url || '';
+        } else {
+          targetUrl = highlights[currentHighlightIndex % highlights.length] || '';
+        }
+      } else {
+        // No highlights, just play the live stream/ad normally
+        targetUrl = servers[activeServerIndex % servers.length]?.url || '';
+      }
+    } else {
+      // No servers/ads, just play highlights sequentially
+      if (highlights.length > 0) {
+        targetUrl = highlights[currentHighlightIndex % highlights.length] || '';
+      }
+    }
+
+    if (!targetUrl) return '';
+
     try {
-      const url = new URL(activeServerUrl);
+      const url = new URL(targetUrl);
       if (url.hostname.includes('youtube.com') && url.searchParams.has('v')) {
-        return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1`;
+        return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1&autoplay=1&mute=1`;
       }
       if (url.hostname.includes('youtu.be')) {
-        return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1`;
+        return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1&autoplay=1&mute=1`;
       }
     } catch (e) {
       // Ignore invalid URLs
     }
-    return activeServerUrl;
+    return targetUrl;
   })();
 
   const handleExternalAction = (action: 'play' | 'setVolume', val?: number) => {
