@@ -404,6 +404,34 @@ export function useTopScorers() {
     queryKey: ['topscorers'],
     queryFn: async () => {
       try {
+        // 1. Fetch from database first (Primary Source)
+        const { data: dbData } = await supabase
+          .from('player_stats')
+          .select('*')
+          .order('goals', { ascending: false })
+          .order('assists', { ascending: false });
+          
+        if (dbData && dbData.length > 0) {
+          return dbData.map((p, i) => ({
+            rank: i + 1,
+            name: p.player_name,
+            club: p.team_name,
+            country: {
+              id: p.team_name,
+              name: p.team_name,
+              shortName: p.team_name.slice(0, 3).toUpperCase(),
+              flag: resolveTeamFlag(p.team_name),
+              code: p.team_name.slice(0, 2).toUpperCase(),
+              color: '#888888',
+            },
+            goals: p.goals || 0,
+            assists: p.assists || 0,
+            matches: p.motm_awards || 0,
+            isLeader: i === 0,
+          }));
+        }
+
+        // 2. Fallback to ESPN if database is completely empty
         const data = await fetchEspnStatsDirectly();
         const goalsGroup = data?.stats?.find((g: any) => g.name === 'goalsLeaders');
         const assistsGroup = data?.stats?.find((g: any) => g.name === 'assistsLeaders');
@@ -411,7 +439,6 @@ export function useTopScorers() {
         if (goalsGroup && goalsGroup.leaders && goalsGroup.leaders.length > 0) {
           const leadersMap: Record<string, any> = {};
           
-          // Process goals leaders
           goalsGroup.leaders.forEach((l: any, i: number) => {
             const athleteId = l.athlete.id;
             const appStat = l.statistics?.find((s: any) => s.name === 'appearances');
@@ -438,7 +465,6 @@ export function useTopScorers() {
             };
           });
           
-          // Supplement with assists leaders if not in goals leaders
           if (assistsGroup && assistsGroup.leaders) {
             assistsGroup.leaders.forEach((l: any) => {
               const athleteId = l.athlete.id;
@@ -483,65 +509,9 @@ export function useTopScorers() {
           
           return scorersArray;
         }
-
-        // Fallback to database if API returns empty
-        const { data: dbData } = await supabase
-          .from('player_stats')
-          .select('*')
-          .order('goals', { ascending: false })
-          .order('assists', { ascending: false });
-          
-        if (dbData) {
-          return dbData.map((p, i) => ({
-            rank: i + 1,
-            name: p.player_name,
-            club: p.team_name,
-            country: {
-              id: p.team_name,
-              name: p.team_name,
-              shortName: p.team_name.slice(0, 3).toUpperCase(),
-              flag: resolveTeamFlag(p.team_name),
-              code: p.team_name.slice(0, 2).toUpperCase(),
-              color: '#888888',
-            },
-            goals: p.goals || 0,
-            assists: p.assists || 0,
-            matches: p.motm_awards || 0,
-            isLeader: i === 0,
-          }));
-        }
         return [];
       } catch (err) {
         console.error('ESPN live stats fetch failed, falling back to DB:', err);
-        try {
-          const { data: dbData } = await supabase
-            .from('player_stats')
-            .select('*')
-            .order('goals', { ascending: false })
-            .order('assists', { ascending: false });
-            
-          if (dbData) {
-            return dbData.map((p, i) => ({
-              rank: i + 1,
-              name: p.player_name,
-              club: p.team_name,
-              country: {
-                id: p.team_name,
-                name: p.team_name,
-                shortName: p.team_name.slice(0, 3).toUpperCase(),
-                flag: resolveTeamFlag(p.team_name),
-                code: p.team_name.slice(0, 2).toUpperCase(),
-                color: '#888888',
-              },
-              goals: p.goals || 0,
-              assists: p.assists || 0,
-              matches: p.motm_awards || 0,
-              isLeader: i === 0,
-            }));
-          }
-        } catch {
-          // ignore
-        }
         return [];
       }
     },

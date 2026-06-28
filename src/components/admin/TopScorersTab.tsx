@@ -54,15 +54,6 @@ export function TopScorersTab() {
         }
       };
 
-      // Fetch all existing players to perform a smart merge and preserve other stats
-      const { data: existingList } = await supabase.from('player_stats').select('*');
-      const existingMap = new Map<string, any>();
-      if (existingList) {
-        existingList.forEach(p => {
-          existingMap.set(p.player_name.trim() + '_' + p.team_name.trim(), p);
-        });
-      }
-
       const parsedPlayers: any[] = [];
       let lastFoundIndex = 0;
 
@@ -127,17 +118,14 @@ export function TopScorersTab() {
           teamName = 'المغرب';
         }
 
-        const key = playerName.trim() + '_' + teamName.trim();
-        const existing = existingMap.get(key);
-
         const payload: any = {
           player_name: playerName,
           team_name: teamName,
-          goals: existing ? existing.goals : 0,
-          assists: existing ? existing.assists : 0,
-          yellow_cards: existing ? existing.yellow_cards : 0,
-          red_cards: existing ? existing.red_cards : 0,
-          motm_awards: existing ? existing.motm_awards : 0
+          goals: 0,
+          assists: 0,
+          yellow_cards: 0,
+          red_cards: 0,
+          motm_awards: 0
         };
 
         if (importType === 'goals') {
@@ -165,23 +153,20 @@ export function TopScorersTab() {
         return;
       }
 
-      // If we are importing goals (which is the main list), we clear existing scorers list first.
-      // Otherwise, we do a merged upsert to preserve existing data.
-      if (importType === 'goals') {
-        await supabase.from('player_stats').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      }
+      // Always clear the database table first for a completely fresh start
+      await supabase.from('player_stats').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       
-      // Upsert in chunks of 50
+      // Insert in chunks of 50
       for (let i = 0; i < parsedPlayers.length; i += 50) {
         const chunk = parsedPlayers.slice(i, i + 50);
-        const { error } = await supabase.from('player_stats').upsert(chunk, { onConflict: 'player_name,team_name' });
+        const { error } = await supabase.from('player_stats').insert(chunk);
         if (error) {
-          console.error('Error upserting chunk:', error);
+          console.error('Error inserting chunk:', error);
           toast({ title: 'فشل إدخال بعض البيانات', description: error.message, variant: 'destructive' });
         }
       }
       
-      toast({ title: `تمت معالجة وحفظ ${parsedPlayers.length} سجل بنجاح وتحديث قاعدة البيانات!` });
+      toast({ title: `تمت مسح وإعادة ترتيب ${parsedPlayers.length} سجل بنجاح في قاعدة البيانات!` });
       setBulkText('');
       fetchScorers();
     } catch (e: any) {
