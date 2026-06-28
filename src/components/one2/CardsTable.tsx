@@ -135,11 +135,37 @@ export function CardsTable() {
                       <div className={cn('font-bold text-sm flex items-center gap-2', colors.text)}>
                         {player.name}
                       </div>
-                      <div className="text-xs text-muted-foreground md:hidden">{player.club}</div>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground md:hidden mt-0.5">
+                        {player.country?.flag && (
+                          <img 
+                            src={player.country.flag} 
+                            alt={player.club} 
+                            className="w-4.5 h-3 object-cover rounded-sm border border-border/40"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://flagcdn.com/w160/un.png';
+                            }}
+                          />
+                        )}
+                        <span>{player.club}</span>
+                      </div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{player.club}</TableCell>
+                <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    {player.country?.flag && (
+                      <img 
+                        src={player.country.flag} 
+                        alt={player.club} 
+                        className="w-5 h-3.5 object-cover rounded-sm border border-border/40"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://flagcdn.com/w160/un.png';
+                        }}
+                      />
+                    )}
+                    <span>{player.club}</span>
+                  </div>
+                </TableCell>
                 <TableCell className="text-center">
                   <span className={cn(
                     'inline-flex items-center justify-center gap-2 min-w-8 h-7 px-2 rounded-md font-display font-extrabold tabular-nums',

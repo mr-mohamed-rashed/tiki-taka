@@ -167,11 +167,37 @@ export function TopScorersTable({ compact = false }: { compact?: boolean }) {
                         {scorer.name}
                         {isTop3 && <BootIcon className="w-5 h-5 drop-shadow-md" rank={scorer.rank} />}
                       </div>
-                      <div className="text-xs text-muted-foreground md:hidden">{scorer.club}</div>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground md:hidden mt-0.5">
+                        {scorer.country?.flag && (
+                          <img 
+                            src={scorer.country.flag} 
+                            alt={scorer.club} 
+                            className="w-4.5 h-3 object-cover rounded-sm border border-border/40"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://flagcdn.com/w160/un.png';
+                            }}
+                          />
+                        )}
+                        <span>{scorer.club}</span>
+                      </div>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{scorer.club}</TableCell>
+                <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    {scorer.country?.flag && (
+                      <img 
+                        src={scorer.country.flag} 
+                        alt={scorer.club} 
+                        className="w-5 h-3.5 object-cover rounded-sm border border-border/40"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://flagcdn.com/w160/un.png';
+                        }}
+                      />
+                    )}
+                    <span>{scorer.club}</span>
+                  </div>
+                </TableCell>
                 <TableCell className="text-center">
                   <span className={cn(
                     'inline-flex items-center justify-center min-w-8 h-7 px-2 rounded-md font-display font-extrabold tabular-nums',

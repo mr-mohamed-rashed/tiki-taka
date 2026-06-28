@@ -146,7 +146,19 @@ export function BestPlayersTable() {
                         {player.name}
                         {isTop3 && <BallIcon className="w-5 h-5 drop-shadow-md" rank={player.rank} />}
                       </div>
-                        <div className="text-xs text-muted-foreground">{player.club}</div>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                          {player.country?.flag && (
+                            <img 
+                              src={player.country.flag} 
+                              alt={player.club} 
+                              className="w-4.5 h-3 object-cover rounded-sm border border-border/40"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://flagcdn.com/w160/un.png';
+                              }}
+                            />
+                          )}
+                          <span>{player.club}</span>
+                        </div>
                       </div>
                     </div>
                   </TableCell>

@@ -4,6 +4,31 @@ import { teams } from '@/lib/footballData';
 import type { Match, Scorer } from '@/lib/footballData';
 import { queryClient } from '@/App';
 
+const COUNTRY_FLAGS: Record<string, string> = {
+  'الأرجنتين': 'ar', 'فرنسا': 'fr', 'البرازيل': 'br', 'النرويج': 'no',
+  'كندا': 'ca', 'الكونغو الديمقراطية': 'cd', 'السنغال': 'sn', 'إنجلترا': 'gb',
+  'هولندا': 'nl', 'ألمانيا': 'de', 'المغرب': 'ma', 'سويسرا': 'ch',
+  'نيوزيلندا': 'nz', 'كولومبيا': 'co', 'السويد': 'se', 'أوروجواي': 'uy',
+  'أمريكا': 'us', 'النمسا': 'at', 'إسبانيا': 'es', 'بلجيكا': 'be',
+  'كوت ديفوار': 'ci', 'البرتغال': 'pt', 'اليابان': 'jp', 'الجزائر': 'dz',
+  'إيران': 'ir', 'المكسيك': 'mx', 'مصر': 'eg', 'كرواتيا': 'hr',
+  'العراق': 'iq', 'إكوادور': 'ec', 'إسكتلندا': 'gb-sct', 'هايتى': 'ht',
+  'التشيك': 'cz', 'الأردن': 'jo', 'كوريا الجنوبية': 'kr', 'غانا': 'gh',
+  'باراجواي': 'py', 'أوزبكستان': 'uz', 'تركيا': 'tr', 'جنوب أفريقيا': 'za',
+  'السعودية': 'sa', 'قطر': 'qa', 'تونس': 'tn', 'أستراليا': 'au',
+  'كاب فيردي': 'cv', 'البوسنة والهرسك': 'ba', 'البوسنة': 'ba', 'كوراساو': 'cw'
+};
+
+export const resolveTeamFlag = (teamName: string | undefined | null) => {
+  if (!teamName) return 'https://flagcdn.com/w160/un.png';
+  const cleanName = teamName.trim();
+  const code = COUNTRY_FLAGS[cleanName];
+  if (code) {
+    return `https://flagcdn.com/w160/${code}.png`;
+  }
+  return 'https://flagcdn.com/w160/un.png';
+};
+
 function getMatchTime(match: Match | undefined): number {
   if (!match || !match.date) return 0;
   const time = new Date(match.date).getTime();
@@ -464,8 +489,7 @@ export function useTopScorers() {
           .from('player_stats')
           .select('*')
           .order('goals', { ascending: false })
-          .order('assists', { ascending: false })
-          .limit(10);
+          .order('assists', { ascending: false });
           
         if (dbData) {
           return dbData.map((p, i) => ({
@@ -476,7 +500,7 @@ export function useTopScorers() {
               id: p.team_name,
               name: p.team_name,
               shortName: p.team_name.slice(0, 3).toUpperCase(),
-              flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`,
+              flag: resolveTeamFlag(p.team_name),
               code: p.team_name.slice(0, 2).toUpperCase(),
               color: '#888888',
             },
@@ -494,8 +518,7 @@ export function useTopScorers() {
             .from('player_stats')
             .select('*')
             .order('goals', { ascending: false })
-            .order('assists', { ascending: false })
-            .limit(10);
+            .order('assists', { ascending: false });
             
           if (dbData) {
             return dbData.map((p, i) => ({
@@ -506,7 +529,7 @@ export function useTopScorers() {
                 id: p.team_name,
                 name: p.team_name,
                 shortName: p.team_name.slice(0, 3).toUpperCase(),
-                flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`,
+                flag: resolveTeamFlag(p.team_name),
                 code: p.team_name.slice(0, 2).toUpperCase(),
                 color: '#888888',
               },
@@ -535,8 +558,7 @@ export function useBestPlayers() {
           .from('player_stats')
           .select('*')
           .order('motm_awards', { ascending: false })
-          .order('goals', { ascending: false })
-          .limit(10);
+          .order('goals', { ascending: false });
           
         if (error || !data) return [];
         
@@ -548,7 +570,7 @@ export function useBestPlayers() {
             id: p.team_name,
             name: p.team_name,
             shortName: p.team_name.slice(0, 3).toUpperCase(),
-            flag: `https://flagcdn.com/w160/${p.team_name.slice(0, 2).toLowerCase()}.png`,
+            flag: resolveTeamFlag(p.team_name),
             code: p.team_name.slice(0, 2).toUpperCase(),
             color: '#888888',
           },
@@ -575,8 +597,7 @@ export function usePlayerCards() {
           .select('*')
           .or('yellow_cards.gt.0,red_cards.gt.0')
           .order('red_cards', { ascending: false })
-          .order('yellow_cards', { ascending: false })
-          .limit(20);
+          .order('yellow_cards', { ascending: false });
           
         if (error || !data) return [];
         
@@ -587,7 +608,7 @@ export function usePlayerCards() {
           country: {
             id: p.team_name,
             name: p.team_name,
-            flag: `https://flagsapi.com/${p.team_name.slice(0, 2).toUpperCase()}/flat/64.png` // Simplified flag logic for now
+            flag: resolveTeamFlag(p.team_name)
           },
           yellow_cards: p.yellow_cards || 0,
           red_cards: p.red_cards || 0,
