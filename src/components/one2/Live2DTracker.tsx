@@ -314,11 +314,10 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
 
 
 
-  const activeServerUrl = servers[activeServerIndex]?.url || '';
-
   const streamUrl = (() => {
     let targetUrl = '';
     let activeServer: any = null;
+    let startOffsetSeconds = 0;
     
     if (servers.length > 0) {
       if (highlights.length > 0) {
@@ -335,9 +334,49 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
         targetUrl = activeServer?.url || '';
       }
     } else {
-      // No servers/ads, just play highlights sequentially
+      // No servers/ads, play highlights like a TV channel (Linear Playout)
       if (highlights.length > 0) {
-        targetUrl = highlights[currentHighlightIndex % highlights.length] || '';
+        const knownHighlights = getHighlights();
+        const playlist = highlights.map(urlStr => {
+          let durationSeconds = 300; // default 5 minutes fallback
+          try {
+            let ytId = '';
+            if (urlStr.includes('youtube.com') && urlStr.includes('v=')) {
+              ytId = new URL(urlStr).searchParams.get('v') || '';
+            } else if (urlStr.includes('youtu.be/')) {
+              ytId = new URL(urlStr).pathname.substring(1);
+            }
+            
+            const match = knownHighlights.find(h => h.youtubeId === ytId);
+            if (match && match.duration) {
+              const parts = match.duration.split(':');
+              if (parts.length === 2) {
+                durationSeconds = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+              }
+            }
+          } catch (e) {}
+          return { url: urlStr, duration: durationSeconds };
+        });
+
+        const totalDuration = playlist.reduce((sum, item) => sum + item.duration, 0);
+        if (totalDuration > 0) {
+          // Epoch start (Jan 1, 2026)
+          const epoch = new Date('2026-01-01T00:00:00Z').getTime();
+          let elapsed = Math.floor((Date.now() - epoch) / 1000) % totalDuration;
+          
+          let currentIdx = 0;
+          for (let i = 0; i < playlist.length; i++) {
+            if (elapsed < playlist[i].duration) {
+              currentIdx = i;
+              startOffsetSeconds = elapsed;
+              break;
+            }
+            elapsed -= playlist[i].duration;
+          }
+          targetUrl = playlist[currentIdx].url;
+        } else {
+          targetUrl = highlights[0];
+        }
       }
     }
 
@@ -354,6 +393,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
           if (elapsedSeconds > 0) {
             startParam = `&start=${elapsedSeconds}`;
           }
+        } else if (startOffsetSeconds > 0) {
+          startParam = `&start=${startOffsetSeconds}`;
         }
         return `https://www.youtube.com/embed/${url.searchParams.get('v')}?enablejsapi=1&autoplay=1&mute=0${startParam}`;
       }
@@ -366,6 +407,8 @@ export function Live2DTracker({ match, hideSocials = false, forceMode = 'default
           if (elapsedSeconds > 0) {
             startParam = `&start=${elapsedSeconds}`;
           }
+        } else if (startOffsetSeconds > 0) {
+          startParam = `&start=${startOffsetSeconds}`;
         }
         return `https://www.youtube.com/embed${url.pathname}?enablejsapi=1&autoplay=1&mute=0${startParam}`;
       }
