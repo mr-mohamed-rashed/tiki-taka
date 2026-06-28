@@ -6,16 +6,24 @@ import { getSlotsByLocation } from '@/lib/adSlots';
 export function PopupAdBanner({ location }: { location: string }) {
   const { banners } = useAdBanners();
   const [dismissed, setDismissed] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    if (countdown > 0 && !dismissed) {
+    const showTimer = setTimeout(() => {
+      setVisible(true);
+    }, 5000);
+    return () => clearTimeout(showTimer);
+  }, []);
+
+  useEffect(() => {
+    if (visible && countdown > 0 && !dismissed) {
       const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
       return () => clearTimeout(timer);
     }
-  }, [countdown, dismissed]);
+  }, [visible, countdown, dismissed]);
 
-  if (dismissed) return null;
+  if (dismissed || !visible) return null;
 
   const slots = getSlotsByLocation(location);
   if (!slots.length) return null;
