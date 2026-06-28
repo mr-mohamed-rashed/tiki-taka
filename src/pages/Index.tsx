@@ -91,25 +91,38 @@ const Index = () => {
                 <EditableSiteText settingKey="hero_footballTitle" fallbackEn="Football." fallbackAr="كرة القدم." className={cn('text-foreground', lang === 'ar' && 'font-arabic')} />{' '}
                 <EditableSiteText settingKey="hero_livePulse" fallbackEn="Live." fallbackAr="مباشر." className="text-primary [text-shadow:0_0_30px_hsl(var(--primary)/0.5)]" />
               </h1>
-              <>
+              {nextMatch ? (
                 <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
                   <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
                     {lang === 'ar' ? 'الماتش اللي عليه الدور' : 'Up Next'}
                   </p>
                   <div className="flex flex-wrap items-center gap-3 text-2xl sm:text-3xl font-extrabold text-foreground">
-                    <TeamHeroName name={nextMatch.home.name} flag={nextMatch.home.flag} />
+                    <TeamHeroName name={nextMatch.home?.name || ''} flag={nextMatch.home?.flag || ''} />
                     <span className="text-primary">vs</span>
-                    <TeamHeroName name={nextMatch.away.name} flag={nextMatch.away.flag} />
+                    <TeamHeroName name={nextMatch.away?.name || ''} flag={nextMatch.away?.flag || ''} />
                   </div>
                   <p className="mt-3 text-sm sm:text-base text-foreground/75 leading-relaxed">
-                    {featured.excerpt.replace(`${nextMatch.home.name} vs ${nextMatch.away.name} at `, '').replace(`الماتش اللي عليه الدور: ${nextMatch.home.name} ضد ${nextMatch.away.name} في `, '')}
+                    {featured.excerpt
+                      .replace(`${nextMatch.home?.name || ''} vs ${nextMatch.away?.name || ''} at `, '')
+                      .replace(`الماتش اللي عليه الدور: ${nextMatch.home?.name || ''} ضد ${nextMatch.away?.name || ''} في `, '')}
                   </p>
-                  <p className="mt-2 inline-flex items-center gap-2 text-sm text-foreground/70">
-                    <MapPin className="h-4 w-4 text-primary" />
-                    <span>{nextMatch.venue}</span>
+                  {nextMatch.venue && (
+                    <p className="mt-2 inline-flex items-center gap-2 text-sm text-foreground/70">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span>{nextMatch.venue}</span>
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className={cn('mb-8 max-w-2xl', lang === 'ar' && 'font-arabic')}>
+                  <p className="mb-3 text-sm font-bold uppercase tracking-wider text-primary">
+                    {lang === 'ar' ? 'الماتش اللي عليه الدور' : 'Up Next'}
+                  </p>
+                  <p className="text-foreground/75">
+                    {lang === 'ar' ? 'لا توجد مباريات قادمة حالياً' : 'No upcoming matches scheduled'}
                   </p>
                 </div>
-                <div className="flex flex-wrap items-start gap-3">
+              )}  <div className="flex flex-wrap items-start gap-3">
                   <div className="flex flex-col items-center gap-2">
                     {liveMatches.length > 0 ? (
                       <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary-glow font-bold shadow-neon">
