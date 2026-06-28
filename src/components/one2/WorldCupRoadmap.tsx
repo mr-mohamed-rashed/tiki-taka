@@ -1,17 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Flag, Trophy, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useLanguage } from '@/context/LanguageContext';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { teams as teamsData, Team } from '@/lib/footballData';
-import { BracketState, getDefaultBracket, BracketMatch } from '@/lib/bracket';
+import { BracketState, getDefaultBracket, BracketMatch, advanceTeam } from '@/lib/bracket';
+import { useResults } from '@/hooks/useFootballData';
 
 export function WorldCupRoadmap() {
   const { lang } = useLanguage();
   const isAr = lang === 'ar';
-  const [bracket, setBracket] = useState<BracketState>(getDefaultBracket());
+  const [savedBracket, setSavedBracket] = useState<BracketState>(getDefaultBracket());
   const [isLoading, setIsLoading] = useState(true);
+  const { data: finishedMatches = [] } = useResults();
 
   useEffect(() => {
     async function loadRoadmap() {
@@ -28,7 +30,7 @@ export function WorldCupRoadmap() {
             if (!parsed.matches['m32']) {
                parsed.matches['m32'] = { id: 'm32', round: '3rd', team1Id: null, team2Id: null, score1: null, score2: null, winnerId: null, nextMatchId: null };
             }
-            setBracket(parsed);
+            setSavedBracket(parsed);
           }
         }
       } catch (e) {
@@ -57,7 +59,7 @@ export function WorldCupRoadmap() {
                 if (!parsed.matches['m32']) {
                    parsed.matches['m32'] = { id: 'm32', round: '3rd', team1Id: null, team2Id: null, score1: null, score2: null, winnerId: null, nextMatchId: null };
                 }
-                setBracket(parsed);
+                setSavedBracket(parsed);
               }
             } catch (e) {
               console.error('Failed to parse realtime bracket update', e);
@@ -71,6 +73,44 @@ export function WorldCupRoadmap() {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  // Automatically compute the bracket state by propagating finished match winners
+  const bracket = useMemo(() => {
+    let newState = JSON.parse(JSON.stringify(savedBracket)) as BracketState;
+    
+    // We run in multiple iterations to propagate winners from R32 -> R16 -> QF -> SF -> Final
+    for (let iteration = 0; iteration < 5; iteration++) {
+      let iterationChanged = false;
+      
+      for (const [id, match] of Object.entries(newState.matches)) {
+        if (match.team1Id && match.team2Id) {
+          const finishedMatch = finishedMatches.find(m => 
+            (m.home.id === match.team1Id && m.away.id === match.team2Id) ||
+            (m.home.id === match.team2Id && m.away.id === match.team1Id)
+          );
+
+          if (finishedMatch) {
+            const isT1Home = finishedMatch.home.id === match.team1Id;
+            const score1 = isT1Home ? finishedMatch.homeScore : finishedMatch.awayScore;
+            const score2 = isT1Home ? finishedMatch.awayScore : finishedMatch.homeScore;
+            
+            match.score1 = score1;
+            match.score2 = score2;
+            
+            const winnerId = finishedMatch.winnerId;
+            if (winnerId && match.winnerId !== winnerId) {
+              newState = advanceTeam(newState, id, winnerId);
+              iterationChanged = true;
+            }
+          }
+        }
+      }
+      
+      if (!iterationChanged) break;
+    }
+    
+    return newState;
+  }, [savedBracket, finishedMatches]);
 
   if (isLoading) {
     return (

@@ -35,6 +35,7 @@ export interface Match {
   venue: string;
   highlight_url?: string;
   isScoreStale?: boolean;
+  winnerId?: string;
 }
 
 export interface Scorer {

@@ -118,39 +118,37 @@ export function RoadmapTab() {
 
   const handleSyncResults = () => {
     setIsSyncing(true);
-    let newState = { ...bracket };
+    let newState = JSON.parse(JSON.stringify(bracket)) as BracketState;
     let changed = false;
 
-    for (const [id, match] of Object.entries(newState.matches)) {
-      if (match.team1Id && match.team2Id && !match.winnerId) {
-        const t1 = teamsData[match.team1Id as keyof typeof teamsData];
-        const t2 = teamsData[match.team2Id as keyof typeof teamsData];
-        
-        if (t1 && t2) {
+    // Run 5 iterations to propagate winners up the bracket
+    for (let iteration = 0; iteration < 5; iteration++) {
+      let iterationChanged = false;
+      for (const [id, match] of Object.entries(newState.matches)) {
+        if (match.team1Id && match.team2Id) {
           const finishedMatch = finished.find(m => 
-            (m.home.name === t1.name && m.away.name === t2.name) ||
-            (m.home.name === t2.name && m.away.name === t1.name)
+            (m.home.id === match.team1Id && m.away.id === match.team2Id) ||
+            (m.home.id === match.team2Id && m.away.id === match.team1Id)
           );
 
           if (finishedMatch) {
-            const isT1Home = finishedMatch.home.name === t1.name;
+            const isT1Home = finishedMatch.home.id === match.team1Id;
             const score1 = isT1Home ? finishedMatch.homeScore : finishedMatch.awayScore;
             const score2 = isT1Home ? finishedMatch.awayScore : finishedMatch.homeScore;
             
             newState.matches[id].score1 = score1;
             newState.matches[id].score2 = score2;
             
-            let winnerId = null;
-            if (score1 > score2) winnerId = match.team1Id;
-            else if (score2 > score1) winnerId = match.team2Id;
-
-            if (winnerId) {
+            const winnerId = finishedMatch.winnerId;
+            if (winnerId && newState.matches[id].winnerId !== winnerId) {
               newState = advanceTeam(newState, id, winnerId);
+              iterationChanged = true;
               changed = true;
             }
           }
         }
       }
+      if (!iterationChanged) break;
     }
 
     if (changed) {

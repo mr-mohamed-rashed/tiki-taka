@@ -234,6 +234,23 @@ export function useResults() {
         proxyResults = proxyResults.map(m => {
           const homeTeam = normalizeTeam(m.home.name, m.home.id);
           const awayTeam = normalizeTeam(m.away.name, m.away.id);
+          
+          let normalizedWinnerId = undefined;
+          if (m.winnerId) {
+            if (m.winnerId === m.home.id && homeTeam) {
+              normalizedWinnerId = homeTeam.id;
+            } else if (m.winnerId === m.away.id && awayTeam) {
+              normalizedWinnerId = awayTeam.id;
+            }
+          }
+          if (!normalizedWinnerId && m.status === 'finished') {
+            if (m.homeScore > m.awayScore && homeTeam) {
+              normalizedWinnerId = homeTeam.id;
+            } else if (m.awayScore > m.homeScore && awayTeam) {
+              normalizedWinnerId = awayTeam.id;
+            }
+          }
+
           return {
             ...m,
             home: { 
@@ -247,7 +264,8 @@ export function useResults() {
               name: awayTeam?.name || m.away.name,
               id: awayTeam?.id || m.away.id,
               flag: awayTeam?.flag || m.away.flag 
-            }
+            },
+            winnerId: normalizedWinnerId
           };
         });
 
@@ -632,6 +650,7 @@ function mapFixture(f: ApiFixture) {
     homeScore: f.goals.home ?? 0,
     awayScore: f.goals.away ?? 0,
     venue: f.fixture.venue?.name ?? '',
+    winnerId: f.teams.home.winner ? String(f.teams.home.id) : f.teams.away.winner ? String(f.teams.away.id) : undefined,
   };
 }
 
@@ -670,6 +689,7 @@ function mapEspnFixture(e: any): Match {
     homeScore: parseInt(home.score, 10) || 0,
     awayScore: parseInt(away.score, 10) || 0,
     venue: comp.venue?.fullName || '',
+    winnerId: home.winner ? home.id : away.winner ? away.id : undefined,
   };
 }
 
