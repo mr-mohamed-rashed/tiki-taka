@@ -4,15 +4,21 @@ import { teams } from '@/lib/footballData';
 import type { Match, Scorer } from '@/lib/footballData';
 import { queryClient } from '@/App';
 
+function getMatchTime(match: Match | undefined): number {
+  if (!match || !match.date) return 0;
+  const time = new Date(match.date).getTime();
+  return isNaN(time) ? 0 : time;
+}
+
 function getSmartPollingInterval(): number | false {
   const now = Date.now();
   const liveMatches = queryClient.getQueryData<Match[]>(['live-fixtures']) || [];
-  const currentLive = liveMatches.filter(m => m.status === 'live');
+  const currentLive = liveMatches.filter(m => m && m.status === 'live');
   
   if (currentLive.length > 0) {
-    const activeMatch = currentLive.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-    const kickoff = new Date(activeMatch.date).getTime();
-    const elapsedMins = (now - kickoff) / 60000;
+    const activeMatch = currentLive.sort((a, b) => getMatchTime(b) - getMatchTime(a))[0];
+    const kickoff = getMatchTime(activeMatch);
+    const elapsedMins = kickoff ? (now - kickoff) / 60000 : 0;
     
     if (elapsedMins < 0) return false;
     if (elapsedMins >= 0 && elapsedMins < 115) return 240_000;
@@ -21,13 +27,13 @@ function getSmartPollingInterval(): number | false {
   
   const upcoming = queryClient.getQueryData<Match[]>(['upcoming-fixtures']) || [];
   const nextUpcoming = upcoming
-    .filter(m => new Date(m.date).getTime() > now)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    .filter(m => m && getMatchTime(m) > now)
+    .sort((a, b) => getMatchTime(a) - getMatchTime(b));
     
   if (nextUpcoming.length === 0) return false;
   
-  const nextKickoff = new Date(nextUpcoming[0].date).getTime();
-  const timeToKickoff = nextKickoff - now;
+  const nextKickoff = getMatchTime(nextUpcoming[0]);
+  const timeToKickoff = nextKickoff ? nextKickoff - now : 0;
   
   if (timeToKickoff <= 0) return 240_000;
   return Math.min(timeToKickoff, 3600_000);
@@ -554,14 +560,14 @@ function mapEspnFixture(e: any): Match {
 function getUpcomingOnly(matches: Match[]) {
   const cutoff = Date.now() - 4 * 60 * 60 * 1000;
   return matches
-    .filter((match) => match.status === 'upcoming' && new Date(match.date).getTime() > cutoff)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    .filter((match) => match && match.status === 'upcoming' && getMatchTime(match) > cutoff)
+    .sort((a, b) => getMatchTime(a) - getMatchTime(b));
 }
 
 function getFinishedOnly(matches: Match[]) {
   return matches
-    .filter((match) => match.status === 'finished')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .filter((match) => match && match.status === 'finished')
+    .sort((a, b) => getMatchTime(b) - getMatchTime(a));
 }
 
 type ApiScorer = { player: { name: string }; statistics: [{ team: { name: string; logo: string }; goals: { total: number; assists: number | null }; games: { appearences: number } }] };
