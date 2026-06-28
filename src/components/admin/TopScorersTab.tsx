@@ -22,6 +22,8 @@ export function TopScorersTab() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [bulkText, setBulkText] = useState('');
+  const [bulking, setBulking] = useState(false);
 
   const [form, setForm] = useState({
     player_name: '',
@@ -31,6 +33,128 @@ export function TopScorersTab() {
     yellow_cards: 0,
     red_cards: 0
   });
+
+  const handleBulkInsert = async () => {
+    if (!bulkText) return;
+    setBulking(true);
+    try {
+      const text = bulkText.replace(/\s+/g, ' ');
+      
+      const findMarker = (txt: string, marker: string, startFrom: number) => {
+        let pos = startFrom;
+        while (true) {
+          pos = txt.indexOf(marker, pos);
+          if (pos === -1) return -1;
+          const after = txt.slice(pos + marker.length, pos + marker.length + 1);
+          if (/[\u0600-\u06FFa-zA-Z]/.test(after)) {
+            return pos;
+          }
+          pos += 1;
+        }
+      };
+
+      const parsedPlayers: any[] = [];
+      let lastFoundIndex = 0;
+
+      for (let i = 1; i <= 145; i++) {
+        const currentMarker = i.toString();
+        const nextMarker = (i + 1).toString();
+        
+        const startIdx = findMarker(text, currentMarker, lastFoundIndex);
+        if (startIdx === -1) continue;
+        
+        lastFoundIndex = startIdx + currentMarker.length;
+        
+        let endIdx = findMarker(text, nextMarker, lastFoundIndex);
+        if (i === 145) {
+          endIdx = text.length;
+        }
+        
+        if (endIdx === -1) continue;
+        
+        const segment = text.slice(startIdx + currentMarker.length, endIdx).trim();
+        const goalsMatch = segment.match(/(\d+)$/);
+        if (!goalsMatch) continue;
+        
+        const goals = parseInt(goalsMatch[1]);
+        const rest = segment.slice(0, segment.length - goalsMatch[1].length).trim();
+        
+        let teamName = "";
+        let playerName = "";
+        
+        for (let len = 2; len <= Math.floor(rest.length / 2); len++) {
+          const endPart1 = rest.slice(rest.length - len);
+          const endPart2 = rest.slice(rest.length - len * 2, rest.length - len);
+          if (endPart1.replace(/\s/g, '') === endPart2.replace(/\s/g, '')) {
+            teamName = endPart1.trim();
+            playerName = rest.slice(0, rest.length - len * 2).trim();
+          }
+        }
+        
+        if (!teamName) {
+          teamName = rest.slice(Math.floor(rest.length * 0.5)).trim();
+          playerName = rest.slice(0, Math.floor(rest.length * 0.5)).trim();
+        }
+        
+        // Clean duplicate team names
+        teamName = teamName
+          .replace(/(السنغال)\s*(السنغال)?/g, '$1')
+          .replace(/(المغرب)\s*(المغرب)?/g, '$1')
+          .replace(/(جنوب أفريقيا)\s*(جنوب أفريقيا)?/g, '$1')
+          .replace(/(الكونغو الديمقراطية)\s*(الكونغو الديمقراطية)?/g, '$1')
+          .replace(/(البوسنة والهرسك)\s*(البوسنة والهرسك)?/g, '$1')
+          .replace(/(ألمانيا)\s*(ألمانيا)?/g, '$1')
+          .replace(/(الأرجنتين)\s*(الأرجنتين)?/g, '$1')
+          .replace(/(فرنسا)\s*(فرنسا)?/g, '$1')
+          .replace(/(السويد)\s*(السويد)?/g, '$1');
+          
+        if (playerName === 'الفارو فيد' && teamName === 'الغوالمكسيك') {
+          playerName = 'الفارو فيدالغو';
+          teamName = 'المكسيك';
+        }
+        if (playerName === 'جاسم ياسينا' && teamName === 'لمغرب المغرب') {
+          playerName = 'جاسم ياسين';
+          teamName = 'المغرب';
+        }
+
+        parsedPlayers.push({
+          player_name: playerName,
+          team_name: teamName,
+          goals: goals,
+          assists: 0,
+          yellow_cards: 0,
+          red_cards: 0,
+          motm_awards: 0
+        });
+      }
+
+      if (parsedPlayers.length === 0) {
+        toast({ title: 'لم يتم العثور على أي هدافين لتسجيلهم', variant: 'destructive' });
+        setBulking(false);
+        return;
+      }
+
+      // Delete existing stats to overwrite cleanly
+      await supabase.from('player_stats').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      
+      // Insert in chunks of 50
+      for (let i = 0; i < parsedPlayers.length; i += 50) {
+        const chunk = parsedPlayers.slice(i, i + 50);
+        const { error } = await supabase.from('player_stats').insert(chunk);
+        if (error) {
+          console.error('Error inserting chunk:', error);
+          toast({ title: 'فشل إدخال جزء من الهدافين', description: error.message, variant: 'destructive' });
+        }
+      }
+      
+      toast({ title: `تم حفظ وإدخال ${parsedPlayers.length} هداف بنجاح وتحديث جداول الموقع الحية!` });
+      setBulkText('');
+      fetchScorers();
+    } catch (e: any) {
+      toast({ title: 'حدث خطأ أثناء حفظ الهدافين', description: e.message, variant: 'destructive' });
+    }
+    setBulking(false);
+  };
 
   const fetchScorers = async () => {
     setLoading(true);
@@ -211,6 +335,30 @@ export function TopScorersTab() {
               </Button>
             )}
           </div>
+        </div>
+      </Card>
+
+      <Card className="border-primary/25 bg-gradient-card p-5">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold">إضافة الهدافين دفعة واحدة (Bulk Import)</h3>
+          <p className="text-sm text-muted-foreground">انسخ والصق القائمة الكاملة التي نسختها هنا لتحديث كافة هدافي البطولة الحالية دفعة واحدة وبشكل حقيقي.</p>
+        </div>
+        <div className="space-y-4">
+          <textarea
+            value={bulkText}
+            onChange={(e) => setBulkText(e.target.value)}
+            placeholder="انسخ والصق قائمة الهدافين كاملة هنا (مثال: 1ليونيل ميسيالأرجنتينالأرجنتين62عثمان ديمبيليفرنسافرنسا4...)"
+            className="flex min-h-[120px] w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            dir="rtl"
+          />
+          <Button
+            onClick={handleBulkInsert}
+            disabled={bulking || !bulkText}
+            className="w-full h-11 font-semibold bg-green-600 hover:bg-green-700 text-white gap-2"
+          >
+            {bulking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+            معالجة وحفظ جميع الهدافين الآن
+          </Button>
         </div>
       </Card>
 
