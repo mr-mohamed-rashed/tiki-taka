@@ -64,15 +64,7 @@ export function BestPlayersTable() {
     return asc ? first - second : second - first;
   });
 
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 7;
-  const totalPages = Math.max(1, Math.ceil(sortedRows.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const visibleRows = sortedRows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
-
-  const goToPage = (nextPage: number) => {
-    setPage(Math.min(Math.max(nextPage, 1), totalPages));
-  };
+  const displayRows = sortedRows;
 
   const toggleSort = (k: SortKey) => {
     if (sortKey === k) {
@@ -134,7 +126,7 @@ export function BestPlayersTable() {
                 </TableCell>
               </TableRow>
             ))}
-            {!isLoading && visibleRows.map((player) => {
+             {!isLoading && displayRows.map((player) => {
               const colors = getRankColors(player.rank);
               const isTop3 = player.rank <= 3;
               return (
@@ -173,40 +165,6 @@ export function BestPlayersTable() {
           </TableBody>
         </Table>
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-border bg-card/40 p-4 mt-auto">
-          <div className={lang === 'ar' ? 'font-arabic text-sm text-muted-foreground' : 'text-sm text-muted-foreground'}>
-            {lang === 'ar'
-              ? `صفحة ${safePage} من ${totalPages}`
-              : `Page ${safePage} of ${totalPages}`}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2" dir="ltr">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => goToPage(safePage - 1)}
-              disabled={safePage === 1}
-              className="h-8 px-4"
-            >
-              {lang === 'ar' ? 'السابق' : 'Prev'}
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => goToPage(safePage + 1)}
-              disabled={safePage === totalPages}
-              className="h-8 px-4"
-            >
-              {lang === 'ar' ? 'التالي' : 'Next'}
-            </Button>
-          </div>
-        </div>
-      )}
     </Card>
   );
 }
