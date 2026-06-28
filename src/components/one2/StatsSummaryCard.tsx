@@ -22,15 +22,20 @@ const getPlayerPhoto = (player: any) => {
   return PLAYER_PHOTOS[name] || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=0284c7`;
 };
 
-const getTeamFlag = (teamName: string) => {
+const getTeamFlag = (teamName: string | undefined | null) => {
+  if (!teamName) return `https://flagcdn.com/w160/un.png`;
   const allTeams = Object.values(getTeams());
   const match = allTeams.find(
-    t => t.name.toLowerCase() === teamName.toLowerCase() || 
-         (teamName.includes('مصر') && t.id === 'EGY') ||
-         (teamName.includes('أرجنتين') && t.id === 'ARG') ||
-         (teamName.includes('سويد') && t.id === 'SWE') ||
-         (teamName.includes('فرنسا') && t.id === 'FRA') ||
-         (teamName.includes('مغرب') && t.id === 'MAR')
+    t => {
+      const nameMatch = t.name && t.name.toLowerCase() === teamName.toLowerCase();
+      const customMatch = 
+        (teamName.includes('مصر') && t.id === 'EGY') ||
+        (teamName.includes('أرجنتين') && t.id === 'ARG') ||
+        (teamName.includes('سويد') && t.id === 'SWE') ||
+        (teamName.includes('فرنسا') && t.id === 'FRA') ||
+        (teamName.includes('مغرب') && t.id === 'MAR');
+      return nameMatch || customMatch;
+    }
   );
   return match?.flag || `https://flagcdn.com/w160/un.png`;
 };
