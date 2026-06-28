@@ -11,6 +11,7 @@ import { WorldCupRoadmap } from '@/components/one2/WorldCupRoadmap';
 import { TrendingSidebar } from '@/components/one2/TrendingSidebar';
 import { AdBanner } from '@/components/one2/AdBanner';
 import { EditModeToggle } from '@/components/one2/EditModeToggle';
+import { StatsSummaryCard } from '@/components/one2/StatsSummaryCard';
 import { EditableSiteText } from '@/components/one2/EditableSiteText';
 import { EditableImage } from '@/components/one2/EditableImage';
 import { AdSlotSelector } from '@/components/one2/AdSlotSelector';
@@ -179,6 +180,7 @@ const Index = () => {
             lang={lang}
           />
           <MatchCenter defaultTab="live" />
+          <StatsSummaryCard />
         </section>
 
         {/* ApiSportsWidget removed temporarily */}
